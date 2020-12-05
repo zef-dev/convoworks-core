@@ -10,7 +10,7 @@ class DialogflowApiFactory
     private $_logger;
 
     /**
-     * @var \Convo\Data\Filesystem\FilesystemServiceDataProvider
+     * @var \Convo\Core\IServiceDataProvider
      */
     private $_convoServiceDataProvider;
 

@@ -4,14 +4,14 @@ namespace Convo\Core\Adapters\Alexa\Validators;
 
 use Convo\Core\Util\CurrentTimeService;
 use Convo\Core\Util\ICurrentTimeService;
-use Convo\Guzzle\GuzzleHttpFactory;
+use Convo\Core\Util\IHttpFactory;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
 
 class AlexaRequestValidator
 {
     /**
-     * @var GuzzleHttpFactory
+     * @var IHttpFactory
      */
     private $_httpFactory;
 

@@ -12,7 +12,7 @@ class AmazonAuthRestHandler implements RequestHandlerInterface
     /**
      * Configuration provider
      *
-     * @var \Convo\Proto\AdminUserDao
+     * @var \Convo\Core\IAdminUserDataProvider
      */
     private $_adminUserDataProvider;
 
