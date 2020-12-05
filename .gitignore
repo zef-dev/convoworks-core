@@ -7,3 +7,4 @@
 /.buildpath
 /composer.lock
 /.project
+/.phpunit.result.cache
