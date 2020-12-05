@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 1.0.0 - 2020-12-03
+## 0.18.0 - 2020-12-05
 
-* Initial release.
+* Initial release & source import
 
