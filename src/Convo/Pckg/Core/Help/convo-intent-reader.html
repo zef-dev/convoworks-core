@@ -1,0 +1,33 @@
+<div class="intent-help">
+    <h3>Convo Intent</h3>
+    
+    <p>Matches against Convo intent definitions.</p>
+
+    <h3>When to use?</h3>
+
+    <p>When we want to catch the certain <b>convo</b> intent which activates this filter and then execute block of code in <b>simple processor</b> element.</p>
+
+    <h3>How to use 1.1: </h3>
+    <ol>
+    	<li>Select the certain <b>INTENT</b> from the drop-down <br>example: <i>GuessTheNumber</i></li>
+    	<li>Intent GuessTheNumber has Slot name <b>guess</b> and Slot type <b>@convo-core.number</b></li>
+    </ol>
+    <h3>How to use 1.2: </h3>
+    <ol>
+    	<li>Select the certain <b>INTENT</b> from the drop-down <br>example: <i>NumberFailbackFour</i> (sample utterances for this intent: <i>is it <b>for</b>, is your number <b>for</b>, <b> for</b></i>)</li>
+    	<li><i>(Optional)</i> In the <b>Required Slots</b> field, add <b>slot name</b>(if required slot is empty, filter will not activate even if intent name is correct.) <br>example: <i>MySlotName</i></li>
+    	<li>Add predefined values you wish to store into the <b>Predefined Values</b> field <br>example: <i>guess : 4</i> <br>When we try to guess the number and for some reason the device understands word <b>for</b> instead number <b>four</b> then we catch <b>NumberFailbackFour</b> intent instead <b>GuessTheNumber</b> intent and we set slot name <b>guess</b> to <b>4</b></li>
+    </ol>
+    
+    <h3>How to use 2.1: </h3>
+    <ol>
+    	<li>Select the certain <b>INTENT</b> from the drop-down <br>example: <i>SetDeviceName</i>(sample utterances for this intent: <i>is it <b>Adam</b>, call it <b>Adam</b></i>)</li>
+    	<li>Intent SetDeviceName has Slot name <b>device_name</b> and Slot type <b>@convo-core.any</b></li>
+    </ol>
+    <h3>How to use 2.2: </h3>
+    <ol>
+    	<li>Select the certain <b>INTENT</b> from the drop-down <br>example: <i>SetDeviceNameSolo</i> (sample utterances for this intent: <i><b>Billy</b></i>)</li>
+    	<li><i>(Optional)</i> In the <b>Required Slots</b> field, add <b>slot name</b>(if required slot is empty, filter will not activate even if intent name is correct.) <br>example: <i>MySlotName</i></li>
+    	<li>Add values you wish to store into the <b>Rename Values</b> field <br>example: <i>device_name_solo : device_name</i> <br>When we try to say new invocation name for the device, for some reason some platform does not support mixing sample utterance with one word and sample utterance with more words in same intent, so we need new intent(SetDeviceNameSolo) with just one sample utterance and then we can rename device_name_solo to device_name and then we can use this slot name. </li>
+    </ol>
+</div>

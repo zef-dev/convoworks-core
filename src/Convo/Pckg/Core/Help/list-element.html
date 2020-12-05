@@ -1,0 +1,39 @@
+<div class="list-help">
+    <h3>List</h3>
+
+    <p>Display's properties of objects in an collection provided via an Http Client or Json Reader element.</p>
+
+    <h3>When to use?</h3>
+
+    <p>After an Http Client or Json Reader has provided the collection of multiple objects you want to display.</p>
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>Make sure that an <b>Http Client</b> or <b>Json Reader</b> element was executed first in an Conversation Block</li>
+        <li>Text Response element has to be used before the <b>List</b> element in order to display the entire response of the <b>List</b> element on Google Assistant and Alexa</li>
+        <li>In the <b>"List title"</b> field set the title of the <b>List</b> element</li>
+        <li>In the <b>"List template"</b> you can choose between List and Carousel template of the <b>List</b> element</li>
+        <li>In the <b>"Items"</b> field set the retrieved result from the <b>Http Client</b> of <b>Json Reader</b> element</li>
+        <li>In the <b>"Offset"</b> field set beginning of items to display</li>
+        <li>In the <b>"Limit"</b> set the amount of the items to be displayed</li>
+        <li>Access the properties by using this example <b>${listItem.value.somePropertyYouWantToDisplay}</b> </li>
+        <li>Access the natural this example <b>${listItem.natural}</b> </li>
+        <li>Access the index this example <b>${listItem.index}</b> </li>
+        <li>Access the first this example <b>${listItem.first}</b> </li>
+        <li>Access the last this example <b>${listItem.last}</b> </li>
+    </ol>
+
+    <h3>Example usage in case of Http Client</h3>
+    <div>
+        <p>List field value filling example: </p>
+        <ul>
+            <li>Items: <p><b>${row.body.someExampleCollectionOfObject}</b></p></li>
+            <li>List item title: <p><b>${listItem.natural}. ${listItem.value.propertyBestSuitedForTitle}</b></p></li>
+            <li>List item subtitle: <p><b>${listItem.value.propertyBestSuitedForSubtitle}</b></p></li>
+            <li>List item Description 1: <p><b>${listItem.value.somePrimaryDescription}</b></p></li>
+            <li>List item Description 2: <p><b>${listItem.value.someSecondaryDescription}</b></p></li>
+            <li>List item image url: <p><b>${listItem.value.someImageLink}</b></p></li>
+            <li>List item image text: <p><b>${listItem.value.someImageText}</b></p></li>
+        </ul>
+    </div>
+</div>

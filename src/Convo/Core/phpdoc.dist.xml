@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+ <title>Convoworks - Core API</title>
+  <parser>
+    <target>../../docs</target>
+    <visibility>public</visibility>
+  </parser>
+  <transformer>
+    <target>../../docs</target>
+  </transformer>
+  <files>
+    <directory>.</directory>
+     <ignore>Migrate/*</ignore>
+     <ignore>Admin/*</ignore>
+     <ignore>Util/*</ignore>
+  </files>
+</phpdoc>

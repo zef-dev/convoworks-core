@@ -1,0 +1,607 @@
+{
+    "RepeatIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.RepeatIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "RepeatIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "repeat",
+                        "model" : [
+                            { "text" : "repeat"}
+                        ]
+                    },
+                    {
+                        "raw" : "say that again",
+                        "model" : [
+                            { "text" : "say that again"}
+                        ]
+                    },
+                    {
+                        "raw" : "repeat that",
+                        "model" : [
+                            { "text" : "repeat that"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "CancelIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.CancelIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "CancelIntent",
+                "type" : "custom",
+                "events" : [
+                    {
+                        "name": "actions_intent_CANCEL"
+                    },
+                    {
+                        "name": "ASSISTANT_CANCEL"
+                    }
+                ]
+            }
+        }
+    ],
+    "HelpIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.HelpIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "HelpIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "help",
+                        "model" : [
+                            { "text" : "help"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "NextIntent": [
+        {
+            "platforms": ["amazon"],
+            "definition": {
+                "name": "AMAZON.NextIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "NextIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "next",
+                        "model" : [
+                            { "text" : "next"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "PreviousIntent": [
+        {
+            "platforms": ["amazon"],
+            "definition": {
+                "name": "AMAZON.PreviousIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "PreviousIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "back",
+                        "model" : [
+                            { "text" : "back"}
+                        ]
+                    },
+                    {
+                        "raw" : "go back",
+                        "model" : [
+                            { "text" : "go back"}
+                        ]
+                    },
+                    {
+                        "raw" : "previous",
+                        "model" : [
+                            { "text" : "previous"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "StopIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.StopIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "StopIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "stop",
+                        "model" : [
+                            { "text" : "stop"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "PauseIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.PauseIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "PauseIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "pause",
+                        "model" : [
+                            { "text" : "pause"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "ResumeIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.ResumeIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "ResumeIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "resume",
+                        "model" : [
+                            { "text" : "resume"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "StartOverIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.StartOverIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "StartOverIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "start over",
+                        "model" : [
+                            { "text" : "start over"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "LoopOnIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.LoopOnIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "LoopOnIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "loop on",
+                        "model" : [
+                            { "text" : "loop on"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "LoopOffIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.LoopOffIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "LoopOffIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "loop off",
+                        "model" : [
+                            { "text" : "loop off"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "ShuffleOffIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.ShuffleOffIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "ShuffleOffIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "shuffle off",
+                        "model" : [
+                            { "text" : "shuffle off"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "ShuffleOnIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.ShuffleOnIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "ShuffleOnIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "shuffle on",
+                        "model" : [
+                            { "text" : "shuffle on"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "NavigateHomeIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.NavigateHomeIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "NavigateHomeIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "home",
+                        "model" : [
+                            { "text" : "home"}
+                        ]
+                    }, {
+                        "raw" : "go home",
+                        "model" : [
+                            { "text" : "go home"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "NoIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.NoIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "NoIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "no",
+                        "model" : [
+                            { "text" : "no"}
+                        ]
+                    }, {
+                        "raw" : "nope",
+                        "model" : [
+                            { "text" : "nope"}
+                        ]
+                    }, {
+                        "raw" : "negative",
+                        "model" : [
+                            { "text" : "negative"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "YesIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.YesIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "YesIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "yes",
+                        "model" : [
+                            { "text" : "yes"}
+                        ]
+                    }, {
+                        "raw" : "sure",
+                        "model" : [
+                            { "text" : "sure"}
+                        ]
+                    }, {
+                        "raw" : "cool",
+                        "model" : [
+                            { "text" : "cool"}
+                        ]
+                    }, {
+                        "raw" : "ok",
+                        "model" : [
+                            { "text" : "ok"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "ScrollLeftIntent": [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.ScrollLeftIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "ScrollLeftIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "go left",
+                        "model" : [
+                            { "text" : "go left"}
+                        ]
+                    }, {
+                        "raw" : "left",
+                        "model" : [
+                            { "text" : "left"}
+                        ]
+                    }, {
+                        "raw" : "scroll left",
+                        "model" : [
+                            { "text" : "scroll left"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "ScrollRightIntent": [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.ScrollRightIntent"
+            }
+        }, {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "ScrollRightIntent",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "go right",
+                        "model" : [
+                            { "text" : "go right"}
+                        ]
+                    }, {
+                        "raw" : "right",
+                        "model" : [
+                            { "text" : "right"}
+                        ]
+                    }, {
+                        "raw" : "scroll right",
+                        "model" : [
+                            { "text" : "scroll right"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "PlaySong": [
+        {
+            "platforms" : ["dialogflow", "amazon"],
+            "definition" : {
+                "name" : "PlaySong",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "play",
+                        "model" : [
+                            { "text" : "play"}
+                        ]
+                    },
+                    {
+                        "raw" : "play a song",
+                        "model" : [
+                            { "text" : "play a song"}
+                        ]
+                    },
+                    {
+                        "raw" : "play songs",
+                        "model" : [
+                            { "text" : "play songs"}
+                        ]
+                    },
+                    {
+                        "raw" : "start playback",
+                        "model" : [
+                            { "text" : "start playback"}
+                        ]
+                    },
+                    {
+                        "raw" : "play a song by Lou Bega",
+                        "model" : [
+                            { "text" : "play a song by"},
+                            { "text" : "Lou Bega", "type" : "@convo-core.artist", "slot_value" : "Artist"}
+                        ]
+                    },
+                    {
+                        "raw" : "play songs in Techno",
+                        "model" : [
+                            { "text" : "play songs in"},
+                            { "text" : "Techno", "type" : "@convo-core.music_playlist", "slot_value" : "Playlist"}
+                        ]
+                    },
+                    {
+                        "raw" : "play songs in Techno playlist",
+                        "model" : [
+                            { "text" : "play songs in"},
+                            { "text" : "Techno", "type" : "@convo-core.music_playlist", "slot_value" : "Playlist"},
+                            { "text" : "playlist"}
+                        ]
+                    },
+                    {
+                        "raw" : "play songs by Lou Bega",
+                        "model" : [
+                            { "text" : "play songs by"},
+                            { "text" : "Lou Bega", "type" : "@convo-core.artist", "slot_value" : "Artist"}
+                        ]
+                    },
+                    {
+                        "raw" : "play songs from Rock",
+                        "model" : [
+                            { "text" : "play songs from"},
+                            { "text" : "Rock", "type" : "@convo-core.genre", "slot_value" : "Genre"}
+                        ]
+                    },
+                    {
+                        "raw" : "play Mambo No. 5 by Lou Bega",
+                        "model" : [
+                            { "text" : "play"},
+                            { "text" : "Mambo No. 5", "type" : "@convo-core.song", "slot_value" : "Song"},
+                            { "text" : "by" },
+                            { "text" : "Lou Bega", "type" : "@convo-core.artist", "slot_value" : "Artist"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "ContinuePlayback": [
+         {
+            "platforms" : ["dialogflow", "amazon"],
+            "definition" : {
+                "name" : "ContinuePlayback",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "continue playback",
+                        "model" : [
+                            { "text" : "continue playback"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "DefaultWelcomeIntent": [
+        {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "DefaultWelcomeIntent",
+                "type" : "custom",
+                "events" : [
+                    {
+                        "name": "GOOGLE_ASSISTANT_WELCOME"
+                    }
+                ]
+            }
+        }
+    ],
+    "DefaultRepromptIntent": [
+        {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "DefaultRepromptIntent",
+                "type" : "custom",
+                "events" : [
+                    {
+                        "name": "actions_intent_NO_INPUT"
+                    }
+                ]
+            }
+        }
+    ],
+    "DefaultFallbackIntent": [
+        {
+            "platforms" : ["dialogflow"],
+            "definition" : {
+                "name" : "DefaultFallbackIntent",
+                "type" : "custom",
+                "fallback" : true
+            }
+        }
+    ]
+}

@@ -1,0 +1,36 @@
+<div class="set-parameter-help">
+    <h3>Set parameter</h3>
+
+    <p>Sets parameters.</p>
+
+    <h3>When to use?</h3>
+
+    <p>When we want to store and reuse values.</p>
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>Select the <b>SCOPE TYPE</b> from the drop-down</li>
+        <li>Scope type <b>installation</b> is for the duration of the whole installation and has the longest life span</li>
+        <li>Scope type <b>session</b> is for the duration of the session</li>
+        <li>Scope type <b>request</b> is for the duration of a single request</li>
+        <li>Add parameters you wish to store into the <b>PROPERTIES</b> field, like his: <i>parameterName : ${parameterValue}</i></li>
+        <li>You can access the created parameters like this: <i>${parameterName}</i></li>
+    </ol>
+
+    <h3>Example of usage for creating an array</h3>
+    <div>
+        <p>We're going to create a two dimensional array in this format:  players[index]["name"]</p>
+        <ul>
+            <li><b>SCOPE TYPE: </b>
+                <p><i>session</i></p></li>
+            <li><b>PROPERTIES: </b>
+                <p><i>players[0]["name"] : ${"John"}</i></p>
+                <p><i>players[1]["name"] : ${"Jane"}</i></p></li>
+            <li>To access an array item:
+                <p><i>${players[0]["name"]}</i> </p></li>
+            <li>Note that for cases where you don't know how many items the array is supposed to have, you can use an existing counter parameter when creating it. For example:
+                <p><b>PROPERTIES: </b></p>
+                <p><i>players[${counter}]["name"] : ${user.input}</i></p></li>
+        </ul>
+    </div>
+</div>

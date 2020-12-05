@@ -1,0 +1,9 @@
+{
+    "namespace": "convo-core",
+    "author": "ZEF Development",
+    "email": "marko@zefdev.com",
+    "source_for": [
+        "functions", "intents", "entities", "templates"
+    ],
+    "description": "Contains core elements, entities, and intents for basic service functionality."
+}

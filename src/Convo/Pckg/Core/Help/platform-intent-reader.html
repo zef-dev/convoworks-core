@@ -1,0 +1,31 @@
+<div class="platform-intent-help">
+    <h3>Platform Intent</h3>
+    
+    <p>Reads platform intents.</p>
+
+    <h3>When to use?</h3>
+
+    <p>When we want to catch the certain <b>platform</b> intent which activates this filter and then execute block of code in <b>simple processor</b> element.</p>
+
+    <h3>How to use 1.1: </h3>
+    <ol>
+    	<li>In the <b>INTENT</b> field enter the name of the intent which activates this filter, example: <i>GuessTheNumber</i></li>
+    </ol>
+    <h3>How to use 1.2: </h3>
+    <ol>
+    	<li>In the <b>INTENT</b> field enter the name of the intent which activates this filter, example: <i>NumberFailbackFour</i></li>
+    	<li><i>(Optional)</i> In the <b>Required Slots</b> field, add <b>slot name</b>(if required slot is empty, filter will not activate even if intent name is correct.) <br>example: <i>MySlotName</i></li>
+    	<li>Add predefined values you wish to store into the <b>Predefined Values</b> field <br>example: <i>guess : 4</i> <br>When we try to guess the number and for some reason the device understands word <b>for</b> instead number <b>four</b> then we catch <b>NumberFailbackFour</b> intent instead <b>GuessTheNumber</b> intent and we set slot name <b>guess</b> to <b>4</b></li>
+    </ol>
+    
+    <h3>How to use 2.1: </h3>
+    <ol>
+    	<li>In the <b>INTENT</b> field enter the name of the intent which activates this filter <br>example: <i>SetDeviceName</i>(sample utterances for this intent: <i>is it <b>Adam</b>, call it <b>Adam</b></i>)</li>
+    </ol>
+    <h3>How to use 2.2: </h3>
+    <ol>
+    	<li>In the <b>INTENT</b> field enter the name of the intent which activates this filter <br>example: <i>SetDeviceNameSolo</i> (sample utterances for this intent: <i><b>Billy</b></i>)</li>
+    	<li><i>(Optional)</i> In the<b> Required Slots</b> field, add <b>slot name</b>(if required slot is empty, filter will not activate even if intent name is correct.) <br>example: <i>MySlotName</i></li>
+    	<li>Add values you wish to store into the <b>Rename Values</b> field <br>example: <i>device_name_solo : device_name</i> <br>When we try to say new invocation name for the device, for some reason some platform does not support mixing sample utterance with one word and sample utterance with more words in same intent, so we need new intent(SetDeviceNameSolo) with just one sample utterance and then we can rename device_name_solo to device_name and then we can use this slot name. </li>
+    </ol>
+</div>

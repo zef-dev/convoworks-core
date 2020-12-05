@@ -1,0 +1,41 @@
+{
+    "template_id" : "blank",
+    "name" : "Blank",
+    "description" : "Empty, blank service",
+    "service" : {
+        "convo_service_version": 6,
+        "properties": [],
+        "packages": ["convo-core"],
+        "configurations": [],
+        "contexts": [],
+        "variables": [],
+        "fragments": [],
+        "entities": [],
+        "intents": [],
+        "blocks": [ {
+            "class": "\\Convo\\Pckg\\Core\\Elements\\ConversationBlock",
+            "namespace": "convo-core",
+            "properties": {
+                "block_id": "home",
+                "role": "conversation_block",
+                "elements": [
+                    {
+                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                        "namespace": "convo-core",
+                        "properties": {
+                            "type": "default",
+                            "alexa_domain": "normal",
+                            "alexa_emotion": "neutral",
+                            "alexa_emotion_intensity": "medium",
+                            "text": "Hello world!",
+                            "append": false
+                        }
+                    }
+                ],
+                "processors": [],
+                "fallback": []
+            }
+        }
+        ]
+    }
+}

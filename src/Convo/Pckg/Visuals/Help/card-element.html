@@ -1,0 +1,32 @@
+<div class="card-help">
+    <h3>Card</h3>
+
+    <p>Display's properties of an object provided via an Http Client or Json Reader element.</p>
+
+    <h3>When to use?</h3>
+
+    <p>After an Http Client or Json Reader has provided the data you want to display.</p>
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>Make sure that an <b>Http Client</b> or <b>Json Reader</b> element was executed first in an Conversation Block</li>
+        <li>Text Response element has to be used before the <b>Card Element</b> in order to display the entire response of the <b>Card</b> element on Google Assistant and Alexa</li>
+        <li>In the <b>"Item"</b> field set the retrieved result from the <b>Http Client</b> of <b>Json Reader</b> element</li>
+        <li>Access the properties by using this example <b>${cardItem.somePropertyYouWantToDisplay}</b> </li>
+    </ol>
+
+    <h3>Example usage in case of Http Client</h3>
+    <div>
+        <p>Card field value filling example: </p>
+        <ul>
+            <li>Item: <p><b>${row.body.someExampleObject}</b></p></li>
+            <li>Data item title: <p><b>${cardItem.propertyBestSuitedForTitle}</b></p></li>
+            <li>Data item subtitle: <p><b>${cardItem.propertyBestSuitedForSubtitle}</b></p></li>
+            <li>Data item Description 1: <p><b>${cardItem.somePrimaryDescription}</b></p></li>
+            <li>Data item Description 2: <p><b>${cardItem.someSecondaryDescription}</b></p></li>
+            <li>Data item Description 3: <p><b>${cardItem.tertiaryDescription}</b></p></li>
+            <li>Data item image url: <p><b>${cardItem.someImageLink}</b></p></li>
+            <li>Data item image text: <p><b>${cardItem.someImageText}</b></p></li>
+        </ul>
+    </div>
+</div>

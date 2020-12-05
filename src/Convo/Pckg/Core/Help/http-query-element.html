@@ -1,0 +1,36 @@
+<div class="http-client-help">
+    <h3>Http Client</h3>
+
+    <p>Perform an HTTP request to a specified endpoint</p>
+
+    <h3>When to use?</h3>
+
+    <p>When you want to access data from a web service endpoint</p>
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>In the <b>RESULT NAME</b> field enter the name the result will be stored as</li>
+        <li>In the <b>ENDPOINT URL</b> field enter the URL you wish to send request to</li>
+        <li>In the <b>CONTENT TYPE</b> drop-down enter the content type you're expecting to get in the headers</li>
+        <li>In the <b>HTTP METHOD</b> drop-down choose between GET or POST methods</li>
+        <li>In the <b>TIMEOUT</b> field enter how long should a request wait for a response in milliseconds</li>
+        <li>In the <b>HEADERS</b> field you can add HTTP headers, and in the <b>PARAMETERS</b> field you can add parameters to be sent with the request</li>
+        <li>You can also send  JSON format <b>Request Body</b> in the POST request</li>
+        <li>The element contains two flows to be executed, depending on the request success: OK and NOK</li>
+        <li>You can access the result body in the OK flow like this: <i>${resultName.body.valueYouWantToAccess}</i></li>
+        <li>To access the response status code and error messages use this syntax: <i>${resultName.status}</i></li>
+    </ol>
+
+    <h3>Example of usage</h3>
+    <div>
+        <p>Accessing horoscope API endpoint and outputting horoscope data:</p>
+        <ul>
+            <li><b>RESULT NAME:</b> <i>row</i></li>
+            <li><b>ENDPOINT URL:</b> <i>http://ohmanda.com/api/horoscope/${horoscopeSign}/</i></li>
+            <li><b>CONTENT TYPE:</b> <i>JSON</i></li>
+            <li><b>HTTP METHOD:</b> <i>GET</i></li>
+            <li><b>TIMEOUT:</b> <i>1000</i></li>
+            <li>For output, place the <b>Text Response</b> element in the OK flow and enter this in the <b>TEXT</b> field,: <i>${row.body.horoscope}</i></li>
+        </ul>
+    </div>
+</div>

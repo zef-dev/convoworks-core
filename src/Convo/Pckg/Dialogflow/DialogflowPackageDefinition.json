@@ -1,0 +1,7 @@
+{
+    "namespace": "convo-dialogflow",
+    "author": "ZEF Development",
+    "email": "marko@zefdev.com",
+    "source_for": [],
+    "description": "Package containing Dialogflow-specific elements, intents, or entities."
+}

@@ -1,0 +1,216 @@
+<?php declare(strict_types=1);
+
+namespace Convo\Pckg\Core\Elements;
+
+use \Convo\Core\Util\IHttpFactory;
+use Convo\Pckg\Core\InvalidJsonException;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\SimpleCache\CacheInterface;
+use Convo\Core\Util\StrUtil;
+use Psr\Http\Message\UriInterface;
+
+class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
+{
+    private $_parameters;
+    private $_scopeType		=	\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION;
+	private $_name;
+	private $_url;
+	private $_contentType;
+	private $_method;
+	private $_timeout;
+	private $_headers;
+	private $_params;
+	private $_body;
+	private $_cacheTimeout;
+
+    /**
+     * @var \Convo\Core\Workflow\IConversationElement[]
+     */
+    private $_ok;
+
+    /**
+     * @var \Convo\Core\Workflow\IConversationElement[]
+     */
+    private $_nok;
+
+	/**
+	 * @var IHttpFactory
+     */
+	private $_httpFactory;
+
+	/**
+	 * @var CacheInterface
+     */
+	private $_cache;
+
+	public function __construct( $config, IHttpFactory $httpFactory, CacheInterface $cache)
+    {
+        parent::__construct($config);
+
+        if ( isset( $config['scope_type'])) {
+            $this->_scopeType	=	$config['scope_type'];
+        }
+
+        $this->_parameters      =   $config['parameters'];
+
+        $this->_httpFactory     =   $httpFactory;
+        $this->_cache           =   $cache;
+
+        $this->_name            =   $config['name'];
+        $this->_url             =   $config['url'];
+        $this->_method          =   $config['method'];
+        $this->_contentType     =   $config['content_type'];
+        $this->_timeout         =   $config['timeout'];
+        $this->_headers         =   $config['headers'];
+        $this->_params          =   $config['params'];
+        $this->_body            =   $config['body'];
+        $this->_cacheTimeout    =   intval( $config['cache_timeout']) ?? 0;
+
+        $this->_ok = $config['ok'] ?? [];
+        foreach ( $this->_ok as $okElement) {
+            $this->addChild( $okElement);
+        }
+
+        $this->_nok = $config['nok'] ?? [];
+        foreach ( $this->_nok as $nokElement) {
+            $this->addChild( $nokElement);
+        }
+	}
+
+	public function read(\Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
+	{
+		$name		    =   $this->evaluateString( $this->_name);
+		$url	 	    =   $this->evaluateString( $this->_url);
+		$method		    =   $this->evaluateString( $this->_method);
+		$params		    =	$this->evaluateString( $this->_params);
+		$scope_type     =   $this->evaluateString( $this->_scopeType);
+		$parameters     =   $this->evaluateString( $this->_parameters);
+
+		$uri = $this->_httpFactory->buildUri( $url, $params);
+		$this->_logger->debug('Current uri ['.$uri.']');
+
+		if( $parameters == 'block'){
+		    $params 	   =	$this->getBlockParams( $scope_type);
+		}
+		else if( $parameters == 'service'){
+		    $params        =    $this->getService()->getServiceParams( $scope_type);
+		}
+		else {
+		    throw new \Exception("Unrecognized parameters type [$parameters]");
+		}
+
+        try {
+            $content = $this->_getContent( $method, $uri);
+
+            $this->_logger->debug('Response body ['.print_r( $content, true).']');
+            $this->_logger->debug('Setting body on http ['.$name.'] namespace');
+
+            $params->setServiceParam( $name, array( 'status' => 200, 'body' => $content));
+            $elems  =   $this->_ok;
+        } catch ( ClientExceptionInterface $e) {
+            $this->_logger->warning( $e);
+            $params->setServiceParam( $name, array('status' => $e->getCode(), 'error' => $e->getMessage()));
+            $elems  =   $this->_nok;
+        } catch ( InvalidJsonException $e) {
+            $this->_logger->warning( $e);
+            $params->setServiceParam( $name, array('status' => $e->getCode(), 'error' => $e->getMessage()));
+            $elems  =   $this->_nok;
+        } catch ( \Exception $e) {
+            $this->_logger->warning( $e);
+            $params->setServiceParam( $name, array('status' => $e->getCode(), 'error' => $e->getMessage()));
+            $elems  =   $this->_nok;
+        }
+
+        foreach ( $elems as $elem) {
+            $elem->read( $request, $response);
+        }
+
+	}
+
+	/**
+	 * @param string $method
+	 * @param UriInterface $uri
+	 * @return array
+	 */
+	private function _getContent( $method, UriInterface $uri)
+	{
+	    if ( $method === 'GET' && $this->_cacheTimeout) {
+	        $key  =   StrUtil::slugify(get_class($this).'-'.$method.'-'.strval($uri));
+	        if ( $this->_cache->has( $key)) {
+	            $this->_logger->debug('Getting data from cache ['.$key.']');
+	            return $this->_cache->get( $key);
+	        }
+	    }
+
+	    $contentType    =   $this->evaluateString( $this->_contentType);
+	    $body		    =	json_decode( $this->_body ?: '{}', true);
+
+	    $this->_logger->debug('Decoded body ['.print_r($body, true).']');
+
+	    if (!empty($body)) {
+            foreach ($body as $key => $value) {
+                $body[$key] = $this->evaluateString($value);
+            }
+        }
+
+	    $parsed_headers = [];
+	    foreach ($this->_headers as $name => $value) {
+	        $parsed_headers[$this->evaluateString($name)] = $this->evaluateString($value);
+        }
+
+	    $config = array( 'timeout' => $this->_timeout);
+	    $http = $this->_httpFactory->getHttpClient( $config);
+
+	    $this->_logger->debug('Current uri ['.$uri.']');
+
+	    $httpRequest = $this->_httpFactory->buildRequest( $method, $uri, $parsed_headers, $body);
+
+	    $this->_logger->debug('Performing ['.$method.'] on ['.$uri->__toString().']');
+
+	    $apiResponse = $http->sendRequest( $httpRequest->withUri( $uri, true));
+	    $this->_logger->debug('Response ['.get_class( $apiResponse).']['.$apiResponse->getStatusCode().']');
+
+	    $content = $this->provideContent( $contentType, $apiResponse);
+
+	    if ( $method === 'GET' && $this->_cacheTimeout) {
+	        $this->_logger->debug( 'Storing data to cache ['.$key.']');
+	        $this->_cache->set( $key, $content, $this->_cacheTimeout);
+	    }
+
+	    return $content;
+	}
+
+
+	// UTIL
+    /**
+     * @param string $contentType
+     * @param \Psr\Http\Message\ResponseInterface $apiResponse
+     * @return mixed
+     * @throws InvalidJsonException
+     */
+    public function provideContent(string $contentType, \Psr\Http\Message\ResponseInterface $apiResponse)
+    {
+        $content = null;
+        if ($contentType === 'AUTO') {
+            $headerLine = explode( ';', $apiResponse->getHeaderLine('Content-Type'));
+            $headerLine = array_shift( $headerLine);
+            if ($headerLine !== 'application/json') {
+                throw new InvalidJsonException('Invalid header Content-Type was provided. We need Content-Type ' . 'application/json' . ', instead of ['.$headerLine.']');
+            }
+
+            $content = json_decode($apiResponse->getBody()->__toString(), true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $content = null;
+                throw new InvalidJsonException('Invalid json response.');
+            }
+        } else {
+            $content = json_decode($apiResponse->getBody()->__toString(), true);
+        }
+        return $content;
+    }
+
+	public function __toString()
+	{
+		return parent::__toString().'['.$this->_name.']';
+	}
+}

@@ -1,0 +1,57 @@
+{
+  "publishingInformation": {
+    "locales": {
+      "en-US": {
+        "summary": "",
+        "examplePhrases": [],
+        "keywords": [],
+        "smallIconUri": "",
+        "largeIconUri": "",
+        "name": "",
+        "description": ""
+      }
+    },
+    "isAvailableWorldwide": false,
+    "testingInstructions": "",
+    "category": "",
+    "distributionCountries": [],
+    "distributionMode": "PRIVATE"
+  },
+  "apis": {
+    "custom": {
+      "endpoint": {
+        "uri": "",
+        "sslCertificateType": ""
+      },
+      "interfaces": []
+    }
+  },
+  "manifestVersion": "1.0",
+  "permissions": [],
+  "privacyAndCompliance": {
+    "allowsPurchases": null,
+    "usesPersonalInfo": null,
+    "isChildDirected": null,
+    "isExportCompliant": null,
+    "containsAds": null,
+    "locales": {
+      "en-US": {
+        "privacyPolicyUrl": "",
+        "termsOfUseUrl": ""
+      }
+    }
+  },
+  "events": {
+    "endpoint": {
+      "uri": ""
+    },
+    "subscriptions": [],
+    "regions": {
+      "NA": {
+        "endpoint": {
+          "uri": ""
+        }
+      }
+    }
+  }
+}

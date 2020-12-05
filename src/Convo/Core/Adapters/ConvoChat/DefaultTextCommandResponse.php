@@ -1,0 +1,131 @@
+<?php declare(strict_types=1);
+
+namespace Convo\Core\Adapters\ConvoChat;
+
+class DefaultTextCommandResponse implements \Convo\Core\Workflow\IConvoResponse
+{
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $_logger;
+
+	private $_texts			=	array();
+	private $_reprompts		=	array();
+	private $_endSession	=	false;
+
+	public function __construct()
+    {
+        $this->_logger = new \Psr\Log\NullLogger();
+    }
+
+    public function setLogger(\Psr\Log\LoggerInterface $logger)
+    {
+        $this->_logger = $logger;
+    }
+
+    public function setShouldEndSession( $endSession) {
+		$this->_endSession	=	$endSession;
+	}
+
+	public function shouldEndSession() {
+		return $this->_endSession;
+	}
+
+	public function isEmpty() {
+		return empty( $this->_texts);
+	}
+
+	public function isSsml() {
+		if ( empty( $this->_textsSsml) === true) {
+			return false;
+		}
+		return true;
+	}
+
+	// SPEECH
+	public function addText( $text, $append = false)
+	{
+	    if ($append && count($this->_texts) > 0) {
+            $this->_appendText($text, $this->_texts);
+        } else {
+            $this->_texts[]	=	'<p>'.$this->_clearWrappers( $text).'</p>';
+        }
+	}
+
+	public function getText()
+	{
+		return preg_replace('/\s\s+/', ' ', strip_tags( $this->getTextSsml()));
+	}
+
+	public function getTextSsml() {
+	    if (count($this->_texts) > 0) {
+            $last = count($this->_texts) - 1;
+
+            if (stripos($this->_texts[$last], '</p>') === false) {
+                $this->_texts[$last] = $this->_texts[$last].'</p>';
+            }
+        }
+
+		return '<speak>'.preg_replace('/\s\s+/', ' ', implode( " ", $this->_texts)).'</speak>';
+	}
+
+	// REPROMPT
+	public function addRepromptText( $text, $append = false)
+	{
+        if ($append && count($this->_reprompts) > 0) {
+            $this->_appendText($text, $this->_reprompts);
+        } else {
+            $this->_reprompts[]	=	'<p>'.$this->_clearWrappers( $text).'</p>';
+        }
+	}
+
+	public function getRepromptText() {
+		return strip_tags( $this->getRepromptTextSsml());
+	}
+
+	public function getRepromptTextSsml() {
+		return '<speak>'.implode( " ", $this->_reprompts).'</speak>';
+	}
+
+	public function getPlatformResponse()
+	{
+// 		"text_response":"Welcome to \"Random Number\" game. We have two type of games. You can play \"guess the number\", where you are guessing the number I picked, or, you can play \"pick the number\", where I am the one guessing it. Would you like to guess or to pick the number",
+// 		"text_reprompt":"Please say, which game type would you like to play? Guess, or pick the number",
+// 		"should_end_session":false}
+		$response	=	[
+				'text_responses' => array_map( function ( $item) { return strip_tags( $item); }, $this->_texts),
+				'text_reprompts' => array_map( function ( $item) { return strip_tags( $item); }, $this->_reprompts),
+				'should_end_session' => $this->shouldEndSession(),
+		];
+		return $response;
+	}
+
+	// COMMON
+	private function _clearWrappers( $text) {
+		$text	=	str_ireplace( '<speak>', '', $text);
+		$text	=	str_ireplace( '</speak>', '', $text);
+		$text	=	str_ireplace( '<p>', '', $text);
+		$text	=	str_ireplace( '</p>', '', $text);
+		return $text;
+	}
+
+	private function _appendText($text, &$array)
+    {
+        $preceding = array_pop($array);
+        $preceding = "<p>".$this->_clearWrappers($preceding).' '.$this->_clearWrappers($text)."</p>";
+        $array[] = $preceding;
+    }
+
+	// UTIL
+	public function __toString()
+	{
+		$str	=	'';
+		if ( !empty( $this->_texts)) {
+			$str	.=	'['.implode( " ", $this->_texts).']';
+		}
+		if ( !empty( $this->_reprompts)) {
+			$str	.=	'['.implode( " ", $this->_reprompts).']';
+		}
+		return get_class( $this).$str;
+	}
+}
