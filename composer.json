@@ -37,10 +37,11 @@
 	"minimum-stability" : "stable",
     "autoload-dev" : {
         "psr-4" : {
-            "Convo\\" : "../tests/"
+            "Convo\\" : "tests/"
         }
     },
     "require-dev" : {
-        "phpunit/phpunit" : "^8"
+        "phpunit/phpunit" : "^8",
+        "zef-dev/convoworks-guzzle" : "^1.0"
     }
 }
