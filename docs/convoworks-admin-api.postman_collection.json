@@ -1,0 +1,1274 @@
+{
+	"info": {
+		"_postman_id": "5fe58589-fa70-473f-8155-7c9732ed355b",
+		"name": "convoworks-admin-api",
+		"description": "# Changelog\n\nContains requests pertaining to the admin interface of a Convoworks installation\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n\n## [1.0.0] - 2020-12-06\n### Added\n- initial version\n",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "services",
+			"item": [
+				{
+					"name": "services",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/services",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"services"
+							]
+						},
+						"description": "Returns all services"
+					},
+					"response": []
+				},
+				{
+					"name": "services",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"service_name\": \"This is a demo service\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/services?=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"services"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": ""
+								}
+							]
+						},
+						"description": "Create a new service.\n\nProvice a `service_name` in the JSON payload.\n\nReturns the newly created service's ID."
+					},
+					"response": []
+				},
+				{
+					"name": "services/{serviceId}",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"convo_service_version\": 4,\r\n    \"properties\": [],\r\n    \"configurations\": [],\r\n    \"contexts\": [],\r\n    \"variables\": [],\r\n    \"subroutines\": [],\r\n    \"blocks\": [\r\n        {\r\n            \"class\": \"\\\\Convo\\\\Pckg\\\\Core\\\\Elements\\\\ConversationBlock\",\r\n            \"properties\": {\r\n                \"block_id\": \"__sessionStart\",\r\n                \"elements\": [\r\n                    {\r\n                        \"class\": \"\\\\Convo\\\\Pckg\\\\Core\\\\Elements\\\\SimpleTextResponse\",\r\n                        \"namespace\": \"convo-core\",\r\n                        \"properties\": {\r\n                            \"type\": \"default\",\r\n                            \"text\": \"Test\",\r\n                            \"_component_id\": \"bkg54alra898qdg8yo185\"\r\n                        }\r\n                    }\r\n                ],\r\n                \"processors\": [],\r\n                \"_component_id\": \"xe3rlhgskkfmtdesvxhwo\"\r\n            }\r\n        },\r\n        {\r\n            \"class\": \"\\\\Convo\\\\Pckg\\\\Core\\\\Elements\\\\ConversationBlock\",\r\n            \"properties\": {\r\n                \"block_id\": \"__serviceProcessors\",\r\n                \"elements\": [],\r\n                \"processors\": [],\r\n                \"_component_id\": \"9p67z12kb255ttitdmh2n2\"\r\n            }\r\n        },\r\n        {\r\n            \"class\": \"\\\\Convo\\\\Pckg\\\\Core\\\\Elements\\\\ConversationBlock\",\r\n            \"properties\": {\r\n                \"block_id\": \"__sessionEnd\",\r\n                \"elements\": [],\r\n                \"processors\": [],\r\n                \"_component_id\": \"owf6lcd37gy16wiaf2c3a\"\r\n            }\r\n        },\r\n        {\r\n            \"class\": \"\\\\Convo\\\\Pckg\\\\Core\\\\Elements\\\\ConversationBlock\",\r\n            \"properties\": {\r\n                \"block_id\": \"__mediaControls\",\r\n                \"elements\": [],\r\n                \"processors\": [],\r\n                \"_component_id\": \"wgdtqwxcdtbwt81hhh13g\"\r\n            }\r\n        }\r\n    ],\r\n    \"name\": \"This Is A Demo Service\",\r\n    \"service_id\": \"this-is-a-demo-service\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/services/this-is-a-demo-service",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"services",
+								"this-is-a-demo-service"
+							]
+						},
+						"description": "Update a service, identified by the `serviceId`"
+					},
+					"response": []
+				},
+				{
+					"name": "services/{serviceId}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/services/this-is-a-demo-service",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"services",
+								"this-is-a-demo-service"
+							]
+						},
+						"description": "Get a service identified by its `serviceId`"
+					},
+					"response": []
+				},
+				{
+					"name": "services/{serviceId}/meta",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/services/tribes-ascend/meta",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"services",
+								"tribes-ascend",
+								"meta"
+							]
+						},
+						"description": "Get a service meta identified by its `serviceId`"
+					},
+					"response": []
+				},
+				{
+					"name": "services/{serviceId}/meta",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"New Marko Test\",\n\t\"description\": \"This is a very simple description\",\n\t\"owner\": \"marko@zefdev.com\",\n\t\"admins\": [\"marko@zefdev.com\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/services/marko-test/meta",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"services",
+								"marko-test",
+								"meta"
+							]
+						},
+						"description": "Update a service's meta data\n\nYou may edit:\n\n* `name`\n* `description`\n* `owner`\n* `admins`"
+					},
+					"response": []
+				},
+				{
+					"name": "services/{serviceId}/preview",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/services/magic-database/preview",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"services",
+								"magic-database",
+								"preview"
+							]
+						},
+						"description": "Get the preview for the specifed `serviceId`"
+					},
+					"response": []
+				},
+				{
+					"name": "services/{serviceId}/preview/{blockId}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/services/magic-database/preview/Main_Menu",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"services",
+								"magic-database",
+								"preview",
+								"Main_Menu"
+							]
+						},
+						"description": "Get the preview for a given block, identified by the `blockId`, for the specifed `serviceId`"
+					},
+					"response": []
+				}
+			],
+			"description": "Requests for service CRUD operations",
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "service-platform-config",
+			"item": [
+				{
+					"name": "service-platform-config/{serviceId}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-platform-config/cross-test",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-platform-config",
+								"cross-test"
+							]
+						},
+						"description": "Retrieve a services platform configuration, identified by its `serviceId`"
+					},
+					"response": []
+				},
+				{
+					"name": "service-platform-config/{serviceId}/{platformId}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-platform-config/tribes-ascend/amazon",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-platform-config",
+								"tribes-ascend",
+								"amazon"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "service-platform-config/{serviceId}/{platformId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-platform-config/tribes-ascend/amazon",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-platform-config",
+								"tribes-ascend",
+								"amazon"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "service-platform-config/{serviceId}/{platformId}",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-platform-config/tribes-ascend/amazon",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-platform-config",
+								"tribes-ascend",
+								"amazon"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "service-platform-propagate/{serviceId}/{platformId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-platform-propagate/tribes-ascend/amazon",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-platform-propagate",
+								"tribes-ascend",
+								"amazon"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "service-platform-propagate/{serviceId}/{platformId}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-platform-propagate/tribes-ascend/amazon",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-platform-propagate",
+								"tribes-ascend",
+								"amazon"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Requests that deal with platform configuration for each skill",
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "service-releases",
+			"item": [
+				{
+					"name": "service-versions/{serviceId}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-versions/mtg-database",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-versions",
+								"mtg-database"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "service-versions/{serviceId}/{versionId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"version_tag\": \"simple version\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-versions/mtg-database/00000001",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-versions",
+								"mtg-database",
+								"00000001"
+							],
+							"query": [
+								{
+									"key": "KEY",
+									"value": null,
+									"disabled": true
+								}
+							]
+						},
+						"description": "Tag a simple version for a given `serviceId` and its `releaseId`\r\n\r\nYou may give a `versionTag` body parameter to give the version a short description. If you don't, it will default to the new version id."
+					},
+					"response": []
+				},
+				{
+					"name": "service-releases/{serviceId}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-releases/tribes-ascend",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-releases",
+								"tribes-ascend"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "service-releases/{serviceId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"platform_id\" : \"dialogflow\",\r\n\t\"type\" : \"production\",\r\n\t\"stage\" : \"review\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-releases/tribes-ascend",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-releases",
+								"tribes-ascend"
+							]
+						},
+						"description": "Submit as new release\n\n* `type` : `production` | `test`\n* `stage` : `alpha` for test and `review` and `release` for production"
+					},
+					"response": []
+				},
+				{
+					"name": "service-releases/{serviceId}/{releaseId}/import-workflow/{versionId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-releases/tribes-ascend/001/import-workflow/002",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-releases",
+								"tribes-ascend",
+								"001",
+								"import-workflow",
+								"002"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "service-releases/{serviceId}/import-develop/{versionId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-releases/marko-test/import-develop/00000003",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-releases",
+								"marko-test",
+								"import-develop",
+								"00000003"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "service-releases/{serviceId}",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"release_id\" : \"00000002\",\r\n\t\"type\" : \"production\",\r\n\t\"stage\" : \"release\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-releases/tribes-ascend",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-releases",
+								"tribes-ascend"
+							]
+						},
+						"description": "Submit as new release\n\n* `type` : `production` | `test`\n* `stage` : `alpha` for test and `review` and `release` for production"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "service-media",
+			"item": [
+				{
+					"name": "media/{serviceId}/{mediaItemId}/download",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/media/cross-test/bb0d486f998d095468a9d2cd6037d97a/download",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"media",
+								"cross-test",
+								"bb0d486f998d095468a9d2cd6037d97a",
+								"download"
+							]
+						},
+						"description": "Download service media item"
+					},
+					"response": []
+				},
+				{
+					"name": "media/{serviceId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "dialogflow.avatar",
+									"type": "file",
+									"src": "/C:/Users/Tole/Desktop/1583827961469.JPEG"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/media/cross-test/",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"media",
+								"cross-test",
+								""
+							]
+						},
+						"description": "Upload media file to service\n\nUse file key to reference the correct meta field!?"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "service-imp-exp",
+			"item": [
+				{
+					"name": "service-imp-exp/export/{serviceId}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-imp-exp/export/this-is-a-demo-service",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-imp-exp",
+								"export",
+								"this-is-a-demo-service"
+							]
+						},
+						"description": "Export a service, identified by its `serviceId`"
+					},
+					"response": []
+				},
+				{
+					"name": "service-imp-exp/export/{serviceId}/{platformId}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-imp-exp/export/tole-test/dialogflow",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-imp-exp",
+								"export",
+								"tole-test",
+								"dialogflow"
+							]
+						},
+						"description": "Export a service, identified by its `serviceId`"
+					},
+					"response": []
+				},
+				{
+					"name": "service-imp-exp/import/{serviceId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "keep_vars",
+									"value": "true",
+									"description": "When importing service data, choose whether to keep or overwrite its variables",
+									"type": "text"
+								},
+								{
+									"key": "keep_config",
+									"value": "true",
+									"description": "When importing service data, choose whether to keep or overwrite its configurations",
+									"type": "text"
+								},
+								{
+									"key": "service_definition",
+									"description": "The file definition to import.",
+									"type": "file",
+									"src": "/C:/Users/Uporabnik/Desktop/this-is-a-demo-service.json"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-imp-exp/import/this-is-a-demo-service",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-imp-exp",
+								"import",
+								"this-is-a-demo-service"
+							]
+						},
+						"description": "Upload a JSON file and import a service into the system"
+					},
+					"response": []
+				}
+			],
+			"description": "Requests about importing and exporting services",
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "service-packages",
+			"item": [
+				{
+					"name": "service-packages/{serviceId}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-packages/mtg-database",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-packages",
+								"mtg-database"
+							]
+						},
+						"description": "Get the definition of all packages from the given service"
+					},
+					"response": []
+				},
+				{
+					"name": "service-packages/{serviceId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"package_id\": \"convo-core\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-packages/mtg-database",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-packages",
+								"mtg-database"
+							]
+						},
+						"description": "Get the definition of all packages from the given service"
+					},
+					"response": []
+				},
+				{
+					"name": "service-packages/{serviceId}",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							},
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"package_id\": \"convo-core\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-packages/mtg-database",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-packages",
+								"mtg-database"
+							]
+						},
+						"description": "Get the definition of all packages from the given service"
+					},
+					"response": []
+				}
+			],
+			"description": "Get, add, and remove packages from a particular service",
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "service-test",
+			"item": [
+				{
+					"name": "service-test/{serviceId}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"text\": \"\",\n\t\"lunch\": true,\n\t\"device_id\": \"demo-postman-device\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/service-test/cross-test",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"service-test",
+								"cross-test"
+							]
+						},
+						"description": "Test a service based on its `serviceId`.\n\nThe following fields are permitted in the JSON body:\n\n`text` -- What to send to the service\n\n`lunch`[sic] -- Should've been `launch`, whether this is a startup request or not.\n\n`device_id` -- Your choice of string on how to identify the \"device\" you're sending from."
+					},
+					"response": []
+				}
+			],
+			"description": "Requests that pertain to testing a service via a text interface",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "292ad9ac-2411-4973-8c59-3e1ebd214e8d",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "c947fb62-69a2-491c-beae-91f0a58dacb0",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "system",
+			"item": [
+				{
+					"name": "config-options",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/config-options",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"config-options"
+							]
+						},
+						"description": "Get all possible config options"
+					},
+					"response": []
+				},
+				{
+					"name": "templates",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/templates",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"templates"
+							]
+						},
+						"description": "Get all available templates"
+					},
+					"response": []
+				},
+				{
+					"name": "user-packages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PHPSESSID={{phpsessid}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/user-packages",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"user-packages"
+							]
+						},
+						"description": "Get all the CW package definitions"
+					},
+					"response": []
+				},
+				{
+					"name": "user-platform-config",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/user-platform-config",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"user-platform-config"
+							]
+						},
+						"description": "Update user platform configurations"
+					},
+					"response": []
+				},
+				{
+					"name": "user-platform-config",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cookie",
+								"type": "text",
+								"value": "PHPSESSID={{phpsessid}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/rest_admin/convo/v1/user-platform-config",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_admin",
+								"convo",
+								"v1",
+								"user-platform-config"
+							]
+						},
+						"description": "Retrieve user platform configurations"
+					},
+					"response": []
+				}
+			],
+			"description": "Requests that handle configuration options",
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "f12760e1-cb7b-4569-be79-1768841c907e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "76933706-2744-4fe6-933b-a5f7dbda85df",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

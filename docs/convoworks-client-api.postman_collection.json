@@ -1,0 +1,339 @@
+{
+	"info": {
+		"_postman_id": "94f3140a-b00a-43af-ae05-ab2684eacb25",
+		"name": "convoworks-client-api",
+		"description": "# Changelog\n\nContains requests pertaining to the public interface of a Convoworks installation\n\nAll notable changes to this project will be documented in this file.\n\nThe format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),\nand this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\n\n## [1.0.0] - 2020-12-06\n### Added\n- initial version",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "service-run",
+			"item": [
+				{
+					"name": "alexa-skill/{variant}/{serviceId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"version\": \"1.0\",\n\t\"session\": {\n\t\t\"new\": true,\n\t\t\"sessionId\": \"amzn1.echo-api.session.ebc943e1-ffa0-473e-8f75-e1fd100786ba\",\n\t\t\"application\": {\n\t\t\t\"applicationId\": \"amzn1.ask.skill.3e17af29-e1e1-45c7-9ec6-08ccb0c8b372\"\n\t\t},\n\t\t\"user\": {\n\t\t\t\"userId\": \"amzn1.ask.account.AHCWXCK7CTCU6FDMUQW7DIAQNJA2MVSN6RI7DBIM6PC6DTMFYV4M6NHAZJ5FSARQRGQCNWB4TVG4P2CNEP7K4HRGZSIJ4AA5QPKZHWDH5GTQV552FZGMVWKTWG7V3VNLP4XOWSPFUDLWI7SKP2GGXG2QTLY7S3ZI4UN53M3L5BJ7CVPYCVZKCASYGPLALWTZ6TLOGEZ3OECSTSI\"\n\t\t}\n\t},\n\t\"context\": {\n\t\t\"System\": {\n\t\t\t\"application\": {\n\t\t\t\t\"applicationId\": \"amzn1.ask.skill.3e17af29-e1e1-45c7-9ec6-08ccb0c8b372\"\n\t\t\t},\n\t\t\t\"user\": {\n\t\t\t\t\"userId\": \"amzn1.ask.account.AHCWXCK7CTCU6FDMUQW7DIAQNJA2MVSN6RI7DBIM6PC6DTMFYV4M6NHAZJ5FSARQRGQCNWB4TVG4P2CNEP7K4HRGZSIJ4AA5QPKZHWDH5GTQV552FZGMVWKTWG7V3VNLP4XOWSPFUDLWI7SKP2GGXG2QTLY7S3ZI4UN53M3L5BJ7CVPYCVZKCASYGPLALWTZ6TLOGEZ3OECSTSI\"\n\t\t\t},\n\t\t\t\"device\": {\n\t\t\t\t\"deviceId\": \"amzn1.ask.device.AEMQBGGPSCTWAQE4PL7YPUD5OQN24DWEWKVQ7ZIODJVBPJ24WRFS6VRBH7H7VX675IKDYDHSMMN26ELAGUXOG3AU7NJF7JJ2U7UCR2MK3KG2HIEEQGZU3XLNU4KXYREJQWDHO5QJ5YVBIZ26YKMJW7DLXXQA\",\n\t\t\t\t\"supportedInterfaces\": {}\n\t\t\t},\n\t\t\t\"apiEndpoint\": \"https://api.amazonalexa.com\",\n\t\t\t\"apiAccessToken\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjEifQ.eyJhdWQiOiJodHRwczovL2FwaS5hbWF6b25hbGV4YS5jb20iLCJpc3MiOiJBbGV4YVNraWxsS2l0Iiwic3ViIjoiYW16bjEuYXNrLnNraWxsLjNlMTdhZjI5LWUxZTEtNDVjNy05ZWM2LTA4Y2NiMGM4YjM3MiIsImV4cCI6MTU4MDM4Nzc5MiwiaWF0IjoxNTgwMzg3NDkyLCJuYmYiOjE1ODAzODc0OTIsInByaXZhdGVDbGFpbXMiOnsiY29udGV4dCI6IkFBQUFBQUFBQUFEcm1oNVhIVWNYVXBPODlYOTd6Vzh0SWdFQUFBQUFBQUJiaWF3czgxelJxTk5vQXBYSkxvaGVmRHJwOC9mdStkb1JzQmFySlg5c05sY2ZVbFVtMS80ZFpQcVpMVnpTT05uWDlvdTFTUWdXcTBhblp1QytiajdVNHZRQktIWWNSQVJUbzZSVGJQbkEvKzlmQlZIZTNQS1NiRldyc2xZQmtDQnRTTVl1amhYc3dQSGZ2Y1ppTHVOVjMvZ2EzTmwzSm1sSnVXSnpWaU9hcEtreExOMTZSaTZOdlF5d3Vhc3p3M0NIR3lMT0k1Z09vcUN3WWhxRlZjQTRkWVZUS3hmSTN3YldCOGVmSnRUMWQ5ajQrTlEvVEljQ0N4cWJpUkFjaXRMU01NWHY1TDdqTlZhemx4ZDlPN2ZlV21kaFpiYXVPWnpjRjQvb0hzZDhWZ2xjQ0VkczIxOUNuQWFtQmNYM1M1OThKWWdDUmVqOUlPc1FiZjAvM3U3Z2pHbEFpZmxFZCtvU3E4V284enhtK2F4THFxT3ZJb29oVlptaENnRDlKRU4xcXc9PSIsImNvbnNlbnRUb2tlbiI6bnVsbCwiZGV2aWNlSWQiOiJhbXpuMS5hc2suZGV2aWNlLkFFTVFCR0dQU0NUV0FRRTRQTDdZUFVENU9RTjI0RFdFV0tWUTdaSU9ESlZCUEoyNFdSRlM2VlJCSDdIN1ZYNjc1SUtEWURIU01NTjI2RUxBR1VYT0czQVU3TkpGN0pKMlU3VUNSMk1LM0tHMkhJRUVRR1pVM1hMTlU0S1hZUkVKUVdESE81UUo1WVZCSVoyNllLTUpXN0RMWFhRQSIsInVzZXJJZCI6ImFtem4xLmFzay5hY2NvdW50LkFIQ1dYQ0s3Q1RDVTZGRE1VUVc3RElBUU5KQTJNVlNONlJJN0RCSU02UEM2RFRNRllWNE02TkhBWko1RlNBUlFSR1FDTldCNFRWRzRQMkNORVA3SzRIUkdaU0lKNEFBNVFQS1pIV0RINUdUUVY1NTJGWkdNVldLVFdHN1YzVk5MUDRYT1dTUEZVRExXSTdTS1AyR0dYRzJRVExZN1MzWkk0VU41M00zTDVCSjdDVlBZQ1ZaS0NBU1lHUExBTFdUWjZUTE9HRVozT0VDU1RTSSJ9fQ.MfF4kAWD4-jd_VddoH7oSfZUNxVfSC65ZMcwkPOPSsQigFJL77oX5WJFCeS7-oftFfMDqjlHIlwIkyxvMw59zEmIQaZ0dTk81dmu1F2nGODhXmDLAIiiQanQ25ZMn6hyAfUsOom9g7VrUbl0ZaqlpmdMyzzxhdKmG1onyZwpIcCZLey96b1P6UPKr87FZ5XEVvh690q5hzCdiaoenrlgB7RZGjakEcNxajATxscJpkq9fRbnd_jNHoswLxHk6eRqSV83OECH8b3zdg9uAxNt6feXGG1l_AVjSqFtaYHdYdoUUYoCBDGDAuLbFpnFbAQmSZB1hDaXu3mgQ2IJUB4cNQ\"\n\t\t},\n\t\t\"Viewport\": {\n\t\t\t\"experiences\": [\n\t\t\t\t{\n\t\t\t\t\t\"arcMinuteWidth\": 246,\n\t\t\t\t\t\"arcMinuteHeight\": 144,\n\t\t\t\t\t\"canRotate\": false,\n\t\t\t\t\t\"canResize\": false\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"shape\": \"RECTANGLE\",\n\t\t\t\"pixelWidth\": 1024,\n\t\t\t\"pixelHeight\": 600,\n\t\t\t\"dpi\": 160,\n\t\t\t\"currentPixelWidth\": 1024,\n\t\t\t\"currentPixelHeight\": 600,\n\t\t\t\"touch\": [\n\t\t\t\t\"SINGLE\"\n\t\t\t],\n\t\t\t\"video\": {\n\t\t\t\t\"codecs\": [\n\t\t\t\t\t\"H_264_42\",\n\t\t\t\t\t\"H_264_41\"\n\t\t\t\t]\n\t\t\t}\n\t\t},\n\t\t\"Viewports\": [\n\t\t\t{\n\t\t\t\t\"type\": \"APL\",\n\t\t\t\t\"id\": \"main\",\n\t\t\t\t\"shape\": \"RECTANGLE\",\n\t\t\t\t\"dpi\": 160,\n\t\t\t\t\"presentationType\": \"STANDARD\",\n\t\t\t\t\"canRotate\": false,\n\t\t\t\t\"configuration\": {\n\t\t\t\t\t\"current\": {\n\t\t\t\t\t\t\"video\": {\n\t\t\t\t\t\t\t\"codecs\": [\n\t\t\t\t\t\t\t\t\"H_264_42\",\n\t\t\t\t\t\t\t\t\"H_264_41\"\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\t\"size\": {\n\t\t\t\t\t\t\t\"type\": \"DISCRETE\",\n\t\t\t\t\t\t\t\"pixelWidth\": 1024,\n\t\t\t\t\t\t\t\"pixelHeight\": 600\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t]\n\t},\n\t\"request\": {\n\t\t\"type\": \"LaunchRequest\",\n\t\t\"requestId\": \"amzn1.echo-api.request.a5d1ae3b-79e9-44ec-89a3-673d4007ce42\",\n\t\t\"timestamp\": \"2020-01-30T12:31:32Z\",\n\t\t\"locale\": \"en-US\",\n\t\t\"shouldLinkResultBeReturned\": false\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_public/convo/v1/service-run/alexa-skill/a/useless-skill",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_public",
+								"convo",
+								"v1",
+								"service-run",
+								"alexa-skill",
+								"a",
+								"useless-skill"
+							]
+						},
+						"description": "Simulate an Amazon Alexa service run request for the specified `serviceId` `variant`"
+					},
+					"response": []
+				},
+				{
+					"name": "google-actions/{variant}/{serviceId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"locale\": \"en-US\",\r\n    \"lastSeen\": \"2020-01-28T17:34:19Z\",\r\n    \"userVerificationStatus\": \"VERIFIED\"\r\n  },\r\n  \"conversation\": {\r\n    \"conversationId\": \"ABwppHEfg1Z9Y1m3frt1ucR1Z3d7laZYkeZgCGHL81yf9kaaB6mNyTXWBA4Q4d3lWxi2MZ93iv3JtvObow\",\r\n    \"type\": \"NEW\"\r\n  },\r\n  \"inputs\": [\r\n    {\r\n      \"intent\": \"actions.intent.MAIN\",\r\n      \"rawInputs\": [\r\n        {\r\n          \"inputType\": \"VOICE\",\r\n          \"query\": \"Talk to Skill of No Use\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"surface\": {\r\n    \"capabilities\": [\r\n      {\r\n        \"name\": \"actions.capability.SCREEN_OUTPUT\"\r\n      },\r\n      {\r\n        \"name\": \"actions.capability.ACCOUNT_LINKING\"\r\n      },\r\n      {\r\n        \"name\": \"actions.capability.MEDIA_RESPONSE_AUDIO\"\r\n      },\r\n      {\r\n        \"name\": \"actions.capability.AUDIO_OUTPUT\"\r\n      }\r\n    ]\r\n  },\r\n  \"isInSandbox\": true,\r\n  \"availableSurfaces\": [\r\n    {\r\n      \"capabilities\": [\r\n        {\r\n          \"name\": \"actions.capability.AUDIO_OUTPUT\"\r\n        },\r\n        {\r\n          \"name\": \"actions.capability.SCREEN_OUTPUT\"\r\n        },\r\n        {\r\n          \"name\": \"actions.capability.WEB_BROWSER\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"requestType\": \"SIMULATOR\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_public/convo/v1/service-run/google-actions/a/useless-skill",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_public",
+								"convo",
+								"v1",
+								"service-run",
+								"google-actions",
+								"a",
+								"useless-skill"
+							]
+						},
+						"description": "Simulate an Actions on Google service run request for the specified `serviceId` `variant`"
+					},
+					"response": []
+				},
+				{
+					"name": "dialogflow/{variant}/{serviceId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"user\": {\r\n    \"locale\": \"en-US\",\r\n    \"lastSeen\": \"2020-01-28T17:34:19Z\",\r\n    \"userVerificationStatus\": \"VERIFIED\"\r\n  },\r\n  \"conversation\": {\r\n    \"conversationId\": \"ABwppHEfg1Z9Y1m3frt1ucR1Z3d7laZYkeZgCGHL81yf9kaaB6mNyTXWBA4Q4d3lWxi2MZ93iv3JtvObow\",\r\n    \"type\": \"NEW\"\r\n  },\r\n  \"inputs\": [\r\n    {\r\n      \"intent\": \"actions.intent.MAIN\",\r\n      \"rawInputs\": [\r\n        {\r\n          \"inputType\": \"VOICE\",\r\n          \"query\": \"Talk to Skill of No Use\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"surface\": {\r\n    \"capabilities\": [\r\n      {\r\n        \"name\": \"actions.capability.SCREEN_OUTPUT\"\r\n      },\r\n      {\r\n        \"name\": \"actions.capability.ACCOUNT_LINKING\"\r\n      },\r\n      {\r\n        \"name\": \"actions.capability.MEDIA_RESPONSE_AUDIO\"\r\n      },\r\n      {\r\n        \"name\": \"actions.capability.AUDIO_OUTPUT\"\r\n      }\r\n    ]\r\n  },\r\n  \"isInSandbox\": true,\r\n  \"availableSurfaces\": [\r\n    {\r\n      \"capabilities\": [\r\n        {\r\n          \"name\": \"actions.capability.AUDIO_OUTPUT\"\r\n        },\r\n        {\r\n          \"name\": \"actions.capability.SCREEN_OUTPUT\"\r\n        },\r\n        {\r\n          \"name\": \"actions.capability.WEB_BROWSER\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"requestType\": \"SIMULATOR\"\r\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_public/convo/v1/service-run/dialogflow/a/useless-skill",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_public",
+								"convo",
+								"v1",
+								"service-run",
+								"dialogflow",
+								"a",
+								"useless-skill"
+							]
+						},
+						"description": "Simulate an Dialogflow service run request for the specified `serviceId` `variant`"
+					},
+					"response": []
+				},
+				{
+					"name": "facebook_messenger/{variant}/{serviceId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"object\": \"page\",\r\n    \"entry\": [\r\n      {\r\n        \"id\": \"102692124812191\",\r\n        \"time\": 1594971090952,\r\n        \"messaging\": [\r\n          {\r\n            \"sender\": {\r\n              \"id\": \"3608068992554355\"\r\n            },\r\n            \"recipient\": {\r\n              \"id\": \"102692124812191\"\r\n            },\r\n            \"timestamp\": 1594971090415,\r\n            \"postback\": {\r\n              \"title\": \"Yes!\",\r\n              \"payload\": \"yes\"\r\n            }\r\n          }\r\n        ]\r\n      }\r\n    ]\r\n  }"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_public/convo/v1/service-run/dialogflow/a/useless-skill",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_public",
+								"convo",
+								"v1",
+								"service-run",
+								"dialogflow",
+								"a",
+								"useless-skill"
+							]
+						},
+						"description": "Simulate an Dialogflow service run request for the specified `serviceId` `variant`"
+					},
+					"response": []
+				},
+				{
+					"name": "viber/{variant}/{serviceId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"event\": \"message\",\r\n    \"timestamp\": 1596008534919,\r\n    \"chat_hostname\": \"SN-CHAT-23_\",\r\n    \"message_token\": 5469165883537819000,\r\n    \"sender\": {\r\n        \"id\": \"9nCr2GSFtI7s+DtDie23/Q==\",\r\n        \"name\": \"Mark Marčec\",\r\n        \"language\": \"en-GB\",\r\n        \"country\": \"HR\",\r\n        \"api_version\": 8\r\n    },\r\n    \"message\": {\r\n        \"text\": \"Hi\",\r\n        \"type\": \"text\",\r\n        \"tracking_data\": \"tracking data\"\r\n    },\r\n    \"silent\": false\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_public/convo/v1/service-run/dialogflow/a/useless-skill",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_public",
+								"convo",
+								"v1",
+								"service-run",
+								"dialogflow",
+								"a",
+								"useless-skill"
+							]
+						},
+						"description": "Simulate an Dialogflow service run request for the specified `serviceId` `variant`"
+					},
+					"response": []
+				},
+				{
+					"name": "webchat/{variant}/{serviceId}",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"text\": \"\",\n\t\"lunch\": true,\n\t\"device_id\": \"postman-demo-device\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/rest_public/convo/v1/service-run/webchat/a/useless-skill",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"rest_public",
+								"convo",
+								"v1",
+								"service-run",
+								"webchat",
+								"a",
+								"useless-skill"
+							]
+						},
+						"description": "Simulate plain text service run request for the specified `serviceId` `variant`"
+					},
+					"response": []
+				}
+			],
+			"description": "Simulate requests from various vendors to run skills",
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "admin-auth",
+			"item": [
+				{
+					"name": "amazon",
+					"item": [
+						{
+							"name": "admin-auth/amazon",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/rest_public/convo/v1/admin-auth/amazon?code=abc123",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"rest_public",
+										"convo",
+										"v1",
+										"admin-auth",
+										"amazon"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "abc123"
+										}
+									]
+								},
+								"description": "Exchange an access code given via a query param for an OAuth 2 access token"
+							},
+							"response": []
+						}
+					],
+					"description": "Amazon admin account linking requests\n",
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "facebook",
+					"item": [
+						{
+							"name": "admin-auth/facebook",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "admin-auth/facebook",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Facebook webhook linking requests",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2fbbba57-278c-418b-87c4-e80d131a788e",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "3739384e-f3eb-4928-bc75-45ce0e756b65",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"description": "Contains requests pertinent to admin account linking with various vendors (Amazon, Facebook, etc.)",
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "0396574b-1a6b-4f68-b517-a11718bdb180",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "cd686d5f-86e2-4bbc-996d-39074c08a55a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
