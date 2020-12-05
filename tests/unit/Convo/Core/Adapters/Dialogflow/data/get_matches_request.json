@@ -1,0 +1,158 @@
+{
+  "responseId": "d51aa889-0c06-47c8-8be4-9d79ed94f5c1-a14fa99c",
+  "queryResult": {
+    "queryText": "get upcoming games of preston",
+    "action": "Matches",
+    "parameters": {
+      "TeamName": "59",
+      "Favorite": "",
+      "CurrentLeague": ""
+    },
+    "allRequiredParamsPresent": true,
+    "outputContexts": [
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHGyvz4vDAM8CypIO5uqcuodyJ1NxFINBBGdm-EcVYXjHuFGjxbtleR3-IOv4bnP1pObGpzJiyjKKI-c6iewfOkY18tE5iI\/contexts\/actions_capability_media_response_audio",
+        "parameters": {
+          "TeamName": "59",
+          "TeamName.original": "preston",
+          "Favorite": "",
+          "Favorite.original": "",
+          "CurrentLeague": "",
+          "CurrentLeague.original": ""
+        }
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHGyvz4vDAM8CypIO5uqcuodyJ1NxFINBBGdm-EcVYXjHuFGjxbtleR3-IOv4bnP1pObGpzJiyjKKI-c6iewfOkY18tE5iI\/contexts\/actions_capability_audio_output",
+        "parameters": {
+          "TeamName": "59",
+          "TeamName.original": "preston",
+          "Favorite": "",
+          "Favorite.original": "",
+          "CurrentLeague": "",
+          "CurrentLeague.original": ""
+        }
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHGyvz4vDAM8CypIO5uqcuodyJ1NxFINBBGdm-EcVYXjHuFGjxbtleR3-IOv4bnP1pObGpzJiyjKKI-c6iewfOkY18tE5iI\/contexts\/actions_capability_account_linking",
+        "parameters": {
+          "TeamName": "59",
+          "TeamName.original": "preston",
+          "Favorite": "",
+          "Favorite.original": "",
+          "CurrentLeague": "",
+          "CurrentLeague.original": ""
+        }
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHGyvz4vDAM8CypIO5uqcuodyJ1NxFINBBGdm-EcVYXjHuFGjxbtleR3-IOv4bnP1pObGpzJiyjKKI-c6iewfOkY18tE5iI\/contexts\/actions_capability_screen_output",
+        "parameters": {
+          "TeamName": "59",
+          "TeamName.original": "preston",
+          "Favorite": "",
+          "Favorite.original": "",
+          "CurrentLeague": "",
+          "CurrentLeague.original": ""
+        }
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHGyvz4vDAM8CypIO5uqcuodyJ1NxFINBBGdm-EcVYXjHuFGjxbtleR3-IOv4bnP1pObGpzJiyjKKI-c6iewfOkY18tE5iI\/contexts\/google_assistant_input_type_voice",
+        "parameters": {
+          "TeamName": "59",
+          "TeamName.original": "preston",
+          "Favorite": "",
+          "Favorite.original": "",
+          "CurrentLeague": "",
+          "CurrentLeague.original": ""
+        }
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHGyvz4vDAM8CypIO5uqcuodyJ1NxFINBBGdm-EcVYXjHuFGjxbtleR3-IOv4bnP1pObGpzJiyjKKI-c6iewfOkY18tE5iI\/contexts\/__system_counters__",
+        "parameters": {
+          "no-input": 0,
+          "no-match": 0,
+          "TeamName": "59",
+          "TeamName.original": "preston",
+          "Favorite": "",
+          "Favorite.original": "",
+          "CurrentLeague": "",
+          "CurrentLeague.original": ""
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects\/kn-vucetinec-1565962572259\/agent\/intents\/7d8cfae6-58ca-4808-8677-5dc3eabf1046",
+      "displayName": "Matches"
+    },
+    "intentDetectionConfidence": 0.78092545,
+    "languageCode": "en"
+  },
+  "originalDetectIntentRequest": {
+    "source": "google",
+    "version": "2",
+    "payload": {
+      "user": {
+        "locale": "en-US",
+        "lastSeen": "2020-04-16T12:32:39Z",
+        "userStorage": "{\"data\":{}}",
+        "userVerificationStatus": "VERIFIED"
+      },
+      "conversation": {
+        "conversationId": "ABwppHGyvz4vDAM8CypIO5uqcuodyJ1NxFINBBGdm-EcVYXjHuFGjxbtleR3-IOv4bnP1pObGpzJiyjKKI-c6iewfOkY18tE5iI",
+        "type": "ACTIVE",
+        "conversationToken": "[]"
+      },
+      "inputs": [
+        {
+          "intent": "actions.intent.TEXT",
+          "rawInputs": [
+            {
+              "inputType": "VOICE",
+              "query": "get upcoming games of preston"
+            }
+          ],
+          "arguments": [
+            {
+              "name": "text",
+              "rawText": "get upcoming games of preston",
+              "textValue": "get upcoming games of preston"
+            }
+          ]
+        }
+      ],
+      "surface": {
+        "capabilities": [
+          {
+            "name": "actions.capability.MEDIA_RESPONSE_AUDIO"
+          },
+          {
+            "name": "actions.capability.AUDIO_OUTPUT"
+          },
+          {
+            "name": "actions.capability.ACCOUNT_LINKING"
+          },
+          {
+            "name": "actions.capability.SCREEN_OUTPUT"
+          }
+        ]
+      },
+      "isInSandbox": true,
+      "availableSurfaces": [
+        {
+          "capabilities": [
+            {
+              "name": "actions.capability.WEB_BROWSER"
+            },
+            {
+              "name": "actions.capability.SCREEN_OUTPUT"
+            },
+            {
+              "name": "actions.capability.AUDIO_OUTPUT"
+            }
+          ]
+        }
+      ],
+      "requestType": "SIMULATOR"
+    }
+  },
+  "session": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHGyvz4vDAM8CypIO5uqcuodyJ1NxFINBBGdm-EcVYXjHuFGjxbtleR3-IOv4bnP1pObGpzJiyjKKI-c6iewfOkY18tE5iI"
+}

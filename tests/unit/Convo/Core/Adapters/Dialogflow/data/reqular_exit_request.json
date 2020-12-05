@@ -1,0 +1,113 @@
+{
+  "responseId": "96af5302-76be-4ca1-84d7-acbf26dad52e-a14fa99c",
+  "queryResult": {
+    "queryText": "actions_intent_CANCEL",
+    "parameters": [],
+    "allRequiredParamsPresent": true,
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            ""
+          ]
+        }
+      }
+    ],
+    "outputContexts": [
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/actions_capability_media_response_audio"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/actions_capability_account_linking"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/actions_capability_screen_output"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/actions_capability_audio_output"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/google_assistant_input_type_voice"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/actions_intent_cancel"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/__system_counters__",
+        "parameters": {
+          "no-input": 0,
+          "no-match": 0
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects\/kn-vucetinec-1565962572259\/agent\/intents\/ee565b5b-2db8-4c2e-a0a8-a21db9ad9ac9",
+      "displayName": "Exit",
+      "endInteraction": true
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  },
+  "originalDetectIntentRequest": {
+    "source": "google",
+    "version": "2",
+    "payload": {
+      "user": {
+        "locale": "en-US",
+        "lastSeen": "2020-04-17T07:54:33Z",
+        "userStorage": "{\"data\":{}}",
+        "userVerificationStatus": "VERIFIED"
+      },
+      "conversation": {
+        "conversationId": "ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc",
+        "type": "ACTIVE",
+        "conversationToken": "[]"
+      },
+      "inputs": [
+        {
+          "intent": "actions.intent.CANCEL",
+          "rawInputs": [
+            {
+              "inputType": "VOICE",
+              "query": "cancel"
+            }
+          ]
+        }
+      ],
+      "surface": {
+        "capabilities": [
+          {
+            "name": "actions.capability.MEDIA_RESPONSE_AUDIO"
+          },
+          {
+            "name": "actions.capability.ACCOUNT_LINKING"
+          },
+          {
+            "name": "actions.capability.SCREEN_OUTPUT"
+          },
+          {
+            "name": "actions.capability.AUDIO_OUTPUT"
+          }
+        ]
+      },
+      "isInSandbox": true,
+      "availableSurfaces": [
+        {
+          "capabilities": [
+            {
+              "name": "actions.capability.AUDIO_OUTPUT"
+            },
+            {
+              "name": "actions.capability.SCREEN_OUTPUT"
+            },
+            {
+              "name": "actions.capability.WEB_BROWSER"
+            }
+          ]
+        }
+      ],
+      "requestType": "SIMULATOR"
+    }
+  },
+  "session": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc"
+}

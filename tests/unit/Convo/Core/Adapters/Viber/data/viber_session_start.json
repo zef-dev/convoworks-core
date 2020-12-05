@@ -1,0 +1,15 @@
+{
+    "event": "conversation_started",
+    "timestamp": 1596008257782,
+    "chat_hostname": "SN-346_",
+    "message_token": 5469164721006774000,
+    "type": "open",
+    "user": {
+        "id": "9nCr2GSFtI7s+DtDie23/Q==",
+        "name": "Mark Marčec",
+        "language": "en-GB",
+        "country": "HR",
+        "api_version": 8
+    },
+    "subscribed": false
+}

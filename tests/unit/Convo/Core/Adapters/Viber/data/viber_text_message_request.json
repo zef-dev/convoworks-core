@@ -1,0 +1,19 @@
+{
+    "event": "message",
+    "timestamp": 1596008534919,
+    "chat_hostname": "SN-CHAT-23_",
+    "message_token": 5469165883537819000,
+    "sender": {
+        "id": "9nCr2GSFtI7s+DtDie23/Q==",
+        "name": "Mark Marčec",
+        "language": "en-GB",
+        "country": "HR",
+        "api_version": 8
+    },
+    "message": {
+        "text": "Hi",
+        "type": "text",
+        "tracking_data": "tracking data"
+    },
+    "silent": false
+}

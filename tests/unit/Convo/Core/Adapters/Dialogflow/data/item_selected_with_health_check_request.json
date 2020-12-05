@@ -1,0 +1,87 @@
+{
+  "responseId": "ff0d1e35-0d89-47a3-ad88-109e9b09bb09-425db6e2",
+  "queryResult": {
+    "queryText": "GOOGLE_ASSISTANT_WELCOME",
+    "action": "DefaultWelcomeIntent",
+    "parameters": {},
+    "allRequiredParamsPresent": true,
+    "fulfillmentText": "don't know",
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            "don't know"
+          ]
+        }
+      }
+    ],
+    "outputContexts": [
+      {
+        "name": "projects\/guessthenumbergamev2-kxwopp\/agent\/environments\/__aog-24\/users\/-\/sessions\/ABwppHGNBjjerSHth-fnYLAY2-3UZ80cPM6rELkKjvomEQJiYXv0g6KoGspJOj3CQfd7l7tzoNIOToGA5Iihy3TxhKZVJ4_ah3Pf\/contexts\/actions_capability_audio_output"
+      },
+      {
+        "name": "projects\/guessthenumbergamev2-kxwopp\/agent\/environments\/__aog-24\/users\/-\/sessions\/ABwppHGNBjjerSHth-fnYLAY2-3UZ80cPM6rELkKjvomEQJiYXv0g6KoGspJOj3CQfd7l7tzoNIOToGA5Iihy3TxhKZVJ4_ah3Pf\/contexts\/google_assistant_input_type_voice"
+      },
+      {
+        "name": "projects\/guessthenumbergamev2-kxwopp\/agent\/environments\/__aog-24\/users\/-\/sessions\/ABwppHGNBjjerSHth-fnYLAY2-3UZ80cPM6rELkKjvomEQJiYXv0g6KoGspJOj3CQfd7l7tzoNIOToGA5Iihy3TxhKZVJ4_ah3Pf\/contexts\/google_assistant_welcome"
+      },
+      {
+        "name": "projects\/guessthenumbergamev2-kxwopp\/agent\/environments\/__aog-24\/users\/-\/sessions\/ABwppHGNBjjerSHth-fnYLAY2-3UZ80cPM6rELkKjvomEQJiYXv0g6KoGspJOj3CQfd7l7tzoNIOToGA5Iihy3TxhKZVJ4_ah3Pf\/contexts\/__system_counters__",
+        "parameters": {
+          "no-input": 0,
+          "no-match": 0
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects\/guessthenumbergamev2-kxwopp\/agent\/intents\/b5ace61f-c270-44d0-863a-48ba884ea2ad",
+      "displayName": "DefaultWelcomeIntent"
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  },
+  "originalDetectIntentRequest": {
+    "source": "google",
+    "version": "2",
+    "payload": {
+      "user": {
+        "userId": "1skQJbLEHTbNwv0w4CIwbCuhoVWJ5buG3BFdREXja1U=",
+        "profile": {
+          "givenName": "Google",
+          "familyName": "Crawler"
+        },
+        "locale": "en-US"
+      },
+      "conversation": {
+        "conversationId": "ABwppHGNBjjerSHth-fnYLAY2-3UZ80cPM6rELkKjvomEQJiYXv0g6KoGspJOj3CQfd7l7tzoNIOToGA5Iihy3TxhKZVJ4_ah3Pf",
+        "type": "NEW"
+      },
+      "inputs": [
+        {
+          "intent": "actions.intent.MAIN",
+          "rawInputs": [
+            {
+              "inputType": "VOICE",
+              "query": "Robo numbers"
+            }
+          ],
+          "arguments": [
+            {
+              "name": "is_health_check",
+              "boolValue": true,
+              "textValue": "1"
+            }
+          ]
+        }
+      ],
+      "surface": {
+        "capabilities": [
+          {
+            "name": "actions.capability.AUDIO_OUTPUT"
+          }
+        ]
+      }
+    }
+  },
+  "session": "projects\/guessthenumbergamev2-kxwopp\/agent\/environments\/__aog-24\/users\/-\/sessions\/ABwppHGNBjjerSHth-fnYLAY2-3UZ80cPM6rELkKjvomEQJiYXv0g6KoGspJOj3CQfd7l7tzoNIOToGA5Iihy3TxhKZVJ4_ah3Pf"
+}

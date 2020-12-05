@@ -1,0 +1,128 @@
+{
+  "responseId": "f9d8ea2f-ad09-4cba-8f7a-cd809a25ddbc-a14fa99c",
+  "queryResult": {
+    "parameters": [],
+    "allRequiredParamsPresent": true,
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            ""
+          ]
+        }
+      }
+    ],
+    "outputContexts": [
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHHhpWgFNfmqyTfaJfL6Qrn_YasYrdMG2qAS5-RKvdGFBexQ49wrH6XLh47EW5NS61bKgCOdmzu9KN9KYrC1RygaRXgYeDs\/contexts\/actions_capability_screen_output"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHHhpWgFNfmqyTfaJfL6Qrn_YasYrdMG2qAS5-RKvdGFBexQ49wrH6XLh47EW5NS61bKgCOdmzu9KN9KYrC1RygaRXgYeDs\/contexts\/actions_capability_account_linking"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHHhpWgFNfmqyTfaJfL6Qrn_YasYrdMG2qAS5-RKvdGFBexQ49wrH6XLh47EW5NS61bKgCOdmzu9KN9KYrC1RygaRXgYeDs\/contexts\/actions_capability_media_response_audio"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHHhpWgFNfmqyTfaJfL6Qrn_YasYrdMG2qAS5-RKvdGFBexQ49wrH6XLh47EW5NS61bKgCOdmzu9KN9KYrC1RygaRXgYeDs\/contexts\/actions_capability_audio_output"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHHhpWgFNfmqyTfaJfL6Qrn_YasYrdMG2qAS5-RKvdGFBexQ49wrH6XLh47EW5NS61bKgCOdmzu9KN9KYrC1RygaRXgYeDs\/contexts\/google_assistant_input_type_voice"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHHhpWgFNfmqyTfaJfL6Qrn_YasYrdMG2qAS5-RKvdGFBexQ49wrH6XLh47EW5NS61bKgCOdmzu9KN9KYrC1RygaRXgYeDs\/contexts\/actions_intent_option",
+        "parameters": {
+          "OPTION": "0",
+          "text": "1. Brentford vs. Preston"
+        }
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHHhpWgFNfmqyTfaJfL6Qrn_YasYrdMG2qAS5-RKvdGFBexQ49wrH6XLh47EW5NS61bKgCOdmzu9KN9KYrC1RygaRXgYeDs\/contexts\/__system_counters__",
+        "lifespanCount": 1,
+        "parameters": {
+          "no-input": 0,
+          "no-match": 1
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects\/kn-vucetinec-1565962572259\/agent\/intents\/70232f0d-8e56-4c68-952a-b66e9ae4f6e9",
+      "displayName": "DefaultFallbackIntent",
+      "isFallback": true
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  },
+  "originalDetectIntentRequest": {
+    "source": "google",
+    "version": "2",
+    "payload": {
+      "user": {
+        "locale": "en-US",
+        "lastSeen": "2020-04-17T10:07:43Z",
+        "userStorage": "{\"data\":{}}",
+        "userVerificationStatus": "VERIFIED"
+      },
+      "conversation": {
+        "conversationId": "ABwppHHhpWgFNfmqyTfaJfL6Qrn_YasYrdMG2qAS5-RKvdGFBexQ49wrH6XLh47EW5NS61bKgCOdmzu9KN9KYrC1RygaRXgYeDs",
+        "type": "ACTIVE",
+        "conversationToken": "[]"
+      },
+      "inputs": [
+        {
+          "intent": "actions.intent.OPTION",
+          "rawInputs": [
+            {
+              "inputType": "VOICE",
+              "query": "1. Brentford vs. Preston"
+            }
+          ],
+          "arguments": [
+            {
+              "name": "OPTION",
+              "textValue": "0"
+            },
+            {
+              "name": "text",
+              "rawText": "1. Brentford vs. Preston",
+              "textValue": "1. Brentford vs. Preston"
+            }
+          ]
+        }
+      ],
+      "surface": {
+        "capabilities": [
+          {
+            "name": "actions.capability.SCREEN_OUTPUT"
+          },
+          {
+            "name": "actions.capability.ACCOUNT_LINKING"
+          },
+          {
+            "name": "actions.capability.MEDIA_RESPONSE_AUDIO"
+          },
+          {
+            "name": "actions.capability.AUDIO_OUTPUT"
+          }
+        ]
+      },
+      "isInSandbox": true,
+      "availableSurfaces": [
+        {
+          "capabilities": [
+            {
+              "name": "actions.capability.WEB_BROWSER"
+            },
+            {
+              "name": "actions.capability.AUDIO_OUTPUT"
+            },
+            {
+              "name": "actions.capability.SCREEN_OUTPUT"
+            }
+          ]
+        }
+      ],
+      "requestType": "SIMULATOR"
+    }
+  },
+  "session": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHHhpWgFNfmqyTfaJfL6Qrn_YasYrdMG2qAS5-RKvdGFBexQ49wrH6XLh47EW5NS61bKgCOdmzu9KN9KYrC1RygaRXgYeDs"
+}

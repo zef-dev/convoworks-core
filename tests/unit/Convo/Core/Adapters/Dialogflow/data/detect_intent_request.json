@@ -1,0 +1,38 @@
+{
+  "responseId": "16e45b7c-59f9-4178-b6b7-e418afed9ead-e15c53b8",
+  "queryResult": {
+    "queryText": "test",
+    "parameters": {},
+    "allRequiredParamsPresent": true,
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            ""
+          ]
+        }
+      }
+    ],
+    "outputContexts": [
+      {
+        "name": "projects\/react-my-burger-5de00\/agent\/sessions\/5ec24922e83d4\/contexts\/__system_counters__",
+        "lifespanCount": 1,
+        "parameters": {
+          "no-input": 0,
+          "no-match": 1
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects\/react-my-burger-5de00\/agent\/intents\/dc302213-ad64-4df0-84c0-21a4effc2589",
+      "displayName": "Fallback",
+      "isFallback": true
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  },
+  "originalDetectIntentRequest": {
+    "payload": {}
+  },
+  "session": "projects\/react-my-burger-5de00\/agent\/sessions\/5ec24922e83d4"
+}

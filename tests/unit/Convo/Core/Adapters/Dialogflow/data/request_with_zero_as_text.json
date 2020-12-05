@@ -1,0 +1,118 @@
+{
+  "responseId": "4ce7cab6-d127-472b-be43-0e389cba6b30-425db6e2",
+  "queryResult": {
+    "queryText": "0",
+    "parameters": {},
+    "allRequiredParamsPresent": true,
+    "fulfillmentMessages": [
+      {
+        "text": {
+          "text": [
+            ""
+          ]
+        }
+      }
+    ],
+    "outputContexts": [
+      {
+        "name": "projects/react-my-burger-5de00/agent/sessions/ABwppHHDt-NBxyvkwiUqVEtOXKuVHwTEhS52hdiiRPwbAqyGqGIAX-tC5ZzvQ5PCdIqeByCifItfwLbl27L-K7ZeGP41/contexts/actions_capability_audio_output"
+      },
+      {
+        "name": "projects/react-my-burger-5de00/agent/sessions/ABwppHHDt-NBxyvkwiUqVEtOXKuVHwTEhS52hdiiRPwbAqyGqGIAX-tC5ZzvQ5PCdIqeByCifItfwLbl27L-K7ZeGP41/contexts/actions_capability_media_response_audio"
+      },
+      {
+        "name": "projects/react-my-burger-5de00/agent/sessions/ABwppHHDt-NBxyvkwiUqVEtOXKuVHwTEhS52hdiiRPwbAqyGqGIAX-tC5ZzvQ5PCdIqeByCifItfwLbl27L-K7ZeGP41/contexts/actions_capability_account_linking"
+      },
+      {
+        "name": "projects/react-my-burger-5de00/agent/sessions/ABwppHHDt-NBxyvkwiUqVEtOXKuVHwTEhS52hdiiRPwbAqyGqGIAX-tC5ZzvQ5PCdIqeByCifItfwLbl27L-K7ZeGP41/contexts/actions_capability_screen_output"
+      },
+      {
+        "name": "projects/react-my-burger-5de00/agent/sessions/ABwppHHDt-NBxyvkwiUqVEtOXKuVHwTEhS52hdiiRPwbAqyGqGIAX-tC5ZzvQ5PCdIqeByCifItfwLbl27L-K7ZeGP41/contexts/google_assistant_input_type_voice"
+      },
+      {
+        "name": "projects/react-my-burger-5de00/agent/sessions/ABwppHHDt-NBxyvkwiUqVEtOXKuVHwTEhS52hdiiRPwbAqyGqGIAX-tC5ZzvQ5PCdIqeByCifItfwLbl27L-K7ZeGP41/contexts/__system_counters__",
+        "lifespanCount": 1,
+        "parameters": {
+          "no-input": 0,
+          "no-match": 1
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects/react-my-burger-5de00/agent/intents/dc302213-ad64-4df0-84c0-21a4effc2589",
+      "displayName": "Fallback",
+      "isFallback": true
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  },
+  "originalDetectIntentRequest": {
+    "source": "google",
+    "version": "2",
+    "payload": {
+      "user": {
+        "locale": "en-AU",
+        "lastSeen": "2020-07-14T13:06:06Z",
+        "userStorage": "{\\\"data\\\":{\\\"installationId\\\":\\\"d68b5fb6-d9e9-4dec-b483-e365011b63f7\\\"}}",
+        "userVerificationStatus": "VERIFIED"
+      },
+      "conversation": {
+        "conversationId": "ABwppHHDt-NBxyvkwiUqVEtOXKuVHwTEhS52hdiiRPwbAqyGqGIAX-tC5ZzvQ5PCdIqeByCifItfwLbl27L-K7ZeGP41",
+        "type": "ACTIVE",
+        "conversationToken": "[]"
+      },
+      "inputs": [
+        {
+          "intent": "actions.intent.TEXT",
+          "rawInputs": [
+            {
+              "inputType": "VOICE",
+              "query": "0"
+            }
+          ],
+          "arguments": [
+            {
+              "name": "text",
+              "rawText": "0",
+              "textValue": "0"
+            }
+          ]
+        }
+      ],
+      "surface": {
+        "capabilities": [
+          {
+            "name": "actions.capability.AUDIO_OUTPUT"
+          },
+          {
+            "name": "actions.capability.MEDIA_RESPONSE_AUDIO"
+          },
+          {
+            "name": "actions.capability.ACCOUNT_LINKING"
+          },
+          {
+            "name": "actions.capability.SCREEN_OUTPUT"
+          }
+        ]
+      },
+      "isInSandbox": true,
+      "availableSurfaces": [
+        {
+          "capabilities": [
+            {
+              "name": "actions.capability.AUDIO_OUTPUT"
+            },
+            {
+              "name": "actions.capability.SCREEN_OUTPUT"
+            },
+            {
+              "name": "actions.capability.WEB_BROWSER"
+            }
+          ]
+        }
+      ],
+      "requestType": "SIMULATOR"
+    }
+  },
+  "session": "projects/react-my-burger-5de00/agent/sessions/ABwppHHDt-NBxyvkwiUqVEtOXKuVHwTEhS52hdiiRPwbAqyGqGIAX-tC5ZzvQ5PCdIqeByCifItfwLbl27L-K7ZeGP41"
+}

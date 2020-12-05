@@ -1,0 +1,103 @@
+{
+  "responseId": "a7116d7e-bb12-44a2-87ef-3d881eba988d-a14fa99c",
+  "queryResult": {
+    "queryText": "GOOGLE_ASSISTANT_WELCOME",
+    "action": "DefaultWelcomeIntent",
+    "parameters": [],
+    "allRequiredParamsPresent": true,
+    "outputContexts": [
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/actions_capability_media_response_audio"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/actions_capability_account_linking"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/actions_capability_screen_output"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/actions_capability_audio_output"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/google_assistant_input_type_voice"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/google_assistant_welcome"
+      },
+      {
+        "name": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc\/contexts\/__system_counters__",
+        "parameters": {
+          "no-input": 0,
+          "no-match": 0
+        }
+      }
+    ],
+    "intent": {
+      "name": "projects\/kn-vucetinec-1565962572259\/agent\/intents\/0ea42fad-a42e-43c8-8589-8278f34dfb05",
+      "displayName": "DefaultWelcomeIntent"
+    },
+    "intentDetectionConfidence": 1,
+    "languageCode": "en"
+  },
+  "originalDetectIntentRequest": {
+    "source": "google",
+    "version": "2",
+    "payload": {
+      "user": {
+        "locale": "en-US",
+        "lastSeen": "2020-04-16T12:33:46Z",
+        "userStorage": "{\"data\":{}}",
+        "userVerificationStatus": "VERIFIED"
+      },
+      "conversation": {
+        "conversationId": "ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc",
+        "type": "NEW"
+      },
+      "inputs": [
+        {
+          "intent": "actions.intent.MAIN",
+          "rawInputs": [
+            {
+              "inputType": "VOICE",
+              "query": "Talk to my test app"
+            }
+          ]
+        }
+      ],
+      "surface": {
+        "capabilities": [
+          {
+            "name": "actions.capability.MEDIA_RESPONSE_AUDIO"
+          },
+          {
+            "name": "actions.capability.ACCOUNT_LINKING"
+          },
+          {
+            "name": "actions.capability.SCREEN_OUTPUT"
+          },
+          {
+            "name": "actions.capability.AUDIO_OUTPUT"
+          }
+        ]
+      },
+      "isInSandbox": true,
+      "availableSurfaces": [
+        {
+          "capabilities": [
+            {
+              "name": "actions.capability.AUDIO_OUTPUT"
+            },
+            {
+              "name": "actions.capability.SCREEN_OUTPUT"
+            },
+            {
+              "name": "actions.capability.WEB_BROWSER"
+            }
+          ]
+        }
+      ],
+      "requestType": "SIMULATOR"
+    }
+  },
+  "session": "projects\/kn-vucetinec-1565962572259\/agent\/sessions\/ABwppHFrjnchahsaAuHlVmzUCgfOgmcFzk1qEGTTKpSrfhfiyxEmhJj29thEIZF9j_Y2xFAOfDco94iJ-xliXWwb-jCzPfALyAc"
+}

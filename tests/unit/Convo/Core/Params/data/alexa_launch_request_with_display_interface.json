@@ -1,0 +1,92 @@
+{
+  "version": "1.0",
+  "session": {
+    "new": true,
+    "sessionId": "amzn1.echo-api.session.47ebf73b-f0ea-4d9f-b258-82202df06b57",
+    "application": {
+      "applicationId": "amzn1.ask.skill.712200c5-41c2-4073-a5d1-ed14c732daa2"
+    },
+    "user": {
+      "userId": "amzn1.ask.account.AFHTGZJXA476SPSEJGGXEM3MFLWKMNEOZULB74SRHKOAWKMFFXDB46GL5OAYEVC2SKBS47OHA344C2P4NASSDDOXSRXO3XJ263PNVPBLTMNDF2GCBGMV6HYXLNVBD7IPIQM2KYM5IM2PRYQ6TQAET5IIIJSESE4VIODBTGJZF5GCCSFDEEIGKIF3RVG22K4Z2A3W65DLZUJKNSI"
+    }
+  },
+  "context": {
+    "Display": {},
+    "System": {
+      "application": {
+        "applicationId": "amzn1.ask.skill.712200c5-41c2-4073-a5d1-ed14c732daa2"
+      },
+      "user": {
+        "userId": "amzn1.ask.account.AFHTGZJXA476SPSEJGGXEM3MFLWKMNEOZULB74SRHKOAWKMFFXDB46GL5OAYEVC2SKBS47OHA344C2P4NASSDDOXSRXO3XJ263PNVPBLTMNDF2GCBGMV6HYXLNVBD7IPIQM2KYM5IM2PRYQ6TQAET5IIIJSESE4VIODBTGJZF5GCCSFDEEIGKIF3RVG22K4Z2A3W65DLZUJKNSI"
+      },
+      "device": {
+        "deviceId": "amzn1.ask.device.AGCAF5Y553LO4E56H67YZBFXZKVO566BYUMF6CJ6YIAFFIKDLNEAPURHOQQEGPNONW64DNAPIFLJVEWQFU7OKMX6FNZ4MZHJHYU3JD6QQFTWK55UBRHTQBR3U66UPYNHKRRXSGNTFODGK3WWP5CHGVNDYSBEEEDZYAZDWK2UIMUHUAZCGJFEK",
+        "supportedInterfaces": {
+          "Display": {
+            "templateVersion": "1.0",
+            "markupVersion": "1.0"
+          }
+        }
+      },
+      "apiEndpoint": "https:\/\/api.amazonalexa.com",
+      "apiAccessToken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IjEifQ.eyJhdWQiOiJodHRwczovL2FwaS5hbWF6b25hbGV4YS5jb20iLCJpc3MiOiJBbGV4YVNraWxsS2l0Iiwic3ViIjoiYW16bjEuYXNrLnNraWxsLjcxMjIwMGM1LTQxYzItNDA3My1hNWQxLWVkMTRjNzMyZGFhMiIsImV4cCI6MTU5MDE0Mzk4NiwiaWF0IjoxNTkwMTQzNjg2LCJuYmYiOjE1OTAxNDM2ODYsInByaXZhdGVDbGFpbXMiOnsiY29udGV4dCI6IkFBQUFBQUFBQUFCYVdTTVNwVHBXcmJ6YlNnMU91aVd4S1FFQUFBQUFBQUNLYnd1by9ORTMrdmlwYytUS3FMK3ZWVThhSXhYU0tnN2tIREwvTC9PUitycjRwWGlZMExWU3dJOWpHM0taRGZubWRXTDQxYUpsaVVyVjZCWmFjYmk4ZzBXT3g1c3U2RkN4VjA5cnVSVXZtY2s4R1dJN1FibFphM24xWEFERUwwa1NWUXFPTXJqdWtSNWVVSGgvRjBtR1psZmdXL0hnbWw5V2F2Vit4Z1FYbUVheXlpaHFCeFhWMHAyZW1sWHVkN3ZWdEl6SzQvWWhVU0hybzRjdzZmbjh0RVVJakJVYnpxd1Njd2ZaSzV5bjJIRzdNOFF1VHRtcEtJa3RialJ1WEpOb3dtMHJVNjZkVUNBWm8vL1JQSXZyZ2lkS3BWY1BjSk9rL0JTczArWFBETXIxRnRLQzlQa1JhV1B6d2NmOWs4V0h3VEI2ZG9zYVU0Zk9sQ3BWcWpNSlZTWHZMazJRa1p1SkxtWDZLd0JnVUgrQjlWcTB5YWJrZGJsN2VOYXpNbEJjaFA1REJhZ1I0SUk9IiwiY29uc2VudFRva2VuIjpudWxsLCJkZXZpY2VJZCI6ImFtem4xLmFzay5kZXZpY2UuQUdDQUY1WTU1M0xPNEU1Nkg2N1laQkZYWktWTzU2NkJZVU1GNkNKNllJQUZGSUtETE5FQVBVUkhPUVFFR1BOT05XNjRETkFQSUZMSlZFV1FGVTdPS01YNkZOWjRNWkhKSFlVM0pENlFRRlRXSzU1VUJSSFRRQlIzVTY2VVBZTkhLUlJYU0dOVEZPREdLM1dXUDVDSEdWTkRZU0JFRUVEWllBWkRXSzJVSU1VSFVBWkNHSkZFSyIsInVzZXJJZCI6ImFtem4xLmFzay5hY2NvdW50LkFGSFRHWkpYQTQ3NlNQU0VKR0dYRU0zTUZMV0tNTkVPWlVMQjc0U1JIS09BV0tNRkZYREI0NkdMNU9BWUVWQzJTS0JTNDdPSEEzNDRDMlA0TkFTU0RET1hTUlhPM1hKMjYzUE5WUEJMVE1OREYyR0NCR01WNkhZWExOVkJEN0lQSVFNMktZTTVJTTJQUllRNlRRQUVUNUlJSUpTRVNFNFZJT0RCVEdKWkY1R0NDU0ZERUVJR0tJRjNSVkcyMks0WjJBM1c2NURMWlVKS05TSSJ9fQ.kel5OKZeHZD-FKNXBpf9MjVqWiElixkAQN3GedRjmdJNIGH1QyDEzgjJx9-OTNhuM3uUblXJKDhIKOR8r_MFRDufH44wFicVnptG8d-gMKdxGikfMNEt-LdP2Lu6tZGBjxi0neh2T-MHT5Ho46ME5-u7H2kloaaUkRr-Mt21ZM7gyTGVAY9iI1d0liMwJ0g1csUK3luofE2uZiekBWE9E26PD9JiUMy8d_pInvIiILxI4TSV7jSRewZ5x0ePYD0Dod3IZAnCiaSpdgXMqH9TrTFqgzqpgzfMCRNgYPZ2K4ktRSEPQFxrD1-uCBF4JWP8RZgfgRM-oVTgDniCfV3PfA"
+    },
+    "Viewport": {
+      "experiences": [
+        {
+          "arcMinuteWidth": 246,
+          "arcMinuteHeight": 144,
+          "canRotate": false,
+          "canResize": false
+        }
+      ],
+      "shape": "RECTANGLE",
+      "pixelWidth": 1024,
+      "pixelHeight": 600,
+      "dpi": 160,
+      "currentPixelWidth": 1024,
+      "currentPixelHeight": 600,
+      "touch": [
+        "SINGLE"
+      ],
+      "video": {
+        "codecs": [
+          "H_264_42",
+          "H_264_41"
+        ]
+      }
+    },
+    "Viewports": [
+      {
+        "type": "APL",
+        "id": "main",
+        "shape": "RECTANGLE",
+        "dpi": 160,
+        "presentationType": "STANDARD",
+        "canRotate": false,
+        "configuration": {
+          "current": {
+            "video": {
+              "codecs": [
+                "H_264_42",
+                "H_264_41"
+              ]
+            },
+            "size": {
+              "type": "DISCRETE",
+              "pixelWidth": 1024,
+              "pixelHeight": 600
+            }
+          }
+        }
+      }
+    ]
+  },
+  "request": {
+    "type": "LaunchRequest",
+    "requestId": "amzn1.echo-api.request.89f7f95d-50f3-421d-9e93-6ca1cc76865c",
+    "timestamp": "2020-05-22T10:34:46Z",
+    "locale": "en-US",
+    "shouldLinkResultBeReturned": false
+  }
+}
