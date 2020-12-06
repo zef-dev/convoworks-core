@@ -7,6 +7,9 @@ Here are few key features:
 * It handles communication layer with connected platforms
 * It highly relies on PSRs and own interface definitions, so it can be used with any PHP application.
 
+## Beta period
+
+Please note that the Convoworks is currently in beta phase and it is planned to be released in March 2021.
 
 ## Overview
 
@@ -84,22 +87,110 @@ You can use our [convoworks-guzzle](https://github.com/zef-dev/convoworks-guzzle
 
 Although you can manually create all required classes, we recommend using an PSR compatible DI container.
 
+Here is the full ecosystem:
+
+**System utils**
+
+| DI key | Type | Description |
+| --- | --- | --- |
+| **httpFactory** | `\Convo\Core\Util\IHttpFactory` | Provides http layer access to the system |
+| **currentTimeService** | `\Convo\Core\Util\ICurrentTimeService` | Allows as to have mockable time provider |
+| **cache** | `\Psr\SimpleCache\CacheInterface` | Provides access to cache infrastructure |
+
+
+**Core functionality**
+| DI key | Type | Description |
+| --- | --- | --- |
+| **adminUserDataProvider** | `\Convo\Core\IAdminUserDataProvider` | Allows integration with your own admin users |
+| **convoServiceParamsFactory** | `\Convo\Core\Params\IServiceParamsFactory` | For handling runtime parameters |
+| **convoServiceDataProvider** | `\Convo\Core\IServiceDataProvider` | Service data persistance layer |
+| **serviceMediaManager** | `\Convo\Core\Media\IServiceMediaManager` | Service media storage |
+| **convoServiceFactory** | `\Convo\Core\Factory\ConvoServiceFactory` | Loads runnable service instance |
+| **platformRequestFactory** | `\Convo\Core\Factory\PlatformRequestFactory` | Updates text based requests to intent based, through delegate platform |
+| **packageProviderFactory** | `\Convo\Core\Factory\PackageProviderFactory` | Provides access to concrete package definitions |
+| **serviceReleaseManager** | `\Convo\Core\Publish\ServiceReleaseManager` | Updates release and version information |
+| **platformPublisherFactory** | `\Convo\Core\Publish\PlatformPublisherFactory` | Provides concrete platform publishers - `\Convo\Core\Publish\IPlatformPublisher` |
+
+
+**Platform specifics**
+| DI key | Type | Description |
+| --- | --- | --- |
+| **amazonAuthService** | `\Convo\Core\Adapters\Alexa\AmazonAuthService` | Enables authentication for Amazon Alexa SMAPI |
+| **alexaRequestValidator** | `\Convo\Core\Adapters\Alexa\Validators\AlexaRequestValidator` | Validates Amazon Alexa requests |
+| **amazonPublishingService** | `\Convo\Core\Adapters\Alexa\AmazonPublishingService` | Our SMAPI implementation |
+| **dialogflowApiFactory** | `\Convo\Core\Adapters\Dialogflow\DialogflowApiFactory` | Provides access to Dialogflow API |
+| **facebookMessengerApiFactory** | `\Convo\Core\Adapters\Fbm\FacebookMessengerApiFactory` | Provides access to FB Messenger API |
+| **viberApi** | `\Convo\Core\Adapters\Viber\ViberApi` | Our Viber API implementation |
+
+
+**Admin API specifics**
+| DI key | Type | Description |
+| --- | --- | --- |
+| **\Convo\Core\Admin\ServicesRestHandler** | `\Convo\Core\Admin\ServicesRestHandler` | Service management |
+| **\Convo\Core\Admin\ServiceVersionsRestHandler** | `\Convo\Core\Admin\ServiceVersionsRestHandler` | Service versions and releases management |
+| **\Convo\Core\Admin\ServicePlatformConfigRestHandler** | `\Convo\Core\Admin\ServicePlatformConfigRestHandler` | Service platform configurations |
+| **\Convo\Core\Admin\UserPlatformConfigRestHandler** | `\Convo\Core\Admin\UserPlatformConfigRestHandler` | Updates user configurations |
+| **\Convo\Core\Admin\UserPackgesRestHandler** | `\Convo\Core\Admin\UserPackgesRestHandler` | Access to user packages |
+| **\Convo\Core\Admin\ServicePackagesRestHandler** | `\Convo\Core\Admin\ServicePackagesRestHandler` | Service packages management |
+| **\Convo\Core\Admin\TemplatesRestHandler** | `\Convo\Core\Admin\TemplatesRestHandler` | Access to available templates |
+| **\Convo\Core\Admin\TestServiceRestHandler** | `\Convo\Core\Admin\TestServiceRestHandler` | Service simulator |
+| **\Convo\Core\Admin\ServiceImpExpRestHandler** | `\Convo\Core\Admin\ServiceImpExpRestHandler` | Import/export service data |
+| **\Convo\Core\Admin\ComponentHelpRestHandler** | `\Convo\Core\Admin\ComponentHelpRestHandler` | Loads component help if available |
+| **\Convo\Core\Admin\ConfigurationRestHandler** | `\Convo\Core\Admin\ConfigurationRestHandler` | Loads configuration options |
+| **\Convo\Core\Admin\MediaRestHandler** | `\Convo\Core\Admin\MediaRestHandler` | Service media management |
+| **propagationErrorReport** | `\Convo\Core\Admin\PropagationErrorReport` | Error reporting utility |
+
+**Public API specifics**
+| DI key | Type | Description |
+| --- | --- | --- |
+| **\Convo\Core\Adapters\ConvoChat\ConvoChatRestHandler** | `\Convo\Core\Adapters\ConvoChat\ConvoChatRestHandler` | Handles web chat requests |
+| **\Convo\Core\Adapters\Google\Dialogflow\DialogflowAgentRestHandler** | `\Convo\Core\Adapters\Google\Dialogflow\DialogflowAgentRestHandler` | Handles Dialogflow requests |
+| **\Convo\Core\Adapters\Google\Gactions\ActionsRestHandler** | `\Convo\Core\Adapters\Google\Gactions\ActionsRestHandler` | Handles direct Google Actions requests |
+| **\Convo\Core\Adapters\Fbm\FacebookMessengerRestHandler** | `\Convo\Core\Adapters\Fbm\FacebookMessengerRestHandler` | Handles Messenger requests |
+| **\Convo\Core\Adapters\Viber\ViberRestHandler** | `\Convo\Core\Adapters\Viber\ViberRestHandler` | Handles Viber requests |
+| **\Convo\Core\Adapters\Alexa\AlexaSkillRestHandler** | `\Convo\Core\Adapters\Alexa\AlexaSkillRestHandler` | Handles Alexa requests |
+| **\Convo\Core\Adapters\Alexa\AmazonAuthRestHandler** | `\Convo\Core\Adapters\Alexa\AmazonAuthRestHandler` | Oauth for enabling Amazon SMAPI access  |
+| **\Convo\Core\Adapters\Alexa\CatalogRestHandler** | `\Convo\Core\Adapters\Alexa\CatalogRestHandler` | Exposes entity catalogues to Alexa |
+| **\Convo\Core\Media\MediaRestHandler** | `\Convo\Core\Media\MediaRestHandler` | Allows public access to service media |
+| **facebookAuthService** | `\Convo\Core\Adapters\Fbm\FacebookAuthService` | Oauth for enabling Facebook API access |
+
+
 
 ### REST routing
 
-Instead of the mapping each route in your app, you can use grouped handlers which already have subroutine implemented.
-Our handlers are always expecting `convo/v1` as a base for all Convoworks requests, so you can route all such requests to the e.g. `\Convo\Core\Admin\AdminRestApi` when you are integrating the admin API.
+Our handlers are always expecting `convo/v1` as a base for all Convoworks requests, so you can use wildcard to route all such requests to the Convoworks request handlers. Please note that we have two separate REST APIs, public and admin so they are treated and mounted separately.
+
+Instead of mapping each request handler we have, you can use our "grouped" handlers, just one per API. `\Convo\Core\Adapters\PublicRestApi` for public and `\Convo\Core\Admin\AdminRestApi` for admin API.
+ Only difference is that in such case you have to use DI container.
+
 
 ### Registering packages
 
 Your application will also define which Convoworks custom packages will be available for use.
+Packages are registered by passing `\Convo\Core\Factory\IPackageDescriptor` objects to the `\Convo\Core\Factory\PackageProviderFactory`.
+
+```php
+<?php
+
+// example with function based factory
+$packageProviderFactory->registerPackage( new FunctionPackageDescriptor('\Convo\Pckg\Gnlp\GoogleNlpPackageDefinition', function() {
+    return new \Convo\Pckg\Gnlp\GoogleNlpPackageDefinition(
+        $logger, $googleNlpFactory, $googleNlpSyntaxParser
+    );
+}));
+
+// example with class based factory - requires ID container!
+$packageProviderFactory->registerPackage( new ClassPackageDescriptor('\Convo\Pckg\Trivia\TriviaPackageDefinition', $container));
+```
 
 
 ### Admin API Authentication
 
 Once you have that implemented, you have to make logged user available for REST handlers. Somewhere in the app bootstrap process, set the request attribute `Convo\Core\IAdminUser` to your user (which implements `\Convo\Core\IAdminUser`).
 
-```
+```php
+<?php
+
 $user       =   $this->_adminUserDataProvider->findUser( 'myusernameiremail');
 $request    =   $request->withAttribute( \Convo\Core\IAdminUser::class, $user);
 ```
@@ -112,4 +203,5 @@ You can check our example integration called Convoworks Prototype. You can [down
 ---
 
 For more information, please check out [convoworks.com](https://convoworks.com)
+
 
