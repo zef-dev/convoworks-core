@@ -108,7 +108,8 @@ $request    =   $request->withAttribute( \Convo\Core\IAdminUser::class, $user);
 
 You can check our example integration called Convoworks Prototype. You can [download](https://convoworks.com/downloads/) it and find more information [here](https://convoworks.com/meet-the-convoworks-prototype-plain-php-convoworks-integration-example/)
 
+
 ---
 
-Check for more information on [convoworks.com](https://convoworks.com)
+For more information, please check out [convoworks.com](https://convoworks.com)
 
