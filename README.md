@@ -179,7 +179,7 @@ $packageProviderFactory->registerPackage( new FunctionPackageDescriptor('\Convo\
     );
 }));
 
-// example with class based factory - requires ID container!
+// example with class based factory - requires DI container!
 $packageProviderFactory->registerPackage( new ClassPackageDescriptor('\Convo\Pckg\Trivia\TriviaPackageDefinition', $container));
 ```
 
