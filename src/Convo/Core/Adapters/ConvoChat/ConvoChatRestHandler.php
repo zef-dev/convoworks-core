@@ -82,7 +82,7 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 		$json		=	$request->getParsedBody();
 
 		$text		=	$json['text'] ?? null;
-		$is_init	=	$json['lunch'] ?? false;
+		$is_init	=	$this->_isInit($json);
 		$device_id	=	$json['device_id'];
 
 
@@ -141,6 +141,18 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 		$data		=	array_merge( $data, $text_response->getPlatformResponse());
 		return $this->_httpFactory->buildResponse( $data);
 	}
+
+	private function _isInit($json) {
+	    $isInit = false;
+
+        if (isset($json['lunch'])) {
+            $isInit = $json['lunch'];
+        } else if (isset($json['launch'])) {
+            $isInit = $json['launch'];
+        }
+
+        return $isInit;
+    }
 
 	// UTIL
 	public function __toString()

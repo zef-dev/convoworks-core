@@ -57,7 +57,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		$json			=	$request->getParsedBody();
 
 		$text			=	$json['text'] ?? null;
-		$is_init		=	$json['lunch'] ?? false;
+		$is_init		=	$this->_isInit($json);
 		$is_end			=	$json['end'] ?? false;
 		$device_id		=	$json['device_id'] ?? false;
 		$platform_id	=	$json['platform_id'] ?? null;
@@ -113,6 +113,17 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		return $this->_httpFactory->buildResponse( $data);
 	}
 
+    private function _isInit($json) {
+        $isInit = false;
+
+        if (isset($json['lunch'])) {
+            $isInit = $json['lunch'];
+        } else if (isset($json['launch'])) {
+            $isInit = $json['launch'];
+        }
+
+        return $isInit;
+    }
 
 	// UTIL
 	public function __toString()
