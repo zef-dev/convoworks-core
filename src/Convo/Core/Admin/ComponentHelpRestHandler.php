@@ -56,11 +56,13 @@ class ComponentHelpRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
         /** @var \Convo\Core\Factory\AbstractPackageDefinition $provider */
         $provider = $this->_packageProviderFactory->getProviderByNamespace($packageId);
 
-        $help = $provider->getComponentHelp($componentName);
+        $help = [
+            "html_content" => $provider->getComponentHelp($componentName)
+        ];
 
         return $this->_httpFactory->buildResponse($help, 200, [
-            'Content-Type' => 'html/text',
-            'Content-Length' => strlen($help)
+            'Content-Type' => 'application/json',
+            'Content-Length' => strlen($help['html_content'])
         ]);
     }
 }
