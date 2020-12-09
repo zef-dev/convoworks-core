@@ -85,6 +85,10 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $entities['person']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.FirstName', true));
         $entities['person']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.person', true));
 
+        $entities['person_first_and_lastname'] = new SystemEntity( 'person_first_and_lastname');
+        $entities['person_first_and_lastname']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Person', true));
+        $entities['person_first_and_lastname']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.person', true));
+
         $entities['artist'] = new SystemEntity( 'artist');
         $entities['artist']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Artist', true));
         $entities['artist']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.music-artist', true));
@@ -100,6 +104,34 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $entities['music_playlist'] = new SystemEntity( 'music_playlist');
         $entities['music_playlist']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.SearchQuery', true));
         $entities['music_playlist']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.any', true));
+
+        $entities['date'] = new SystemEntity( 'date');
+        $entities['date']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.DATE', true));
+        $entities['date']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.date', true));
+
+        $entities['time'] = new SystemEntity( 'time');
+        $entities['time']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.TIME', true));
+        $entities['time']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.time', true));
+
+        $entities['color'] = new SystemEntity( 'color');
+        $entities['color']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Color', true));
+        $entities['color']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.color', true));
+
+        $entities['language'] = new SystemEntity( 'language');
+        $entities['language']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Language', true));
+        $entities['language']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.language', true));
+
+        $entities['airport'] = new SystemEntity( 'airport');
+        $entities['airport']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Airport', true));
+        $entities['airport']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.airport', true));
+
+        $entities['duration'] = new SystemEntity( 'duration');
+        $entities['duration']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.DURATION', true));
+        $entities['duration']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.duration', true));
+
+        $entities['phone_number'] = new SystemEntity( 'phone_number');
+        $entities['phone_number']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.PhoneNumber', true));
+        $entities['phone_number']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.phone-number', true));
         return $entities;
     }
 

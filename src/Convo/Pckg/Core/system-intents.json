@@ -51,6 +51,26 @@
                     {
                         "name": "ASSISTANT_CANCEL"
                     }
+                ],
+                "utterances" : [
+                    {
+                        "raw" : "cancel",
+                        "model" : [
+                            { "text" : "cancel"}
+                        ]
+                    },
+                    {
+                        "raw" : "never mind",
+                        "model" : [
+                            { "text" : "never mind"}
+                        ]
+                    },
+                    {
+                        "raw" : "forget it",
+                        "model" : [
+                            { "text" : "forget it"}
+                        ]
+                    }
                 ]
             }
         }
@@ -71,6 +91,24 @@
                         "raw" : "help",
                         "model" : [
                             { "text" : "help"}
+                        ]
+                    },
+                    {
+                        "raw" : "I need help",
+                        "model" : [
+                            { "text" : "I need help"}
+                        ]
+                    },
+                    {
+                        "raw" : "help me",
+                        "model" : [
+                            { "text" : "help me"}
+                        ]
+                    },
+                    {
+                        "raw" : "can you help me",
+                        "model" : [
+                            { "text" : "can you help me"}
                         ]
                     }
                 ]
@@ -93,6 +131,18 @@
                         "raw" : "next",
                         "model" : [
                             { "text" : "next"}
+                        ]
+                    },
+                    {
+                        "raw" : "skip",
+                        "model" : [
+                            { "text" : "skip"}
+                        ]
+                    },
+                    {
+                        "raw" : "skip forward",
+                        "model" : [
+                            { "text" : "skip forward"}
                         ]
                     }
                 ]
@@ -124,6 +174,12 @@
                         ]
                     },
                     {
+                        "raw" : "skip back",
+                        "model" : [
+                            { "text" : "skip back"}
+                        ]
+                    },
+                    {
                         "raw" : "previous",
                         "model" : [
                             { "text" : "previous"}
@@ -150,6 +206,18 @@
                         "model" : [
                             { "text" : "stop"}
                         ]
+                    },
+                    {
+                        "raw" : "off",
+                        "model" : [
+                            { "text" : "off"}
+                        ]
+                    },
+                    {
+                        "raw" : "shut up",
+                        "model" : [
+                            { "text" : "shut up"}
+                        ]
                     }
                 ]
             }
@@ -171,6 +239,12 @@
                         "raw" : "pause",
                         "model" : [
                             { "text" : "pause"}
+                        ]
+                    },
+                    {
+                        "raw" : "pause that",
+                        "model" : [
+                            { "text" : "pause that"}
                         ]
                     }
                 ]
@@ -194,6 +268,18 @@
                         "model" : [
                             { "text" : "resume"}
                         ]
+                    },
+                    {
+                        "raw" : "continue",
+                        "model" : [
+                            { "text" : "continue"}
+                        ]
+                    },
+                    {
+                        "raw" : "keep going",
+                        "model" : [
+                            { "text" : "keep going"}
+                        ]
                     }
                 ]
             }
@@ -216,6 +302,18 @@
                         "model" : [
                             { "text" : "start over"}
                         ]
+                    },
+                    {
+                        "raw" : "restart",
+                        "model" : [
+                            { "text" : "restart"}
+                        ]
+                    },
+                    {
+                        "raw" : "start again",
+                        "model" : [
+                            { "text" : "start again"}
+                        ]
                     }
                 ]
             }
@@ -234,9 +332,21 @@
                 "type" : "custom",
                 "utterances" : [
                     {
+                        "raw" : "loop",
+                        "model" : [
+                            { "text" : "loop"}
+                        ]
+                    },
+                    {
                         "raw" : "loop on",
                         "model" : [
                             { "text" : "loop on"}
+                        ]
+                    },
+                    {
+                        "raw" : "keep playing this",
+                        "model" : [
+                            { "text" : "keep playing this"}
                         ]
                     }
                 ]
@@ -282,6 +392,18 @@
                         "model" : [
                             { "text" : "shuffle off"}
                         ]
+                    },
+                    {
+                        "raw" : "stop shuffling",
+                        "model" : [
+                            { "text" : "stop shuffling"}
+                        ]
+                    },
+                    {
+                        "raw" : "turn off shuffle",
+                        "model" : [
+                            { "text" : "turn off shuffle"}
+                        ]
                     }
                 ]
             }
@@ -300,9 +422,27 @@
                 "type" : "custom",
                 "utterances" : [
                     {
+                        "raw" : "shuffle",
+                        "model" : [
+                            { "text" : "shuffle"}
+                        ]
+                    },
+                    {
                         "raw" : "shuffle on",
                         "model" : [
                             { "text" : "shuffle on"}
+                        ]
+                    },
+                    {
+                        "raw" : "shuffle the music",
+                        "model" : [
+                            { "text" : "shuffle the music"}
+                        ]
+                    },
+                    {
+                        "raw" : "shuffle mode",
+                        "model" : [
+                            { "text" : "shuffle mode"}
                         ]
                     }
                 ]
@@ -330,6 +470,11 @@
                         "raw" : "go home",
                         "model" : [
                             { "text" : "go home"}
+                        ]
+                    }, {
+                        "raw" : "navigate user to the device home screen",
+                        "model" : [
+                            { "text" : "navigate user to the device home screen"}
                         ]
                     }
                 ]
@@ -362,6 +507,11 @@
                         "raw" : "negative",
                         "model" : [
                             { "text" : "negative"}
+                        ]
+                    }, {
+                        "raw" : "no thanks",
+                        "model" : [
+                            { "text" : "no thanks"}
                         ]
                     }
                 ]
@@ -399,6 +549,11 @@
                         "raw" : "ok",
                         "model" : [
                             { "text" : "ok"}
+                        ]
+                    }, {
+                        "raw" : "yes please",
+                        "model" : [
+                            { "text" : "yes please"}
                         ]
                     }
                 ]
