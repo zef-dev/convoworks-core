@@ -699,6 +699,13 @@
                             { "text" : "by" },
                             { "text" : "Lou Bega", "type" : "@convo-core.artist", "slot_value" : "Artist"}
                         ]
+                    },
+                    {
+                        "raw" : "play Mambo No. 5",
+                        "model" : [
+                            { "text" : "play"},
+                            { "text" : "Mambo No. 5", "type" : "@convo-core.song", "slot_value" : "Song"}
+                        ]
                     }
                 ]
             }
