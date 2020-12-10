@@ -117,8 +117,8 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
             case IResponseType::CAROUSEL_BROWSE:
                 return $this->_prepareCarouselBrowseResponse();
             default:
-                $ssmlText = '<speak>'."".'</speak>';
-                $displayText = "";
+                $displayText = " ";
+                $ssmlText = "<speak><p>$displayText</p></speak>";
                 if (!empty($this->getText())) {
                     $ssmlText = $this->getTextSsml();
                     $displayText = $this->getText();
@@ -222,27 +222,32 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
 
     public function enqueueSong(Mp3File $playingSong, Mp3File $enqueuingSong) : array
     {
-        return $this->_emptyResponse('<speak>'."".'</speak>', "");
+        $text = " ";
+        return $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
     }
 
     public function resumeSong(Mp3File $song, $offset) : array
     {
-        return $this->_emptyResponse('<speak>'."".'</speak>', "");
+        $text = " ";
+        return $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
     }
 
     public function stopSong() : array
     {
-        return $this->_emptyResponse('<speak>'."".'</speak>', "");
+        $text = " ";
+        return $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
     }
 
     public function emptyResponse() : array
     {
-        return $this->_emptyResponse('<speak>'."".'</speak>', "");
+        $text = " ";
+        return $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
     }
 
     public function clearQueue() : array
     {
-        return $this->_emptyResponse($this->getTextSsml(), $this->getText());
+        $text = " ";
+        return $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
     }
 
     private function _emptyResponse($ssmlText, $text) {
