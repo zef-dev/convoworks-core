@@ -17,7 +17,7 @@ class PreviewSpeechPart
     /**
      * @var array
      */
-    private $_text;
+    private $_text  =   [];
 
     public function __construct($componentId, $fragmentId = null)
     {
