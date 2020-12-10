@@ -333,8 +333,6 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
     private function _getDialogflowAudioPlayerIntents() {
         return [
             "PlaySong",
-            "NextIntent",
-            "PreviousIntent",
             "MediaStatus",
             "actions.intent.MEDIA_STATUS",
             "LoopOnIntent",
