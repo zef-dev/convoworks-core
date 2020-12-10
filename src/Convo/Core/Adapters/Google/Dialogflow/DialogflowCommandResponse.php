@@ -19,7 +19,7 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
 
     private $_value;
     private $_suggestions = array();
-    private $_responseType;
+    private $_responseType = IResponseType::SIMPLE_RESPONSE;
 
     private $_response;
 
@@ -107,21 +107,29 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
             case IResponseType::LIST:
             case IResponseType::CAROUSEL:
                 $this->_isSystemIntentInvolved = true;
-                $speechText = [
+                $this->_value = [
                     "ssml" => $this->getTextSsml(),
                     "displayText" => $this->getText(),
                 ];
-                return $this->_prepareSimpleResponse($speechText);
+                return $this->_prepareSimpleResponse();
             case IResponseType::BASIC_CARD:
                 return $this->_prepareBasicCardResponse();
             case IResponseType::CAROUSEL_BROWSE:
                 return $this->_prepareCarouselBrowseResponse();
             default:
+                $ssmlText = '<speak>'."".'</speak>';
+                $displayText = "";
+                if (!empty($this->getText())) {
+                    $ssmlText = $this->getTextSsml();
+                    $displayText = $this->getText();
+                }
+
                 $speechText = [
-                    "ssml" => $this->getTextSsml(),
-                    "displayText" => $this->getText(),
+                    "ssml" => $ssmlText,
+                    "displayText" => $displayText,
                 ];
-                return $this->_prepareSimpleResponse($speechText);
+                $this->_value = $speechText;
+                return $this->_prepareSimpleResponse();
         }
     }
 
@@ -173,10 +181,10 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
         );
     }
 
-    private function _prepareSimpleResponse($speechText) {
+    private function _prepareSimpleResponse() {
         return array (
             "items" => array(
-                $this->_responseElement->getSimpleResponseElement("Conversation Response", $speechText['ssml'], $speechText['displayText'])
+                $this->_responseElement->getSimpleResponseElement("Conversation Response", $this->_value['ssml'], $this->_value['displayText'])
             )
         );
     }
@@ -214,31 +222,35 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
 
     public function enqueueSong(Mp3File $playingSong, Mp3File $enqueuingSong) : array
     {
-        return [];
+        return $this->_emptyResponse('<speak>'."".'</speak>', "");
     }
 
     public function resumeSong(Mp3File $song, $offset) : array
     {
-        return [];
+        return $this->_emptyResponse('<speak>'."".'</speak>', "");
     }
 
     public function stopSong() : array
     {
-        return [];
+        return $this->_emptyResponse('<speak>'."".'</speak>', "");
     }
 
     public function emptyResponse() : array
     {
-        $speechText = [
-            "ssml" => $this->getTextSsml(),
-            "displayText" => $this->getText(),
-        ];
-        $this->prepareResponse(IResponseType::SIMPLE_RESPONSE, $speechText);
-        return json_decode($this->getPlatformResponse(), true);
+        return $this->_emptyResponse('<speak>'."".'</speak>', "");
     }
 
     public function clearQueue() : array
     {
-        return [];
+        return $this->_emptyResponse($this->getTextSsml(), $this->getText());
+    }
+
+    private function _emptyResponse($ssmlText, $text) {
+        $speechText = [
+            "ssml" => $ssmlText,
+            "displayText" => $text,
+        ];
+        $this->prepareResponse(IResponseType::SIMPLE_RESPONSE, $speechText);
+        return json_decode($this->getPlatformResponse(), true);
     }
 }
