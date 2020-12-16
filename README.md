@@ -10,6 +10,21 @@ Here are few key features:
 ## Beta period
 
 Please note that the Convoworks is currently in beta phase and it is planned to be released in March 2021.
+In a meanwhile, we will have several releases and some of them could have breaking changes.
+
+When there is a breaking change we will round the minor version to multiplier of 10.
+
+Here is the example how it might look:
+
+* 0.40.0 - breaking changes
+* 0.32.0 - improvements
+* 0.31.0 - improvements
+* 0.30.0 - breaking changes
+* 0.21.0 - improvements
+* 0.20.0 - improvements // if it was breaking chenge it would be 1.30
+* 0.19.0 - improvements
+* 0.18.0 - improvements
+ 
 
 ## Overview
 
@@ -34,7 +49,9 @@ Here are few parts to notice
 
 Admin rest allows access and management of the conversation workflow and publishing process. All handlers are placed in `\Convo\Core\Admin` namespace.
 
-There is a Postman definition you can find in the docs folder which describes full API.
+You can use the [Convoworks Editor](https://github.com/zef-dev/convoworks-editor) which is tailored to cover all Convoworks admin api functionalities.
+
+There is a also Postman definition you can find in the docs folder which describes full API.
 
 ### Adapters
 
@@ -195,7 +212,16 @@ $user       =   $this->_adminUserDataProvider->findUser( 'myusernameiremail');
 $request    =   $request->withAttribute( \Convo\Core\IAdminUser::class, $user);
 ```
 
-### Convoworks Prototype
+## Roadmap
+
+* Prefix our intent model on target platforms - It will enable users to manually create additional intents and entities directly on platform and not to be overwritten when model is propagated
+* Propagate platform system events - Ability to reference some platform intent or entity in a manner that it will be automatically turned on when we propagate Convoworks intent model
+* Component migration interface to packages - Ability to migrate component definitions to the new version. Right now it is on the core level, but should be on the package.
+* Package files - ability to deploy files inside component packages to be used in services (mp3 audio prompts, images ...)
+* Increase unit test coverage - 
+
+
+## Convoworks Prototype
 
 You can check our example integration called Convoworks Prototype. You can [download](https://convoworks.com/downloads/) it and find more information [here](https://convoworks.com/meet-the-convoworks-prototype-plain-php-convoworks-integration-example/)
 
