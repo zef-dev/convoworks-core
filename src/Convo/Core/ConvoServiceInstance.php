@@ -129,6 +129,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Convo\Core\EvaluationContext $eval,
+        \Convo\Core\Params\IServiceParamsFactory $paramsFactory,
         \Convo\Core\IAdminUser $user,
         $serviceId
     )
@@ -136,6 +137,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $this->_logger = $logger;
         $this->_serviceId = $serviceId;
         $this->_eval = $eval;
+        $this->_serviceParamsFactory = $paramsFactory;
     }
 
     public function getComponentId()
@@ -265,20 +267,16 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     // RUN
     /**
-     * @param \Convo\Core\Params\IServiceParamsFactory $paramsFactory
      * @param \Convo\Core\Workflow\IConvoRequest $request
      * @param \Convo\Core\Workflow\IConvoResponse $response
      */
     public function run(
-        \Convo\Core\Params\IServiceParamsFactory $paramsFactory,
         \Convo\Core\Workflow\IConvoRequest $request,
         \Convo\Core\Workflow\IConvoResponse $response)
     {
         $this->_logger->debug( 'Processing request ['.$request.']');
 
         // INITIALIZE
-
-        $this->_serviceParamsFactory	=	$paramsFactory;
         $this->_request					=	$request;
         $this->_response				=	$response;
 

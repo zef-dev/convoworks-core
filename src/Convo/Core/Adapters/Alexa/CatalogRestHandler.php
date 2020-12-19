@@ -33,7 +33,12 @@ class CatalogRestHandler implements \Psr\Http\Server\RequestHandlerInterface
 	 */
 	private $_convoServiceDataProvider;
 
-	public function __construct($logger, $httpFactory, $adminUserDataProvider, $convoServiceFactory, $serviceDataProvider)
+	/**
+	 * @var \Convo\Core\Params\IServiceParamsFactory
+	 */
+	private $_convoServiceParamsFactory;
+
+	public function __construct($logger, $httpFactory, $adminUserDataProvider, $convoServiceFactory, $serviceDataProvider, $convoServiceParamsFactory)
 	{
 		$this->_logger = $logger;
 		$this->_httpFactory = $httpFactory;
@@ -42,6 +47,7 @@ class CatalogRestHandler implements \Psr\Http\Server\RequestHandlerInterface
 
 		$this->_convoServiceFactory = $convoServiceFactory;
 		$this->_convoServiceDataProvider = $serviceDataProvider;
+		$this->_convoServiceParamsFactory = $convoServiceParamsFactory;
 	}
 
 	public function handle(ServerRequestInterface $request): ResponseInterface
@@ -77,7 +83,7 @@ class CatalogRestHandler implements \Psr\Http\Server\RequestHandlerInterface
 			$user, $serviceId, $platform, $version
 		);
 		$instance = $this->_convoServiceFactory->getService(
-			$user, $serviceId, $convo_version
+			$user, $serviceId, $convo_version, $this->_convoServiceParamsFactory
 		);
 
 		/* @var \Convo\Core\Workflow\ICatalogSource $catalog */

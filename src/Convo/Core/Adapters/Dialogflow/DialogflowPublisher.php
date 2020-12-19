@@ -25,6 +25,11 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
     private $_convoServiceFactory;
 
     /**
+     * @var \Convo\Core\Params\IServiceParamsFactory
+     */
+    private $_convoServiceParamsFactory;
+
+    /**
      * @var \Convo\Core\Factory\PackageProviderFactory
      */
     private $_packageProviderFactory;
@@ -45,18 +50,20 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $serviceId,
         $serviceFactory,
         $serviceDataProvider,
+        $convoServiceParamsFactory,
         $packageProviderFactory,
         $dialogflowApiFactory,
         $mediaService,
         $serviceReleaseManager
     )
     {
-        parent::__construct( $logger, $user, $serviceId, $serviceDataProvider, $serviceReleaseManager);
+        parent::__construct( $logger, $user, $serviceId, $serviceDataProvider, $convoServiceParamsFactory, $serviceReleaseManager);
 
-        $this->_convoServiceFactory     =   $serviceFactory;
-        $this->_packageProviderFactory  =   $packageProviderFactory;
-        $this->_dialogflowApiFactory    =   $dialogflowApiFactory;
-        $this->_mediaService            =   $mediaService;
+        $this->_convoServiceFactory         =   $serviceFactory;
+        $this->_convoServiceParamsFactory   =   $convoServiceParamsFactory;
+        $this->_packageProviderFactory      =   $packageProviderFactory;
+        $this->_dialogflowApiFactory        =   $dialogflowApiFactory;
+        $this->_mediaService                =   $mediaService;
     }
 
     public function getPlatformId()
@@ -231,8 +238,12 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
     	$existing_model = $this->_getDialogflowExportFiles();
 
-    	$service = $this->_convoServiceFactory->getService($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
-//         $model = $service->getServiceIntentModel();
+    	$service = $this->_convoServiceFactory->getService(
+            $this->_user,
+            $this->_serviceId,
+            IPlatformPublisher::MAPPING_TYPE_DEVELOP,
+            $this->_convoServiceParamsFactory
+        );
 
         /** @var \Convo\Core\Intent\IIntentDriven $intent_drivens */
         $intent_drivens    =   $service->findChildren( '\Convo\Core\Intent\IIntentDriven');

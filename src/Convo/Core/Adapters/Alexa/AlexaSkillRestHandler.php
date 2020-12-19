@@ -97,7 +97,7 @@ class AlexaSkillRestHandler implements RequestHandlerInterface
             throw new \Convo\Core\Rest\NotFoundException( 'Service variant ['.$serviceId.']['.$variant.'] not found', 0, $e);
         }
 
-    	$service 	=	$this->_convoServiceFactory->getService( $owner, $serviceId, $version_id);
+    	$service 	=	$this->_convoServiceFactory->getService( $owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
 
         $this->_logger->debug("Running variant [$variant] of [$serviceId]");
 
@@ -110,7 +110,7 @@ class AlexaSkillRestHandler implements RequestHandlerInterface
 
         $this->_logger->debug('Running with request [' . $text_request . ']');
 
-        $service->run($this->_convoServiceParamsFactory, $text_request, $text_response);
+        $service->run($text_request, $text_response);
 
         $this->_logger->debug('Got response [' . $text_response . ']');
 

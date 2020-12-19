@@ -102,8 +102,8 @@ class ActionsRestHandler implements RequestHandlerInterface
         $text_response = new ActionsCommandResponse($googleActionsIntentResolver, $googleActionsElements);
 
         /**  @var ConvoServiceInstance $service */
-        $service = $this->_convoServiceFactory->getService( $owner, $serviceId, $version_id);
-        $service->run( $this->_convoServiceParamsFactory, $client, $text_response);
+        $service = $this->_convoServiceFactory->getService( $owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
+        $service->run($client, $text_response);
 
         $json   		=   $text_response->getPlatformResponse();
 
