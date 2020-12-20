@@ -2,9 +2,11 @@
 
 namespace Convo\Core;
 
+use Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest;
 use Convo\Core\Intent\EntityModel;
 use Convo\Core\Intent\IntentModel;
 use Convo\Core\Util\ArrayUtil;
+use Convo\Core\Util\StrUtil;
 use Zef\Zel\ArrayResolver;
 use Zef\Zel\ObjectResolver;
 use Convo\Core\Workflow\IRunnableBlock;
@@ -624,13 +626,25 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
      */
     public function getServiceParams( $scopeType)
     {
-        $scope		=	new \Convo\Core\Params\RequestParamsScope( $this->_request, $scopeType, \Convo\Core\Params\IServiceParamsScope::LEVEL_TYPE_SERVICE);
+        if (!$this->_request) {
+            $request = new DefaultTextCommandRequest(StrUtil::uuidV4(), StrUtil::uuidV4(), StrUtil::uuidV4(), StrUtil::uuidV4(), '', true);
+        } else {
+            $request = $this->_request;
+        }
+
+        $scope		=	new \Convo\Core\Params\RequestParamsScope($request, $scopeType, \Convo\Core\Params\IServiceParamsScope::LEVEL_TYPE_SERVICE);
         return $this->_serviceParamsFactory->getServiceParams( $scope);
     }
 
     public function getComponentParams( $scopeType, $component)
     {
-        $scope	=	new \Convo\Core\Params\ComponentParamsScope( $component, $this->_request, $scopeType);
+        if (!$this->_request) {
+            $request = new DefaultTextCommandRequest(StrUtil::uuidV4(), StrUtil::uuidV4(), StrUtil::uuidV4(), StrUtil::uuidV4(), '', true);
+        } else {
+            $request = $this->_request;
+        }
+
+        $scope	=	new \Convo\Core\Params\ComponentParamsScope( $component, $request, $scopeType);
         return $this->_serviceParamsFactory->getServiceParams( $scope);
     }
 
