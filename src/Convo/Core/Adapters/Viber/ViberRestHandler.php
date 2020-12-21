@@ -98,7 +98,7 @@ class ViberRestHandler implements RequestHandlerInterface
             throw new \Convo\Core\Rest\NotFoundException( 'Service variant ['.$serviceId.']['.$variant.'] not found', 0, $e);
         }
 
-        $service 	=	$this->_convoServiceFactory->getService( $owner, $serviceId, $version_id);
+        $service 	=	$this->_convoServiceFactory->getService( $owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
         $servicePlatformConfig = $this->_convoServiceDataProvider->getServicePlatformConfig(
             $owner,
             $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
@@ -120,7 +120,7 @@ class ViberRestHandler implements RequestHandlerInterface
             }
 
             $viberCommandResponse = new ViberCommandResponse();
-            $service->run($this->_convoServiceParamsFactory, $viberCommandRequest, $viberCommandResponse);
+            $service->run($viberCommandRequest, $viberCommandResponse);
 
             $viberCommandResponse->setSenderName($serviceId);
             $viberCommandResponse->setReceiver($viberCommandRequest->getSessionId());

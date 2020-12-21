@@ -8,6 +8,7 @@ use Convo\Core\Util\ArrayUtil;
 use Zef\Zel\ArrayResolver;
 use Zef\Zel\ObjectResolver;
 use Convo\Core\Workflow\IRunnableBlock;
+use Convo\Core\Params\NoRequestParamsException;
 
 class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerComponent, \Convo\Core\Workflow\IIdentifiableComponent
 {
@@ -129,6 +130,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Convo\Core\EvaluationContext $eval,
+        \Convo\Core\Params\IServiceParamsFactory $paramsFactory,
         \Convo\Core\IAdminUser $user,
         $serviceId
     )
@@ -136,6 +138,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $this->_logger = $logger;
         $this->_serviceId = $serviceId;
         $this->_eval = $eval;
+        $this->_serviceParamsFactory = $paramsFactory;
     }
 
     public function getComponentId()
@@ -265,20 +268,16 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     // RUN
     /**
-     * @param \Convo\Core\Params\IServiceParamsFactory $paramsFactory
      * @param \Convo\Core\Workflow\IConvoRequest $request
      * @param \Convo\Core\Workflow\IConvoResponse $response
      */
     public function run(
-        \Convo\Core\Params\IServiceParamsFactory $paramsFactory,
         \Convo\Core\Workflow\IConvoRequest $request,
         \Convo\Core\Workflow\IConvoResponse $response)
     {
         $this->_logger->debug( 'Processing request ['.$request.']');
 
         // INITIALIZE
-
-        $this->_serviceParamsFactory	=	$paramsFactory;
         $this->_request					=	$request;
         $this->_response				=	$response;
 
@@ -499,7 +498,11 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         // 		$this->_logger->debug( 'Starting context ['.print_r( $context, true).']');
 
         // PAARAMS
-        $context			=	array_merge( $this->_getAllServiceParams(), $context);
+        try {
+            $context			=	array_merge( $this->_getAllServiceParams(), $context);
+        } catch ( NoRequestParamsException $e) {
+            $this->_logger->debug( $e->getMessage());
+        }
 
         // VARIABLES
         $variables          =   $this->_resolveVariables($this->_variables);
@@ -550,6 +553,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     /**
      * @return array
+     * @throws NoRequestParamsException
      */
     private function _getAllServiceParams()
     {
@@ -621,17 +625,31 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     // EXECUTION CONTEXT
     /**
      * @param string $scopeType
+     * @throws NoRequestParamsException
      * @throws \Exception
      * @return \Convo\Core\Params\IServiceParams
      */
     public function getServiceParams( $scopeType)
     {
+        if (!$this->_request) {
+            throw new NoRequestParamsException( 'Service params can be used only inside service request');
+        }
         $scope		=	new \Convo\Core\Params\RequestParamsScope( $this->_request, $scopeType, \Convo\Core\Params\IServiceParamsScope::LEVEL_TYPE_SERVICE);
         return $this->_serviceParamsFactory->getServiceParams( $scope);
     }
 
+    /**
+     * @param string $scopeType
+     * @param \Convo\Core\Workflow\IBasicServiceComponent $component
+     * @throws NoRequestParamsException
+     * @throws \Exception
+     * @return \Convo\Core\Params\IServiceParams
+     */
     public function getComponentParams( $scopeType, $component)
     {
+        if (!$this->_request) {
+            throw new NoRequestParamsException( 'Component params can be used only inside service request');
+        }
         $scope	=	new \Convo\Core\Params\ComponentParamsScope( $component, $this->_request, $scopeType);
         return $this->_serviceParamsFactory->getServiceParams( $scope);
     }

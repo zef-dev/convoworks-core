@@ -139,6 +139,7 @@ class PlatformPublisherFactory
 				$serviceId,
 				$this->_convoServiceFactory,
 				$this->_convoServiceDataProvider,
+				$this->_convoServiceParamsFactory,
 				$this->_packageProviderFactory,
 				$this->_dialogflowApiFactory,
 				$this->_mediaService,

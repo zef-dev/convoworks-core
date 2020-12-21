@@ -118,7 +118,7 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 
 		$delegate_nlp		=	$platform_config['convo_chat']['delegateNlp'] ?? null;
 
-		$service			=	$this->_convoServiceFactory->getService( $owner, $serviceId, $version_id);
+		$service			=	$this->_convoServiceFactory->getService($owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
 
 		$text_request		=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest(
 			$serviceId, $device_id, $device_id, $device_id, $text, $is_init, false /* <- temp */, $delegate_nlp);
@@ -132,7 +132,7 @@ class ConvoChatRestHandler implements RequestHandlerInterface
             $text_request     =   $this->_platformRequestFactory->toIntentRequest($text_request, $owner, $serviceId, $delegate_nlp);
 		}
 
-		$service->run( $this->_convoServiceParamsFactory, $text_request, $text_response);
+		$service->run($text_request, $text_response);
 
 		$data	=	array(
 				'service_state' => $service->getServiceState(),

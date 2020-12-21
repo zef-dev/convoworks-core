@@ -366,7 +366,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	 */
 	public function export()
 	{
-	    $service	=   $this->_convoServiceFactory->getService($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+	    $service	=   $this->_convoServiceFactory->getService($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory);
 		$sys_config = isset($this->_adminUserDataProvider->getPlatformConfig($this->_user->getId())[$this->getPlatformId()]) ?
                       $this->_adminUserDataProvider->getPlatformConfig($this->_user->getId())[$this->getPlatformId()] : [];;
                       $config		=   $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);

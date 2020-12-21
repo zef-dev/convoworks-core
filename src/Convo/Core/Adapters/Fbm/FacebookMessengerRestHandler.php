@@ -198,7 +198,7 @@ class FacebookMessengerRestHandler implements RequestHandlerInterface
             throw new \Convo\Core\Rest\NotFoundException( 'Service variant ['.$serviceId.']['.$variant.'] not found', 0, $e);
         }
 
-        $service 	=	$this->_convoServiceFactory->getService( $owner, $serviceId, $version_id);
+        $service 	=	$this->_convoServiceFactory->getService( $owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
         $servicePlatformConfig = $this->_convoServiceDataProvider->getServicePlatformConfig(
             new RestSystemUser(),
             $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
@@ -219,7 +219,7 @@ class FacebookMessengerRestHandler implements RequestHandlerInterface
                 $this->_logger->info("Debug request with delegate [$debugData]");
             }
 
-            $service->run($this->_convoServiceParamsFactory, $messenger_request, $messenger_response);
+            $service->run($messenger_request, $messenger_response);
 
             $senderId = $entry["messaging"][0]["sender"]["id"];
             if (count($messenger_response->getTexts()) > 0) {

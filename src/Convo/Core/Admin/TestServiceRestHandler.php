@@ -77,14 +77,14 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		    $text_request     =   $this->_platformRequestFactory->toIntentRequest($text_request, $user, $service_id, $platform_id);
 		}
 
-		$service        =   $this->_convoServiceFactory->getService( $user, $service_id, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+		$service        =   $this->_convoServiceFactory->getService( $user, $service_id, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory);
 		$exception = [
 		    "exceptionMessage" => null,
 		    "exceptionStackTrace" => null,
         ];
 
         try {
-            $service->run( $this->_convoServiceParamsFactory, $text_request, $text_response);
+            $service->run($text_request, $text_response);
         } catch (\Exception $e) {
             $exception["exceptionMessage"] = $e->getMessage();
             $stack = explode('#', $e->getTraceAsString());

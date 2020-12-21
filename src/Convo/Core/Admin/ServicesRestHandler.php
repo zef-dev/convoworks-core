@@ -30,6 +30,11 @@ class ServicesRestHandler implements RequestHandlerInterface
 	 */
 	private $_convoServiceDataProvider;
 
+    /**
+     * @var \Convo\Core\Params\IServiceParamsFactory
+     */
+	private $_convoServiceParamsFactory;
+
 	/**
 	 * @var \Convo\Core\Factory\PackageProviderFactory
 	 */
@@ -49,7 +54,8 @@ class ServicesRestHandler implements RequestHandlerInterface
 	    $logger,
         $httpFactory,
         $serviceFactory,
-        $serviceDataProvider,
+		$serviceDataProvider,
+		$convoServiceParamsFactory,
         $packageProviderFactory,
         $platformPublisherFactory,
         $adminUserDataProvider
@@ -59,6 +65,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 		$this->_httpFactory					= 	$httpFactory;
 		$this->_convoServiceFactory			= 	$serviceFactory;
 		$this->_convoServiceDataProvider	= 	$serviceDataProvider;
+		$this->_convoServiceParamsFactory	=	$convoServiceParamsFactory;
 		$this->_packageProviderFactory	    = 	$packageProviderFactory;
 		$this->_platformPublisherFactory    =   $platformPublisherFactory;
 		$this->_adminUserDataProvider       =   $adminUserDataProvider;
@@ -246,7 +253,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 	private function _performConvoPathServiceIdPathPreviewGet(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId)
 	{
 		$instance = $this->_convoServiceFactory->getService(
-		    $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP
+		    $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory
 		);
 
 		$previewBuilder = new ServicePreviewBuilder($serviceId);
@@ -260,7 +267,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 	private function _performServicesPathServiceIdPathPreviewPathBlockIdGet(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId, $blockId)
     {
         $instance = $this->_convoServiceFactory->getService(
-            $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP
+            $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory
         );
 
         $blocks = $instance->getBlocks();

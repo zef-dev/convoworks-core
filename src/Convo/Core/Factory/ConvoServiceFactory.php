@@ -45,7 +45,7 @@ class ConvoServiceFactory
 	 * @param string $versionId
 	 * @return \Convo\Core\ConvoServiceInstance
 	 */
-	public function getService( \Convo\Core\IAdminUser $user, $serviceId, $versionId)
+	public function getService(\Convo\Core\IAdminUser $user, $serviceId, $versionId, $convoServiceParamsFactory)
 	{
 		$this->_logger->debug( 'Creating service ['.$serviceId.']['.$versionId.']');
 
@@ -55,7 +55,13 @@ class ConvoServiceFactory
         $provider = $this->_packageProviderFactory->getProviderFromPackageIds($data['packages']);
         $eval = new \Convo\Core\EvaluationContext($this->_logger, $provider);
 
-		$service	=	new \Convo\Core\ConvoServiceInstance($this->_logger, $eval, $user, $serviceId);
+		$service	=	new \Convo\Core\ConvoServiceInstance(
+			$this->_logger,
+			$eval,
+			$convoServiceParamsFactory,
+			$user,
+			$serviceId
+		);
 		$service->setVariables( $data['variables']);
 		$service->setPreviewVariables( $data['preview_variables']);
 		$service->setPackageIds($data['packages']);
