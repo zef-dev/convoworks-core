@@ -1,12 +1,12 @@
 # CHANGELOG
 
-
 ## [Current development]
 
-* Convo request is now optional in evaluateString() process - #11
-
-
 ## [Releases]
+
+### 0.18.2 - 2020-12-21
+
+* Convo request is now optional in evaluateString() process - #11
 
 ### 0.18.0 - 2020-12-05
 
