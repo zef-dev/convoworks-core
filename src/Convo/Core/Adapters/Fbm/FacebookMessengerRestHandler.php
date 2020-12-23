@@ -210,7 +210,7 @@ class FacebookMessengerRestHandler implements RequestHandlerInterface
             $messenger_request->setEntry($entry);
             $messenger_request->init();
 
-            $messenger_response = new FacebookMessengerCommandResponse();
+            $messenger_response = new FacebookMessengerCommandResponse($messenger_request);
             $delegationNlp = $servicePlatformConfig["facebook_messenger"]["delegateNlp"] ?? null;
 
             if ($delegationNlp) {
@@ -228,6 +228,16 @@ class FacebookMessengerRestHandler implements RequestHandlerInterface
                 $data = $messenger_response->getPlatformResponse();
                 $facebookMessengerApi->callSendApi($senderId, $data);
               }
+            }
+
+            if ($messenger_request->getSelectedItemIndex() > -1) {
+                $data = $messenger_response->getPlatformResponse();
+                $facebookMessengerApi->callSendApi($senderId, $data);
+            }
+
+            if (!empty($messenger_request->getSelectedCardAction())) {
+                $data = $messenger_response->getPlatformResponse();
+                $facebookMessengerApi->callSendApi($senderId, $data);
             }
         }
     }

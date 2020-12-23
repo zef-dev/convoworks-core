@@ -1,9 +1,14 @@
 <?php
 namespace Convo\Core\Adapters\Viber;
 
-class ViberCommandRequest implements \Convo\Core\Workflow\IConvoRequest
+use Convo\Core\Workflow\IConvoCardRequest;
+use Convo\Core\Workflow\IConvoListRequest;
+
+class ViberCommandRequest implements \Convo\Core\Workflow\IConvoRequest, IConvoListRequest, IConvoCardRequest
 {
     const PLATFORM_ID	=	'viber';
+    const LIST_ITEM	    =	'list_item';
+    const CARD_ACTION   =	'card_action';
     private $_serviceId = "";
     private $_sessionId = "";
     private $_requestId = "";
@@ -216,5 +221,36 @@ class ViberCommandRequest implements \Convo\Core\Workflow\IConvoRequest
     public function __toString()
     {
         return get_class( $this).'['.self::PLATFORM_ID.']['.$this->_serviceId.']['.$this->_text.']'. '['.$this->_sessionId.']';
+    }
+
+    /**
+     * @return int
+     */
+    public function getSelectedItemIndex() : int
+    {
+        $selectedItemIndex = -1;
+        $pos = strpos($this->_text, self::LIST_ITEM);
+        if ($pos !== false) {
+            $int = filter_var($this->_text, FILTER_SANITIZE_NUMBER_INT);
+            if ($int !== false && is_numeric($int) && $int > -1) {
+                $selectedItemIndex = intval($int);
+            }
+        }
+
+        return $selectedItemIndex;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSelectedCardAction() : string
+    {
+        $selectedAction = "";
+        $pos = strpos($this->_text, self::CARD_ACTION);
+        if ($pos !== false) {
+            $selectedAction = str_replace(self::CARD_ACTION . "_","", $this->_text);
+        }
+
+        return $selectedAction;
     }
 }

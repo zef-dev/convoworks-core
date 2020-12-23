@@ -3,10 +3,14 @@
 namespace Convo\Core\Adapters\Alexa;
 
 use Convo\Core\Workflow\IConvoAudioRequest;
+use Convo\Core\Workflow\IConvoCardRequest;
+use Convo\Core\Workflow\IConvoListRequest;
 
-class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, IConvoAudioRequest
+class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, IConvoAudioRequest, IConvoListRequest, IConvoCardRequest
 {
 	const PLATFORM_ID	=	'amazon';
+	const LIST_ITEM	    =	'list_item';
+	const CARD_ACTION   =	'card_action';
 
 	private $_serviceId;
 
@@ -171,7 +175,7 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	public function isEmpty() {
 	    $isEmpty = empty( $this->_text) && empty( $this->_intentName);
 
-	    if (is_numeric($this->_selectedOption)) {
+	    if ($this->getSelectedItemIndex() > -1) {
 	        $isEmpty = false;
 	    }
 
@@ -189,7 +193,7 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 
 	public function getSelectedOption()
 	{
-	    return $this->_selectedOption;
+	    return $this->getSelectedItemIndex();
 	}
 
 	public  function getIsDisplaySupported()
@@ -374,5 +378,39 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
     public function getOffset()
     {
         return $this->getOffsetMilliseconds();
+    }
+
+    /**
+     * @return int
+     */
+    public function getSelectedItemIndex() : int
+    {
+        $selectedItemIndex = -1;
+        if (!empty($this->_selectedOption)) {
+            $pos = strpos($this->_selectedOption, self::LIST_ITEM);
+            $this->_logger->debug("Position of request[" . $pos . "]");
+            if ($pos !== false) {
+                $int = filter_var($this->_selectedOption, FILTER_SANITIZE_NUMBER_INT);
+                if ($int !== false && is_numeric($int) && $int > -1) {
+                    $selectedItemIndex = intval($int);
+                }
+            }
+        }
+
+        return $selectedItemIndex;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSelectedCardAction() : string
+    {
+        $selectedAction = "";
+        $pos = strpos($this->_selectedOption, self::CARD_ACTION);
+        if ($pos !== false) {
+            $selectedAction = str_replace(self::CARD_ACTION . "_","", $this->_selectedOption);
+        }
+
+        return $selectedAction;
     }
 }

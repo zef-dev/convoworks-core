@@ -4,6 +4,8 @@
 namespace Convo\Core\Adapters\Google\Common\Elements;
 
 use Convo\Core\Adapters\Google\Common\Intent\IActionsIntent;
+use Convo\Core\Workflow\IVisualCard;
+use Convo\Core\Workflow\IVisualItem;
 
 class GoogleActionsElements
 {
@@ -38,23 +40,24 @@ class GoogleActionsElements
         return $simpleResponse;
     }
 
-    public function getBasicCardResponseElement($value) {
+    public function getBasicCardResponseElement(IVisualCard $value) {
+        $card = $value->getCardVisualItem();
         $basicCardBody = array(
-            "formattedText" => $value["data_item_description_1"]
+            "formattedText" => $card->getDescription()
         );
 
-        if (!empty($value["data_item_title"])) {
-            $basicCardBody["title"] = $value["data_item_title"];
+        if (!empty($card->getTitle())) {
+            $basicCardBody["title"] = $card->getTitle();
         }
 
-        if (!empty($value["data_item_subtitle"])) {
-            $basicCardBody["subtitle"] = $value["data_item_subtitle"];
+        if (!empty($card->getSubtitle())) {
+            $basicCardBody["subtitle"] = $card->getSubtitle();
         }
 
-        if (!empty($value["data_item_image_url"]) && !empty($value["data_item_image_text"])) {
+        if (!empty($card->getImageURL()) && !empty($card->getImageText())) {
             $basicCardBody["image"] = array (
-                "url" => $value["data_item_image_url"],
-                "accessibilityText" => $value["data_item_image_text"],
+                "url" => $card->getImageURL(),
+                "accessibilityText" => $card->getImageText(),
             );
         }
 

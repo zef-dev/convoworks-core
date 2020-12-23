@@ -7,15 +7,19 @@ use Convo\Core\Adapters\Google\Common\ICapability;
 use Convo\Core\Adapters\Google\Common\Intent\IActionsIntent;
 use Convo\Core\Util\StrUtil;
 use Convo\Core\Workflow\IConvoAudioRequest;
+use Convo\Core\Workflow\IConvoCardRequest;
+use Convo\Core\Workflow\IConvoListRequest;
 use Convo\Core\Workflow\IIntentAwareRequest;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterface, IConvoAudioRequest
+class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterface, IConvoAudioRequest, IConvoListRequest, IConvoCardRequest
 {
-    const PLATFORM_ID   =   'dialogflow';
+    const PLATFORM_ID                   =   'dialogflow';
     const DEFAULT_CONVERSATION_TOKEN    =   '{ "state": null, "data": {} }';
+    const LIST_ITEM	                    =	'list_item';
+    const CARD_ACTION                   =	'card_action';
 
     private $_data;
     private $_serviceId;
@@ -243,7 +247,7 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
             $isEmpty = false;
         }
 
-        if (is_numeric($this->_selectedOption)) {
+        if ($this->getSelectedItemIndex() > -1) {
             $isEmpty = false;
         }
 
@@ -362,7 +366,7 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
     }
 
     public function getSelectedOption() {
-        return $this->_selectedOption;
+        return $this->getSelectedItemIndex();
     }
 
     public function getIsWebBrowserSupported() {
@@ -457,5 +461,39 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
     public function getOffset()
     {
         return 0;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSelectedItemIndex() : int
+    {
+        $selectedItemIndex = -1;
+        if (!empty($this->_selectedOption)) {
+            $pos = strpos($this->_selectedOption, self::LIST_ITEM);
+            if ($pos !== false) {
+                $int = filter_var($this->_selectedOption, FILTER_SANITIZE_NUMBER_INT);
+                if ($int !== false && is_numeric($int) && $int > -1) {
+                    $selectedItemIndex = intval($int);
+                }
+            }
+        }
+
+        return $selectedItemIndex;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSelectedCardAction() : string
+    {
+        $selectedCardAction = "";
+        $isFallback = isset($this->_data['queryResult']['intent']['isFallback']);
+
+        if ($isFallback) {
+            $selectedCardAction = strtolower(preg_replace('/\s+/', '_', $this->_text));
+        }
+
+        return $selectedCardAction;
     }
 }

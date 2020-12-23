@@ -5,9 +5,15 @@ declare(strict_types=1);
 namespace Convo\Core\Adapters\Alexa;
 
 use Convo\Core\Media\Mp3File;
+use Convo\Core\Workflow\ICardAction;
 use Convo\Core\Workflow\IConvoAudioResponse;
+use Convo\Core\Workflow\IConvoCardResponse;
+use Convo\Core\Workflow\IConvoListResponse;
+use Convo\Core\Workflow\IVisualCard;
+use Convo\Core\Workflow\IVisualItem;
+use Convo\Core\Workflow\IVisualList;
 
-class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse implements IConvoAudioResponse
+class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse implements IConvoAudioResponse, IConvoListResponse, IConvoCardResponse
 {
     private $_mp3url;
     private $_offsetMilliseconds;
@@ -17,8 +23,15 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 
     private $_mode;
 
+    /**
+     * @var $_dataList IVisualList
+     */
     private $_dataList;
     private $_selectedOption;
+
+    /**
+     * @var $_dataList IVisualCard
+     */
     private $_dataCard;
 
     private $_backButton;
@@ -108,7 +121,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         return $this->_mode;
     }
 
-    public function setDataList($dataList)
+    public function setDataList(IVisualList $dataList)
     {
         $this->_dataList = $dataList;
     }
@@ -117,7 +130,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         return $this->_dataList;
     }
 
-    public function setDataCard($dataCard)
+    public function setDataCard(IVisualCard $dataCard)
     {
         $this->_dataCard = $dataCard;
     }
@@ -183,36 +196,38 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         }
     }
 
-    public function prepareItems() {
+    private function _prepareItems($listItemsFromListDefinition) {
         $listItems = array();
-        foreach ($this->_dataList['list_items'] as $listItem) {
+        $index = 0;
+        foreach ($listItemsFromListDefinition as $listItem) {
+            /**
+             * @var $listItem IVisualItem
+             */
+
             $obj = array(
-                'token' => $listItem['list_item_key'],
+                'token' => 'list_item_' . strval($index),
                 'image' => [
                     'sources' => [
                         [
-                            'url' => $listItem['list_item_image_url'],
+                            'url' => $listItem->getImageURL(),
                         ]
                     ],
-                    'contentDescription' => $listItem['list_item_image_text']
+                    'contentDescription' => $listItem->getImageText()
                 ],
                 'textContent' => [
                     'primaryText' => [
                         'type' => 'RichText',
-                        'text' => $listItem['list_item_title']
+                        'text' => $listItem->getTitle()
                     ],
                     'secondaryText' => [
                         'type' => 'PlainText',
-                        'text' => $listItem['list_item_description_1']
-                    ],
-                    'tertiaryText' => [
-                        'type' => 'PlainText',
-                        'text' => $listItem['list_item_description_2']
+                        'text' => $listItem->getDescription()
                     ]
                 ]
             );
 
             array_push($listItems, $obj);
+            $index++;
         }
 
         return $listItems;
@@ -225,12 +240,12 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
             'response' => array(),
         );
 
-        $this->_logger->debug('List template ['.print_r($this->_dataList['list_template'], true).']');
+        $this->_logger->debug('List template ['.print_r($this->_dataList->getListType(), true).']');
 
-        if (strtolower($this->_dataList['list_template']) == 'list') {
+        if (strtolower($this->_dataList->getListType()) == 'list') {
             $listType = 'ListTemplate1';
         }
-        else if (strtolower($this->_dataList['list_template']) == 'carousel') {
+        else if (strtolower($this->_dataList->getListType()) == 'carousel') {
             $listType = 'ListTemplate2';
         }
         else {
@@ -245,10 +260,10 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                 'type' => 'Display.RenderTemplate',
                 'template' => [
                     'type' => $listType,
-                    'title' => $this->_dataList['list_title'],
+                    'title' => $this->_dataList->getListTitle(),
                     'backButton' => 'HIDDEN',
                     'token' => 0,
-                    'listItems' => $this->prepareItems()
+                    'listItems' => $this->_prepareItems($this->_dataList->getListItems())
                 ]
             ];
         }
@@ -267,11 +282,22 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         $this->_logger->debug('Back Button value ' . '['.$this->_backButton.']');
         if (!empty($this->_dataCard)) {
 
-            $title = $this->_dataCard['data_item_title'];
-            $image = $this->_dataCard['data_item_image_url'];
-            $contentDescription = $this->_dataCard['data_item_image_text'];
-            $primaryText = $this->_dataCard['data_item_description_1'];
-            $secondaryText = $this->_dataCard['data_item_description_2'];
+            $title = $this->_dataCard->getCardVisualItem()->getTitle();
+            $image = $this->_dataCard->getCardVisualItem()->getImageURL();
+            $contentDescription = $this->_dataCard->getCardVisualItem()->getImageText();
+            $primaryText = $this->_dataCard->getCardVisualItem()->getDescription();
+            $secondaryText = array_map( function ( $cardAction) {
+                /**
+                 * @var $cardAction ICardAction
+                 */
+                    $cardActionKey = $cardAction->getCardActionKey();
+                    $cardActionName = $cardAction->getCardActionName();
+                    return "<action value='$cardActionKey'>" . $cardActionName. "</action>";
+                },
+                $this->_dataCard->getCardActions()
+            );
+
+            $secondaryText = implode(" | ", $secondaryText);
 
             $data['response']['outputSpeech']['type'] = 'SSML';
             $data['response']['outputSpeech']['ssml'] = $this->getTextSsml();
@@ -293,12 +319,12 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                     ],
                     'textContent' => [
                         'primaryText' => [
-                            'text' => $primaryText,
-                            'type' => 'RichText'
+                            'type' => 'RichText',
+                            'text' => $primaryText
                         ],
                         'secondaryText' => [
-                            'text' => $secondaryText,
-                            'type' => 'PlainText'
+                            'type' => 'RichText',
+                            'text' => $secondaryText
                         ]
                     ]
                 ]
@@ -585,6 +611,20 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     {
         $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
         $this->setMode("clearEnqueue");
+        return $this->getPlatformResponse();
+    }
+
+    public function getListResponse(IVisualList $listDefinition): array
+    {
+        $this->prepareResponse(IAlexaResponseType::LIST_RESPONSE);
+        $this->setDataList($listDefinition);
+        return $this->getPlatformResponse();
+    }
+
+    public function getCardResponse(IVisualCard $cardItem): array
+    {
+        $this->prepareResponse(IAlexaResponseType::CARD_RESPONSE);
+        $this->setDataCard($cardItem);
         return $this->getPlatformResponse();
     }
 }

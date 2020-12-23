@@ -5,11 +5,16 @@ namespace Convo\Core\Adapters\Fbm;
 
 
 use Convo\Core\Util\StrUtil;
+use Convo\Core\Workflow\IConvoCardRequest;
+use Convo\Core\Workflow\IConvoListRequest;
 use Convo\Core\Workflow\IConvoRequest;
 
-class FacebookMessengerCommandRequest implements IConvoRequest
+class FacebookMessengerCommandRequest implements IConvoRequest, IConvoListRequest, IConvoCardRequest
 {
-    const PLATFORM_ID	=	'facebook_messenger';
+    const PLATFORM_ID	= 'facebook_messenger';
+    const LIST_ITEM	    = 'list_item';
+    const CARD_ACTION   = 'card_action';
+
     private $_serviceId;
     private $_isLaunchRequest = true;
 
@@ -216,5 +221,36 @@ class FacebookMessengerCommandRequest implements IConvoRequest
     public function __toString()
     {
         return get_class( $this).'['.self::PLATFORM_ID.']['.$this->_serviceId.']['.$this->_text.']'. '['.$this->_sessionId.']';
+    }
+
+    /**
+     * @return int
+     */
+    public function getSelectedItemIndex() : int
+    {
+        $selectedItemIndex = -1;
+        $pos = strpos($this->_postbackPayload, self::LIST_ITEM);
+        if ($pos !== false) {
+            $int = filter_var($this->_postbackPayload, FILTER_SANITIZE_NUMBER_INT);
+            if ($int !== false && is_numeric($int) && $int > -1) {
+                $selectedItemIndex = intval($int);
+            }
+        }
+
+        return $selectedItemIndex;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSelectedCardAction() : string
+    {
+        $selectedAction = "";
+        $pos = strpos($this->_postbackPayload, self::CARD_ACTION);
+        if ($pos !== false) {
+            $selectedAction = str_replace(self::CARD_ACTION . "_","", $this->_postbackPayload);
+        }
+
+        return $selectedAction;
     }
 }

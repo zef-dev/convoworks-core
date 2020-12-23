@@ -10,9 +10,15 @@ use Convo\Core\Adapters\Google\Common\IResponseType;
 use Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse;
 use Convo\Core\Params\IServiceParams;
 use Convo\Core\Media\Mp3File;
+use Convo\Core\Workflow\CardAction;
 use Convo\Core\Workflow\IConvoAudioResponse;
+use Convo\Core\Workflow\IConvoCardResponse;
+use Convo\Core\Workflow\IConvoListResponse;
+use Convo\Core\Workflow\IVisualCard;
+use Convo\Core\Workflow\IVisualItem;
+use Convo\Core\Workflow\IVisualList;
 
-class DialogflowCommandResponse extends DefaultTextCommandResponse implements IConvoAudioResponse
+class DialogflowCommandResponse extends DefaultTextCommandResponse implements IConvoAudioResponse, IConvoListResponse, IConvoCardResponse
 {
     private $_conversationToken = '{ "state": null, "data": {} }';
     private $_userStorage = "{\"data\":{}}";
@@ -107,10 +113,6 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
             case IResponseType::LIST:
             case IResponseType::CAROUSEL:
                 $this->_isSystemIntentInvolved = true;
-                $this->_value = [
-                    "ssml" => $this->getTextSsml(),
-                    "displayText" => $this->getText(),
-                ];
                 return $this->_prepareSimpleResponse();
             case IResponseType::BASIC_CARD:
                 return $this->_prepareBasicCardResponse();
@@ -184,7 +186,7 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
     private function _prepareSimpleResponse() {
         return array (
             "items" => array(
-                $this->_responseElement->getSimpleResponseElement("Conversation Response", $this->_value['ssml'], $this->_value['displayText'])
+                $this->_responseElement->getSimpleResponseElement("Conversation Response", $this->getTextSsml(), $this->getText())
             )
         );
     }
@@ -256,6 +258,28 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
             "displayText" => $text,
         ];
         $this->prepareResponse(IResponseType::SIMPLE_RESPONSE, $speechText);
+        return json_decode($this->getPlatformResponse(), true);
+    }
+
+    public function getCardResponse(IVisualCard $cardItem) : array
+    {
+        foreach ($cardItem->getCardActions() as $cardAction) {
+            /**
+             * @var $cardAction CardAction
+             */
+            $suggestion = array(
+                "title" => $cardAction->getCardActionName()
+            );
+            array_push($this->_suggestions, $suggestion);
+        }
+
+        $this->prepareResponse(IResponseType::BASIC_CARD, $cardItem);
+        return json_decode($this->getPlatformResponse(), true);
+    }
+
+    public function getListResponse(IVisualList $listDefinition) : array
+    {
+        $this->prepareResponse(IResponseType::LIST, $listDefinition);
         return json_decode($this->getPlatformResponse(), true);
     }
 }
