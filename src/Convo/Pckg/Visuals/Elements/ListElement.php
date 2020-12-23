@@ -5,6 +5,8 @@ use Convo\Core\Adapters\Google\Common\IResponseType;
 use Convo\Core\Adapters\Alexa\IAlexaResponseType;
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
+use Convo\Core\Workflow\VisualItem;
+use Convo\Core\Workflow\VisualList;
 
 /**
  * Class ListElement
@@ -85,23 +87,17 @@ class ListElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
                 'first' => $i === $start,
                 'last' => $i === $end
             ]);
-            array_push($listItems,
-                array(
-                    "list_item_key" => $this->evaluateString(strval($i)),
-                    "list_item_title" => $this->evaluateString($this->_listItemTitle),
-                    "list_item_description_1" => $this->evaluateString($this->_listItemDescription1),
-                    "list_item_description_2" => $this->evaluateString($this->_listItemDescription2),
-                    "list_item_image_url" => $this->evaluateString($this->_listItemImageUrl),
-                    "list_item_image_text" => $this->evaluateString($this->_listItemImageText),
-                )
+            $listItem = new VisualItem(
+                $this->evaluateString($this->_sanitizeString($this->_listItemTitle)),
+                $this->evaluateString($this->_sanitizeString($this->_listItemDescription1)),
+                $this->evaluateString($this->_sanitizeString($this->_listItemDescription2)),
+                $this->evaluateString($this->_listItemImageUrl),
+                $this->evaluateString($this->_sanitizeString($this->_listItemImageText))
             );
+            array_push($listItems, $listItem);
         }
 
-        $data = array(
-            "list_title" => $listTitle,
-            "list_template" => $listTemplate,
-            "list_items" => $listItems,
-        );
+        $data = new VisualList($listTitle, $listTemplate, $listItems);
 
         $this->_logger->debug('List element read method executed ['.print_r( $data, true).']');
 
@@ -112,7 +108,6 @@ class ListElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
             $response->prepareResponse(IResponseType::LIST, $data);
         }
 
-        // todo add handling for gactions and alexa
         if (is_a( $response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse'))
         {
 
@@ -130,11 +125,29 @@ class ListElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
                 $this->_logger->debug('Display is not supported on this device.');
             }
         }
+
+        if (is_a( $response, 'Convo\Core\Adapters\Fbm\FacebookMessengerCommandResponse'))
+        {
+            $this->_logger->debug('Facebook Messenger ['.$response->getText().']');
+            /* @var \Convo\Core\Adapters\Fbm\FacebookMessengerCommandResponse  $response */
+            $response->getListResponse($data);
+        }
+
+        if (is_a( $response, 'Convo\Core\Adapters\Viber\ViberCommandResponse'))
+        {
+            $this->_logger->debug('Viber ['.$response->getText().']');
+            /* @var \Convo\Core\Adapters\Viber\ViberCommandResponse  $response */
+            $response->getListResponse($data);
+        }
     }
 
     public function evaluateString( $string, $context=[]) {
         $own_params	= $this->getService()->getAllComponentParams( $this);
         return parent::evaluateString( $string, array_merge( $own_params, $context));
+    }
+
+    private function _sanitizeString($string) {
+        return str_replace('&', 'and', $string);
     }
 
     // UTIL

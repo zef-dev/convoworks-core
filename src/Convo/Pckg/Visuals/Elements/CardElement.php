@@ -5,6 +5,8 @@ use Convo\Core\Adapters\Google\Common\IResponseType;
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
 use Convo\Core\Adapters\Alexa\IAlexaResponseType;
+use Convo\Core\Workflow\VisualCard;
+use Convo\Core\Workflow\VisualItem;
 
 /**
  * Class CardElement
@@ -49,15 +51,16 @@ class CardElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 
         $params->setServiceParam('cardItem', $this->evaluateString($this->_dataItem));
 
-        $data = array(
-            "data_item_title" => $this->evaluateString($this->_dataItemTitle),
-            "data_item_subtitle" => $this->evaluateString($this->_dataItemSubtitle),
-            "data_item_description_1" => $this->evaluateString($this->_dataItemDescription1),
-            "data_item_description_2" => $this->evaluateString($this->_dataItemDescription2),
-            "data_item_description_3" => $this->evaluateString($this->_dataItemDescription3),
-            "data_item_image_url" => $this->evaluateString($this->_dataItemImageUrl),
-            "data_item_image_text" => $this->evaluateString($this->_dataItemImageText),
+        $cardDefinition = new VisualItem(
+            $this->evaluateString($this->_sanitizeString($this->_dataItemTitle)),
+            $this->evaluateString($this->_sanitizeString($this->_dataItemSubtitle)),
+            $this->evaluateString($this->_sanitizeString($this->_dataItemDescription1)),
+            $this->evaluateString($this->_dataItemImageUrl),
+            $this->evaluateString($this->_sanitizeString($this->_dataItemImageText))
         );
+
+        // TODO add new property card actions to render actions on cards
+        $data = new VisualCard($cardDefinition, []);
 
         $backButton	=   $this->evaluateString( $this->_backButton);
         $this->_logger->debug( 'Back Button ['.$backButton.']');
@@ -68,10 +71,9 @@ class CardElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
         {
             $this->_logger->debug('Google action invoked with dialogflow ['.$response->getText().']');
             /* @var \Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandResponse  $response */
-            $response->prepareResponse(IResponseType::BASIC_CARD, $data);
+            $response->getCardResponse($data);
         }
 
-        // todo add handling for gactions and alexa
         if (is_a( $response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse'))
         {
             $response->setDataCard( $data);
@@ -80,6 +82,7 @@ class CardElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
             $this->_logger->debug('Amazon command invoked ['.$response->getText().']');
 
             if ($request->getIntentType() == 'Display.ElementSelected') {
+                // todo determine if card action or list item was pressed
                 $params->setServiceParam('selected_option', $request->getSelectedOption());
                 $response->setSelectedOption($params->getServiceParam('selected_option'));
             }
@@ -87,18 +90,36 @@ class CardElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
             if ($request->getIsDisplaySupported() && $request->getIsDisplayInterfaceEnabled())
             {
                 /* @var \Convo\Core\Adapters\Alexa\AmazonCommandResponse  $response*/
-                $response->prepareResponse(IAlexaResponseType::CARD_RESPONSE);
+                $response->getCardResponse($data);
             }
             else
             {
                 $this->_logger->debug('Display is not supported on this device.');
             }
         }
+
+        if (is_a( $response, 'Convo\Core\Adapters\Fbm\FacebookMessengerCommandResponse'))
+        {
+            $this->_logger->debug('Facebook Messenger ['.$response->getText().']');
+            /* @var \Convo\Core\Adapters\Fbm\FacebookMessengerCommandResponse  $response */
+            $response->getCardResponse($data);
+        }
+
+        if (is_a( $response, 'Convo\Core\Adapters\Viber\ViberCommandResponse'))
+        {
+            $this->_logger->debug('Viber ['.$response->getText().']');
+            /* @var \Convo\Core\Adapters\Viber\ViberCommandResponse  $response */
+            $response->getCardResponse($data);
+        }
     }
 
     public function evaluateString( $string, $context=[]) {
         $own_params	= $this->getService()->getAllComponentParams( $this);
         return parent::evaluateString( $string, array_merge( $own_params, $context));
+    }
+
+    private function _sanitizeString($string) {
+        return str_replace('&', 'and', $string);
     }
 
     // UTIL
