@@ -56,7 +56,7 @@ class IfElement extends AbstractWorkflowContainerComponent implements IConversat
 //         $then_result = StrUtil::parseBoolean($this->evaluateString($this->_test));
         $then_result = $this->evaluateString($this->_test);
 
-        $this->_logger->debug('Got then result ['.$then_result.']');
+        // $this->_logger->debug('Got then result ['.$then_result.']');
 
         if ($then_result)
         {
