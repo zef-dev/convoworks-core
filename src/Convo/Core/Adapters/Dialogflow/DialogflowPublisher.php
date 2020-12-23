@@ -57,7 +57,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $serviceReleaseManager
     )
     {
-        parent::__construct( $logger, $user, $serviceId, $serviceDataProvider, $convoServiceParamsFactory, $serviceReleaseManager);
+        parent::__construct( $logger, $user, $serviceId, $serviceDataProvider, $serviceReleaseManager);
 
         $this->_convoServiceFactory         =   $serviceFactory;
         $this->_convoServiceParamsFactory   =   $convoServiceParamsFactory;
