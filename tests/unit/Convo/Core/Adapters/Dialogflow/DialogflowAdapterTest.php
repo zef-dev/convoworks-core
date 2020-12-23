@@ -3,6 +3,8 @@
 use Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandRequest;
 use Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandResponse;
 use Convo\Core\Util\Test\ConvoTestCase;
+use Convo\Core\Workflow\VisualCard;
+use Convo\Core\Workflow\VisualList;
 
 class DialogflowAdapterTest extends ConvoTestCase
 {
@@ -301,7 +303,92 @@ class DialogflowAdapterTest extends ConvoTestCase
         $dialogflowCommandRequest->init();
         $isRequestEmpty = $dialogflowCommandRequest->isEmpty();
         $this->_logger->info("Text to get [" . $dialogflowCommandRequest->getText() . "]");
-        $this->assertEquals(false, $isRequestEmpty, 'This should be an health check.');    }
+        $this->assertEquals(false, $isRequestEmpty, 'This should be an health check.');
+    }
+
+    /**
+     * @dataProvider getOptionSelectedListItemRequestProvider
+     * @param $getOptionSelectedListItemRequestProvider
+     * @throws Exception
+     */
+    public function testListItemSelectedNew($getOptionSelectedListItemRequestProvider) {
+        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getOptionSelectedListItemRequestProvider);
+        $dialogflowCommandRequest->init();
+        $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
+        $intentName = $dialogflowCommandRequest->getIntentName();
+        $selectedOption = $dialogflowCommandRequest->getSelectedItemIndex();
+
+        $this->assertEquals(false, $isHealthCheck);
+        $this->assertEquals(false, $dialogflowCommandRequest->isLaunchRequest(), 'This should not be a launch request.');
+        $this->assertEquals(0, $selectedOption, 'Selected option is not correct.');
+        $this->assertEquals('actions.intent.OPTION', $intentName, 'Option intent is not correct.');
+    }
+
+    /**
+     * @dataProvider getOptionSelectedCardActionRequestProvider
+     * @param $getOptionSelectedCardActionRequestProvider
+     * @throws Exception
+     */
+    public function testCardActionSelectedNew($getOptionSelectedCardActionRequestProvider) {
+        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getOptionSelectedCardActionRequestProvider);
+        $dialogflowCommandRequest->init();
+        $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
+        $intentName = $dialogflowCommandRequest->getIntentName();
+        $selectedCardAction = $dialogflowCommandRequest->getSelectedCardAction();
+
+        $this->assertEquals(false, $isHealthCheck);
+        $this->assertEquals(false, $dialogflowCommandRequest->isLaunchRequest(), 'This should not be a launch request.');
+        $this->assertEquals('show_more', $selectedCardAction, 'Selected card action is not correct.');
+        $this->assertEquals('Default Fallback Intent', $intentName, 'Default Fallback Intent intent is not correct.');
+    }
+
+    /**
+     * @dataProvider getLaunchRequestWithoutUserStorage
+     * @param $getLaunchRequestWithoutUserStorage
+     * @throws Exception
+     */
+    public function testListResponseTest($getLaunchRequestWithoutUserStorage) {
+        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getLaunchRequestWithoutUserStorage);
+        $dialogflowCommandRequest->init();
+
+        $visualItems[] = new \Convo\Core\Workflow\VisualItem("Item 1", "Item 1", "Desc of item 1", "", "");
+        $visualItems[] = new \Convo\Core\Workflow\VisualItem("Item 2", "Item 2", "Desc of item 2", "", "");
+        $visualItems[] = new \Convo\Core\Workflow\VisualItem("Item 3", "Item 3", "Desc of item 3", "", "");
+
+        $list = new VisualList("Some title", "LIST", $visualItems);
+
+        $dialogflowCommandResponse = new DialogflowCommandResponse([], $dialogflowCommandRequest);
+        $dialogFlowAppResponse = $dialogflowCommandResponse->getListResponse($list);
+
+        $this->assertTrue(isset($dialogFlowAppResponse['payload']['google']['systemIntent']));
+        $this->assertEquals('actions.intent.OPTION', $dialogFlowAppResponse['payload']['google']['systemIntent']['intent']);
+        $this->assertCount(3, $dialogFlowAppResponse['payload']['google']['systemIntent']['data']['listSelect']['items']);
+    }
+
+    /**
+     * @dataProvider getLaunchRequestWithoutUserStorage
+     * @param $getLaunchRequestWithoutUserStorage
+     * @throws Exception
+     */
+    public function testCardResponse($getLaunchRequestWithoutUserStorage) {
+        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getLaunchRequestWithoutUserStorage);
+        $dialogflowCommandRequest->init();
+
+        $visualItem = new \Convo\Core\Workflow\VisualItem("Item 1", "Item 1", "Desc of item 1", "", "");
+
+        $cardActions[] = new \Convo\Core\Workflow\CardAction("card_action_show_more", "Show More");
+        $cardActions[] = new \Convo\Core\Workflow\CardAction("card_action_buy", "Buy");
+
+        $card = new VisualCard($visualItem, $cardActions);
+
+        $dialogflowCommandResponse = new DialogflowCommandResponse([], $dialogflowCommandRequest);
+        $dialogFlowAppResponse = $dialogflowCommandResponse->getCardResponse($card);
+
+        $this->_logger->info("Text to get [" . print_r($dialogFlowAppResponse, true) . "]");
+        $this->assertTrue(isset($dialogFlowAppResponse['payload']['google']['richResponse']['items'][1]['basicCard']));
+        $this->assertTrue(isset($dialogFlowAppResponse['payload']['google']['richResponse']['suggestions']));
+        $this->assertCount(2, $dialogFlowAppResponse['payload']['google']['richResponse']['suggestions']);
+    }
 
     // data providers form real json requests
     public function getMatchesRequestProvider() {
@@ -358,5 +445,13 @@ class DialogflowAdapterTest extends ConvoTestCase
 
     public function getZeroAsTextRequestProvider() {
         return $this->_establishTestData(__DIR__ . './data/request_with_zero_as_text.json');
+    }
+
+    public function getOptionSelectedListItemRequestProvider() {
+        return $this->_establishTestData(__DIR__ . './data/list_item_selected_request.json');
+    }
+
+    public function getOptionSelectedCardActionRequestProvider() {
+        return $this->_establishTestData(__DIR__ . './data/card_action_as_suggestion_selected.json');
     }
 }

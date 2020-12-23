@@ -1,0 +1,118 @@
+{
+    "responseId": "74f3436f-06b6-474a-a46b-2ee296dbf8a0-5811cb77",
+    "queryResult": {
+        "queryText": "Show More",
+        "action": "input.unknown",
+        "parameters": {},
+        "allRequiredParamsPresent": true,
+        "fulfillmentText": "One more time?",
+        "fulfillmentMessages": [
+            {
+                "text": {
+                    "text": [
+                        "One more time?"
+                    ]
+                }
+            }
+        ],
+        "outputContexts": [
+            {
+                "name": "projects/aitsoftshopbot-utgm/agent/sessions/ABwppHG5yTftpunm-NK90Fjz0Qe7-AoS3rFMdNiUt2qUXQiFN3EBUGO-s4ohJRv94ZtJBF1x0RdCcTvccLqAVWSmiA/contexts/actions_capability_media_response_audio"
+            },
+            {
+                "name": "projects/aitsoftshopbot-utgm/agent/sessions/ABwppHG5yTftpunm-NK90Fjz0Qe7-AoS3rFMdNiUt2qUXQiFN3EBUGO-s4ohJRv94ZtJBF1x0RdCcTvccLqAVWSmiA/contexts/actions_capability_account_linking"
+            },
+            {
+                "name": "projects/aitsoftshopbot-utgm/agent/sessions/ABwppHG5yTftpunm-NK90Fjz0Qe7-AoS3rFMdNiUt2qUXQiFN3EBUGO-s4ohJRv94ZtJBF1x0RdCcTvccLqAVWSmiA/contexts/actions_capability_screen_output"
+            },
+            {
+                "name": "projects/aitsoftshopbot-utgm/agent/sessions/ABwppHG5yTftpunm-NK90Fjz0Qe7-AoS3rFMdNiUt2qUXQiFN3EBUGO-s4ohJRv94ZtJBF1x0RdCcTvccLqAVWSmiA/contexts/actions_capability_audio_output"
+            },
+            {
+                "name": "projects/aitsoftshopbot-utgm/agent/sessions/ABwppHG5yTftpunm-NK90Fjz0Qe7-AoS3rFMdNiUt2qUXQiFN3EBUGO-s4ohJRv94ZtJBF1x0RdCcTvccLqAVWSmiA/contexts/google_assistant_input_type_voice"
+            },
+            {
+                "name": "projects/aitsoftshopbot-utgm/agent/sessions/ABwppHG5yTftpunm-NK90Fjz0Qe7-AoS3rFMdNiUt2qUXQiFN3EBUGO-s4ohJRv94ZtJBF1x0RdCcTvccLqAVWSmiA/contexts/__system_counters__",
+                "lifespanCount": 1,
+                "parameters": {
+                    "no-input": 0,
+                    "no-match": 2
+                }
+            }
+        ],
+        "intent": {
+            "name": "projects/aitsoftshopbot-utgm/agent/intents/a4886fc6-0493-437b-9065-a6cee73016e2",
+            "displayName": "Default Fallback Intent",
+            "isFallback": true
+        },
+        "intentDetectionConfidence": 1,
+        "languageCode": "en"
+    },
+    "originalDetectIntentRequest": {
+        "source": "google",
+        "version": "2",
+        "payload": {
+            "user": {
+                "locale": "en-GB",
+                "lastSeen": "2020-12-18T10:05:16Z",
+                "userVerificationStatus": "VERIFIED"
+            },
+            "conversation": {
+                "conversationId": "ABwppHG5yTftpunm-NK90Fjz0Qe7-AoS3rFMdNiUt2qUXQiFN3EBUGO-s4ohJRv94ZtJBF1x0RdCcTvccLqAVWSmiA",
+                "type": "ACTIVE",
+                "conversationToken": "[\"__system_counters__\"]"
+            },
+            "inputs": [
+                {
+                    "intent": "actions.intent.TEXT",
+                    "rawInputs": [
+                        {
+                            "inputType": "VOICE",
+                            "query": "Show   More"
+                        }
+                    ],
+                    "arguments": [
+                        {
+                            "name": "text",
+                            "rawText": "Show   More",
+                            "textValue": "Show   More"
+                        }
+                    ]
+                }
+            ],
+            "surface": {
+                "capabilities": [
+                    {
+                        "name": "actions.capability.MEDIA_RESPONSE_AUDIO"
+                    },
+                    {
+                        "name": "actions.capability.ACCOUNT_LINKING"
+                    },
+                    {
+                        "name": "actions.capability.SCREEN_OUTPUT"
+                    },
+                    {
+                        "name": "actions.capability.AUDIO_OUTPUT"
+                    }
+                ]
+            },
+            "isInSandbox": true,
+            "availableSurfaces": [
+                {
+                    "capabilities": [
+                        {
+                            "name": "actions.capability.AUDIO_OUTPUT"
+                        },
+                        {
+                            "name": "actions.capability.SCREEN_OUTPUT"
+                        },
+                        {
+                            "name": "actions.capability.WEB_BROWSER"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "session": "projects/aitsoftshopbot-utgm/agent/sessions/ABwppHG5yTftpunm-NK90Fjz0Qe7-AoS3rFMdNiUt2qUXQiFN3EBUGO-s4ohJRv94ZtJBF1x0RdCcTvccLqAVWSmiA"
+}
