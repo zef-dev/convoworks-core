@@ -230,6 +230,63 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     ),
                     '_workflow' => 'read',
                 )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Core\Processors\CardActionProcessor',
+                'Card Action Processor',
+                'Process elements if child filters are activated',
+                array(
+                    'card_action_id' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Card Action ID',
+                        'description' => 'A user friendly name for the card action.',
+                        'valueType' => 'string'
+                    ),
+                    'elements' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => false,
+                        'name' => 'OK flow',
+                        'description' => 'Flow to be executed if processor is matched',
+                        'valueType' => 'class',
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="user-say">' .
+                            'Action to be executed: <b>{{component.properties.card_action_id}}</b>' .
+                            '</div>' .
+                            ''
+                    ),
+                    '_workflow' => 'process',
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Core\Processors\ListSelectionProcessor',
+                'List Selection Processor',
+                'Process elements if child filters are activated',
+                array(
+                    'elements' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => false,
+                        'name' => 'OK flow',
+                        'description' => 'Flow to be executed if processor is matched',
+                        'valueType' => 'class',
+                    ),
+                    '_workflow' => 'process',
+                )
             )
         ];
     }
