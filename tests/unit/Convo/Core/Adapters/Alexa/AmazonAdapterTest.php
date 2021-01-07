@@ -109,6 +109,30 @@ class AmazonAdapterTest extends ConvoTestCase
     }
 
     /**
+     * @dataProvider getRegularRepeatRequest
+     * @param $getRegularRepeatRequest
+     * @throws Exception
+     */
+    public function testRegularRepeatRequest($getRegularRepeatRequest)
+    {
+        $amazonCommandRequest = new AmazonCommandRequest($this->_logger, self::SERVICE_ID, $getRegularRepeatRequest);
+        $amazonCommandRequest->init();
+        $this->assertEquals(false, $amazonCommandRequest->isMediaRequest());
+    }
+
+    /**
+     * @dataProvider getRepeatMediaRequest
+     * @param $getRepeatMediaRequest
+     * @throws Exception
+     */
+    public function testRepeatMediaRequest($getRepeatMediaRequest)
+    {
+        $amazonCommandRequest = new AmazonCommandRequest($this->_logger, self::SERVICE_ID, $getRepeatMediaRequest);
+        $amazonCommandRequest->init();
+        $this->assertEquals(true, $amazonCommandRequest->isMediaRequest());
+    }
+
+    /**
      * @dataProvider getContinuePlaybackRequest
      * @param $getContinuePlaybackRequest
      * @throws Exception
@@ -163,6 +187,14 @@ class AmazonAdapterTest extends ConvoTestCase
 
     public function getContinuePlaybackRequest() {
         return $this->_establishTestData(__DIR__ . './data/continue_playback_intent.json');
+    }
+
+    public function getRegularRepeatRequest() {
+        return $this->_establishTestData(__DIR__ . './data/repeat_intent_request.json');
+    }
+
+    public function getRepeatMediaRequest() {
+        return $this->_establishTestData(__DIR__ . './data/repeat_intent_request_after_play_directive.json');
     }
 
     public function getContinuePlaybackAfterPlayDirectiveRequest() {
