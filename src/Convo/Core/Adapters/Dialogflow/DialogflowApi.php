@@ -140,7 +140,7 @@ class DialogflowApi
 		$project = $client->projectName($this->_projectId);
 
 		try {
-			$operation_res = $client->exportAgent($project);
+			$operation_res = $client->exportAgent($project, "");
 			$operation_res->pollUntilComplete();
 
 			/** @var ExportAgentResponse $result */
