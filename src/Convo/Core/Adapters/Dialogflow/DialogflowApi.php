@@ -43,11 +43,6 @@ class DialogflowApi
      */
     private $_adminUserDataProvider;
 
-    /**
-     * @var \Convo\Core\Util\IHttpFactory
-     */
-    private $_httpFactory;
-
     private $_dialogflowAuthService;
 
     private const BASE_DIALOGFLOW_URL = 'https://dialogflow.googleapis.com/v2';
@@ -64,7 +59,7 @@ class DialogflowApi
         'sessions' => null
     ];
 
-    public function __construct($logger, $serviceDataProvider, \Convo\Core\IAdminUser $user, $serviceId, \Convo\Core\IAdminUserDataProvider $adminUserDataProvider, \Convo\Core\Util\IHttpFactory $httpFactory)
+    public function __construct($logger, $serviceDataProvider, \Convo\Core\IAdminUser $user, $serviceId, \Convo\Core\IAdminUserDataProvider $adminUserDataProvider)
     {
         $this->_logger = $logger;
         $this->_convoServiceDataProvider = $serviceDataProvider;
@@ -74,7 +69,6 @@ class DialogflowApi
 
         $this->_projectId = $this->_getProjectId();
         $this->_adminUserDataProvider = $adminUserDataProvider;
-        $this->_httpFactory = $httpFactory;
 
         $this->_dialogflowAuthService = $this->_setupAuthService();
         $this->_clients = $this->_setUpClients();
