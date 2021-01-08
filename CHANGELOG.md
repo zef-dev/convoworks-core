@@ -4,6 +4,12 @@
 
 ## [Releases]
 
+### 0.18.5 - 2021-01-08
+
+* Two more functions made available in expression language
+* Remove faulty log statement in `IfElement` that assumed `$then_result` would always be a simple string
+* Added `arrayDiffRecursive` function to `ArrayUtil`
+
 ### 0.18.4 - 2021-01-08
 
 * Fixed method `isMediaRequest` in `AmazonCommandReqeust` - [#14](https://github.com/zef-dev/convoworks-core/issues/14)
