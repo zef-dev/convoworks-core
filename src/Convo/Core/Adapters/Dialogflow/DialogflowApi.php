@@ -9,8 +9,9 @@ use Google\Cloud\Dialogflow\V2\Agent;
 use Google\Cloud\Dialogflow\V2\AgentsClient;
 use Google\Cloud\Dialogflow\V2\ExportAgentResponse;
 use Google\Cloud\Dialogflow\V2\IntentsClient;
+use Google\Cloud\Dialogflow\V2\QueryInput;
 use Google\Cloud\Dialogflow\V2\SessionsClient;
-use Psr\Http\Message\ResponseInterface;
+use Google\Cloud\Dialogflow\V2\TextInput;
 use Convo\Core\Publish\IPlatformPublisher;
 
 class DialogflowApi
@@ -185,9 +186,44 @@ class DialogflowApi
         }
     }
 
-    public function analyzeText($text, $locale)
-    {
-       return $this->_performDialogflowDetectIntentRequest($text, $locale);
+    /**
+     * @param $text
+     * @param $locale
+     * @return false|string
+     * @throws \Exception
+     */
+    public function analyzeText($text, $locale) {
+        /** @var SessionsClient $client */
+        $client = $this->_clients['sessions'];
+        $response = [];
+        $this->_logger->debug("Going to analyze text...");
+        try {
+            $sessionName = $client->sessionName($this->_projectId, uniqid());
+            $this->_logger->debug("Going to prepare TextInput...");
+            $textInput = new TextInput();
+
+            $textInput->setText($text);
+            $textInput->setLanguageCode($locale);
+
+            $this->_logger->debug("Going to prepare QueryInput...");
+            $queryInput = new QueryInput();
+            $queryInput->setText($textInput);
+            $this->_logger->debug("Going to detect intent...");
+            $queryResult = $client->detectIntent($sessionName, $queryInput)->getQueryResult();
+
+            if (!empty($queryResult)) {
+                $response['queryResult']['intent']['displayName'] = $queryResult->getIntent()->getDisplayName();
+                $response['queryResult']['parameters'] = json_decode($queryResult->getParameters()->serializeToJsonString(), true);
+            } else {
+                throw new \Exception("Couldn't prepare query result.");
+            }
+        } catch (ApiException $e) {
+            throw new \Exception($e->getMessage());
+        } finally {
+            $client->close();
+        }
+
+        return json_encode($response);
     }
 
     public function trainAgent() {
