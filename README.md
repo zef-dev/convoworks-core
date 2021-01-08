@@ -110,6 +110,7 @@ Here is the full ecosystem:
 
 | DI key | Type | Description |
 | --- | --- | --- |
+| **logger** | `\Psr\Log\LoggerInterface` | Provides logger |
 | **httpFactory** | `\Convo\Core\Util\IHttpFactory` | Provides http layer access to the system |
 | **currentTimeService** | `\Convo\Core\Util\ICurrentTimeService` | Allows as to have mockable time provider |
 | **cache** | `\Psr\SimpleCache\CacheInterface` | Provides access to cache infrastructure |
