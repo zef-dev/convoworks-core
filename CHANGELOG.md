@@ -4,6 +4,11 @@
 
 ## [Releases]
 
+### 0.18.6 - 2021-01-08
+
+* new dialogflow api
+* removed unused dependencies from core package definition
+
 ### 0.18.5 - 2021-01-08
 
 * Two more functions made available in expression language
