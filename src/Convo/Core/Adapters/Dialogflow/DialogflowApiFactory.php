@@ -27,6 +27,8 @@ class DialogflowApiFactory
     }
 
     /**
+     * @param \Convo\Core\IAdminUser $user
+     * @param $serviceId
      * @return \Convo\Core\Adapters\Dialogflow\DialogflowApi
      */
     public function getApi(\Convo\Core\IAdminUser $user, $serviceId)
