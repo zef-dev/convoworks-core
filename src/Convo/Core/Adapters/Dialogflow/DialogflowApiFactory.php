@@ -19,20 +19,16 @@ class DialogflowApiFactory
 	 */
     private $_adminUserDataProvider;
 
-	/**
-	 * @var \Convo\Core\Util\IHttpFactory
-	 */
-    private $_httpFactory;
-    
-    public function __construct($logger, $serviceDataProvider, $adminUserDataProvider, $httpFactory)
+    public function __construct($logger, $serviceDataProvider, $adminUserDataProvider)
     {
         $this->_logger = $logger;
         $this->_convoServiceDataProvider = $serviceDataProvider;
         $this->_adminUserDataProvider = $adminUserDataProvider;
-        $this->_httpFactory = $httpFactory;
     }
 
     /**
+     * @param \Convo\Core\IAdminUser $user
+     * @param $serviceId
      * @return \Convo\Core\Adapters\Dialogflow\DialogflowApi
      */
     public function getApi(\Convo\Core\IAdminUser $user, $serviceId)
@@ -42,8 +38,7 @@ class DialogflowApiFactory
             $this->_convoServiceDataProvider,
             $user,
             $serviceId,
-            $this->_adminUserDataProvider,
-            $this->_httpFactory
+            $this->_adminUserDataProvider
         );
     }
 }
