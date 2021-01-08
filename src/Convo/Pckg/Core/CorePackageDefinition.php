@@ -18,16 +18,6 @@ class CorePackageDefinition extends AbstractPackageDefinition
     private $_httpFactory;
 
     /**
-     * @var \Convo\Pckg\Gnlp\Api\IGoogleNlpFactory
-     */
-    private $_googleNlpFactory;
-
-    /**
-     * @var \Convo\Pckg\Gnlp\GoogleNlSyntaxParser
-     */
-    private $_googleNlpSyntaxParser;
-
-    /**
      * @var \Convo\Core\Factory\PackageProviderFactory
      */
     private $_packageProviderFactory;
@@ -40,14 +30,10 @@ class CorePackageDefinition extends AbstractPackageDefinition
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
         \Convo\Core\Util\IHttpFactory $httpFactory,
-        \Convo\Pckg\Gnlp\Api\IGoogleNlpFactory $nlpFactory,
-        \Convo\Pckg\Gnlp\GoogleNlSyntaxParser $syntaxParser,
         \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory,
         CacheInterface $cache
     ) {
         $this->_httpFactory				=	$httpFactory;
-        $this->_googleNlpFactory		=	$nlpFactory;
-        $this->_googleNlpSyntaxParser	=	$syntaxParser;
         $this->_packageProviderFactory  =   $packageProviderFactory;
         $this->_cache                   =   $cache;
 
