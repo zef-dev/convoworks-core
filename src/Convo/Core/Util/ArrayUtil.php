@@ -54,6 +54,29 @@ abstract class ArrayUtil
         }
     }
 
+    public static function arrayDiffRecursive($arr1, $arr2) {
+        // https://stackoverflow.com/a/3877494/5552688
+        $arr_ret = [];
+
+        foreach ($arr1 as $key => $value) {
+            if (array_key_exists($key, $arr2)) {
+                if (is_array($value)) {
+                    $diff_recursive = self::arrayDiffRecursive($value, $arr2[$key]);
+                    if (count($diff_recursive)) {
+                        $arr_ret[$key] = $diff_recursive;
+                    }
+                } else {
+                    if ($value != $arr2[$key]) {
+                        $arr_ret[$key] = $value;
+                    }
+                }
+            } else {
+                $arr_ret[$key] = $value;
+            }
+        }
+        return $arr_ret;
+    }
+
 	public static function areArraysEqual( $arr1, $arr2, $igonerOrder=true)
 	{
 	    if ( empty( $arr1) && empty( $arr2)) {
