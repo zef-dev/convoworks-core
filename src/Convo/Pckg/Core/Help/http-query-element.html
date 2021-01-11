@@ -10,12 +10,17 @@
     <h3>How to use: </h3>
     <ol>
         <li>Select a <b>Scope type</b> from the drop-down</li>
-        <li>In the <b>RESULT NAME</b> field enter the name the result will be stored as</li>
-        <li>In the <b>ENDPOINT URL</b> field enter the URL you wish to send request to</li>
-        <li>In the <b>CONTENT TYPE</b> drop-down enter the content type you're expecting to get in the headers</li>
-        <li>In the <b>HTTP METHOD</b> drop-down choose between GET or POST methods</li>
-        <li>In the <b>TIMEOUT</b> field enter how long should a request wait for a response in milliseconds</li>
-        <li>In the <b>HEADERS</b> field you can add HTTP headers, and in the <b>PARAMETERS</b> field you can add parameters to be sent with the request</li>
+        <li>Scope type <b>installation</b> is for the duration of the whole installation and has the longest life span</li>
+        <li>Scope type <b>session</b> is for the duration of the session</li>
+        <li>Scope type <b>request</b> is for the duration of a single request</li>
+        <li>Select if the result <b>Parameters</b> will be stored as either <i>service</i> or <i>block</i> variables</li>
+        <li>In the <b>Result name</b> field enter the name the result will be stored under</li>
+        <li>In the <b>Endpoint URL</b> field enter the URL you wish to send request to</li>
+        <li>In the <b>Content type</b> drop-down enter the content type you're expecting to get in the headers</li>
+        <li>In the <b>HTTP method</b> drop-down choose between GET or POST methods</li>
+        <li>You can cache GET requests by entering a <b>Cache timeout</b> number in seconds</li>
+        <li>In the <b>Timeout</b> field enter how long should a request wait for a response in seconds</li>
+        <li>In the <b>Headers</b> field you can add HTTP headers, and in the <b>Parameters</b> field you can add parameters to be sent with the request</li>
         <li>You can also send  JSON format <b>Request Body</b> in the POST request</li>
         <li>The element contains two flows to be executed, depending on the request success: OK and NOK</li>
         <li>You can access the result body in the OK flow like this: <i>${resultName.body.valueYouWantToAccess}</i></li>
@@ -26,11 +31,13 @@
     <div>
         <p>Accessing horoscope API endpoint and outputting horoscope data:</p>
         <ul>
-            <li><b>RESULT NAME:</b> <i>row</i></li>
-            <li><b>ENDPOINT URL:</b> <i>http://ohmanda.com/api/horoscope/${horoscopeSign}/</i></li>
-            <li><b>CONTENT TYPE:</b> <i>JSON</i></li>
-            <li><b>HTTP METHOD:</b> <i>GET</i></li>
-            <li><b>TIMEOUT:</b> <i>1000</i></li>
+            <li><b>Scope type:</b> <i>Installation</i></li>
+            <li><b>Parameters:</b> <i>Block Params</i></li>
+            <li><b>Result name:</b> <i>row</i></li>
+            <li><b>Endpoint URL:</b> <i>http://ohmanda.com/api/horoscope/${horoscopeSign}/</i></li>
+            <li><b>Content type:</b> <i>JSON</i></li>
+            <li><b>HTTP method:</b> <i>GET</i></li>
+            <li><b>Timeout:</b> <i>1000</i></li>
             <li>For output, place the <b>Text Response</b> element in the OK flow and enter this in the <b>TEXT</b> field,: <i>${row.body.horoscope}</i></li>
         </ul>
     </div>
