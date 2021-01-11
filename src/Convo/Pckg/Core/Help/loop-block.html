@@ -1,0 +1,23 @@
+<div class="loop-block-help">
+    <h3>Loop Block</h3>
+    
+    <p>Iterates through the provided array and evaluates user answer.</p>
+
+    <h3>When to use?</h3>
+
+    <p>When you've got a collection of items you want a user to respond to within a block</p>
+
+    <h3>How to use: </h3>
+    <ol>
+    	<li>In the <b>Block name</b> field you can change the block's the name</li>
+        <li>In the <b>Items</b> field enter the name of the array, as shown in this example: <i>${array_name}</i></li>
+        <li>In the <b>Data collection item name</b> enter the name under which you'll be able to access individual array items, for example: <i>item</i></li>
+        <li>You can skip iterations of as many items as you wish, starting from the beginning of the array, by entering an offset number in the <b>Offset</b> field</li>
+        <li>Entering a limit number in the <b>Limit</b> field limits the number of iterations to a specified number</li>
+        <li>You can set the <b>Skip reset</b> field to <i>true</i> (or an expression that evaluates to <i>true</i>) to skip resetting status variables after the iteration is interrupted, for example: <i>${some_var}</i></li>
+        <li>To access array values, use this syntax: <i>${item.value}</i></li>
+        <li>To access array indexes, use this syntax: <i>${item.index}</i></li>
+        <li>If you want to output array indexes, counting from number one instead of zero, use this: <i>${item.natural}</i></li>
+        <li>To identify the first, or the last iteration, use this syntax: <i>${item.first}</i>, <i>{item.last}</i></li>
+    </ol>
+</div>
