@@ -917,7 +917,9 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code">Catch Convoworks intent <b>{{ component.properties.intent}}</b>'.
+                        'template' => '<div class="code">Catch Convoworks intent '.
+                            '<span ng-if="component.properties.intent && !isSystemIntent(component.properties.intent)" class="block-id linked" ng-click="gotoIntent(component.properties.intent); $event.stopPropagation();">{{ component.properties.intent}}</span>'.
+                            '<b ng-if="component.properties.intent && isSystemIntent(component.properties.intent)">{{ component.properties.intent}}</b>'.
                             '<span ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span>'.
                             '<span ng-repeat="(key,val) in component.properties.rename track by key">, rename slot <b>{{ key }} => result.{{ val }}</b></span></div>'
                     ),
