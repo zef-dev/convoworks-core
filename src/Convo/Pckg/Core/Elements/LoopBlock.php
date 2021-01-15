@@ -70,6 +70,20 @@ class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
         throw new \Exception( 'Provide non empty indexed array for ['.$this->_dataCollection.'] component parameter');
     }
 
+    public function getElements()
+    {
+        return array_merge(
+            parent::getElements(), $this->_done
+        );
+    }
+
+    public function getProcessors()
+    {
+        return array_merge(
+            parent::getProcessors(), $this->_mainProcessors
+        );
+    }
+
     public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
     {
         $this->_loadItem();
