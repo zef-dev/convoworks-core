@@ -870,34 +870,40 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $platform_config = $this->_convoServiceDataProvider->getServicePlatformConfig(
             $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP
         );
+        $skill_id = $platform_config[$this->getPlatformId()]['app_id'];
+        $mode = $platform_config[$this->getPlatformId()]['mode'] ?? 'manual';
 
-        try {
-            $skill_id = $platform_config[$this->getPlatformId()]['app_id'];
-            $delete_res = $this->_amazonPublishingService->deleteSkill($this->_user, $skill_id);
-            $this->_logger->debug('Amazon skill ['.$skill_id.'] deleted successfully, response ['.print_r($delete_res, true).']');
+        if ($mode === 'auto') {
+            try {
+                $delete_res = $this->_amazonPublishingService->deleteSkill($this->_user, $skill_id);
+                $this->_logger->debug('Amazon skill ['.$skill_id.'] deleted successfully, response ['.print_r($delete_res, true).']');
 
-            $report['success']['amazon']['skill'] = $delete_res;
-        } catch (\Exception $e) {
-            $this->_logger->error($e);
-            $report['errors']['amazon'] = $e->getMessage();
-        }
+                $report['success']['amazon']['skill'] = $delete_res;
+            } catch (\Exception $e) {
+                $this->_logger->error($e);
+                $report['errors']['amazon'] = $e->getMessage();
+            }
 
-        if (isset($platform_config['amazon']['catalogs']))
-        {
-            $this->_logger->debug('Going to delete amazon catalogs');
-
-            foreach ($platform_config['amazon']['catalogs'] as $catalog_name => $catalog_data)
+            if (isset($platform_config['amazon']['catalogs']))
             {
-                try {
-                    $catalog_id = $catalog_data['catalog_id'];
-                    $catalog_delete_res = $this->_amazonPublishingService->deleteCatalog($this->_user, $catalog_id);
+                $this->_logger->debug('Going to delete amazon catalogs');
 
-                    $report['success']['amazon']['catalogs'][$catalog_name] = $catalog_delete_res;
-                } catch (\Exception $e) {
-                    $this->_logger->error($e);
-                    $report['errors']['amazon']['catalogs'][$catalog_name] = $e->getMessage();
+                foreach ($platform_config['amazon']['catalogs'] as $catalog_name => $catalog_data)
+                {
+                    try {
+                        $catalog_id = $catalog_data['catalog_id'];
+                        $catalog_delete_res = $this->_amazonPublishingService->deleteCatalog($this->_user, $catalog_id);
+
+                        $report['success']['amazon']['catalogs'][$catalog_name] = $catalog_delete_res;
+                    } catch (\Exception $e) {
+                        $this->_logger->error($e);
+                        $report['errors']['amazon']['catalogs'][$catalog_name] = $e->getMessage();
+                    }
                 }
             }
+        } else {
+            $this->_logger->debug('Will not delete service due to manual mode selection.');
+            $report['success']['amazon']['skill'] = "Skill with id [" . $skill_id . "] will not be deleted due to manual mode selection in the service platform configuration.";
         }
     }
 
