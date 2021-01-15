@@ -795,15 +795,24 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 	public function delete(array &$report)
     {
-        try {
-            $api = $this->_dialogflowApiFactory->getApi(
-                $this->_user, $this->_serviceId
-            );
+        $platform_config = $this->_convoServiceDataProvider->getServicePlatformConfig(
+            $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP
+        );
+        $mode = $platform_config[$this->getPlatformId()]['mode'] ?? 'manual';
 
-            $api->deleteAgent();
-        } catch (\Exception $e) {
-            $this->_logger->error($e);
-            $report['errors']['dialogflow']['skill'] = $e->getMessage();
+        if ($mode === 'auto') {
+            try {
+                $api = $this->_dialogflowApiFactory->getApi(
+                    $this->_user, $this->_serviceId
+                );
+
+                $api->deleteAgent();
+            } catch (\Exception $e) {
+                $this->_logger->error($e);
+                $report['errors']['dialogflow']['skill'] = $e->getMessage();
+            }
+        } else {
+            $report['success']['amazon']['skill'] = "Dialogflow agent with will not be deleted due to manual mode selection in the service platform configuration.";
         }
     }
 }
