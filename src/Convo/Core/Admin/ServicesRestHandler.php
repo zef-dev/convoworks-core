@@ -101,7 +101,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 
 		if ($info->delete() && $route = $info->route('services/{serviceId}'))
         {
-            $local_only = $info->getParameterGet( 'local_only', false);
+            $local_only = filter_var($info->getParameterGet( 'local_only', false), FILTER_VALIDATE_BOOLEAN);
             return $this->_performConvoPathServiceIdDelete( $request, $user, $route->get( 'serviceId'), $local_only);
         }
 
