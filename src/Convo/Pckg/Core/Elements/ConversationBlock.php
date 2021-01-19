@@ -3,6 +3,9 @@
 namespace Convo\Pckg\Core\Elements;
 
 
+use Convo\Core\Preview\PreviewBlock;
+use Convo\Core\Preview\PreviewSection;
+use Convo\Core\Preview\PreviewUtterance;
 use Convo\Core\Workflow\IRunnableBlock;
 use Convo\Core\ConvoServiceInstance;
 
@@ -235,6 +238,121 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 
 		return $processors;
 	}
+
+	// PREVIEW
+    public function getPreview()
+    {
+        if (!$this->_isBlockApplicable()) {
+            $this->_logger->debug('Skipping non applicable block [' . $this->getComponentId() . ']');
+            return null;
+        }
+
+        $pblock = new PreviewBlock($this->getName(), $this->getComponentId());
+        $pblock->setLogger($this->_logger);
+
+        // What the bot says first
+        $read = new PreviewSection('Read');
+        foreach ($this->getElements() as $element)
+        {
+            /** @var \Convo\Core\Preview\IBotSpeechResource[] $speech */
+            $speech = [];
+            $this->_populateSpeech($speech, $element, '\Convo\Core\Preview\IBotSpeechResource');
+
+            foreach ($speech as $part) {
+                $read->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
+            }
+        }
+        $pblock->addSection($read);
+
+        // User <-> Bot back and forth
+        foreach ($this->getProcessors() as $processor)
+        {
+            $processor_section = new PreviewSection((new \ReflectionClass($processor))->getShortName().' ['.$processor->getId().']');
+
+            /** @var \Convo\Core\Preview\IBotSpeechResource[] $user */
+            $user = [];
+            /** @var \Convo\Core\Preview\IBotSpeechResource[] $bot */
+            $bot = [];
+            $this->_populateSpeech($user, $processor, '\Convo\Core\Preview\IUserSpeechResource');
+			$this->_populateSpeech($bot, $processor, '\Convo\Core\Preview\IBotSpeechResource');
+			
+			if (empty($user) && empty($bot)) {
+				$this->_logger->debug('No user utterances or bot responses, skipping.');
+				continue;
+			}
+
+            foreach ($user as $user_part)
+            {
+				$speech = $user_part->getSpeech();
+                $utterance = new PreviewUtterance($speech->getText(), false, $speech->getIntentSource());
+                $processor_section->addUtterance($utterance);
+            }
+
+            foreach ($bot as $bot_part)
+            {
+                $utterance = new PreviewUtterance($bot_part->getSpeech()->getText());
+                $processor_section->addUtterance($utterance);
+            }
+
+            $pblock->addSection($processor_section);
+        }
+
+        // Fallback text
+        $fallback = new PreviewSection('Fallback');
+        foreach ($this->getFallback() as $element)
+        {
+            /** @var \Convo\Core\Preview\IBotSpeechResource[] $speech */
+            $speech = [];
+            $this->_populateSpeech($speech, $element, '\Convo\Core\Preview\IBotSpeechResource');
+
+            foreach ($speech as $part) {
+                $fallback->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
+            }
+        }
+        $pblock->addSection($fallback);
+
+        return $pblock;
+    }
+
+    protected function _isBlockApplicable()
+    {
+        // session start is fine
+        if ($this->getComponentId() === '__sessionStart') {
+            return true;
+        }
+
+        // otherwise only non system blocks
+        return strpos($this->getComponentId(), '__') !== 0;
+    }
+
+    protected function _populateSpeech(&$array, $element, $interface)
+    {
+        // being a speech resource takes precedence over being a container component.
+        if (is_a($element, $interface))
+        {
+            $array[] = $element;
+        }
+        else if (is_a($element, '\Convo\Core\Workflow\IWorkflowContainerComponent'))
+        {
+            /** @var \Convo\Core\Workflow\IWorkflowContainerComponent $element */
+            $this->_logger->debug('Element ['.$element.'] is a workflow container');
+            $this->_flattenWorkflowContainers($array, $element, $interface);
+        }
+    }
+
+    protected function _flattenWorkflowContainers(&$array, $element, $interface)
+    {
+        $array = array_merge($array, $element->findChildren($interface));
+        if (($index = array_search($element, $array)) !== false) {
+            array_splice($array, $index, 1);
+        }
+
+        foreach ($array as $item) {
+            if (is_a($item, '\Convo\Core\Workflow\IWorkflowContainerComponent')) {
+                $this->_flattenWorkflowContainers($array, $item, $interface);
+            }
+        }
+    }
 
 	// UTIL
 	public function __toString()
