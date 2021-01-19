@@ -30,6 +30,11 @@ class ServicePreviewBuilder implements \Psr\Log\LoggerAwareInterface
         $this->_logger = $logger;
     }
 
+    public function addPreviewBlock(PreviewBlock $block)
+    {
+        $this->_blocks[] = $block;
+    }
+
     public function read(\Convo\Core\ConvoServiceInstance $service)
     {
         /** @var \Convo\Core\Preview\ISpeechResource[] $bot_says */

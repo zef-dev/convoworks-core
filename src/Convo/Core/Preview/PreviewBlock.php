@@ -14,6 +14,11 @@ class PreviewBlock implements \Psr\Log\LoggerAwareInterface
 
     private $_speech;
 
+    /**
+     * @var PreviewSection[]
+     */
+    private $_sections = [];
+
     public function __construct($blockName, $blockId)
     {
         $this->_logger = new \Psr\Log\NullLogger();
@@ -46,15 +51,18 @@ class PreviewBlock implements \Psr\Log\LoggerAwareInterface
         }
     }
 
+    public function addSection(PreviewSection $section)
+    {
+        $this->_sections[] = $section;
+    }
+
     public function getData()
     {
-        return array_merge(
-            [
-                'block_name' => $this->_blockName,
-                'block_id' => $this->_blockId
-            ],
-            $this->_speech
-        );
+        return [
+            'block_name' => $this->_blockName,
+            'block_id' => $this->_blockId,
+            'sections' => array_map(function ($section) { return $section->getData(); }, $this->_sections)
+        ];
     }
 
     // UTIL
