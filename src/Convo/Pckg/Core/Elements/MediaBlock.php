@@ -3,6 +3,7 @@
 namespace Convo\Pckg\Core\Elements;
 
 use Convo\Core\DataItemNotFoundException;
+use Convo\Core\Preview\PreviewBlock;
 use Convo\Core\Workflow\IConvoAudioRequest;
 use Convo\Core\Workflow\IConvoAudioResponse;
 use Convo\Core\Workflow\IConvoRequest;
@@ -385,6 +386,11 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
             }
             $this->_readFallback($request, $response);
         }
+    }
+
+    public function getPreview()
+    {
+        return new PreviewBlock($this->getName(), $this->getComponentId());
     }
 
     /**
