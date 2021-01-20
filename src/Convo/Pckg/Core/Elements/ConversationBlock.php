@@ -249,15 +249,18 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
         $read = new PreviewSection('Read');
         foreach ($this->getElements() as $element)
         {
-            /** @var \Convo\Core\Preview\IBotSpeechResource[] $speech */
-            $speech = [];
-            $this->_populateSpeech($speech, $element, '\Convo\Core\Preview\IBotSpeechResource');
+            /** @var \Convo\Core\Preview\IBotSpeechResource[] $read_speech */
+            $read_speech = [];
+            $this->_populateSpeech($read_speech, $element, '\Convo\Core\Preview\IBotSpeechResource');
 
-            foreach ($speech as $part) {
+            foreach ($read_speech as $part) {
                 $read->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
             }
         }
-        $pblock->addSection($read);
+		
+		if (!empty($read_speech)) {
+			$pblock->addSection($read);
+		}
 
         // User <-> Bot back and forth
         foreach ($this->getProcessors() as $processor)
@@ -296,15 +299,18 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
         $fallback = new PreviewSection('Fallback');
         foreach ($this->getFallback() as $element)
         {
-            /** @var \Convo\Core\Preview\IBotSpeechResource[] $speech */
-            $speech = [];
-            $this->_populateSpeech($speech, $element, '\Convo\Core\Preview\IBotSpeechResource');
+            /** @var \Convo\Core\Preview\IBotSpeechResource[] $fallback_speech */
+            $fallback_speech = [];
+            $this->_populateSpeech($fallback_speech, $element, '\Convo\Core\Preview\IBotSpeechResource');
 
-            foreach ($speech as $part) {
+            foreach ($fallback_speech as $part) {
                 $fallback->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
             }
         }
-        $pblock->addSection($fallback);
+		
+		if (!empty($fallback_speech)) {
+			$pblock->addSection($fallback);
+		}
 
         return $pblock;
     }
