@@ -311,7 +311,7 @@ class ServicesRestHandler implements RequestHandlerInterface
             /** @var \Convo\Core\Workflow\IFragmentComponent $fragment */
             foreach ($fragments as $fragment)
             {
-                if ($fragment->getId() === $blockId) {
+                if ($fragment->getComponentId() === $blockId) {
                     $found = $fragment;
                     break;
                 }
