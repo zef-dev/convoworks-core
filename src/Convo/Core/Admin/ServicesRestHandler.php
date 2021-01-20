@@ -278,7 +278,6 @@ class ServicesRestHandler implements RequestHandlerInterface
             // check blocks
             if ($block->getComponentId() === $blockId) {
                 $found = $block;
-                $type = 'block';
                 break;
             }
         }
@@ -292,7 +291,6 @@ class ServicesRestHandler implements RequestHandlerInterface
             {
                 if ($fragment->getComponentId() === $blockId) {
                     $found = $fragment;
-                    $type = 'fragment';
                     break;
                 }
             }
@@ -305,15 +303,8 @@ class ServicesRestHandler implements RequestHandlerInterface
         $previewBuilder = new ServicePreviewBuilder($serviceId);
         $previewBuilder->setLogger($this->_logger);
 
-        if ($type === 'block')
-        {
-            $previewBuilder->readBlock($found);
-        }
-        else if ($type === 'fragment')
-        {
-            $previewBuilder->readFragment($found);
-        }
-
+        $previewBuilder->addPreviewBlock($found->getPreview());
+        
         return $this->_httpFactory->buildResponse($previewBuilder->getPreview());
     }
 
