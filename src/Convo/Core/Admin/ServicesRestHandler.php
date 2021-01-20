@@ -259,10 +259,32 @@ class ServicesRestHandler implements RequestHandlerInterface
 		$previewBuilder = new ServicePreviewBuilder($serviceId);
 		$previewBuilder->setLogger($this->_logger);
 
-		$previewBuilder->read($instance);
+		foreach ($instance->getBlocks() as $block) {
+			if (!$this->_isBlockApplicable($block)) {
+				$this->_logger->debug('Skipping non applicable block [' . $block->getComponentId() . ']');
+				continue;
+			}
+
+			$previewBuilder->addPreviewBlock($block->getPreview());
+		}
+
+		foreach ($instance->getFragments() as $fragment) {
+			$previewBuilder->addPreviewBlock($fragment->getPreview());
+		}
 
 		return $this->_httpFactory->buildResponse($previewBuilder->getPreview());
 	}
+
+	private function _isBlockApplicable($block)
+    {
+        // session start is fine
+        if ($block->getComponentId() === '__sessionStart') {
+            return true;
+        }
+
+        // otherwise only non system blocks
+        return strpos($block->getComponentId(), '__') !== 0;
+    }
 
 	private function _performServicesPathServiceIdPathPreviewPathBlockIdGet(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId, $blockId)
     {
@@ -289,7 +311,7 @@ class ServicesRestHandler implements RequestHandlerInterface
             /** @var \Convo\Core\Workflow\IFragmentComponent $fragment */
             foreach ($fragments as $fragment)
             {
-                if ($fragment->getComponentId() === $blockId) {
+                if ($fragment->getId() === $blockId) {
                     $found = $fragment;
                     break;
                 }

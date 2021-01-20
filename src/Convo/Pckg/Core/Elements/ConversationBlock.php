@@ -242,11 +242,6 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 	// PREVIEW
     public function getPreview()
     {
-        if (!$this->_isBlockApplicable()) {
-            $this->_logger->debug('Skipping non applicable block [' . $this->getComponentId() . ']');
-            return null;
-        }
-
         $pblock = new PreviewBlock($this->getName(), $this->getComponentId());
         $pblock->setLogger($this->_logger);
 
@@ -312,17 +307,6 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
         $pblock->addSection($fallback);
 
         return $pblock;
-    }
-
-    protected function _isBlockApplicable()
-    {
-        // session start is fine
-        if ($this->getComponentId() === '__sessionStart') {
-            return true;
-        }
-
-        // otherwise only non system blocks
-        return strpos($this->getComponentId(), '__') !== 0;
     }
 
     protected function _populateSpeech(&$array, $element, $interface)
