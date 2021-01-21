@@ -17,7 +17,9 @@ class PreviewSpeechPart
     /**
      * @var array
      */
-    private $_text  =   [];
+    private $_text = [];
+
+    private $_intentSource;
 
     public function __construct($componentId, $fragmentId = null)
     {
@@ -40,17 +42,19 @@ class PreviewSpeechPart
         return $this->_text;
     }
 
-    public function addText($text, $intentSource = null)
+    public function setIntentSource($intentSource)
     {
-        $part = [
-            'text' => $text
-        ];
+        $this->_intentSource = $intentSource;
+    }
 
-        if ($intentSource) {
-            $part['intent'] = $intentSource;
-        }
+    public function getIntentSource()
+    {
+        return $this->_intentSource;
+    }
 
-        $this->_text[] = $part;
+    public function addText($text)
+    {
+        $this->_text[] = $text;
     }
 
     public function getData()

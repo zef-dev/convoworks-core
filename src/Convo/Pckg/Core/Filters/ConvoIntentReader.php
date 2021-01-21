@@ -101,18 +101,19 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
                 $this->_logger->debug($e->getMessage());
 
                 $part = new PreviewSpeechPart($this->getId());
-                $part->addText('', 'Unknown intent');
+                $part->setIntentSource('Unknown');
+                $part->addText('');
 
                 return $part;
             }
         }
 
         $part = new PreviewSpeechPart($this->getId());
+        $part->setIntentSource($intent->getName());
 
         foreach ($intent->getUtterances() as $utterance)
         {
-            // $this->_logger->debug('Got utterance ['.print_r($utterance, true).']');
-            $part->addText($utterance->getText(), $intent->getName());
+            $part->addText($utterance->getText());
         }
 
         return $part;

@@ -2,6 +2,8 @@
 
 namespace Convo\Core\Workflow;
 
+use Convo\Core\Preview\PreviewBlock;
+
 /**
  * Special kind if workflow components which can be run.
  *
@@ -48,4 +50,10 @@ interface IRunnableBlock extends IConversationElement, IIdentifiableComponent
      * @return string
      */
     public function getName();
+
+    /**
+     * Get preview object for this block
+     * @return PreviewBlock
+     */
+    public function getPreview();
 }

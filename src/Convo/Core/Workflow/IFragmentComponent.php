@@ -21,4 +21,11 @@ interface IFragmentComponent extends IBasicServiceComponent
      * @return string
      */
 	public function getWorkflowName();
+
+	/**
+	 * Get a preview block for the current fragment
+	 *
+	 * @return \Convo\Core\Preview\PreviewBlock
+	 */
+	public function getPreview();
 }
