@@ -2,6 +2,9 @@
 
 ## [Current development]
 
+* Overhauled preview generation
+    * No longer done in `PreviewBuilder::read()`, each block now creates its own preview
+
 ## [Releases]
 
 ### 0.18.6 - 2021-01-08
