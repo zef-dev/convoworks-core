@@ -257,7 +257,7 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
                 $read->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
             }
         }
-		
+
 		if (!empty($read_speech)) {
 			$pblock->addSection($read);
 		}
@@ -265,7 +265,7 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
         // User <-> Bot back and forth
         foreach ($this->getProcessors() as $processor)
         {
-            $processor_section = new PreviewSection((new \ReflectionClass($processor))->getShortName().' ['.$processor->getId().']');
+            $processor_section = new PreviewSection('Process - '.(new \ReflectionClass($processor))->getShortName().' ['.$processor->getId().']');
 
             /** @var \Convo\Core\Preview\IBotSpeechResource[] $user */
             $user = [];
@@ -273,7 +273,7 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
             $bot = [];
             $this->_populateSpeech($user, $processor, '\Convo\Core\Preview\IUserSpeechResource');
 			$this->_populateSpeech($bot, $processor, '\Convo\Core\Preview\IBotSpeechResource');
-			
+
 			if (empty($user) && empty($bot)) {
 				$this->_logger->debug('No user utterances or bot responses, skipping.');
 				continue;
@@ -307,7 +307,7 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
                 $fallback->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
             }
         }
-		
+
 		if (!empty($fallback_speech)) {
 			$pblock->addSection($fallback);
 		}
