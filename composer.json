@@ -18,6 +18,7 @@
         "psr/http-server-handler" : "^1.0.0",
         "psr/http-server-middleware" : "^1.0.0",
         "psr/simple-cache" : "^1.0.0",
+        "phpseclib/bcmath_compat": "^2.0.0",
         "google/cloud-dialogflow" : "^0.17.4",
         "facebook/graph-sdk": "^5.7",
         "symfony/expression-language" : "^4.3",
