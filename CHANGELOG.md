@@ -7,6 +7,8 @@
     
 * add phpseclib/bcmath_compat in composer.json to fix issue with missing bccomp function from bcmath module
 
+* fix service deletion
+
 ## [Releases]
 
 ### 0.18.6 - 2021-01-08
