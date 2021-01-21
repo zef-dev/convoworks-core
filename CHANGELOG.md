@@ -4,6 +4,8 @@
 
 * Overhauled preview generation
     * No longer done in `PreviewBuilder::read()`, each block now creates its own preview
+    
+* add phpseclib/bcmath_compat in composer.json to fix issue with missing bccomp function from bcmath module
 
 ## [Releases]
 
