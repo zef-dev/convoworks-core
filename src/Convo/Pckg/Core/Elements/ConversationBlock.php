@@ -247,6 +247,7 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 
         // What the bot says first
         $read = new PreviewSection('Read');
+        $read_count = 0;
         foreach ($this->getElements() as $element)
         {
             /** @var \Convo\Core\Preview\IBotSpeechResource[] $read_speech */
@@ -255,10 +256,11 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 
             foreach ($read_speech as $part) {
                 $read->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
+                $read_count++;
             }
         }
 
-		if (!empty($read_speech)) {
+		if ($read_count > 0) {
 			$pblock->addSection($read);
 		}
 
@@ -297,6 +299,7 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 
         // Fallback text
         $fallback = new PreviewSection('Fallback');
+        $fallback_count = 0;
         foreach ($this->getFallback() as $element)
         {
             /** @var \Convo\Core\Preview\IBotSpeechResource[] $fallback_speech */
@@ -305,10 +308,11 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 
             foreach ($fallback_speech as $part) {
                 $fallback->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
+                $fallback_count++;
             }
         }
 
-		if (!empty($fallback_speech)) {
+		if ($fallback_count > 0) {
 			$pblock->addSection($fallback);
 		}
 

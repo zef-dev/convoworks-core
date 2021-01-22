@@ -398,6 +398,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
 
         // What the bot says first
         $read = new PreviewSection('Read');
+        $read_count = 0;
         foreach ($this->getElements() as $element)
         {
             /** @var \Convo\Core\Preview\IBotSpeechResource[] $read_speech */
@@ -406,15 +407,17 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
 
             foreach ($read_speech as $part) {
                 $read->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
+                $read_count++;
             }
         }
 
-        if (!empty($read_speech)) {
+        if ($read_count > 0) {
             $pblock->addSection($read);
         }
 
         // Fallback text
         $fallback = new PreviewSection('Fallback');
+        $fallback_count = 0;
         foreach ($this->getFallback() as $element)
         {
             /** @var \Convo\Core\Preview\IBotSpeechResource[] $fallback_speech */
@@ -423,14 +426,16 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
 
             foreach ($fallback_speech as $part) {
                 $fallback->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
+                $fallback_count++;
             }
         }
 
-        if (!empty($fallback_speech)) {
+        if ($fallback_count > 0) {
             $pblock->addSection($fallback);
         }
 
         $not_found = new PreviewSection('On not found');
+        $not_found_count = 0;
         foreach ($this->_notFound as $element)
         {
             /** @var \Convo\Core\Preview\IBotSpeechResource[] $not_found_speech */
@@ -439,10 +444,11 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
 
             foreach ($not_found_speech as $part) {
                 $not_found->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
+                $not_found_count++;
             }
         }
 
-        if (!empty($not_found_speech)) {
+        if ($not_found_count > 0) {
             $pblock->addSection($not_found);
         }
 
