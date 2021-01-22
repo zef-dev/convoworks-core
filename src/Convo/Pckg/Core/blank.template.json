@@ -18,6 +18,7 @@
             "properties": {
                 "block_id": "home",
                 "role": "conversation_block",
+                "name": "Home",
                 "elements": [
                     {
                         "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
