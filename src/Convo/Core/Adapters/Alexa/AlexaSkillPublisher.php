@@ -135,8 +135,6 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             }
             $config[$this->getPlatformId()]['time_updated'] = time();
             $this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
-            $meta['default_language'] = AlexaSkillLanguageMapper::getDefaultLocaleFromExternalSupportedLocales(array_keys($manifestData['publishingInformation']['locales']));
-            $this->_convoServiceDataProvider->saveServiceMeta($this->_user, $this->_serviceId, $meta);
             return;
         }
 
@@ -159,7 +157,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
 
 		$name = $this->_invocationToName($invocation);
-		$locales = AlexaSkillLanguageMapper::getSupportedLocalesByLocale($meta['default_language']);
+		$locales = $meta['supported_locales'];
 
         $interfaces = isset($config[$this->getPlatformId()]['interfaces']) ? $config[$this->getPlatformId()]['interfaces'] : [];
 
@@ -195,7 +193,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 		$this->_logger->info("Going to print manifest [" . $manifest->getManifest(true) . "]");
 
 		$manifestToCreate = $manifest->getManifest();
-        if (AlexaSkillLanguageMapper::getDefaultLocale($meta['default_language']) !== 'en-US') {
+        if (!in_array('en-US', $locales)) {
             unset($manifestToCreate['publishingInformation']['locales']['en-US']);
         }
 
@@ -250,7 +248,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 		$skillId = $config[$this->getPlatformId()]['app_id'];
 
-        $locales = AlexaSkillLanguageMapper::getSupportedLocalesByLocale($meta['default_language']);
+        $locales = $meta['supported_locales'];
 
         $invocation = strtolower($config[$this->getPlatformId()]['invocation']);
         $name = $this->_invocationToName($invocation);
@@ -270,18 +268,17 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD;
         $this->_updateManifest($manifest, $locales, $name, $publishingInformation, $endpointCertificate);
         $manifestData = $manifest->getManifest();
-        if (AlexaSkillLanguageMapper::getDefaultLocale($meta['default_language']) !== 'en-US') {
+        if (!in_array('en-US', $locales)) {
             unset($manifestData['publishingInformation']['locales']['en-US']);
         }
 
-        if (AlexaSkillLanguageMapper::getDefaultLocale($meta['default_language']) !== $existingManifestDefaultLocale) {
-            $existingLocales = array_diff(
-                array_keys($existing['manifest']['publishingInformation']['locales']),
-                AlexaSkillLanguageMapper::getSupportedLocalesByLocale($meta['default_language'])
-            );
-            foreach ($existingLocales as $existingLocale) {
-                unset($manifestData['publishingInformation']['locales'][$existingLocale]);
-            }
+        $existingLocales = array_diff(
+            array_keys($existing['manifest']['publishingInformation']['locales']),
+            $meta['supported_locales']
+        );
+
+        foreach ($existingLocales as $existingLocale) {
+            unset($manifestData['publishingInformation']['locales'][$existingLocale]);
         }
 
 		$this->_amazonPublishingService->updateSkill(
