@@ -39,6 +39,8 @@ interface IServiceDataProvider
         'name' => null,
         'description' => null,
         'default_language' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH,
+        'default_locale' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_US,
+        'supported_locales' => [IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_US],
         'active' => 0,
         'is_private' => false,
         'owner' => null,
@@ -72,12 +74,14 @@ interface IServiceDataProvider
      * @param \Convo\Core\IAdminUser $user
      * @param string $serviceName Name for the service.
      * @param string $defaultLanguage Default language of the service.
+     * @param string $defaultLocale
+     * @param string[] $supportedLocales
      * @param bool $isPrivate Non private services are accessible by all admin users.
      * @param string[] $serviceAdmins array of user emails which should be able to access service even if it is private.
      * @param array $workflowData
      * @return string new service_id
      */
-    public function createNewService( \Convo\Core\IAdminUser $user, $serviceName, $defaultLanguage, $isPrivate, $serviceAdmins, $workflowData);
+    public function createNewService( \Convo\Core\IAdminUser $user, $serviceName, $defaultLanguage, $defaultLocale, $supportedLocales, $isPrivate, $serviceAdmins, $workflowData);
 
 
     /**
@@ -170,9 +174,10 @@ interface IServiceDataProvider
 	 * @param string $stage
 	 * @param string $alias
 	 * @param string $versionId
+	 * @param array $meta
 	 * @return string Newly created release tag
 	 */
-	public function createRelease( \Convo\Core\IAdminUser $user, $serviceId, $platformId, $type, $stage, $alias, $versionId);
+	public function createRelease(\Convo\Core\IAdminUser $user, $serviceId, $platformId, $type, $stage, $alias, $versionId, $meta);
 
 
 	/**
@@ -199,8 +204,9 @@ interface IServiceDataProvider
 	 * @param string $serviceId
 	 * @param string $releaseId
 	 * @param string $versionId
+	 * @param array $meta
 	 */
-	public function setReleaseVersion( \Convo\Core\IAdminUser $user, $serviceId, $releaseId, $versionId);
+	public function setReleaseVersion(\Convo\Core\IAdminUser $user, $serviceId, $releaseId, $versionId, $meta);
 
 
 	/**
