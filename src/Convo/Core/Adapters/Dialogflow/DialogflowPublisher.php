@@ -76,7 +76,6 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         parent::enable();
 
         $config   =   $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
-        $meta      =   $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId);
         $mode     =   strtoupper($config[$this->getPlatformId()]['mode'] ?? 'MANUAL');
         if ( $mode !== 'AUTO') {
             $this->_logger->debug( 'No propagation in ['.$mode.'] mode');
@@ -104,9 +103,6 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $existingAgent = $api->getAgent();
         if ($existingAgent !== null) {
-            $meta['default_language'] = DialogflowLanguageMapper::getDefaultLocaleFromExternalLocale($existingAgent->getDefaultLanguageCode());
-            $this->_convoServiceDataProvider->saveServiceMeta($this->_user, $this->_serviceId, $meta);
-
             $config[$this->getPlatformId()]['name'] = $existingAgent->getDisplayName();
             $config[$this->getPlatformId()]['description'] = $existingAgent->getDescription();
             $config[$this->getPlatformId()]['avatar'] = $existingAgent->getAvatarUri();
@@ -115,8 +111,9 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $config[$this->getPlatformId()]['time_updated'] = time();
             $this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
         } else {
-            $defaultLocale = DialogflowLanguageMapper::getDefaultLocale($meta['default_language']);
-            $supportedLocales = DialogflowLanguageMapper::getSupportedLocalesByLocale($meta['default_language']);
+            $meta      =   $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId);
+            $defaultLocale = $meta['default_language'];
+            $supportedLocales = [];
             $agent = new Agent();
             $agent
                 ->setDisplayName($name)
@@ -141,7 +138,6 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
     public function propagate()
     {
-        $meta      =   $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 		$config = $this->_convoServiceDataProvider->getServicePlatformConfig(
             $this->_user,
             $this->_serviceId,
@@ -316,7 +312,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 json_encode($built['definition'], $json_options_mask)
             );
 
-            $defaultLocale = DialogflowLanguageMapper::getDefaultLocale($meta['default_language']);
+            $defaultLocale = $meta['default_language'];
             $entries = new SimpleFileResource(
                 $entity_name.'_entries_'.$defaultLocale.'.json', 'application/json',
                 json_encode($built['entries'], $json_options_mask)
@@ -333,7 +329,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         ]);
 
         foreach ($intents as $intent) {
-            $userSaysByLanguage = DialogflowLanguageMapper::getDefaultLocale($meta['default_language']);
+            $userSaysByLanguage = $meta['default_language'];
         	$existing_intent = $this->_findExistingIntent($intent, $existing_model);
         	$existing_utterances = $this->_findExistingUtterances($intent, $existing_model, $userSaysByLanguage);
             $built = $this->_buildIntents($intent, $existing_intent, $existing_utterances);
@@ -743,8 +739,8 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $agent = [
             'name' => $df_config['name'],
             'description' => $df_config['description'],
-            'language' => DialogflowLanguageMapper::getDefaultLocale($meta['default_language']),
-            'supportedLanguages' => DialogflowLanguageMapper::getSupportedLocalesByLocale($meta['default_language']),
+            'language' => $meta['default_language'],
+            'supportedLanguages' => [],
             'disableInteractionLogs' => false,
             'disableStackdriverLogs' => true,
             'defaultTimezone' => $df_config['default_timezone'],
