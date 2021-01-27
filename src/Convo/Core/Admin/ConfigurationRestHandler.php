@@ -45,12 +45,21 @@ class ConfigurationRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
         $data = [
             'CONVO_SERVICE_LANGUAGES' => [
                 ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH, 'name' => 'English'],
-                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_AU, 'name' => 'English Australia'],
-                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_CA, 'name' => 'English Canada'],
-                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_GB, 'name' => 'English UK'],
-                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_IN, 'name' => 'English India'],
-                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_US, 'name' => 'English US'],
                 ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_GERMAN, 'name' => 'German']
+            ],
+            'CONVO_SERVICE_LOCALES' => [
+                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_AU, 'name' => 'English (Australia)', 'checked' => false],
+                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_CA, 'name' => 'English (Canada)', 'checked' => false],
+                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_GB, 'name' => 'English (UK)', 'checked' => false],
+                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_IN, 'name' => 'English (India)', 'checked' => false],
+                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_US, 'name' => 'English (US)', 'checked' => true],
+                ['code' => 'de-DE', 'name' => 'German (Germany)', 'checked' => true]
+            ],
+            'CONVO_VIBER_WEBHOOK_EVENT_TYPES' => [
+                ['name' => 'conversation_started', 'checked' => true, 'mandatory' => true],
+                ['name' => 'delivered', 'checked' => false, 'mandatory' => false],
+                ['name' => 'seen', 'checked' => false, 'mandatory' => false],
+                ['name' => 'failed', 'checked' => false, 'mandatory' => false]
             ],
             'CONVO_AMAZON_INTERACTION_MODEL_SENSITIVITIES' => [
                 ['value' => 'LOW', 'name' => 'Low'],
