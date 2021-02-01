@@ -55,6 +55,10 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $entities['number']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.NUMBER', true));
         $entities['number']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.number-integer', true));
 
+        $entities['ordinal'] =   new SystemEntity( 'ordinal');
+        $entities['ordinal']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Ordinal', true));
+        $entities['ordinal']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.ordinal', true));
+
         $entities['city'] = new SystemEntity('city');
         $entities['city']->setPlatformModel('amazon', new EntityModel('AMAZON.City', true));
         $entities['city']->setPlatformModel('dialogflow', new EntityModel('@sys.geo-city', true));
