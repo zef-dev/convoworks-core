@@ -319,35 +319,6 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
         return $pblock;
     }
 
-    protected function _populateSpeech(&$array, $element, $interface)
-    {
-        // being a speech resource takes precedence over being a container component.
-        if (is_a($element, $interface))
-        {
-            $array[] = $element;
-        }
-        else if (is_a($element, '\Convo\Core\Workflow\IWorkflowContainerComponent'))
-        {
-            /** @var \Convo\Core\Workflow\IWorkflowContainerComponent $element */
-            $this->_logger->debug('Element ['.$element.'] is a workflow container');
-            $this->_flattenWorkflowContainers($array, $element, $interface);
-        }
-    }
-
-    protected function _flattenWorkflowContainers(&$array, $element, $interface)
-    {
-        $array = array_merge($array, $element->findChildren($interface));
-        if (($index = array_search($element, $array)) !== false) {
-            array_splice($array, $index, 1);
-        }
-
-        foreach ($array as $item) {
-            if (is_a($item, '\Convo\Core\Workflow\IWorkflowContainerComponent')) {
-                $this->_flattenWorkflowContainers($array, $item, $interface);
-            }
-        }
-    }
-
 	// UTIL
 	public function __toString()
 	{
