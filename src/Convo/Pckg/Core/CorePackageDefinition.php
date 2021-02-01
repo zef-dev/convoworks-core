@@ -1936,11 +1936,26 @@ Additional Processors are used to execute user command, if matched. If no match 
                         'description' => 'Use this filter to test workflows',
                         'valueType' => 'string'
                     ),
+                    'values' => array(
+                        'editor_type' => 'params',
+                        'editor_properties' => array(
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Predefined values',
+                        'description' => 'Predefined values which should be set in result',
+                        'valueType' => 'array'
+                    ),
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div>' .
                             '<b>{{ component.properties.empty === \'empty\' ? \'Will not activate\' :  \'Always activated\' }}</b>' .
                             '</div>'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code"><b>{{ component.properties.empty === \'empty\' ? \'Will not activate\' :  \'Always activated\' }}</b>'.
+                        '<span ng-if="component.properties.empty != \'empty\'" ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span>'
                     ),
                     '_help' =>  array(
                         'type' => 'file',

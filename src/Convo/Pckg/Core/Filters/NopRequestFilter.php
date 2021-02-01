@@ -16,12 +16,14 @@ class NopRequestFilter implements \Convo\Core\Workflow\IRequestFilter
 	
 	private $_id;
 	private $_empty;
+	private $_values;
 	
 	public function __construct( $config)
 	{
-		$this->_filterResult	=	new \Convo\Core\Workflow\DefaultFilterResult();
-		$this->_id				=	$config['_component_id'] ?? null;
-		$this->_empty			=	$config['empty'] ?? 'empty';
+        $this->_filterResult    =   new \Convo\Core\Workflow\DefaultFilterResult();
+        $this->_id              =   $config['_component_id'] ?? null;
+        $this->_empty           =   $config['empty'] ?? 'empty';
+        $this->_values          =   $config['values'] ?? [];
 	}
 	
 	public function getId()
@@ -53,6 +55,12 @@ class NopRequestFilter implements \Convo\Core\Workflow\IRequestFilter
 	        // DUMMY VALUE
 	        $result->setSlotValue( get_class( $this), true);
 	    }
+	    
+	    foreach ( $this->_values as $key => $value)
+	    {
+	        $result->setSlotValue( $key, $value);
+	    }
+	    
 	    return $result;
 	}
 
