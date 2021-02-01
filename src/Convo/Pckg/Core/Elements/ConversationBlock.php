@@ -264,13 +264,13 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
             try {
                 $processor_section->collectOne($processor, '\Convo\Core\Preview\IUserSpeechResource');
                 $processor_section->collectOne($processor, '\Convo\Core\Preview\IBotSpeechResource');
+
+                if (!$processor_section->isEmpty()) {
+                    $pblock->addSection($processor_section);
+                }
             } catch (\Exception $e) {
                 $this->_logger->error($e);
                 continue;
-            }
-
-            if (!$processor_section->isEmpty()) {
-                $pblock->addSection($processor_section);
             }
         }
 
