@@ -77,7 +77,7 @@ class YesNoProcessor extends \Convo\Pckg\Core\Processors\AbstractServiceProcesso
 
 	    /* @var \Convo\Core\Workflow\IIntentAwareRequest $request */
         $provider = $this->_packageProviderFactory->getProviderFromPackageIds($this->getService()->getPackageIds());
-	    $sys_intent = $provider->findPlatformIntent( $request->getIntentName(), $request->getPlatformId());
+	    $sys_intent = $provider->findPlatformIntent( $request->getIntentName(), $request->getIntentPlatformId());
 
 	    $this->_logger->debug( 'Got sys intent ['.$sys_intent->getName().']['.$sys_intent.']');
 

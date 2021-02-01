@@ -366,8 +366,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'boolean',
                         'editor_properties' => array(),
                         'defaultValue' => false,
-                        'name' => 'Next',
-                        'description' => 'Should the state change be applied in next request.',
+                        'name' => 'Wait for next request',
+                        'description' => 'If true, the state won\'t be immediately changed, and will wait for the end of execution for the current read phase. The next request will change the state and will skip the read phase of that state. If false, the state will be immediately changed.',
                         'valueType' => 'boolean'
                     ),
                     '_preview_angular' => array(

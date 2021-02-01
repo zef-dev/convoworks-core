@@ -464,10 +464,10 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     // EVAL CONTEXTS
 
-	/**
-	 * @param \Convo\Core\Workflow\IServiceContext
-	 * @throws \Exception
-	 */
+    /**
+     * @param \Convo\Core\Workflow\IServiceContext
+     * @throws \Exception
+     */
     public function addEvalContext($item)
     {
         $this->_contexts[$item->getId()] = $item;
@@ -621,8 +621,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     }
 
     public function getFragments() {
-    	return $this->_fragments;
-	}
+        return $this->_fragments;
+    }
 
     // EXECUTION CONTEXT
     /**

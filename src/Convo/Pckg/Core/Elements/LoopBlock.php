@@ -80,6 +80,7 @@ class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
         $preview->setLogger($this->_logger);
 
         $read = new PreviewSection('Read');
+        $read_count = 0;
         foreach ($this->getElements() as $element)
         {
             /** @var \Convo\Core\Preview\IBotSpeechResource[] $read_speech */
@@ -88,10 +89,11 @@ class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
 
             foreach ($read_speech as $part) {
                 $read->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
+                $read_count++;
             }
         }
 
-        if (!empty($read_speech)) {
+        if ($read_count > 0) {
             $preview->addSection($read);
         }
 
@@ -161,6 +163,7 @@ class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
         }
 
         $done = new PreviewSection('Done');
+        $done_count = 0;
         foreach ($this->_done as $element) {
             /** @var \Convo\Core\Preview\IBotSpeechResource[] $done_speech */
             $done_speech = [];
@@ -168,14 +171,16 @@ class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
 
             foreach ($done_speech as $part) {
                 $done->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
+                $done_count++;
             }
         }
 
-        if (!empty($done_speech)) {
+        if ($done_count > 0) {
             $preview->addSection($done);
         }
 
         $fallback = new PreviewSection('Fallback');
+        $fallback_count = 0;
         foreach ($this->getFallback() as $element)
         {
             /** @var \Convo\Core\Preview\IBotSpeechResource[] $fallback_speech */
@@ -184,14 +189,13 @@ class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
 
             foreach ($fallback_speech as $part) {
                 $fallback->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
+                $fallback_count++;
             }
         }
 
-        if (!empty($fallback_speech)) {
+        if ($fallback_count > 0) {
             $preview->addSection($fallback);
         }
-
-
 
         return $preview;
     }
