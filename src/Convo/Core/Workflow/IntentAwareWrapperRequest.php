@@ -115,7 +115,7 @@ class IntentAwareWrapperRequest implements IIntentAwareRequest
 	// UTIL
 	public function __toString()
 	{
-		return get_class( $this).'['.$this->_intentName.']['.$this->_parent.']';
+	    return get_class( $this).'['.$this->_intentName.']['.json_encode( $this->_slots).']['.$this->_parent.']';
 	}
 
     /**
