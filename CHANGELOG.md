@@ -17,6 +17,8 @@
 
 * added abilty to set predefined values for NOP filter
 
+* fixed amazon auth code refresh process - was overwriting client data and had bad expiration handling
+
 ## [Releases]
 
 ### 0.18.6 - 2021-01-08

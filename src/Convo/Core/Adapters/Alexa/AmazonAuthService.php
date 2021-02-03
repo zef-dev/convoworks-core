@@ -116,7 +116,9 @@ class AmazonAuthService
         $expires = $amazonConfig['expires_in'];
         $created = $amazonConfig['created'] ?? 0;
 
-        if ($now < $created + $expires) {
+        $this->_logger->debug('Got client_auth timestamps created['.$created.'] expires['.$expires.'] now['.$now.']');
+        
+        if ( $now < $expires) {
             $this->_logger->debug('No need to refresh token yet.');
             return;
         }
@@ -159,12 +161,8 @@ class AmazonAuthService
 
     public function storeAuthCredentials(IAdminUser $user, $credentials)
     {
-        $config = [
-            'amazon' => [
-                'client_auth' => $credentials
-            ]
-        ];
-
+        $config =   $this->_adminUserDataProvider->getPlatformConfig( $user->getId());
+        $config['amazon']['client_auth']    =   $credentials;
         $this->_adminUserDataProvider->updatePlatformConfig($user->getId(), $config);
     }
 
