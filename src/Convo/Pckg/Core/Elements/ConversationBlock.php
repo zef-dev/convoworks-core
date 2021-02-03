@@ -247,101 +247,46 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 
         // What the bot says first
         $read = new PreviewSection('Read');
-        foreach ($this->getElements() as $element)
-        {
-            /** @var \Convo\Core\Preview\IBotSpeechResource[] $read_speech */
-            $read_speech = [];
-            $this->_populateSpeech($read_speech, $element, '\Convo\Core\Preview\IBotSpeechResource');
-
-            foreach ($read_speech as $part) {
-                $read->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
+        try {
+            $read->collect($this->getElements(), '\Convo\Core\Preview\IBotSpeechResource');
+            if (!$read->isEmpty()) {
+                $pblock->addSection($read);
             }
+        } catch (\Exception $e) {
+            $this->_logger->error($e);
         }
-
-		if (!empty($read_speech)) {
-			$pblock->addSection($read);
-		}
 
         // User <-> Bot back and forth
         foreach ($this->getProcessors() as $processor)
         {
             $processor_section = new PreviewSection('Process - '.(new \ReflectionClass($processor))->getShortName().' ['.$processor->getId().']');
+            $processor_section->setLogger($this->_logger);
+            try {
+                $processor_section->collectOne($processor, '\Convo\Core\Preview\IUserSpeechResource');
+                $processor_section->collectOne($processor, '\Convo\Core\Preview\IBotSpeechResource');
 
-            /** @var \Convo\Core\Preview\IBotSpeechResource[] $user */
-            $user = [];
-            /** @var \Convo\Core\Preview\IBotSpeechResource[] $bot */
-            $bot = [];
-            $this->_populateSpeech($user, $processor, '\Convo\Core\Preview\IUserSpeechResource');
-			$this->_populateSpeech($bot, $processor, '\Convo\Core\Preview\IBotSpeechResource');
-
-			if (empty($user) && empty($bot)) {
-				$this->_logger->debug('No user utterances or bot responses, skipping.');
-				continue;
-			}
-
-            foreach ($user as $user_part)
-            {
-				$speech = $user_part->getSpeech();
-                $utterance = new PreviewUtterance($speech->getText(), false, $speech->getIntentSource());
-                $processor_section->addUtterance($utterance);
+                if (!$processor_section->isEmpty()) {
+                    $pblock->addSection($processor_section);
+                }
+            } catch (\Exception $e) {
+                $this->_logger->error($e);
+                continue;
             }
-
-            foreach ($bot as $bot_part)
-            {
-                $utterance = new PreviewUtterance($bot_part->getSpeech()->getText());
-                $processor_section->addUtterance($utterance);
-            }
-
-            $pblock->addSection($processor_section);
         }
 
         // Fallback text
         $fallback = new PreviewSection('Fallback');
-        foreach ($this->getFallback() as $element)
-        {
-            /** @var \Convo\Core\Preview\IBotSpeechResource[] $fallback_speech */
-            $fallback_speech = [];
-            $this->_populateSpeech($fallback_speech, $element, '\Convo\Core\Preview\IBotSpeechResource');
-
-            foreach ($fallback_speech as $part) {
-                $fallback->addUtterance(new PreviewUtterance($part->getSpeech()->getText()));
+        $fallback->setLogger($this->_logger);
+        try {
+            $fallback->collect($this->getFallback(), '\Convo\Core\Preview\IBotSpeechResource');
+            if (!$fallback->isEmpty()) {
+                $pblock->addSection($fallback);
             }
+        } catch (\Exception $e) {
+            $this->_logger->error($e);
         }
-
-		if (!empty($fallback_speech)) {
-			$pblock->addSection($fallback);
-		}
 
         return $pblock;
-    }
-
-    protected function _populateSpeech(&$array, $element, $interface)
-    {
-        // being a speech resource takes precedence over being a container component.
-        if (is_a($element, $interface))
-        {
-            $array[] = $element;
-        }
-        else if (is_a($element, '\Convo\Core\Workflow\IWorkflowContainerComponent'))
-        {
-            /** @var \Convo\Core\Workflow\IWorkflowContainerComponent $element */
-            $this->_logger->debug('Element ['.$element.'] is a workflow container');
-            $this->_flattenWorkflowContainers($array, $element, $interface);
-        }
-    }
-
-    protected function _flattenWorkflowContainers(&$array, $element, $interface)
-    {
-        $array = array_merge($array, $element->findChildren($interface));
-        if (($index = array_search($element, $array)) !== false) {
-            array_splice($array, $index, 1);
-        }
-
-        foreach ($array as $item) {
-            if (is_a($item, '\Convo\Core\Workflow\IWorkflowContainerComponent')) {
-                $this->_flattenWorkflowContainers($array, $item, $interface);
-            }
-        }
     }
 
 	// UTIL

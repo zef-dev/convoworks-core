@@ -55,6 +55,10 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $entities['number']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.NUMBER', true));
         $entities['number']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.number-integer', true));
 
+        $entities['ordinal'] =   new SystemEntity( 'ordinal');
+        $entities['ordinal']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Ordinal', true));
+        $entities['ordinal']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.ordinal', true));
+
         $entities['city'] = new SystemEntity('city');
         $entities['city']->setPlatformModel('amazon', new EntityModel('AMAZON.City', true));
         $entities['city']->setPlatformModel('dialogflow', new EntityModel('@sys.geo-city', true));
@@ -143,6 +147,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('array_search');
         $functions[] = ExpressionFunction::fromPhp('array_merge');
         $functions[] = ExpressionFunction::fromPhp('is_numeric');
+        $functions[] = ExpressionFunction::fromPhp('substr');
 
         // CUSTOM
         $functions[] = new ExpressionFunction(
@@ -366,8 +371,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'boolean',
                         'editor_properties' => array(),
                         'defaultValue' => false,
-                        'name' => 'Next',
-                        'description' => 'Should the state change be applied in next request.',
+                        'name' => 'Wait for next request',
+                        'description' => 'If true, the state won\'t be immediately changed, and will wait for the end of execution for the current read phase. The next request will change the state and will skip the read phase of that state. If false, the state will be immediately changed.',
                         'valueType' => 'boolean'
                     ),
                     '_preview_angular' => array(
@@ -1932,11 +1937,26 @@ Additional Processors are used to execute user command, if matched. If no match 
                         'description' => 'Use this filter to test workflows',
                         'valueType' => 'string'
                     ),
+                    'values' => array(
+                        'editor_type' => 'params',
+                        'editor_properties' => array(
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Predefined values',
+                        'description' => 'Predefined values which should be set in result',
+                        'valueType' => 'array'
+                    ),
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div>' .
                             '<b>{{ component.properties.empty === \'empty\' ? \'Will not activate\' :  \'Always activated\' }}</b>' .
                             '</div>'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code"><b>{{ component.properties.empty === \'empty\' ? \'Will not activate\' :  \'Always activated\' }}</b>'.
+                        '<span ng-if="component.properties.empty != \'empty\'" ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span>'
                     ),
                     '_help' =>  array(
                         'type' => 'file',

@@ -17,19 +17,19 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
      * @deprecated
      */
     const BLOCK_TYPE_SESSION_END		=	'__sessionEnd';
-    
+
     /**
      * @var string
      * @deprecated
      */
     const BLOCK_TYPE_SESSION_START		=	'__sessionStart';
-    
+
     /**
      * @var string
      * @deprecated
      */
     const BLOCK_TYPE_SERVICE_PROCESSORS	=	'__serviceProcessors';
-    
+
     /**
      * @var string
      * @deprecated
@@ -349,7 +349,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                 $this->_logger->debug( 'Exiting ...');
                 return ;
             }
-            
+
             try {
                 $this->_logger->debug( 'Trying to read role ['.IRunnableBlock::ROLE_SESSION_START.'] ...');
                 $block  =   $this->getBlockByRole( IRunnableBlock::ROLE_SESSION_START);
@@ -388,7 +388,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         try {
             $block->run( $request, $response);
         } catch ( \Convo\Core\StateChangedException $e) {
-            $this->_logger->info( $e->getMessage());
+            $this->_logger->info('Caught state change ['.$e->getMessage().']');
             $params->setServiceParam(self::SERVICE_STATE_PREV_NAME, $block->getComponentId());
             $this->_readState( $e->getState(), $request, $response);
         }
@@ -404,10 +404,12 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         try {
             $block->read( $request, $response);
         } catch ( \Convo\Core\StateChangedException $e) {
-            $this->_logger->info( $e->getMessage());
+            $this->_logger->info('Caught state change ['.$e->getMessage().']');
             if ( $e->getState() === $state) {
                 throw new \Exception( 'Not allowed to call itself again in block ['.$state.']');
             }
+            $params = $this->getServiceParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION);
+            $params->setServiceParam(self::SERVICE_STATE_PREV_NAME, $block->getComponentId());
             $this->_readState( $e->getState(), $request, $response);
         }
     }
@@ -415,7 +417,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     protected function _readBlock( IRunnableBlock $block, $request, $response)
     {
         $this->_logger->debug( 'Reading block ['.$block->getRole().']['.$block->getComponentId().']');
-        
+
         try {
             $block->read( $request, $response);
         } catch ( \Convo\Core\StateChangedException $e) {
@@ -462,10 +464,10 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     // EVAL CONTEXTS
 
-	/**
-	 * @param \Convo\Core\Workflow\IServiceContext
-	 * @throws \Exception
-	 */
+    /**
+     * @param \Convo\Core\Workflow\IServiceContext
+     * @throws \Exception
+     */
     public function addEvalContext($item)
     {
         $this->_contexts[$item->getId()] = $item;
@@ -589,18 +591,18 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         }
         throw new \Convo\Core\ComponentNotFoundException( 'Unexisting block ['.$state.']');
     }
-    
+
     public function getBlockByRole( $role) {
         if ( $role === IRunnableBlock::ROLE_CONVERSATION_BLOCK) {
             throw new \Exception( 'Only singleton roles are allowed');
         }
-        
+
         foreach ( $this->_blocks as $block) {
             if ( $block->getRole() === $role) {
                 return $block;
             }
         }
-        
+
         throw new \Convo\Core\ComponentNotFoundException( 'Block with role ['.$role.'] not found');
     }
 
@@ -619,8 +621,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     }
 
     public function getFragments() {
-    	return $this->_fragments;
-	}
+        return $this->_fragments;
+    }
 
     // EXECUTION CONTEXT
     /**
@@ -802,19 +804,19 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
         return $this->_evaluateVariables( $variables);
     }
-    
+
     private function _evaluateVariables( $variables)
     {
         $evaluated  =   [];
-        
+
         foreach ( $variables as $key=>$val) {
             $evaluated[$key] = $this->_eval->evalString( $val, $evaluated);
         }
-        
+
         return $evaluated;
     }
-    
-    
+
+
     public function __toString()
     {
         return get_class( $this).'['.$this->_serviceId.']';

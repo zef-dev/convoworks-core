@@ -913,15 +913,11 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
     {
         if ($config['endpoint_ssl_certificate_type'] === AmazonSkillManifest::CERTIFICATE_TYPE_SELF_SIGNED) {
             if (isset($config['self_signed_certificate'])) {
-                try {
-                    $sslCertificate = $this->_mediaService->getMediaItem(
-                        $this->_serviceId, $config['self_signed_certificate']
+                $sslCertificate = $this->_mediaService->getMediaItem(
+                    $this->_serviceId, $config['self_signed_certificate']
                     )->getContent();
-                    $this->_logger->debug("Printing self signed ssl certificate [" . $sslCertificate . "] when [" . $config['endpoint_ssl_certificate_type'] . "] is selected." );
-                    $this->_amazonPublishingService->uploadSelfSignedSslCertificateToSkill($owner, $skillId, $sslCertificate);
-                } catch (\Exception $e) {
-                    throw new \Exception($e->getMessage());
-                }
+                $this->_logger->debug("Printing self signed ssl certificate [" . $sslCertificate . "] when [" . $config['endpoint_ssl_certificate_type'] . "] is selected." );
+                $this->_amazonPublishingService->uploadSelfSignedSslCertificateToSkill($owner, $skillId, $sslCertificate);
             }
         }
     }

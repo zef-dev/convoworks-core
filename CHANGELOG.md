@@ -9,6 +9,16 @@
 
 * fix service deletion
 
+* added function `substr` to core package
+
+* added `ordinal` system entity
+
+* fixed `DefaultFilterResult::isSlotEmpty()` to check empty string too (was `isset` only)
+
+* added abilty to set predefined values for NOP filter
+
+* fixed amazon auth code refresh process - covered 2nd variant
+
 ## [Releases]
 
 ### 0.18.6 - 2021-01-08
