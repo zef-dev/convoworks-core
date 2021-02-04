@@ -19,6 +19,8 @@
 
 * fixed amazon auth code refresh process - covered 2nd variant
 
+* update Alexa Skill manifest from platform configuration
+
 ## [Releases]
 
 ### 0.18.6 - 2021-01-08
