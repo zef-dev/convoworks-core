@@ -11,19 +11,6 @@ Here are few key features:
 
 Please note that the Convoworks is currently in beta phase and it is planned to be released in March 2021.
 In a meanwhile, we will have several releases and some of them could have breaking changes.
-
-When there is a breaking change we will round the minor version to multiplier of 10.
-
-Here is the example how it might look:
-
-* 0.40.0 - breaking changes
-* 0.32.0 - improvements
-* 0.31.0 - improvements
-* 0.30.0 - breaking changes
-* 0.21.0 - improvements
-* 0.20.0 - improvements // if it was breaking chenge it would be 1.30
-* 0.19.0 - improvements
-* 0.18.0 - improvements
  
 
 ## Overview
