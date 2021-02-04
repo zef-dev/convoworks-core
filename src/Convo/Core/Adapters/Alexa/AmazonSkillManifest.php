@@ -25,66 +25,6 @@ class AmazonSkillManifest implements LoggerAwareInterface
 	const CERTIFICATE_TYPE_WILDCARD = 'Wildcard';
 	const CERTIFICATE_TYPE_TRUSTED = 'Trusted';
 
-	const CATEGORY_ALARMS_AND_CLOCKS = "ALARMS_AND_CLOCKS";
-	const CATEGORY_ASTROLOGY = "ASTROLOGY";
-	const CATEGORY_BUSINESS_AND_FINANCE = "BUSINESS_AND_FINANCE";
-	const CATEGORY_CALCULATORS = "CALCULATORS";
-	const CATEGORY_CALENDARS_AND_REMINDERS = "CALENDARS_AND_REMINDERS";
-	const CATEGORY_CHILDRENS_EDUCATION_AND_REFERENCE = "CHILDRENS_EDUCATION_AND_REFERENCE";
-	const CATEGORY_CHILDRENS_GAMES = "CHILDRENS_GAMES";
-	const CATEGORY_CHILDRENS_MUSIC_AND_AUDIO = "CHILDRENS_MUSIC_AND_AUDIO";
-	const CATEGORY_CHILDRENS_NOVELTY_AND_HUMOR = "CHILDRENS_NOVELTY_AND_HUMOR";
-	const CATEGORY_COMMUNICATION = "COMMUNICATION";
-	const CATEGORY_CONNECTED_CAR = "CONNECTED_CAR";
-	const CATEGORY_COOKING_AND_RECIPE = "COOKING_AND_RECIPE";
-	const CATEGORY_CURRENCY_GUIDES_AND_CONVERTERS = "CURRENCY_GUIDES_AND_CONVERTERS";
-	const CATEGORY_DATING = "DATING";
-	const CATEGORY_DELIVERY_AND_TAKEOUT = "DELIVERY_AND_TAKEOUT";
-	const CATEGORY_DEVICE_TRACKING = "DEVICE_TRACKING";
-	const CATEGORY_EDUCATION_AND_REFERENCE = "EDUCATION_AND_REFERENCE";
-	const CATEGORY_EVENT_FINDERS = "EVENT_FINDERS";
-	const CATEGORY_EXERCISE_AND_WORKOUT = "EXERCISE_AND_WORKOUT";
-	const CATEGORY_FASHION_AND_STYLE = "FASHION_AND_STYLE";
-	const CATEGORY_FLIGHT_FINDERS = "FLIGHT_FINDERS";
-	const CATEGORY_FRIENDS_AND_FAMILY = "FRIENDS_AND_FAMILY";
-	const CATEGORY_GAME_INFO_AND_ACCESSORY = "GAME_INFO_AND_ACCESSORY";
-	const CATEGORY_GAMES = "GAMES";
-	const CATEGORY_HEALTH_AND_FITNESS = "HEALTH_AND_FITNESS";
-	const CATEGORY_HOTEL_FINDERS = "HOTEL_FINDERS";
-	const CATEGORY_KNOWLEDGE_AND_TRIVIA = "KNOWLEDGE_AND_TRIVIA";
-	const CATEGORY_MOVIE_AND_TV_KNOWLEDGE_AND_TRIVIA = "MOVIE_AND_TV_KNOWLEDGE_AND_TRIVIA";
-	const CATEGORY_MOVIE_INFO_AND_REVIEWS = "MOVIE_INFO_AND_REVIEWS";
-	const CATEGORY_MOVIE_SHOWTIMES = "MOVIE_SHOWTIMES";
-	const CATEGORY_MUSIC_AND_AUDIO_ACCESSORIES = "MUSIC_AND_AUDIO_ACCESSORIES";
-	const CATEGORY_MUSIC_AND_AUDIO_KNOWLEDGE_AND_TRIVIA = "MUSIC_AND_AUDIO_KNOWLEDGE_AND_TRIVIA";
-	const CATEGORY_MUSIC_INFO_REVIEWS_AND_RECOGNITION_SERVICE = "MUSIC_INFO_REVIEWS_AND_RECOGNITION_SERVICE";
-	const CATEGORY_NAVIGATION_AND_TRIP_PLANNER = "NAVIGATION_AND_TRIP_PLANNER";
-	const CATEGORY_NEWS = "NEWS";
-	const CATEGORY_NOVELTY = "NOVELTY";
-	const CATEGORY_ORGANIZERS_AND_ASSISTANTS = "ORGANIZERS_AND_ASSISTANTS";
-	const CATEGORY_PETS_AND_ANIMAL = "PETS_AND_ANIMAL";
-	const CATEGORY_PODCAST = "PODCAST";
-	const CATEGORY_PUBLIC_TRANSPORTATION = "PUBLIC_TRANSPORTATION";
-	const CATEGORY_RELIGION_AND_SPIRITUALITY = "RELIGION_AND_SPIRITUALITY";
-	const CATEGORY_RESTAURANT_BOOKING_INFO_AND_REVIEW = "RESTAURANT_BOOKING_INFO_AND_REVIEW";
-	const CATEGORY_SCHOOLS = "SCHOOLS";
-	const CATEGORY_SCORE_KEEPING = "SCORE_KEEPING";
-	const CATEGORY_SELF_IMPROVEMENT = "SELF_IMPROVEMENT";
-	const CATEGORY_SHOPPING = "SHOPPING";
-	const CATEGORY_SMART_HOME = "SMART_HOME";
-	const CATEGORY_SOCIAL_NETWORKING = "SOCIAL_NETWORKING";
-	const CATEGORY_SPORTS_GAMES = "SPORTS_GAMES";
-	const CATEGORY_SPORTS_NEWS = "SPORTS_NEWS";
-	const CATEGORY_STREAMING_SERVICE = "STREAMING_SERVICE";
-	const CATEGORY_TAXI_AND_RIDESHARING = "TAXI_AND_RIDESHARING";
-	const CATEGORY_TO_DO_LISTS_AND_NOTES = "TO_DO_LISTS_AND_NOTES";
-	const CATEGORY_TRANSLATORS = "TRANSLATORS";
-	const CATEGORY_TV_GUIDES = "TV_GUIDES";
-	const CATEGORY_UNIT_CONVERTERS = "UNIT_CONVERTERS";
-	const CATEGORY_WEATHER = "WEATHER";
-	const CATEGORY_WINE_AND_BEVERAGE = "WINE_AND_BEVERAGE";
-	const CATEGORY_ZIP_CODE_LOOKUP = "ZIP_CODE_LOOKUP";
-
     /**
      * @var array
      **/
@@ -332,30 +272,6 @@ class AmazonSkillManifest implements LoggerAwareInterface
 
         return $this;
     }
-    /**
-     * Set what's new description for the specified locale(s). You may provide $locales as either a string, which will be considered a single locale; an array of strings, which will be treated as a series of locales for which to set the description; or a key => value map, in which case the keys will be treated as locale names, and the values will be the descriptions for each respective locale.
-     * @param array|string $locales The locale(s) for which to set the description. If this is a key => value map, then the $description parameter will be ignored.
-     * @param string $description The what's new description to set for the given locale(s). This is ignored if $locales is a key => value map.
-     * @return self
-     * @throws Exception
-     */
-    public function setWhatsNew($locales, $description)
-    {
-        if (!is_array($locales)) {
-            $locales = [$locales];
-        }
-
-        foreach ($locales as $key => $value) {
-            $l = is_numeric($key) ? $value : $key;
-            $d = is_numeric($key) ? $description : $value;
-
-            $this->_checkLocaleIsValid($l);
-
-            $this->_manifest['publishingInformation']['locales'][$l]['updatesDescription'] = $d;
-        }
-
-        return $this;
-    }
 
     /**
      * Set whether the skill should be available worldwide.
@@ -489,50 +405,32 @@ class AmazonSkillManifest implements LoggerAwareInterface
 
     /**
      * Sets the privacy policy url for the specified locale. Note that you may only provide a string for the `locale` parameter because every locale MUST have a separate Privacy Policy URL.
-     * @param array $locales Locales for which to set the privacy policy URL
+     * @param string $locale Locale for which to set the privacy policy URL
      * @param string $url Publicly accessible URL to the privacy policy for the specified locale.
      * @return self
      * @throws Exception Invalid locale provided
      */
-    public function setPrivacyPolicyUrl($locales, $url)
+    public function setPrivacyPolicyUrl($locale, $url)
     {
-        if (!is_array($locales)) {
-            $locales = [$locales];
-        }
+        $this->_checkLocaleIsValid($locale);
 
-        foreach ($locales as $key => $value) {
-            $l = is_numeric($key) ? $value : $key;
-            $d = is_numeric($key) ? $url : $value;
-
-            $this->_checkLocaleIsValid($l);
-
-            $this->_manifest['privacyAndCompliance']['locales'][$l]['privacyPolicyUrl'] = $d;
-        }
+        $this->_manifest['privacyAndCompliance']['locales'][$locale]['privacyPolicyUrl'] = $url;
 
         return $this;
     }
 
     /**
      * Set the Terms of Use URL for the specified locale. Note that you may only provide a string for the `locale` paramter, because every locale MUST have its own, separate URL for the Terms of Use.
-     * @param array $locales Locales for which to set the Terms of Use URL
+     * @param string $locale Locale for which to set the Terms of Use URL
      * @param string $url Publicly accessible URL with the Terms of Use for the specified locale
      * @return $this
      * @throws Exception Invalid locale given
      */
-    public function setTermsOfUseUrl($locales, $url)
+    public function setTermsOfUseUrl($locale, $url)
     {
-        if (!is_array($locales)) {
-            $locales = [$locales];
-        }
+        $this->_checkLocaleIsValid($locale);
 
-        foreach ($locales as $key => $value) {
-            $l = is_numeric($key) ? $value : $key;
-            $d = is_numeric($key) ? $url : $value;
-
-            $this->_checkLocaleIsValid($l);
-
-            $this->_manifest['privacyAndCompliance']['locales'][$l]['termsOfUseUrl'] = $d;
-        }
+        $this->_manifest['privacyAndCompliance']['locales'][$locale]['termsOfUseUrl'] = $url;
 
         return $this;
     }
@@ -608,6 +506,38 @@ class AmazonSkillManifest implements LoggerAwareInterface
 	{
 		$this->_useEvents = $bool;
 	}
+
+	// MANIFEST DATA
+    public function getPublishingInformationByLocale($locale) {
+        $preparedArray = [
+            "localizedInfo" => $this->_manifest["publishingInformation"]["locales"][$locale],
+            "otherInfo" => [
+                "category" => $this->_manifest["publishingInformation"]["category"],
+                "distributionMode" => $this->_manifest["publishingInformation"]["distributionMode"],
+                "isAvailableWorldwide" => $this->_manifest["publishingInformation"]["isAvailableWorldwide"],
+                "testingInstructions" => $this->_manifest["publishingInformation"]["testingInstructions"]
+            ]
+        ];
+        $this->_logger->info("This is the prepared publishing info from amazon [" . print_r($preparedArray, true) . "]"  );
+
+        return $preparedArray;
+    }
+
+    public function getPrivacyAndComplianceByLocale($locale) {
+        $preparedArray = [
+            "localizedInfo" => $this->_manifest["privacyAndCompliance"]["locales"][$locale],
+            "otherInfo" => [
+                "allowsPurchases" => $this->_manifest["privacyAndCompliance"]["allowsPurchases"],
+                "usesPersonalInfo" => $this->_manifest["privacyAndCompliance"]["usesPersonalInfo"],
+                "isChildDirected" => $this->_manifest["privacyAndCompliance"]["isChildDirected"],
+                "isExportCompliant" => $this->_manifest["privacyAndCompliance"]["isExportCompliant"],
+                "containsAds" => $this->_manifest["privacyAndCompliance"]["containsAds"]
+            ]
+        ];
+        $this->_logger->info("This is the prepared publishing info from amazon [" . print_r($preparedArray, true) . "]"  );
+
+        return $preparedArray;
+    }
 
     // UTIL
     private function _setPrivacySetting($setting, $bool)

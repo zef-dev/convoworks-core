@@ -35,16 +35,16 @@ class ServiceReleaseManager
     public function createServiceRelease(IAdminUser $user, $serviceId, $platformId, $type, $stage)
     {
         $alias = $this->getDevelopmentAlias($user, $serviceId, $platformId);
-        $meta = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId);
         // tag version
         $data = $this->_convoServiceDataProvider->getServiceData($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
         $config = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
         $version_id = $this->_convoServiceDataProvider->createServiceVersion($user, $serviceId, $data, $config);
-        $new_release_id = $this->_convoServiceDataProvider->createRelease($user, $serviceId, $platformId, $type, $stage, $alias, $version_id, $meta);
+        $new_release_id = $this->_convoServiceDataProvider->createRelease($user, $serviceId, $platformId, $type, $stage, $alias, $version_id);
 
         $this->_convoServiceDataProvider->markVersionAsRelease( $user, $serviceId, $version_id, $new_release_id);
 
         // if slot taken - discard all release
+        $meta = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId);
         $release = $this->_findReleaseInMeta($user, $serviceId, $platformId, $type, $stage);
         if ($release) {
             $this->withdrawRelease($user, $serviceId, $release['release_id']);
@@ -67,7 +67,7 @@ class ServiceReleaseManager
         }
 
         $this->_convoServiceDataProvider->promoteRelease( $user, $serviceId, $releaseId, $type, $stage);
-
+        
         $meta = $this->_setPlatformRelease($user, $serviceId, $release['platform_id'], $releaseId);
         return $meta;
     }
@@ -92,10 +92,9 @@ class ServiceReleaseManager
         $workflow = $this->_convoServiceDataProvider->getServiceData($user, $serviceId, $versionId);
         $release = $this->_convoServiceDataProvider->getReleaseData($user, $serviceId, $releaseId);
         $config = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, $release['version_id']);
-        $meta = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId);
         $version_id = $this->_convoServiceDataProvider->createServiceVersion($user, $serviceId, $workflow, $config);
         $this->_convoServiceDataProvider->markVersionAsRelease( $user, $serviceId, $version_id, $releaseId);
-        $this->_convoServiceDataProvider->setReleaseVersion( $user, $serviceId, $releaseId, $version_id, $meta);
+        $this->_convoServiceDataProvider->setReleaseVersion( $user, $serviceId, $releaseId, $version_id);
         return $this->_convoServiceDataProvider->getReleaseData( $user, $serviceId, $releaseId);
     }
 
@@ -104,12 +103,8 @@ class ServiceReleaseManager
         // Get specific version flow
         $workflow = $this->_convoServiceDataProvider->getServiceData($user, $serviceId, $versionId);
         $config = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, $versionId);
-        $release_data = $this->_convoServiceDataProvider->getReleaseData($user, $serviceId, $versionId);
 
         $meta = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId);
-        $meta['default_language'] = $release_data['default_language'] ?? 'en';
-        $meta['default_locale'] = $release_data['default_locale'] ?? 'en-US';
-        $meta['supported_locales'] = $release_data['supported_locales'] ?? ['en-US'];
         $meta['time_updated'] = time();
 
         // Save flow as develop
@@ -127,27 +122,27 @@ class ServiceReleaseManager
 
         return $this->_convoServiceDataProvider->createServiceVersion($user, $serviceId, $workflow, $config, $versionTag);
     }
-
-    public function getAllServiceVersionsMeta( IAdminUser $user, $serviceId)
+    
+    public function getAllServiceVersionsMeta( IAdminUser $user, $serviceId) 
     {
         $versions   =   $this->_convoServiceDataProvider->getAllServiceVersions( $user, $serviceId);
         $this->_logger->debug( 'Found ['.count( $versions).']');
-
+       
         $all       =    [];
         $meta      =    $this->_convoServiceDataProvider->getServiceMeta( $user, $serviceId);
-
-        foreach ( $versions as $version_id)
+        
+        foreach ( $versions as $version_id) 
         {
             $this->_logger->debug( 'Handling version ['.$version_id.']');
-
+            
             $version_meta    =  $this->_convoServiceDataProvider->getServiceMeta( $user, $serviceId, $version_id);
-
+            
             if ( $version_meta['release_id']) {
                 $release         =  $this->_convoServiceDataProvider->getReleaseData( $user, $serviceId, $version_meta['release_id']);
             } else {
                 $release         =   [];
             }
-
+            
             $row		=	[
                 'version_id' => $version_id,
                 'platform_id' => $release['platform_id'] ?? null,
@@ -159,20 +154,20 @@ class ServiceReleaseManager
                 'version_tag' => $version_meta['version_tag'] ?? '',
                 'time_created' => $version_meta['time_created'] ?? 0,
             ];
-
+            
             foreach ( $meta['release_mapping'] as $platform_id => $platform_data) {
                 foreach ( $platform_data as $alias => $mapping) {
                     if ( $mapping['type'] === IPlatformPublisher::MAPPING_TYPE_DEVELOP) {
                         continue;
                     }
                     $release             =   $this->_convoServiceDataProvider->getReleaseData( $user, $serviceId, $mapping['release_id']);
-
+                    
                     if ( $release['version_id'] !== $version_id) {
                         continue;
                     }
-
+                    
                     $this->_logger->debug( 'Found mapping in ['.$serviceId.']['.$platform_id.']['.$alias.']');
-
+                    
                     $row['platform_id']  =    $release['platform_id'];
                     $row['alias']        =    $release['alias'];
                     $row['type']         =    $release['type'];
@@ -180,14 +175,14 @@ class ServiceReleaseManager
                     $row['active']       =    true;
                 }
             }
-
+            
             $all[]       =   $row;
         }
-
+        
         usort( $all, [get_class( $this), 'compareVersions']);
         return array_slice( $all, 0, 20);
     }
-
+    
     public static function compareVersions( $a, $b) {
         return strnatcmp( $a['version_id'], $b['version_id']) * -1;
     }
@@ -248,7 +243,7 @@ class ServiceReleaseManager
 	    if ( !isset( $meta['release_mapping'][$platformId])) {
 	        throw new \Exception( 'No release mapping defined for ['.$serviceId.']['.$platformId.']');
 	    }
-
+	    
 	    foreach ( $meta['release_mapping'][$platformId] as $alias=>$mapping) {
 	        if ( $mapping['type'] === IPlatformPublisher::MAPPING_TYPE_DEVELOP) {
 	            return $alias;

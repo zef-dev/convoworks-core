@@ -153,8 +153,6 @@ class ServicesRestHandler implements RequestHandlerInterface
 
 		$service_name     = $json['service_name'];
 		$default_language = $json['default_language'];
-		$default_locale = $json['default_locale'];
-		$supported_locales = $json['supported_locales'];
  		$is_private       = $json['is_private'];
 		$template_id      = $json['template_id'];
         $service_admins   = $json['admins'] ?? [];
@@ -164,7 +162,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 
 		$template     =   $provider->getTemplate( $template_id);
         $this->_convoServiceFactory->fixComponentIds( $template['service']);
-		$service_id   =   $this->_convoServiceDataProvider->createNewService( $user, $service_name, $default_language, $default_locale, $supported_locales, $is_private, $service_admins, $template['service']);
+		$service_id   =   $this->_convoServiceDataProvider->createNewService( $user, $service_name, $default_language, $is_private, $service_admins, $template['service']);
 
 		return $this->_httpFactory->buildResponse(['service_id' => $service_id]);
 	}
@@ -328,7 +326,7 @@ class ServicesRestHandler implements RequestHandlerInterface
         $previewBuilder->setLogger($this->_logger);
 
         $previewBuilder->addPreviewBlock($found->getPreview());
-
+        
         return $this->_httpFactory->buildResponse($previewBuilder->getPreview());
     }
 
