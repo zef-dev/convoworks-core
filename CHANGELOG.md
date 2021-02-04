@@ -17,8 +17,6 @@
 
 * added abilty to set predefined values for NOP filter
 
-* fixed amazon auth code refresh process - was overwriting client data and had bad expiration handling
-
 * update Alexa Skill manifest from platform configuration
 
 ## [Releases]

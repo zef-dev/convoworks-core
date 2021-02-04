@@ -118,7 +118,7 @@ class AmazonAuthService
 
         $this->_logger->debug('Got client_auth timestamps created['.$created.'] expires['.$expires.'] now['.$now.']');
         
-        if ( $now < $expires) {
+        if ( $now < $created + $expires) {
             $this->_logger->debug('No need to refresh token yet.');
             return;
         }
