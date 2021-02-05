@@ -268,6 +268,21 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Type of the response definition',
                         'valueType' => 'string'
                     ),
+                    'text' => array(
+                        'editor_type' => 'ssml',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Text',
+                        'valueType' => 'string'
+                    ),
+                    'append' => array(
+                        'editor_type' => 'boolean',
+                        'editor_properties' => array(),
+                        'defaultValue' => false,
+                        'name' => 'Append',
+                        'description' => 'If true, text will be appended to the preceding sentence (if any) instead of creating a new one.',
+                        'valueType' => 'boolean'
+                    ),
                     'alexa_domain' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
@@ -297,21 +312,6 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'name' => 'Alexa Emotion Intensity',
                         'description' => 'Emotion intensity of spoken text by Alexa',
                         'valueType' => 'string'
-                    ),
-                    'text' => array(
-                        'editor_type' => 'ssml',
-                        'editor_properties' => array(),
-                        'defaultValue' => '',
-                        'name' => 'Text',
-                        'valueType' => 'string'
-                    ),
-                    'append' => array(
-                        'editor_type' => 'boolean',
-                        'editor_properties' => array(),
-                        'defaultValue' => false,
-                        'name' => 'Append',
-                        'description' => 'If true, text will be appended to the preceding sentence (if any) instead of creating a new one.',
-                        'valueType' => 'boolean'
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
