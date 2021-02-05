@@ -805,6 +805,16 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 'Intent Filter',
                 'Intent capable platform request filter',
                 array(
+                    'name' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Name',
+                        'description' => 'Optional name for the component',
+                        'valueType' => 'string'
+                    ),
                     'readers' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
