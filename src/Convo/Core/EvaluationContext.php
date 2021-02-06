@@ -76,8 +76,7 @@ class EvaluationContext
 				throw $e;
 			}
 
-			$this->_logger->warning( 'Got value ['.gettype( $value).']');
-// 			$this->_logger->warning( 'Got value ['.gettype( $value).']['.print_r( $value, true).']');
+			$this->_logger->debug( 'Got value type ['.gettype( $value).'] for expression ['.$expression.']');
 
 			if ( is_string( $value) || is_numeric( $value) || is_null( $value) || is_bool( $value)) {
 
