@@ -194,13 +194,13 @@ class ConfigurationRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
                 ['name' => 'failed', 'checked' => false, 'mandatory' => false]
             ],
             'CONVO_ALEXA_INTERFACES' => [
-                ['type' => 'AUDIO_PLAYER', 'name'=> 'Audio Player', 'checked' => false],
-                ['type' => 'RENDER_TEMPLATE', 'name'=> 'Display Interface', 'checked' => false],
-                ['type' => 'VIDEO_APP', 'name'=> 'Video App', 'checked' => false],
-                ['type' => 'CAN_FULFILL_INTENT_REQUEST', 'name'=> 'CanFulfillIntentRequest', 'checked' => false],
-                ['type' => 'ALEXA_PRESENTATION_APL', 'name'=> 'Alexa Presentation Language', 'checked' => false],
-                ['type' => 'CUSTOM_INTERFACE', 'name'=> 'Custom Interface Controller', 'checked' => false],
-                ['type' => 'ALEXA_PRESENTATION_HTML', 'name'=> 'Alexa Web API for Games', 'checked' => false]
+                ['type' => 'AUDIO_PLAYER', 'name'=> 'Audio Player', 'checked' => false, 'supported' => true],
+                ['type' => 'RENDER_TEMPLATE', 'name'=> 'Display Interface', 'checked' => false, 'supported' => true],
+                ['type' => 'VIDEO_APP', 'name'=> 'Video App', 'checked' => false, 'supported' => false],
+                ['type' => 'CAN_FULFILL_INTENT_REQUEST', 'name'=> 'CanFulfillIntentRequest', 'checked' => false, 'supported' => false],
+                ['type' => 'ALEXA_PRESENTATION_APL', 'name'=> 'Alexa Presentation Language', 'checked' => false, 'supported' => false],
+                ['type' => 'CUSTOM_INTERFACE', 'name'=> 'Custom Interface Controller', 'checked' => false, 'supported' => false],
+                ['type' => 'ALEXA_PRESENTATION_HTML', 'name'=> 'Alexa Web API for Games', 'checked' => false, 'supported' => false]
             ],
             'CONVO_DIALOGFLOW_INTERFACES' => [
                 ['type' => 'AUDIO_PLAYER', 'name'=> 'Audio Player', 'checked' => false]
