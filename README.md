@@ -178,16 +178,18 @@ Packages are registered by passing `\Convo\Core\Factory\IPackageDescriptor` obje
 <?php
 
 // example with function based factory
-$packageProviderFactory->registerPackage( new FunctionPackageDescriptor('\Convo\Pckg\Gnlp\GoogleNlpPackageDefinition', function() {
-    return new \Convo\Pckg\Gnlp\GoogleNlpPackageDefinition(
-        $logger, $googleNlpFactory, $googleNlpSyntaxParser
+/** @var \Psr\Log\LoggerInterface $logger */
+/** @var \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory */
+$packageProviderFactory->registerPackage( new FunctionPackageDescriptor('\Convo\Pckg\Trivia\TriviaPackageDefinition', function() use ( $logger, $packageProviderFactory) {
+    return new \Convo\Pckg\Trivia\TriviaPackageDefinition(
+        $logger, $packageProviderFactory
     );
 }));
 
 // example with class based factory - requires DI container!
+/** @var \Psr\Container\ContainerInterface $container */
 $packageProviderFactory->registerPackage( new ClassPackageDescriptor('\Convo\Pckg\Trivia\TriviaPackageDefinition', $container));
 ```
-
 
 ### Admin API Authentication
 
