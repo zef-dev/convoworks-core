@@ -786,9 +786,11 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     // UTIL
     private function _resolveVariables($variables)
     {
+        $variables = $this->_evaluateVariables($variables);
+
         foreach ( $variables as $key => $val)
         {
-            if (ArrayUtil::isComplexKey($key) === false)
+            if (!ArrayUtil::isComplexKey($key))
             {
                 // old simple setting
                 $this->_logger->debug( "Parsed [$key][".gettype($val)."][$val]");
@@ -802,7 +804,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
             }
         }
 
-        return $this->_evaluateVariables( $variables);
+        return $variables;
     }
 
     private function _evaluateVariables( $variables)
