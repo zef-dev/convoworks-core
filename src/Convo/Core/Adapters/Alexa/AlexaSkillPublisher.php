@@ -313,7 +313,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             ->isChildDirected(filter_var($config[$this->getPlatformId()]['privacy_and_compliance']['is_child_directed'], FILTER_VALIDATE_BOOLEAN))
             ->containsAds(filter_var($config[$this->getPlatformId()]['privacy_and_compliance']['contains_ads'], FILTER_VALIDATE_BOOLEAN))
             ->isExportCompliant($config[$this->getPlatformId()]['privacy_and_compliance']['is_export_compliant'])
-            ->setGlobalCertificateType($endpointCertificate);
+            ->setGlobalCertificateType($endpointCertificate)
+            ->setIsAvailableWorldwide(true);
 
         if (!in_array('en-US', $locales)) {
             unset($manifest['publishingInformation']['locales']['en-US']);
