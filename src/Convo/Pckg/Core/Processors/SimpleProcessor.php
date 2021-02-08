@@ -65,7 +65,7 @@ class SimpleProcessor extends \Convo\Pckg\Core\Processors\AbstractServiceProcess
 			return ;
 		}
 		
-		$this->_logger->debug( 'Reading default exit [ok]');
+		$this->_logger->info( 'Reading default exit [ok]');
 		foreach ( $this->_ok as $ok) {
 		    $ok->read( $request, $response);
 		}

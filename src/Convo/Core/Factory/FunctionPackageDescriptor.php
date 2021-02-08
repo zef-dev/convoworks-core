@@ -19,7 +19,7 @@ class FunctionPackageDescriptor extends AbstractPackageDescriptor
 
     protected function _createPackageInstance()
     {
-        $this->_logger->debug( 'Creating package ['.$this->_packageClass.'] with function ...');
+        $this->_logger->info( 'info package ['.$this->_packageClass.'] with function ...');
         
         $result = call_user_func($this->_instantiationFunction);
 

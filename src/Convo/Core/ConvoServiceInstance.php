@@ -275,7 +275,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         \Convo\Core\Workflow\IConvoRequest $request,
         \Convo\Core\Workflow\IConvoResponse $response)
     {
-        $this->_logger->debug( 'Processing request ['.$request.']');
+        $this->_logger->info( 'Processing request ['.$request.']');
 
         // INITIALIZE
         $this->_request					=	$request;
@@ -294,7 +294,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
         // SET first_call
         $last_state		=	$this->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getServiceParam( self::SERVICE_STATE_NAME);
-        $this->_logger->debug( 'Found last state ['.$last_state.']');
+        $this->_logger->info( 'Found last state ['.$last_state.']');
         if ( empty( $last_state)) {
             $this->_logger->debug( 'First session call. Setting [first_call=true]');
             $this->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->setServiceParam( 'first_call', true);
@@ -307,24 +307,24 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         // SESSION END
         if ( $request->isSessionEndRequest())
         {
-            $this->_logger->debug( 'Reading session end block');
+            $this->_logger->info( 'Reading session end block');
             try {
                 $block  =   $this->getBlockByRole( IRunnableBlock::ROLE_SESSION_ENDED);
                 $this->_readBlock( $block, $request, $response);
             } catch ( \Convo\Core\ComponentNotFoundException $e) {
                 $this->_logger->info( $e->getMessage());
             }
-            $this->_logger->debug( 'Exiting ...');
+            $this->_logger->info( 'Exiting ...');
             return;
         }
 
         // MEDIA
         if ( $request->isMediaRequest()) {
-            $this->_logger->debug( 'Media control request.');
+            $this->_logger->info( 'Media control request.');
             $block  =   $this->getBlockByRole( IRunnableBlock::ROLE_MEDIA_PLAYER);
             $this->_processBlock( $block, $request, $response);
             $this->_checkNextState();
-            $this->_logger->debug( 'Exiting ...');
+            $this->_logger->info( 'Exiting ...');
             return;
         }
 
@@ -335,23 +335,23 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
             if ( $request->isEmpty())
             {
                 try {
-                    $this->_logger->debug( 'Trying to read role ['.IRunnableBlock::ROLE_SESSION_START.'] ...');
+                    $this->_logger->info( 'Trying to read role ['.IRunnableBlock::ROLE_SESSION_START.'] ...');
                     $block  =   $this->getBlockByRole( IRunnableBlock::ROLE_SESSION_START);
                     $this->_readBlock( $block, $request, $response);
                 } catch ( \Convo\Core\ComponentNotFoundException $e) {
                     $this->_logger->info( $e->getMessage());
                     $state  =   $this->_getDefaultState();
-                    $this->_logger->debug( 'Going to read an empty launch request wits state ['.$state.'] ...');
+                    $this->_logger->info( 'Going to read an empty launch request wits state ['.$state.'] ...');
                     $this->_readState( $state, $request, $response);
                 }
 
                 $this->_checkNextState();
-                $this->_logger->debug( 'Exiting ...');
+                $this->_logger->info( 'Exiting ...');
                 return ;
             }
 
             try {
-                $this->_logger->debug( 'Trying to read role ['.IRunnableBlock::ROLE_SESSION_START.'] ...');
+                $this->_logger->info( 'Trying to read role ['.IRunnableBlock::ROLE_SESSION_START.'] ...');
                 $block  =   $this->getBlockByRole( IRunnableBlock::ROLE_SESSION_START);
             } catch ( \Convo\Core\ComponentNotFoundException $e) {
                 $this->_logger->info( $e->getMessage());
@@ -360,20 +360,20 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
             }
 
             // DIRECT INVOCATION
-            $this->_logger->debug( 'We have direct invocation in block ['.$block->getComponentId().'] ...');
+            $this->_logger->info( 'We have direct invocation in block ['.$block->getComponentId().'] ...');
         }
         else
         {
             // REGULAR CALL
             $state		=	$this->getServiceState();
             $block      =   $this->findBlock( $state);
-            $this->_logger->debug( 'We have regular state ['.$state.'] request');
+            $this->_logger->info( 'We have regular state ['.$state.'] request');
         }
 
         // PROCESS
         $this->_processBlock( $block, $request, $response);
         $this->_checkNextState();
-        $this->_logger->debug( 'Exiting ...');
+        $this->_logger->info( 'Exiting ...');
     }
 
     protected function _processBlock( IRunnableBlock $block, $request, $response)
@@ -384,7 +384,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $params = $this->getServiceParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION);
         $this->setServiceState( $block->getComponentId());
 
-        $this->_logger->debug( 'Going to process block ['.$block->getComponentId().'] with text ['.$request->getText().']');
+        $this->_logger->info( 'Going to process block ['.$block->getComponentId().'] with text ['.$request->getText().']');
         try {
             $block->run( $request, $response);
         } catch ( \Convo\Core\StateChangedException $e) {
@@ -399,7 +399,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $this->setServiceState( $state);
 
         $block	=	$this->findBlock( $state);
-        $this->_logger->debug( 'Found block ['.$block.']');
+        $this->_logger->info( 'Found block ['.$block.']');
 
         try {
             $block->read( $request, $response);
@@ -416,7 +416,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     protected function _readBlock( IRunnableBlock $block, $request, $response)
     {
-        $this->_logger->debug( 'Reading block ['.$block->getRole().']['.$block->getComponentId().']');
+        $this->_logger->info( 'Reading block ['.$block->getRole().']['.$block->getComponentId().']');
 
         try {
             $block->read( $request, $response);
@@ -701,10 +701,10 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $params->setServiceParam( self::SERVICE_STATE_NAME, $state);
 
         if ( $old_state === $state) {
-            $this->_logger->debug( 'Setting returning true');
+            $this->_logger->info( 'Setting returning true');
             $req_params->setServiceParam( 'returning', true);
         } else {
-            $this->_logger->debug( 'Setting returning false');
+            $this->_logger->info( 'Setting returning false');
             $req_params->setServiceParam( 'returning', false);
         }
 

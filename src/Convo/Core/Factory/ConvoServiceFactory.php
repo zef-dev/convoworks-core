@@ -47,7 +47,7 @@ class ConvoServiceFactory
 	 */
 	public function getService(\Convo\Core\IAdminUser $user, $serviceId, $versionId, $convoServiceParamsFactory)
 	{
-		$this->_logger->debug( 'Creating service ['.$serviceId.']['.$versionId.']');
+		$this->_logger->info( 'Creating service ['.$serviceId.']['.$versionId.']');
 
 		$data		=	$this->_convoServiceDataProvider->getServiceData( $user, $serviceId, $versionId);
 		$this->_logger->debug( 'Data loaded');

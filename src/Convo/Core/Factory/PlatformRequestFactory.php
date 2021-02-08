@@ -59,10 +59,10 @@ class PlatformRequestFactory implements IPlatformRequestFactory
     {
         switch ($platformId) {
             case AmazonCommandRequest::PLATFORM_ID:
-                $this->_logger->debug("Accessing Platform Request Factory with Amazon Command Request");
+                $this->_logger->info("Accessing Platform Request Factory with Amazon Command Request");
                 return $this->_prepareAmazonIntentRequest($request, $user, $serviceId, $platformId);
             case DialogflowCommandRequest::PLATFORM_ID;
-                $this->_logger->debug("Accessing Platform Request Factory with Dialogflow Command Request");
+                $this->_logger->info("Accessing Platform Request Factory with Dialogflow Command Request");
                 return $this->_prepareDialogflowIntentRequest($request, $user, $serviceId, $platformId);
             default:
                 return [];
@@ -120,7 +120,7 @@ class PlatformRequestFactory implements IPlatformRequestFactory
             }
         }
 
-        $this->_logger->debug('Final matched intent data ['.$intent_name.']['.print_r($slots, true).']');
+        $this->_logger->info('Final matched intent data ['.$intent_name.']['.print_r($slots, true).']');
 
         return new IntentAwareWrapperRequest($request, $intent_name, $slots, $platformId);
     }
@@ -156,7 +156,7 @@ class PlatformRequestFactory implements IPlatformRequestFactory
         $intent_name = $decodedResult['queryResult']['intent']['displayName'];
         $slots = $decodedResult['queryResult']['parameters'];
 
-        $this->_logger->debug('Got intent ['.$intent_name.']['.print_r($slots, true).']');
+        $this->_logger->info('Got intent ['.$intent_name.']['.print_r($slots, true).']');
 
         return new IntentAwareWrapperRequest($request, $intent_name, $slots, $platformId);
     }
