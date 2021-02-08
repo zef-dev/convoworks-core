@@ -233,6 +233,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $this->_logger->debug('Updated interaction model for [' . $locale . '], res ['.print_r($interaction_model_update_res, true).']');
         }
 
+        // TODO pool after skill status other then IN_PROGRESS
+
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $res['skillId']);
 	}
 
@@ -330,6 +332,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 $owner, $skillId, $model, $locale
             );
         }
+
+        // TODO pool after skill status other then IN_PROGRESS
 
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $skillId);
 
