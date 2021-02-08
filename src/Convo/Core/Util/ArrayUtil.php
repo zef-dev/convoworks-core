@@ -156,11 +156,11 @@ abstract class ArrayUtil
 
         foreach($parts as $part)
         {
+            $part = str_replace('"', '', $part);
+
             if (is_numeric($part)) {
                 $part = intval($part);
             }
-
-            $part = str_replace('"', '', $part);
 
             $current = &$current[$part];
         }
