@@ -11,19 +11,6 @@ Here are few key features:
 
 Please note that the Convoworks is currently in beta phase and it is planned to be released in March 2021.
 In a meanwhile, we will have several releases and some of them could have breaking changes.
-
-When there is a breaking change we will round the minor version to multiplier of 10.
-
-Here is the example how it might look:
-
-* 0.40.0 - breaking changes
-* 0.32.0 - improvements
-* 0.31.0 - improvements
-* 0.30.0 - breaking changes
-* 0.21.0 - improvements
-* 0.20.0 - improvements // if it was breaking chenge it would be 1.30
-* 0.19.0 - improvements
-* 0.18.0 - improvements
  
 
 ## Overview
@@ -191,16 +178,18 @@ Packages are registered by passing `\Convo\Core\Factory\IPackageDescriptor` obje
 <?php
 
 // example with function based factory
-$packageProviderFactory->registerPackage( new FunctionPackageDescriptor('\Convo\Pckg\Gnlp\GoogleNlpPackageDefinition', function() {
-    return new \Convo\Pckg\Gnlp\GoogleNlpPackageDefinition(
-        $logger, $googleNlpFactory, $googleNlpSyntaxParser
+/** @var \Psr\Log\LoggerInterface $logger */
+/** @var \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory */
+$packageProviderFactory->registerPackage( new FunctionPackageDescriptor('\Convo\Pckg\Trivia\TriviaPackageDefinition', function() use ( $logger, $packageProviderFactory) {
+    return new \Convo\Pckg\Trivia\TriviaPackageDefinition(
+        $logger, $packageProviderFactory
     );
 }));
 
 // example with class based factory - requires DI container!
+/** @var \Psr\Container\ContainerInterface $container */
 $packageProviderFactory->registerPackage( new ClassPackageDescriptor('\Convo\Pckg\Trivia\TriviaPackageDefinition', $container));
 ```
-
 
 ### Admin API Authentication
 

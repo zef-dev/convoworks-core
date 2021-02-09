@@ -17,10 +17,6 @@
 
 * added abilty to set predefined values for NOP filter
 
-* fixed amazon auth code refresh process - covered 2nd variant
-
-* update Alexa Skill manifest from platform configuration
-
 ## [Releases]
 
 ### 0.18.6 - 2021-01-08

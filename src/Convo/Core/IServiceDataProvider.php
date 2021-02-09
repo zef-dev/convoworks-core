@@ -15,6 +15,8 @@ namespace Convo\Core;
  *
  * Service data is an associaive array.
  * You can notice that there is no DEFAULT definition for configurations. That is because we can not know what parameters platform configuration has.
+ * 
+ * This interface allows you to store service data how it is the most appropriate for your application.
  */
 interface IServiceDataProvider
 {
