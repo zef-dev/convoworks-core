@@ -98,14 +98,24 @@ class TestServiceRestHandler implements RequestHandlerInterface
         $varsInSession = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getData();
         $varsInInstallation = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION)->getData();
 
+		$child_params = [];
+
+		foreach ($service->getAllChildren() as $child)
+		{
+			$child_params[$child->getId()][\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST] = $service->getComponentParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $child);
+			$child_params[$child->getId()][\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION] = $service->getComponentParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION, $child);
+			$child_params[$child->getId()][\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION] = $service->getComponentParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION, $child);
+		}
+
 		$data	=	array(
             'service_state' =>  $service->getServiceState(),
             'variables' => [
-                "vars_in_request" => json_encode($varsInRequest, JSON_PRETTY_PRINT),
-                "vars_in_session" => json_encode($varsInSession, JSON_PRETTY_PRINT),
-                "vars_in_installation" => json_encode($varsInInstallation, JSON_PRETTY_PRINT)
+                'vars_in_request' => json_encode($varsInRequest, JSON_PRETTY_PRINT),
+                'vars_in_session' => json_encode($varsInSession, JSON_PRETTY_PRINT),
+                'vars_in_installation' => json_encode($varsInInstallation, JSON_PRETTY_PRINT),
+				'component_params' => json_encode($child_params, JSON_PRETTY_PRINT)
             ],
-            "exception" => $exception
+            'exception' => $exception
 		);
 
 		$data		=	array_merge( $data, $text_response->getPlatformResponse());
