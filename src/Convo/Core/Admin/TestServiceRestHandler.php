@@ -112,9 +112,9 @@ class TestServiceRestHandler implements RequestHandlerInterface
             'variables' => [
                 'vars_in_request' => json_encode($varsInRequest, JSON_PRETTY_PRINT),
                 'vars_in_session' => json_encode($varsInSession, JSON_PRETTY_PRINT),
-                'vars_in_installation' => json_encode($varsInInstallation, JSON_PRETTY_PRINT),
-				'component_params' => json_encode($child_params, JSON_PRETTY_PRINT)
+                'vars_in_installation' => json_encode($varsInInstallation, JSON_PRETTY_PRINT)
             ],
+			'component_params' => json_encode($child_params, JSON_PRETTY_PRINT),
             'exception' => $exception
 		);
 
