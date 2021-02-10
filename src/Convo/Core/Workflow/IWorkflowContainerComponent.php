@@ -23,6 +23,12 @@ interface IWorkflowContainerComponent extends \Convo\Core\Workflow\IServiceWorkf
 	public function getChildren();
 
 	/**
+	 * Returns ALL of this component's children, both direct descendants and its children's children.
+	 * @return \Convo\Core\Workflow\IBasicServiceComponent[] 
+	 */
+	public function getAllChildren();
+
+	/**
 	 * Searches for a children components implementing the specific interface.
 	 * @param string $class
 	 * @return \Convo\Core\Workflow\IBasicServiceComponent[]

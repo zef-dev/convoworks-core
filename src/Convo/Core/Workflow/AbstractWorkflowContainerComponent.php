@@ -48,6 +48,26 @@ abstract class AbstractWorkflowContainerComponent extends AbstractWorkflowCompon
 
 	/**
 	 * {@inheritDoc}
+	 * @see \Convo\Core\Workflow\IWorkflowContainerComponent::getAllChildren()
+	 */
+	public function getAllChildren()
+	{
+		$all = [];
+        foreach ($this->getChildren() as $child) {
+			$all[] = $child;
+            
+			if (is_a($child, '\Convo\Core\Workflow\IWorkflowContainerComponent'))
+			{
+                /** @var \Convo\Core\Workflow\IWorkflowContainerComponent $child */
+                $all = array_merge($all, $child->getChildren());
+            }
+        }
+
+        return $all;
+	}
+
+	/**
+	 * {@inheritDoc}
 	 * @see \Convo\Core\Workflow\IWorkflowContainerComponent::findChildren()
 	 */
 	public function findChildren( $class) {

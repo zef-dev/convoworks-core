@@ -247,6 +247,25 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 //        return $model;
 //    }
 
+	/**
+	 * {@inheritDoc}
+	 * @see \Convo\Core\Workflow\IWorkflowContainerComponent::getAllChildren()
+	 */
+	public function getAllChildren()
+	{
+		$all = [];
+        foreach ($this->getChildren() as $child) {
+			$all[] = $child;
+            
+			if (is_a($child, '\Convo\Core\Workflow\IWorkflowContainerComponent'))
+			{
+                /** @var \Convo\Core\Workflow\IWorkflowContainerComponent $child */
+                $all = array_merge($all, $child->getChildren());
+            }
+        }
+
+        return $all;
+	}
 
     /**
      * {@inheritDoc}
