@@ -12,6 +12,10 @@ use Convo\Core\Publish\IPlatformPublisher;
 
 class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 {
+    const PLACEHOLDER_SMALL_SKILL_URL = 'https://via.placeholder.com/108.png/09f/fffC/O';
+
+    const PLACEHOLDER_LARGE_SKILL_URL = 'https://via.placeholder.com/512.png/09f/fffC/O';
+
 	/**
 	 * @var string
 	 */
@@ -168,15 +172,15 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon'],
-                'https://via.placeholder.com/108.png/09f/fffC/O'
-            ) : 'https://via.placeholder.com/108.png/09f/fffC/O';
+                self::PLACEHOLDER_SMALL_SKILL_URL
+            ) : self::PLACEHOLDER_SMALL_SKILL_URL;
 
         $largeSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon']) ?
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon'],
-                'https://via.placeholder.com/512.png/09f/fffC/O'
-            ) : 'https://via.placeholder.com/512.png/09f/fffC/O';
+                self::PLACEHOLDER_LARGE_SKILL_URL
+            ) : self::PLACEHOLDER_LARGE_SKILL_URL;
 
         $endpointCertificate = isset($config[$this->getPlatformId()]['endpoint_ssl_certificate_type']) ? $config[$this->getPlatformId()]['endpoint_ssl_certificate_type'] :
             AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD;
@@ -191,12 +195,12 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 			->setCategory($config[$this->getPlatformId()]['skill_preview_in_store']['category'])
             ->setTermsOfUseUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['terms_of_use_url'])
             ->setPrivacyPolicyUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['privacy_policy_url'])
-			->allowsPurchases(false)
-			->usesPersonalInfo(false)
-			->isChildDirected(false)
-			->containsAds(false)
-			->isExportCompliant(true)
-			->setTestingInstructions('N/A')
+			->allowsPurchases($config[$this->getPlatformId()]['privacy_and_compliance']['allows_purchases'])
+			->usesPersonalInfo($config[$this->getPlatformId()]['privacy_and_compliance']['uses_personal_info'])
+			->isChildDirected($config[$this->getPlatformId()]['privacy_and_compliance']['is_child_directed'])
+			->containsAds($config[$this->getPlatformId()]['privacy_and_compliance']['contains_ads'])
+			->isExportCompliant($config[$this->getPlatformId()]['privacy_and_compliance']['is_export_compliant'])
+			->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
 			->setIsAvailableWorldwide(true)
 			->setDistributionMode(AmazonSkillManifest::DISTRIBUTION_MODE_PUBLIC)
 			->setGlobalEndpoint( $this->_serviceReleaseManager->getWebhookUrl( $this->_user, $this->_serviceId, $this->getPlatformId()))
@@ -233,9 +237,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $this->_logger->debug('Updated interaction model for [' . $locale . '], res ['.print_r($interaction_model_update_res, true).']');
         }
 
-        // TODO pool after skill status other then IN_PROGRESS
-
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $res['skillId']);
+
+        // TODO pool as loong as skill status gets other then IN_PROGRESS
 	}
 
 	public function propagate()
@@ -283,15 +287,15 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon'],
-                'https://via.placeholder.com/108.png/09f/fffC/O'
-            ) : 'https://via.placeholder.com/108.png/09f/fffC/O';
+                self::PLACEHOLDER_SMALL_SKILL_URL
+            ) : self::PLACEHOLDER_SMALL_SKILL_URL;
 
         $largeSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon']) ?
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon'],
-                'https://via.placeholder.com/512.png/09f/fffC/O'
-            ) : 'https://via.placeholder.com/512.png/09f/fffC/O';
+                self::PLACEHOLDER_LARGE_SKILL_URL
+            ) : self::PLACEHOLDER_LARGE_SKILL_URL;
 
         $manifest->setGlobalEndpoint(
             $this->_serviceReleaseManager->getWebhookUrl(
@@ -310,11 +314,12 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             ->setPrivacyPolicyUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['privacy_policy_url'])
             ->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
             ->setDistributionMode(AmazonSkillManifest::DISTRIBUTION_MODE_PUBLIC)
-            ->allowsPurchases(filter_var($config[$this->getPlatformId()]['privacy_and_compliance']['allows_purchases'], FILTER_VALIDATE_BOOLEAN))
-            ->usesPersonalInfo(filter_var($config[$this->getPlatformId()]['privacy_and_compliance']['uses_personal_info'], FILTER_VALIDATE_BOOLEAN))
-            ->isChildDirected(filter_var($config[$this->getPlatformId()]['privacy_and_compliance']['is_child_directed'], FILTER_VALIDATE_BOOLEAN))
-            ->containsAds(filter_var($config[$this->getPlatformId()]['privacy_and_compliance']['contains_ads'], FILTER_VALIDATE_BOOLEAN))
+            ->allowsPurchases($config[$this->getPlatformId()]['privacy_and_compliance']['allows_purchases'])
+            ->usesPersonalInfo($config[$this->getPlatformId()]['privacy_and_compliance']['uses_personal_info'])
+            ->isChildDirected($config[$this->getPlatformId()]['privacy_and_compliance']['is_child_directed'])
+            ->containsAds($config[$this->getPlatformId()]['privacy_and_compliance']['contains_ads'])
             ->isExportCompliant($config[$this->getPlatformId()]['privacy_and_compliance']['is_export_compliant'])
+            ->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
             ->setGlobalCertificateType($endpointCertificate)
             ->setIsAvailableWorldwide(true);
 
@@ -333,9 +338,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             );
         }
 
-        // TODO pool after skill status other then IN_PROGRESS
-
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $skillId);
+
+        // TODO pool as loong as skill status gets other then IN_PROGRESS
 
 		$this->_recordPropagation();
 	}
@@ -943,6 +948,10 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
     private function _getDownloadLink($serviceId, $mediaItemId, $alternativeDownloadLink = '') {
         if ($mediaItemId !== '') {
+            $parsedUrl = parse_url($mediaItemId);
+            if (is_array($parsedUrl) && count($parsedUrl) > 1) {
+                return $mediaItemId;
+            }
             return $this->_mediaService->getMediaUrl($serviceId, $mediaItemId);
         }
         return $alternativeDownloadLink;
