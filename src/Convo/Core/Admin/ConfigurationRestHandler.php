@@ -187,12 +187,6 @@ class ConfigurationRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
                 ['name' => 'inbox_labels', 'checked' => false, 'mandatory' => false],
                 ['name' => 'messaging_fblogin_account_linking', 'checked' => false, 'mandatory' => false]
             ],
-            'CONVO_VIBER_WEBHOOK_EVENT_TYPES' => [
-                ['name' => 'conversation_started', 'checked' => true, 'mandatory' => true],
-                ['name' => 'delivered', 'checked' => false, 'mandatory' => false],
-                ['name' => 'seen', 'checked' => false, 'mandatory' => false],
-                ['name' => 'failed', 'checked' => false, 'mandatory' => false]
-            ],
             'CONVO_ALEXA_INTERFACES' => [
                 ['type' => 'AUDIO_PLAYER', 'name'=> 'Audio Player', 'checked' => false, 'supported' => true],
                 ['type' => 'RENDER_TEMPLATE', 'name'=> 'Display Interface', 'checked' => false, 'supported' => true],
