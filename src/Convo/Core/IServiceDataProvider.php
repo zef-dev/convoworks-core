@@ -15,7 +15,7 @@ namespace Convo\Core;
  *
  * Service data is an associaive array.
  * You can notice that there is no DEFAULT definition for configurations. That is because we can not know what parameters platform configuration has.
- * 
+ *
  * This interface allows you to store service data how it is the most appropriate for your application.
  */
 interface IServiceDataProvider
@@ -61,6 +61,37 @@ interface IServiceDataProvider
         'alias' => null,
         'time_created' => 0,
         'time_updated' => 0,
+    ];
+
+    const DEFAULT_AMAZON_CONFIG = [
+        'mode' => 'manual',
+        'invocation' => 'Default Name',
+        'app_id' => null,
+        'interaction_model_sensitivity' => 'LOW',
+        'endpoint_ssl_certificate_type' => 'Wildcard',
+        'self_signed_certificate' => null,
+        'auto_display' => false,
+        'skill_preview_in_store' => [
+            'public_name' => 'Default Name',
+            'one_sentence_description' => 'Default Name',
+            'detailed_description' => 'Default Name',
+            'whats_new' => 'Default Name',
+            'example_phrases' => ['Alexa, open Default Name'],
+            'small_skill_icon' => 'https://via.placeholder.com/108.png/09f/fffC/O',
+            'large_skill_icon' => 'https://via.placeholder.com/512.png/09f/fffC/O',
+            'category' => 'ALARMS_AND_CLOCKS',
+            'keywords' => [],
+            'privacy_policy_url' => '',
+            'terms_of_use_url' => '',
+        ],
+        'privacy_and_compliance' => [
+            'allows_purchases' => false,
+            'uses_personal_info' => false,
+            'is_child_directed' => false,
+            'contains_ads' => false,
+            'is_export_compliant' => false,
+            'testing_instructions' => false
+        ]
     ];
 
 
