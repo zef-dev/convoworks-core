@@ -94,27 +94,25 @@ class TestServiceRestHandler implements RequestHandlerInterface
             $this->_logger->error($e->getTraceAsString());
         }
 
-        $varsInRequest = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData();
-        $varsInSession = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getData();
-        $varsInInstallation = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION)->getData();
+        $request_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData();
+        $session_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getData();
+        $installation_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION)->getData();
 
 		$child_params = [];
 
-		foreach ($service->getAllChildren() as $child)
+		foreach ($service->getChildren() as $child)
 		{
-			$child_params[$child->getId()][\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST] = $service->getComponentParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $child);
-			$child_params[$child->getId()][\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION] = $service->getComponentParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION, $child);
-			$child_params[$child->getId()][\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION] = $service->getComponentParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION, $child);
+			$child_params[$child->getId()] = $this->_getChildData($service, $child);
 		}
 
 		$data	=	array(
             'service_state' =>  $service->getServiceState(),
             'variables' => [
-                'vars_in_request' => json_encode($varsInRequest, JSON_PRETTY_PRINT),
-                'vars_in_session' => json_encode($varsInSession, JSON_PRETTY_PRINT),
-                'vars_in_installation' => json_encode($varsInInstallation, JSON_PRETTY_PRINT)
+                'vars_in_request' => $request_vars,
+                'vars_in_session' => $session_vars,
+                'vars_in_installation' => $installation_vars
             ],
-			'component_params' => json_encode($child_params, JSON_PRETTY_PRINT),
+			'component_params' => $child_params,
             'exception' => $exception
 		);
 
@@ -134,6 +132,23 @@ class TestServiceRestHandler implements RequestHandlerInterface
 
         return $isInit;
     }
+
+	private function _getChildData($service, $child)
+	{
+		$data = [
+			'component_class' => (new \ReflectionClass($child))->getShortName(),
+			'component_params' => $service->getAllComponentParams($child)
+		];
+
+		if (is_a($child, '\Convo\Core\Workflow\AbstractWorkflowContainerComponent')) {
+			/** @var \Convo\Core\Workflow\AbstractWorkflowContainerComponent $child */
+			foreach ($child->getChildren() as $childs_child) {
+				$data['children'][$childs_child->getId()] = $this->_getChildData($service, $childs_child);
+			}
+		}
+
+		return $data;
+	}
 
 	// UTIL
 	public function __toString()
