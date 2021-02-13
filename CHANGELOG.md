@@ -2,10 +2,11 @@
 
 ## [Current development]
 
-* use md5 to normalize service params keys
-
-
 ## [Releases]
+
+### 0.19.1 - 2021-02-13
+
+* use md5 to normalize service params keys
 
 ### 0.19.0 - 2021-02-09
 
