@@ -106,13 +106,15 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		}
 
 		$data	=	array(
-            'service_state' =>  $service->getServiceState(),
+            'service_state' => $service->getServiceState(),
             'variables' => [
-                'vars_in_request' => $request_vars,
-                'vars_in_session' => $session_vars,
-                'vars_in_installation' => $installation_vars
+                'service' => [
+					'request' => $request_vars,
+					'session' => $session_vars,
+					'installation' => $installation_vars
+				],
+                'component' => $child_params
             ],
-			'component_params' => $child_params,
             'exception' => $exception
 		);
 
