@@ -2,6 +2,7 @@
 
 namespace Convo\Core\Admin;
 
+use Convo\Core\DataItemNotFoundException;
 use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Publish\IPlatformPublisher;
 
@@ -102,10 +103,14 @@ class TestServiceRestHandler implements RequestHandlerInterface
 
 		foreach ($service->getChildren() as $child)
 		{
-			$child_params[] = $this->_getChildData($service, $child);
+			try {
+				$child_params[] = $this->_getChildData($service, $child);
+			} catch (DataItemNotFoundException $e) {
+				$this->_logger->info($e->getMessage());
+			}
 		}
 
-		$data	=	array(
+		$data =	[
             'service_state' => $service->getServiceState(),
             'variables' => [
                 'service' => [
@@ -116,9 +121,9 @@ class TestServiceRestHandler implements RequestHandlerInterface
                 'component' => $child_params
             ],
             'exception' => $exception
-		);
+		];
 
-		$data		=	array_merge( $data, $text_response->getPlatformResponse());
+		$data = array_merge($data, $text_response->getPlatformResponse());
 
 		return $this->_httpFactory->buildResponse( $data);
 	}
@@ -137,20 +142,65 @@ class TestServiceRestHandler implements RequestHandlerInterface
 
 	private function _getChildData($service, $child)
 	{
+		if (!$this->_shouldRender($service, $child)) {
+			throw new DataItemNotFoundException('Container component ['.$child->getId().'] has no params or children. Skipping.');
+		}
+
 		$data = [
-			// 'id' => $child->getId(),
-			'class' => (new \ReflectionClass($child))->getShortName(),
-			'params' => $service->getAllComponentParams($child)
+			'class' => (new \ReflectionClass($child))->getShortName()
 		];
+
+		$params = $service->getAllComponentParams($child);
+		if (!empty($params)) {
+			$data['params'] = $params;
+		}
 
 		if (is_a($child, '\Convo\Core\Workflow\AbstractWorkflowContainerComponent')) {
 			/** @var \Convo\Core\Workflow\AbstractWorkflowContainerComponent $child */
 			foreach ($child->getChildren() as $childs_child) {
-				$data['children'][] = $this->_getChildData($service, $childs_child);
+				try {
+					$data['children'][] = $this->_getChildData($service, $childs_child);
+				} catch (DataItemNotFoundException $e) {
+					$this->_logger->info($e);
+				}
 			}
 		}
 
 		return $data;
+	}
+
+	/**
+	 * @param \Convo\Core\ConvoServiceInstance $service 
+	 * @param \Convo\Core\Workflow\IBasicServiceComponent $component 
+	 * @return boolean 
+	 */
+	private function _shouldRender($service, $component)
+	{
+		if (!empty($service->getAllComponentParams($component))) {
+			return true;
+		}
+
+		if (is_a($component, '\Convo\Core\Workflow\AbstractWorkflowContainerComponent')) {
+			/** @var \Convo\Core\Workflow\AbstractWorkflowContainerComponent $component */
+			$children = $component->getChildren();
+
+			if (!empty($children)) {
+				$render = false;
+
+				foreach ($children as $child) {
+					if ($this->_shouldRender($service, $child)) {
+						$render = true;
+						// break;
+					}
+				}
+
+				return $render;
+			}
+
+			return false;
+		}
+
+		return false;
 	}
 
 	// UTIL
