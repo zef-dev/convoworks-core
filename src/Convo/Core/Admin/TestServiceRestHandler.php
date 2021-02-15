@@ -102,7 +102,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 
 		foreach ($service->getChildren() as $child)
 		{
-			$child_params[$child->getId()] = $this->_getChildData($service, $child);
+			$child_params[] = $this->_getChildData($service, $child);
 		}
 
 		$data	=	array(
@@ -138,14 +138,15 @@ class TestServiceRestHandler implements RequestHandlerInterface
 	private function _getChildData($service, $child)
 	{
 		$data = [
-			'component_class' => (new \ReflectionClass($child))->getShortName(),
-			'component_params' => $service->getAllComponentParams($child)
+			// 'id' => $child->getId(),
+			'class' => (new \ReflectionClass($child))->getShortName(),
+			'params' => $service->getAllComponentParams($child)
 		];
 
 		if (is_a($child, '\Convo\Core\Workflow\AbstractWorkflowContainerComponent')) {
 			/** @var \Convo\Core\Workflow\AbstractWorkflowContainerComponent $child */
 			foreach ($child->getChildren() as $childs_child) {
-				$data['children'][$childs_child->getId()] = $this->_getChildData($service, $childs_child);
+				$data['children'][] = $this->_getChildData($service, $childs_child);
 			}
 		}
 
