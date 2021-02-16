@@ -5,6 +5,7 @@ namespace Convo\Core\Admin;
 use Convo\Core\DataItemNotFoundException;
 use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Publish\IPlatformPublisher;
+use Convo\Core\Util\ArrayUtil;
 
 class TestServiceRestHandler implements RequestHandlerInterface
 {
@@ -123,9 +124,10 @@ class TestServiceRestHandler implements RequestHandlerInterface
             'exception' => $exception
 		];
 
+		$data = ArrayUtil::arrayFilterRecursive($data, function ($value) { return !empty($value); });
 		$data = array_merge($data, $text_response->getPlatformResponse());
 
-		return $this->_httpFactory->buildResponse( $data);
+		return $this->_httpFactory->buildResponse($data);
 	}
 
     private function _isInit($json) {
