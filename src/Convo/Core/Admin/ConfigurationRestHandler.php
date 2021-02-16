@@ -44,8 +44,7 @@ class ConfigurationRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
     {
         $data = [
             'CONVO_SERVICE_LANGUAGES' => [
-                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH, 'name' => 'English'],
-                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_GERMAN, 'name' => 'German']
+                ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH, 'name' => 'English']
             ],
             'CONVO_SERVICE_LOCALES' => [
                 ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_AU, 'name' => 'English (Australia)', 'checked' => false],
