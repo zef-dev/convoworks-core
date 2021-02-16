@@ -27,7 +27,7 @@ class ComponentParamsScope extends RequestParamsScope
 	{
 		$key	=	parent::getKey();
 		$key	.=	'_';
-		$key	.=	$this->_component->getId();
+		$key	.=	$this->_sanitizeIdForDao( $this->_component->getId());
 		
 		return $key;
 	}
