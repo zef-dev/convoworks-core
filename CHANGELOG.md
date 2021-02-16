@@ -2,6 +2,13 @@
 
 ## [Current development]
 
+* Reworked data format returned from `ServiceTestHandler`
+    * Now includes component parameters as well
+
+* Added `ArrayUtil::arrayFilterRecursive`
+
+* Workflow containers now implement `getAllChildren()`
+
 ## [Releases]
 
 ### 0.19.1 - 2021-02-13
