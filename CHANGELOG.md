@@ -9,6 +9,9 @@
 
 * Workflow containers now implement `getAllChildren()`
 
+* Optional property for block container params, `_separate`
+    * If true, a separator will be rendered after the container in the editor
+
 ## [Releases]
 
 ### 0.19.1 - 2021-02-13
