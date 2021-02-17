@@ -63,20 +63,13 @@ class ProcessorFragment extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
         // User <-> Bot back and forth
         foreach ($this->_processors as $processor)
         {
-            $processor_section = new PreviewSection('Process Fragment '.(new \ReflectionClass($processor))->getShortName().' ['.$processor->getId().']');
-            $processor_section->setLogger($this->_logger);
+			/** @var \Convo\Pckg\Core\Processors\AbstractServiceProcessor $processor */
+			$name = $processor->getName() !== '' ? $processor->getName() : 'Process Fragment - '.(new \ReflectionClass($processor))->getShortName().' ['.($processor->getId()).']';
+			$section = new PreviewSection($name, $this->_logger);
 
-            try {
-                $processor_section->collectOne($processor, '\Convo\Core\Preview\IUserSpeechResource');
-                $processor_section->collectOne($processor, '\Convo\Core\Preview\IBotSpeechResource');
-
-                if (!$processor_section->isEmpty()) {
-                    $pblock->addSection($processor_section);
-                }
-            } catch (\Exception $e) {
-                $this->_logger->error($e);
-                continue;
-            }
+			$section->collectOne($processor, '\Convo\Core\Preview\IUserSpeechResource');
+			$section->collectOne($processor, '\Convo\Core\Preview\IBotSpeechResource');
+			$pblock->addSection($section);
         }
 
         return $pblock;

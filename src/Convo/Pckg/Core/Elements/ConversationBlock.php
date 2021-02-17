@@ -246,45 +246,26 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
         $pblock->setLogger($this->_logger);
 
         // What the bot says first
-        $read = new PreviewSection('Read');
-        try {
-            $read->collect($this->getElements(), '\Convo\Core\Preview\IBotSpeechResource');
-            if (!$read->isEmpty()) {
-                $pblock->addSection($read);
-            }
-        } catch (\Exception $e) {
-            $this->_logger->error($e);
-        }
+        $section = new PreviewSection('Read', $this->_logger);
+		$section->collect($this->getElements(), '\Convo\Core\Preview\IBotSpeechResource');
+		$pblock->addSection($section);
 
         // User <-> Bot back and forth
         foreach ($this->getProcessors() as $processor)
         {
-            $processor_section = new PreviewSection('Process - '.(new \ReflectionClass($processor))->getShortName().' ['.$processor->getId().']');
-            $processor_section->setLogger($this->_logger);
-            try {
-                $processor_section->collectOne($processor, '\Convo\Core\Preview\IUserSpeechResource');
-                $processor_section->collectOne($processor, '\Convo\Core\Preview\IBotSpeechResource');
-
-                if (!$processor_section->isEmpty()) {
-                    $pblock->addSection($processor_section);
-                }
-            } catch (\Exception $e) {
-                $this->_logger->error($e);
-                continue;
-            }
+			/** @var \Convo\Pckg\Core\Processors\AbstractServiceProcessor $processor */
+			$name = $processor->getName() !== '' ? $processor->getName() : 'Process - '.(new \ReflectionClass($processor))->getShortName().' ['.($processor->getId()).']';
+            $section = new PreviewSection($name, $this->_logger);
+			$section->collectOne($processor, '\Convo\Core\Preview\IUserSpeechResource');
+			$section->collectOne($processor, '\Convo\Core\Preview\IBotSpeechResource');
+			
+			$pblock->addSection($section);
         }
 
         // Fallback text
-        $fallback = new PreviewSection('Fallback');
-        $fallback->setLogger($this->_logger);
-        try {
-            $fallback->collect($this->getFallback(), '\Convo\Core\Preview\IBotSpeechResource');
-            if (!$fallback->isEmpty()) {
-                $pblock->addSection($fallback);
-            }
-        } catch (\Exception $e) {
-            $this->_logger->error($e);
-        }
+        $section = new PreviewSection('Fallback', $this->_logger);
+		$section->collect($this->getFallback(), '\Convo\Core\Preview\IBotSpeechResource');
+		$pblock->addSection($section);
 
         return $pblock;
     }
