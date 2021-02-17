@@ -10,6 +10,8 @@ abstract class AbstractServiceProcessor extends \Convo\Core\Workflow\AbstractWor
 	 */
 	protected $_requestFilters	=	array();
 
+	protected $_name;
+
 	public function __construct( $properties)
 	{
 		parent::__construct( $properties);
@@ -20,6 +22,8 @@ abstract class AbstractServiceProcessor extends \Convo\Core\Workflow\AbstractWor
 		        $this->addChild( $filter);
 		    }
 		}
+
+		$this->_name = $properties['name'] ?? '';
 	}
 	
 	protected function _getDefaultResultFilters( \Convo\Core\Workflow\IConvoRequest $request)
@@ -27,6 +31,10 @@ abstract class AbstractServiceProcessor extends \Convo\Core\Workflow\AbstractWor
 		return $this->_requestFilters;
 	}
 	
+	public function getName()
+	{
+		return $this->_name;
+	}
 	
 	/**
 	 * {@inheritDoc}
