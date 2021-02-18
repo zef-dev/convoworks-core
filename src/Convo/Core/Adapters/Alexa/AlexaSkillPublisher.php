@@ -5,10 +5,12 @@ namespace Convo\Core\Adapters\Alexa;
 use Convo\Core\Intent\EntityModel;
 use Convo\Core\Intent\IntentModel;
 use Convo\Core\ComponentNotFoundException;
+use Convo\Core\Rest\InvalidRequestException;
 use Convo\Core\Util\SimpleFileResource;
 use Convo\Core\Util\StrUtil;
 use Convo\Core\Workflow\ICatalogSource;
 use Convo\Core\Publish\IPlatformPublisher;
+use Psr\Http\Client\ClientExceptionInterface;
 
 class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 {
@@ -231,10 +233,17 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 		$model = json_decode($this->export()->getContent(), true);
 
         foreach ($locales as $locale) {
-            $interaction_model_update_res = $this->_amazonPublishingService->updateInteractionModel(
-                $owner, $res['skillId'], $model, $locale
-            );
-            $this->_logger->debug('Updated interaction model for [' . $locale . '], res ['.print_r($interaction_model_update_res, true).']');
+            try {
+                $interaction_model_update_res = $this->_amazonPublishingService->updateInteractionModel(
+                    $owner, $res['skillId'], $model, $locale
+                );
+                $this->_logger->debug('Updated interaction model for [' . $locale . '], res ['.print_r($interaction_model_update_res, true).']');
+            } catch (ClientExceptionInterface $e) {
+                $report = ['errors' => []];
+                $report['errors']['convoworks']['skill'] = "Interaction model couldn't be created, going to delete skill with id [" . $res['skillId'] . "]";
+                $this->delete($report);
+                throw new InvalidRequestException($e->getMessage(), 0, $e);
+            }
         }
 
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $res['skillId']);
