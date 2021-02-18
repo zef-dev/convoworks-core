@@ -16,10 +16,10 @@ class PreviewSection implements \Psr\Log\LoggerAwareInterface
      */
     private $_utterances = [];
 
-    public function __construct($name)
+    public function __construct($name, \Psr\Log\LoggerInterface $logger = null)
     {
         $this->_name = $name;
-        $this->_logger = new \Psr\Log\NullLogger();
+        $this->_logger = $logger ?? new \Psr\Log\NullLogger();
     }
 
     public function setLogger(\Psr\Log\LoggerInterface $logger)

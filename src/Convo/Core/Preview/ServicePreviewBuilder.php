@@ -30,9 +30,9 @@ class ServicePreviewBuilder implements \Psr\Log\LoggerAwareInterface
         $this->_logger = $logger;
     }
 
-    public function addPreviewBlock(PreviewBlock $block)
+    public function addPreviewBlock(PreviewBlock $block, $isFragment = false)
     {
-        $this->_blocks[] = $block;
+        $this->_blocks[] = ['data' => $block, 'is_fragment' => $isFragment];
     }
 
     public function getPreview()
@@ -44,7 +44,7 @@ class ServicePreviewBuilder implements \Psr\Log\LoggerAwareInterface
 
         foreach ($this->_blocks as $block)
         {
-            $preview['blocks'][] = $block->getData();
+            $preview['blocks'][] = ['data' => $block['data']->getData(), 'is_fragment' => $block['is_fragment']];
         }
 
         return $preview;

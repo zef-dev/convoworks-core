@@ -20,32 +20,32 @@ class LogRequestMiddleware implements \Psr\Http\Server\MiddlewareInterface
 	
 	public function process( ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 	{
-		$this->_logger->debug( '============================================================');
+		$this->_logger->info( '============================================================');
 		if (isset($_SERVER['REQUEST_SCHEME']) && isset($_SERVER['HTTP_HOST'])) {
-			$this->_logger->debug( $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
+			$this->_logger->info( $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
 		}
 		
 		if (isset($_SERVER['CONTENT_TYPE'])) {
-			$this->_logger->debug( 'Content-Type: '.$_SERVER['CONTENT_TYPE']);
+			$this->_logger->info( 'Content-Type: '.$_SERVER['CONTENT_TYPE']);
 		}
 		
 		if (isset($_SERVER['HTTP_USER_AGENT'])) {
-			$this->_logger->debug( 'User-Agent: '.$_SERVER['HTTP_USER_AGENT']);
+			$this->_logger->info( 'User-Agent: '.$_SERVER['HTTP_USER_AGENT']);
 		}
 		
 		if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-			$this->_logger->debug( 'IP: '.$_SERVER['HTTP_X_FORWARDED_FOR']);
+			$this->_logger->info( 'IP: '.$_SERVER['HTTP_X_FORWARDED_FOR']);
 		}
 		
 		else if (isset($_SERVER['REMOTE_ADDR'])) {
-			$this->_logger->debug( 'IP: '.$_SERVER['REMOTE_ADDR']);
+			$this->_logger->info( 'IP: '.$_SERVER['REMOTE_ADDR']);
 		}
 		
 		if (isset($_SERVER['REQUEST_METHOD'])) {
-			$this->_logger->debug( 'Method: '.$_SERVER['REQUEST_METHOD']);
+			$this->_logger->info( 'Method: '.$_SERVER['REQUEST_METHOD']);
 		}
 		
-		$this->_logger->debug( '============================================================');
+		$this->_logger->info( '============================================================');
 		return $handler->handle( $request);
 	}
 	

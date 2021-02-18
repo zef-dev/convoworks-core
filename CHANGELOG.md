@@ -2,6 +2,24 @@
 
 ## [Current development]
 
+* Reworked data format returned from `ServiceTestHandler`
+    * Now includes component parameters as well
+
+* Added `ArrayUtil::arrayFilterRecursive`
+
+* Workflow containers now implement `getAllChildren()`
+
+* Optional property for block container params, `_separate`
+    * If true, a separator will be rendered after the container in the editor
+
+## [Releases]
+
+### 0.19.1 - 2021-02-13
+
+* use md5 to normalize service params keys
+
+### 0.19.0 - 2021-02-09
+
 * Overhauled preview generation
     * No longer done in `PreviewBuilder::read()`, each block now creates its own preview
     
@@ -16,8 +34,6 @@
 * fixed `DefaultFilterResult::isSlotEmpty()` to check empty string too (was `isset` only)
 
 * added abilty to set predefined values for NOP filter
-
-## [Releases]
 
 ### 0.18.6 - 2021-01-08
 

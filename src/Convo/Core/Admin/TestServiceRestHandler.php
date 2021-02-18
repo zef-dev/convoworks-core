@@ -2,8 +2,10 @@
 
 namespace Convo\Core\Admin;
 
+use Convo\Core\DataItemNotFoundException;
 use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Publish\IPlatformPublisher;
+use Convo\Core\Util\ArrayUtil;
 
 class TestServiceRestHandler implements RequestHandlerInterface
 {
@@ -94,23 +96,38 @@ class TestServiceRestHandler implements RequestHandlerInterface
             $this->_logger->error($e->getTraceAsString());
         }
 
-        $varsInRequest = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData();
-        $varsInSession = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getData();
-        $varsInInstallation = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION)->getData();
+        $request_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData();
+        $session_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getData();
+        $installation_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION)->getData();
 
-		$data	=	array(
-            'service_state' =>  $service->getServiceState(),
+		$child_params = [];
+
+		foreach ($service->getChildren() as $child)
+		{
+			try {
+				$child_params[] = $this->_getChildData($service, $child);
+			} catch (DataItemNotFoundException $e) {
+				$this->_logger->info($e->getMessage());
+			}
+		}
+
+		$data =	[
+            'service_state' => $service->getServiceState(),
             'variables' => [
-                "vars_in_request" => json_encode($varsInRequest, JSON_PRETTY_PRINT),
-                "vars_in_session" => json_encode($varsInSession, JSON_PRETTY_PRINT),
-                "vars_in_installation" => json_encode($varsInInstallation, JSON_PRETTY_PRINT)
+                'service' => [
+					'request' => $request_vars,
+					'session' => $session_vars,
+					'installation' => $installation_vars
+				],
+                'component' => $child_params
             ],
-            "exception" => $exception
-		);
+            'exception' => $exception
+		];
 
-		$data		=	array_merge( $data, $text_response->getPlatformResponse());
+		$data = ArrayUtil::arrayFilterRecursive($data, function ($value) { return !empty($value); });
+		$data = array_merge($data, $text_response->getPlatformResponse());
 
-		return $this->_httpFactory->buildResponse( $data);
+		return $this->_httpFactory->buildResponse($data);
 	}
 
     private function _isInit($json) {
@@ -124,6 +141,69 @@ class TestServiceRestHandler implements RequestHandlerInterface
 
         return $isInit;
     }
+
+	private function _getChildData($service, $child)
+	{
+		if (!$this->_shouldRender($service, $child)) {
+			throw new DataItemNotFoundException('Container component ['.$child->getId().'] has no params or children. Skipping.');
+		}
+
+		$data = [
+			'class' => (new \ReflectionClass($child))->getShortName()
+		];
+
+		$params = $service->getAllComponentParams($child);
+		if (!empty($params)) {
+			$data['params'] = $params;
+		}
+
+		if (is_a($child, '\Convo\Core\Workflow\AbstractWorkflowContainerComponent')) {
+			/** @var \Convo\Core\Workflow\AbstractWorkflowContainerComponent $child */
+			foreach ($child->getChildren() as $childs_child) {
+				try {
+					$data['children'][] = $this->_getChildData($service, $childs_child);
+				} catch (DataItemNotFoundException $e) {
+					$this->_logger->info($e);
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	/**
+	 * @param \Convo\Core\ConvoServiceInstance $service 
+	 * @param \Convo\Core\Workflow\IBasicServiceComponent $component 
+	 * @return boolean 
+	 */
+	private function _shouldRender($service, $component)
+	{
+		if (!empty($service->getAllComponentParams($component))) {
+			return true;
+		}
+
+		if (is_a($component, '\Convo\Core\Workflow\AbstractWorkflowContainerComponent')) {
+			/** @var \Convo\Core\Workflow\AbstractWorkflowContainerComponent $component */
+			$children = $component->getChildren();
+
+			if (!empty($children)) {
+				$render = false;
+
+				foreach ($children as $child) {
+					if ($this->_shouldRender($service, $child)) {
+						$render = true;
+						// break;
+					}
+				}
+
+				return $render;
+			}
+
+			return false;
+		}
+
+		return false;
+	}
 
 	// UTIL
 	public function __toString()

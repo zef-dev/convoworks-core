@@ -1682,7 +1682,8 @@ In default phase you can inform users about problem you have interpreting comman
                         'defaultOpen' => true,
                         'name' => 'Read phase',
                         'description' => 'Elements to be executed in read phase',
-                        'valueType' => 'class'
+                        'valueType' => 'class',
+                        '_separate' => true
                     ),
                     'processors' => array(
                         'editor_type' => 'service_components',

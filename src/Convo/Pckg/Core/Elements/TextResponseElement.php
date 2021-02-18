@@ -39,7 +39,7 @@ class TextResponseElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
 
 	public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
-		$this->_logger->debug( 'Raw text ['.$this->_text.']');
+		$this->_logger->info( 'Raw text ['.$this->_text.']');
 
 		$text	=	$this->evaluateString( $this->_text);
 
@@ -74,7 +74,7 @@ class TextResponseElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
     {
         if ($type === self::TYPE_DEFAULT)
         {
-            $this->_logger->debug( 'Adding text ['.$text.']');
+            $this->_logger->info( 'Adding text ['.$text.']');
             if (is_a($response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse'))
             {
                 /* @var AmazonCommandResponse $response */
@@ -94,7 +94,7 @@ class TextResponseElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
         }
         else if ($type === self::TYPE_REPROMPT)
         {
-            $this->_logger->debug( 'Adding reprompt text ['.$text.']');
+            $this->_logger->info( 'Adding reprompt text ['.$text.']');
             if (is_a($response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse')) {
                 /* @var AmazonCommandResponse $response */
                 if ($this->_alexaEmotion !== self::ALEXA_EMOTION_TYPE) {

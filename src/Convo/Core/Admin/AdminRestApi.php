@@ -34,7 +34,7 @@ class AdminRestApi implements RequestHandlerInterface
 	{
 		$info	=	new \Convo\Core\Rest\RequestInfo( $request);
 
-		$this->_logger->debug( 'Got info ['.$info.']');
+		$this->_logger->info( 'Got info ['.$info.']');
 
 		if ( $info->startsWith( 'services')) {
 		    $class_name	=	'\Convo\Core\Admin\ServicesRestHandler';
@@ -66,7 +66,7 @@ class AdminRestApi implements RequestHandlerInterface
 		    throw new \Convo\Core\Rest\NotFoundException( 'Could not map ['.$info.']');
 		}
 
-		$this->_logger->debug( 'Searching for handler ['.$class_name.']');
+		$this->_logger->info( 'Searching for handler ['.$class_name.']');
 
 		/* @var \Psr\Http\Server\RequestHandlerInterface $handler */
 		$handler	=	$this->_container->get( $class_name);

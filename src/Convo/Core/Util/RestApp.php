@@ -65,7 +65,7 @@ class RestApp implements RequestHandlerInterface
 	        return $next->process( $request, $this);
 	    }
 	    
-	    $this->_logger->debug( 'Running actual handler ['.get_class( $this->_defaultHandler).']');
+	    $this->_logger->info( 'Running actual handler ['.get_class( $this->_defaultHandler).']');
 	    
 	    return $this->_defaultHandler->handle( $request);
 	}

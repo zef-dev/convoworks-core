@@ -50,18 +50,9 @@ class ElementsFragment extends \Convo\Pckg\Core\Elements\ElementCollection imple
         $pblock->setLogger($this->_logger);
 
         // What the bot says first
-        $read = new PreviewSection('Read');
-        $read->setLogger($this->_logger);
-
-        try {
-            $read->collect($this->getElements(), '\Convo\Core\Preview\IBotSpeechResource');
-
-            if (!$read->isEmpty()) {
-                $pblock->addSection($read);
-            }
-        } catch (\Exception $e) {
-            $this->_logger->error($e);
-        }
+        $section = new PreviewSection('Read', $this->_logger);
+		$section->collect($this->getElements(), '\Convo\Core\Preview\IBotSpeechResource');
+		$pblock->addSection($section);
 
         return $pblock;
     }

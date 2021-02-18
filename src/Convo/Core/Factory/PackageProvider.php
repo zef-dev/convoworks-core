@@ -245,7 +245,7 @@ class PackageProvider implements
                 }
 
                 $component = $package->createPackageComponent( $service, $this, $componentData);
-                $this->_logger->info( 'Created component ['.get_class( $component).']');
+                $this->_logger->debug( 'Created component ['.get_class( $component).']');
 // 				$this->_logger->debug( '-----');
 
                 if ( is_a( $component, '\Psr\Log\LoggerAwareInterface')) {

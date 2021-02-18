@@ -65,12 +65,8 @@ class RequestParamsScope implements IServiceParamsScope
 
 
 	// UTIL
-    private function _sanitizeIdForDao($id) {
-        $new_id =   strval($id);
-        $new_id =   \Convo\Core\Util\StrUtil::slugify( $new_id);
-        $new_id =   str_replace( '-', '_', $new_id);
-
-        return $new_id;
+    protected function _sanitizeIdForDao($id) {
+        return md5( $id);
     }
 
 	public function __toString()

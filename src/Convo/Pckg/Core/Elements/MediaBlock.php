@@ -397,62 +397,29 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         $pblock->setLogger($this->_logger);
 
         // What the bot says first
-        $read = new PreviewSection('Read');
-        $read->setLogger($this->_logger);
-
-        try {
-            $read->collect($this->getElements(), '\Convo\Core\Preview\IBotSpeechResource');
-
-            if (!$read->isEmpty()) {
-                $pblock->addSection($read);
-            }
-        } catch (\Exception $e) {
-            $this->_logger->error($e);
-        }
+        $section = new PreviewSection('Read', $this->_logger);
+        $section->collect($this->getElements(), '\Convo\Core\Preview\IBotSpeechResource');
+        $pblock->addSection($section);
 
         // Fallback text
-        $fallback = new PreviewSection('Fallback');
-        $fallback->setLogger($this->_logger);
+        $section = new PreviewSection('Fallback', $this->_logger);
+        $section->collect($this->getFallback(), '\Convo\Core\Preview\IBotSpeechResource');
+        $pblock->addSection($section);
 
-        try {
-            $fallback->collect($this->getFallback(), '\Convo\Core\Preview\IBotSpeechResource');
-
-            if (!$fallback->isEmpty()) {
-                $pblock->addSection($fallback);
-            }
-        } catch (\Exception $e) {
-            $this->_logger->error($e);
-        }
-
-        $not_found = new PreviewSection('On Not Found');
-        $not_found->setLogger($this->_logger);
-
-        try {
-            $not_found->collect($this->_notFound, '\Convo\Core\Preview\IBotSpeechResource');
-
-            if (!$not_found->isEmpty()) {
-                $pblock->addSection($not_found);
-            }
-        } catch (\Exception $e) {
-            $this->_logger->error($e);
-        }
+        $section = new PreviewSection('On Not Found', $this->_logger);
+        $section->collect($this->_notFound, '\Convo\Core\Preview\IBotSpeechResource');
+        $pblock->addSection($section);
 
         // User <-> Bot back and forth
         foreach ($this->getProcessors() as $processor)
         {
-            $processor_section = new PreviewSection('Process - '.(new \ReflectionClass($processor))->getShortName().' ['.$processor->getId().']');
-            $processor_section->setLogger($this->_logger);
-            try {
-                $processor_section->collectOne($processor, '\Convo\Core\Preview\IUserSpeechResource');
-                $processor_section->collectOne($processor, '\Convo\Core\Preview\IBotSpeechResource');
-            } catch (\Exception $e) {
-                $this->_logger->error($e);
-                continue;
-            }
+			/** @var \Convo\Pckg\Core\Processors\AbstractServiceProcessor $processor */
+			$name = $processor->getName() !== '' ? $processor->getName() : 'Process - '.(new \ReflectionClass($processor))->getShortName().' ['.($processor->getId()).']';
+			$section = new PreviewSection($name, $this->_logger);
 
-            if (!$processor_section->isEmpty()) {
-                $pblock->addSection($processor_section);
-            }
+			$section->collectOne($processor, '\Convo\Core\Preview\IUserSpeechResource');
+			$section->collectOne($processor, '\Convo\Core\Preview\IBotSpeechResource');
+			$pblock->addSection($section);
         }
 
         return $pblock;

@@ -22,11 +22,11 @@ class ClassPackageDescriptor extends AbstractPackageDescriptor
     protected function _createPackageInstance()
     {
         if ( $this->_container->has( $this->_packageClass)) {
-            $this->_logger->debug( 'Creating package ['.$this->_packageClass.'] from container ...');
+            $this->_logger->info( 'Creating package ['.$this->_packageClass.'] from container ...');
             return $this->_container->get( $this->_packageClass);
         }
         
-        $this->_logger->debug( 'Creating package ['.$this->_packageClass.'] with autowire ...');
+        $this->_logger->info( 'Creating package ['.$this->_packageClass.'] with autowire ...');
         
         $base_package_class = new \ReflectionClass($this->_packageClass);
 

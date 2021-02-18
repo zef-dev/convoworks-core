@@ -53,7 +53,9 @@ class PreviewBlock implements \Psr\Log\LoggerAwareInterface
 
     public function addSection(PreviewSection $section)
     {
-        $this->_sections[] = $section;
+        if (!$section->isEmpty()) {
+            $this->_sections[] = $section;
+        }
     }
 
     public function getData()

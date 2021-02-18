@@ -77,6 +77,19 @@ abstract class ArrayUtil
         return $arr_ret;
     }
 
+    public static function arrayFilterRecursive($array, callable $callback = null, $flag = 0)
+    {
+        foreach ($array as &$value)
+        {
+            if (is_array($value))
+            {
+                $value = self::arrayFilterRecursive($value, $callback, $flag);
+            }
+        }
+
+        return array_filter($array, $callback, $flag);
+    }
+
 	public static function areArraysEqual( $arr1, $arr2, $igonerOrder=true)
 	{
 	    if ( empty( $arr1) && empty( $arr2)) {

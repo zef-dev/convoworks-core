@@ -271,7 +271,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 		}
 
 		foreach ($instance->getFragments() as $fragment) {
-			$previewBuilder->addPreviewBlock($fragment->getPreview());
+			$previewBuilder->addPreviewBlock($fragment->getPreview(), true);
 		}
 
 		return $this->_httpFactory->buildResponse($previewBuilder->getPreview());
