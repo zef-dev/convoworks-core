@@ -14,6 +14,11 @@
 
 ## [Releases]
 
+### 0.19.2 - 2021-02-19
+
+* stringify value before md5
+* added missing parent constructor calls in if elements
+
 ### 0.19.1 - 2021-02-13
 
 * use md5 to normalize service params keys
