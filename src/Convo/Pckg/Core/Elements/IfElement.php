@@ -26,6 +26,8 @@ class IfElement extends AbstractWorkflowContainerComponent implements IConversat
 
     public function __construct($properties)
     {
+        parent::__construct($properties);
+        
         $this->_test = $properties['test'] ?? null;
 
         if (!$this->_test) {
