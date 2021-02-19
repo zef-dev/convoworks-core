@@ -16,6 +16,8 @@ class ElseIfElement extends AbstractWorkflowContainerComponent implements IConve
 
     public function __construct($config)
     {
+        parent::__construct($config);
+        
         if (!isset($config['test'])) {
             throw new \Exception('Missing property [then] in ['.$this.']');
         }
