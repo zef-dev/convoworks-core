@@ -20,9 +20,123 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
         return [
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
+                '\Convo\Pckg\Visuals\Elements\ListTitleElement',
+                'List Title',
+                'Initiates list layout and sets title and type.',
+                array(
+                    'list_title' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'List title',
+                        'description' => 'Title of the content that is in the list.',
+                        'valueType' => 'string'
+                    ),
+                    'list_template' => array(
+                        'editor_type' => 'select',
+                        'editor_properties' => array(
+                            'options' => array('LIST' => 'List', 'CAROUSEL'  => 'Carousel'),
+                        ),
+                        'defaultValue' => 'LIST',
+                        'name' => 'List template',
+                        'description' => 'Choose between Vertical or Horizontal list layout.',
+                        'valueType' => 'string'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code">' .
+                        '<ul class="list-unstyled">' .
+                        ' <li>List name: {{component.properties.list_title}}</li>' .
+                        ' <li>List template: {{component.properties.list_template}}</li>' .
+                        '</ul>' .
+                        '</div>'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'list-title-element.html'
+                    ),
+                    '_workflow' => 'read',
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Visuals\Elements\ListItemElement',
+                'List Item',
+                'Defines content of each list item',
+                array(
+                    'list_item_key' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'List item key',
+                        'description' => 'Key of the item which is in the list.',
+                        'valueType' => 'string'
+                    ),
+                    'list_item_title' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'List item title',
+                        'description' => 'Title of the item which is in the list.',
+                        'valueType' => 'string'
+                    ),
+                    'list_item_description_1' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'List item description 1',
+                        'description' => 'Description of the item which is in the list. (works with Google Assistant and Alexa)',
+                        'valueType' => 'string'
+                    ),
+                    'list_item_description_2' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'List item description 2',
+                        'description' => 'Secondary description of the item which is in the list. (works with Alexa only)',
+                        'valueType' => 'string'
+                    ),
+                    'list_item_image_url' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'List item image url',
+                        'description' => 'Link to the image of an item in the list.',
+                        'valueType' => 'string'
+                    ),
+                    'list_item_image_text' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'List item image text',
+                        'description' => 'Accessibility text of the image of an item in the list. (Required if you want to display the image.)',
+                        'valueType' => 'string'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code">' .
+                            '<ul class="list-unstyled">' .
+                            ' <li>List item key: {{component.properties.list_item_key}}</li>' .
+                            ' <li>List item title: {{component.properties.list_item_title}}</li>' .
+                            ' <li>List item description 1: {{component.properties.list_item_description_1}}</li>' .
+                            ' <li>List item description 2: {{component.properties.list_item_description_2}}</li>' .
+                            ' <li>List item image URL: {{component.properties.list_item_image_url}}</li>' .
+                            ' <li>List item image text: {{component.properties.list_item_image_text}}</li>' .
+                            '</ul>' .
+                            '</div>'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'list-item-element.html'
+                    ),
+                    '_workflow' => 'read',
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
                 '\Convo\Pckg\Visuals\Elements\ListElement',
                 'List',
-                'Iterates over a collection and renders a visual representation for each item in the list. (Works with devices that have the screen output capability.)',
+                '*** DEPRECATED *** Iterates over a collection and renders a visual representation for each item in the list. (Works with devices that have the screen output capability.)',
                 array(
                     'list_title' => array(
                         'editor_type' => 'text',
