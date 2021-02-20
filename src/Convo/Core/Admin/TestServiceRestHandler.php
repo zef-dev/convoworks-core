@@ -107,7 +107,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 			try {
 				$child_params[] = $this->_getChildData($service, $child);
 			} catch (DataItemNotFoundException $e) {
-				$this->_logger->info($e->getMessage());
+			    $this->_logger->debug( $e->getMessage());
 			}
 		}
 
@@ -163,7 +163,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 				try {
 					$data['children'][] = $this->_getChildData($service, $childs_child);
 				} catch (DataItemNotFoundException $e) {
-					$this->_logger->info($e);
+					$this->_logger->debug( $e->getMessage());
 				}
 			}
 		}
