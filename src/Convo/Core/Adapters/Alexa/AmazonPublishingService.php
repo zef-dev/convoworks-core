@@ -421,6 +421,36 @@ class AmazonPublishingService
         return $body;
     }
 
+    public function enableSkillForUse($owner, $skillId, $stage) {
+        $url = self::BASE_SMAPI_URL.'/v1/skills/'.$skillId.'/stages/'.$stage.'/enablement';
+
+        $this->_logger->debug("Going to enable skill to use from url [$url]");
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_PUT,
+            $url
+        );
+
+        $statusCode = $response->getStatusCode();
+        return $statusCode;
+    }
+
+    public function checkSkillEnablementStatus($owner, $skillId, $stage) {
+        $url = self::BASE_SMAPI_URL.'/v1/skills/'.$skillId.'/stages/'.$stage.'/enablement';
+
+        $this->_logger->debug("Going to enable skill to use from url [$url]");
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_GET,
+            $url
+        );
+
+        $statusCode = $response->getStatusCode();
+        return $statusCode;
+    }
+
     // UTIL
     private function _executeRequest($user, $method, $url, $headers = [], $body = null)
     {
