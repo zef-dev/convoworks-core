@@ -34,18 +34,19 @@ class ListTitleElement extends \Convo\Core\Workflow\AbstractWorkflowComponent im
 
         if ( is_a( $response, 'Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandResponse'))
         {
+            /* @var \Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandRequest  $request */
             /* @var \Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandResponse  $response */
-            $response->prepareResponse( IResponseType::LIST, $data);
+            if ( $request->getIsDisplaySupported()) {
+                $response->prepareResponse( IResponseType::LIST, $data);
+            }
         }
         else if ( is_a( $response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse'))
         {
+            /* @var \Convo\Core\Adapters\Alexa\AmazonCommandRequest  $request */
             /* @var \Convo\Core\Adapters\Alexa\AmazonCommandResponse  $response */
-            $response->setDataList( $data);
-
             if ( $request->getIsDisplaySupported() && $request->getIsDisplayInterfaceEnabled()) {
+                $response->setDataList( $data);
                 $response->prepareResponse( IAlexaResponseType::LIST_RESPONSE);
-            } else {
-                $this->_logger->info( 'Display is not supported on this device ['.$request.']');
             }
         }
     }

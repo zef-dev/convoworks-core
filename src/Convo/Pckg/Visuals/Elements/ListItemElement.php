@@ -38,14 +38,20 @@ class ListItemElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
 
         if (is_a( $response, 'Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandResponse'))
         {
+            /* @var \Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandRequest  $request */
             /* @var \Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandResponse  $response */
-            $response->addListItem( $item);
+            if ( $request->getIsDisplaySupported()) {
+                $response->addListItem( $item);
+            }
         }
 
         if (is_a( $response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse'))
         {
-            /* @var \Convo\Core\Adapters\Alexa\AmazonCommandResponse  $response*/
-            $response->addListItem( $item);
+            /* @var \Convo\Core\Adapters\Alexa\AmazonCommandRequest  $request */
+            /* @var \Convo\Core\Adapters\Alexa\AmazonCommandResponse  $response */
+            if ( $request->getIsDisplaySupported() && $request->getIsDisplayInterfaceEnabled()) {
+                $response->addListItem( $item);
+            }
         }
     }
 
