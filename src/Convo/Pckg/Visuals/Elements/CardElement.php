@@ -13,9 +13,6 @@ use Convo\Core\Adapters\Alexa\IAlexaResponseType;
 
 class CardElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
 {
-    /** @var array */
-	private $_dataItem = array();
-
 	private $_dataItemTitle;
 	private $_dataItemSubtitle;
 	private $_dataItemDescription1;
@@ -29,8 +26,6 @@ class CardElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
     public function __construct($properties)
     {
         parent::__construct($properties);
-
-        $this->_dataItem = $properties['data_item'];
 
         $this->_dataItemTitle = $properties['data_item_title'];
         $this->_dataItemSubtitle = $properties['data_item_subtitle'];
@@ -46,8 +41,6 @@ class CardElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
     {
         $scope_type	= \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST;
         $params = $this->getService()->getComponentParams( $scope_type, $this);
-
-        $params->setServiceParam('cardItem', $this->evaluateString($this->_dataItem));
 
         $data = array(
             "data_item_title" => $this->evaluateString($this->_dataItemTitle),

@@ -248,14 +248,6 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                 'Card',
                 'Display the properties of an object in an visual layout. (Works with devices that have the screen output capability.)',
                 array(
-                    'data_item' => array(
-                        'editor_type' => 'text',
-                        'editor_properties' => array(),
-                        'defaultValue' => '',
-                        'name' => 'Item',
-                        'description' => 'Single item (object) from which you want to display properties to an visual card element.',
-                        'valueType' => 'string'
-                    ),
                     'back_button' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
@@ -326,7 +318,6 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                         'type' => 'html',
                         'template' => '<div class="code">' .
                             '<ul class="list-unstyled">' .
-                            ' <li>Data item: {{component.properties.data_item}}</li>' .
                             ' <li>Back button: {{component.properties.back_button}}</li>' .
                             ' <li>Data item title: {{component.properties.data_item_title}}</li>' .
                             ' <li>Data item subtitle: {{component.properties.data_item_subtitle}}</li>' .
