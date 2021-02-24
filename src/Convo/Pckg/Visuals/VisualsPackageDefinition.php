@@ -27,7 +27,7 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     'list_title' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'Title',
                         'name' => 'List title',
                         'description' => 'Title line displayed in front of list.',
                         'valueType' => 'string'
@@ -66,13 +66,13 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                         'editor_properties' => array(),
                         'defaultValue' => '',
                         'name' => 'Key',
-                        'description' => 'Key of the item which is in the list.',
+                        'description' => 'Unique key (index, id) of the item which is in the list.',
                         'valueType' => 'string'
                     ),
                     'list_item_title' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'Title',
                         'name' => 'Title',
                         'description' => 'Title of the item which is in the list.',
                         'valueType' => 'string'
@@ -80,7 +80,7 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     'list_item_description_1' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'Description',
                         'name' => 'Description 1',
                         'description' => 'Description of the item which is in the list. (works with Google Assistant and Alexa)',
                         'valueType' => 'string'
@@ -261,7 +261,7 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     'data_item_title' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'Title',
                         'name' => 'Title',
                         'description' => 'Title of the item which will be displayed on the card.',
                         'valueType' => 'string'
@@ -277,7 +277,7 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     'data_item_description_1' => array(
                         'editor_type' => 'desc',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'Description',
                         'name' => 'Description 1',
                         'description' => 'Primary description of the item which will be displayed on the card.',
                         'valueType' => 'string'
@@ -323,16 +323,6 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                         ' <div><div class="subtitle">{{component.properties.data_item_subtitle}}</div></div>' .
                         ' <div>{{component.properties.data_item_description_1}}</div>' .
                         ' <div>{{component.properties.data_item_description_2}}</div>' .
-//                             '<ul class="list-unstyled">' .
-//                             ' <li>Back button: <b>{{component.properties.back_button}}</b></li>' .
-//                             ' <li>Title: <b>{{component.properties.data_item_title}}</b></li>' .
-//                             ' <li>Subtitle: <b>{{component.properties.data_item_subtitle}}</b></li>' .
-//                             ' <li>Description 1: <b>{{component.properties.data_item_description_1}}</b></li>' .
-//                             ' <li>Description 2: <b>{{component.properties.data_item_description_2}}</b></li>' .
-//                             ' <li>Description 3: <b>{{component.properties.data_item_description_3}}</b></li>' .
-//                             ' <li>Image URL: <b>{{component.properties.data_item_image_url}}</b></li>' .
-//                             ' <li>Image text: <b>{{component.properties.data_item_image_text}}</b></li>' .
-//                             '</ul>' .
                             '</div>'.
                                 '<div class="col-md-4">' .
                                     '<div class="image-placeholder large" ng-if="component.properties.data_item_image_url"><div>IMG</div></div>' .
