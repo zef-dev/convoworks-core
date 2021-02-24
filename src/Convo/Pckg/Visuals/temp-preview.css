@@ -1,0 +1,67 @@
+
+
+.convoworks .selectable-component .preview .list-container
+{
+    background-color: #5b5b5b;
+    color: white;
+    padding: 6px 12px;
+    text-align: left;
+    font-family: Arial,Helvetica,Roboto,sans-serif;
+}
+
+.convoworks .selectable-component .preview .list-container .list-item
+{
+    border-bottom: 1px solid white;
+    padding-bottom: 4px;
+}
+
+.convoworks .selectable-component .preview .card-container
+{
+    background-color: #5b5b5b;
+    color: white;
+    padding: 10px 20px;
+    text-align: left;
+    font-family: Arial,Helvetica,Roboto,sans-serif;
+}
+
+
+
+.convoworks .selectable-component .preview .list-container .title,
+.convoworks .selectable-component .preview .card-container .title
+{
+    font-size: 20px;
+    margin:0;
+    padding:0;
+    color: white;
+    display: inline;
+}
+
+
+.convoworks .selectable-component .preview .list-container .title-main,
+.convoworks .selectable-component .preview .card-container .title-main
+{
+    font-size: 24px;
+    margin:0;
+    padding:0;
+    color: white;
+    display: inline;
+}
+
+
+.convoworks .selectable-component .preview .list-container .subtitle,
+.convoworks .selectable-component .preview .card-container .subtitle
+{
+    font-size: 16px;
+    margin:0;
+    padding:0;
+    color: white;
+    display: inline;
+}
+
+
+.convoworks .selectable-component .preview .list-container .thumb,
+.convoworks .selectable-component .preview .card-container .thumb
+{
+    max-width:90%;
+    max-height:90%;
+}

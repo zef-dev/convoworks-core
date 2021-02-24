@@ -44,11 +44,8 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code">' .
-                        '<ul class="list-unstyled">' .
-                        ' <li>Title: <b>{{component.properties.list_title}}</b></li>' .
-                        ' <li>Template: <b>{{component.properties.list_template}}</b></li>' .
-                        '</ul>' .
+                        'template' => '<div class="list-container">' .
+                        ' <div><span class="title-main">{{component.properties.list_title}}</span> [{{component.properties.list_template}}]</div>' .
                         '</div>'
                     ),
                     '_help' =>  array(
@@ -114,15 +111,18 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code">' .
-                            '<ul class="list-unstyled">' .
-                            ' <li>Key: <b>{{component.properties.list_item_key}}</b></li>' .
-                            ' <li>Title: <b>{{component.properties.list_item_title}}</b></li>' .
-                            ' <li>Description 1: <b>{{component.properties.list_item_description_1}}</b></li>' .
-                            ' <li>Description 2: <b>{{component.properties.list_item_description_2}}</b></li>' .
-                            ' <li>Image URL: <b>{{component.properties.list_item_image_url}}</b></li>' .
-                            ' <li>Image text: <b>{{component.properties.list_item_image_text}}</b></li>' .
-                            '</ul>' .
+                        'template' => '<div class="list-container">' .
+                            '<div class="list-item">'.
+                            '<div class="row">'.
+                            '<div class="col-md-2">'.
+                                '<div class="image-placeholder" ng-if="component.properties.list_item_image_url"><div>IMG</div></div>' .
+                            '</div>'.
+                            '<div class="col-md-10">'.
+                                '<div class="title">{{component.properties.list_item_title}}</div><div class="subtitle"> {{component.properties.list_item_description_2}}</div>' .
+                                '<div>{{component.properties.list_item_description_1}}</div>' .
+                            '</div>'.
+                            '</div>'.
+                            '</div>'.
                             '</div>'
                     ),
                     '_help' =>  array(
@@ -316,17 +316,28 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code">' .
-                            '<ul class="list-unstyled">' .
-                            ' <li>Back button: <b>{{component.properties.back_button}}</b></li>' .
-                            ' <li>Title: <b>{{component.properties.data_item_title}}</b></li>' .
-                            ' <li>Subtitle: <b>{{component.properties.data_item_subtitle}}</b></li>' .
-                            ' <li>Description 1: <b>{{component.properties.data_item_description_1}}</b></li>' .
-                            ' <li>Description 2: <b>{{component.properties.data_item_description_2}}</b></li>' .
-                            ' <li>Description 3: <b>{{component.properties.data_item_description_3}}</b></li>' .
-                            ' <li>Image URL: <b>{{component.properties.data_item_image_url}}</b></li>' .
-                            ' <li>Image text: <b>{{component.properties.data_item_image_text}}</b></li>' .
-                            '</ul>' .
+                        'template' => '<div class="card-container">' .
+                        '<div class="row">' .
+                        '<div class="col-md-8">' .
+                        ' <div class="title-main">{{component.properties.data_item_title}}</div>' .
+                        ' <div><div class="subtitle">{{component.properties.data_item_subtitle}}</div></div>' .
+                        ' <div>{{component.properties.data_item_description_1}}</div>' .
+                        ' <div>{{component.properties.data_item_description_2}}</div>' .
+//                             '<ul class="list-unstyled">' .
+//                             ' <li>Back button: <b>{{component.properties.back_button}}</b></li>' .
+//                             ' <li>Title: <b>{{component.properties.data_item_title}}</b></li>' .
+//                             ' <li>Subtitle: <b>{{component.properties.data_item_subtitle}}</b></li>' .
+//                             ' <li>Description 1: <b>{{component.properties.data_item_description_1}}</b></li>' .
+//                             ' <li>Description 2: <b>{{component.properties.data_item_description_2}}</b></li>' .
+//                             ' <li>Description 3: <b>{{component.properties.data_item_description_3}}</b></li>' .
+//                             ' <li>Image URL: <b>{{component.properties.data_item_image_url}}</b></li>' .
+//                             ' <li>Image text: <b>{{component.properties.data_item_image_text}}</b></li>' .
+//                             '</ul>' .
+                            '</div>'.
+                                '<div class="col-md-4">' .
+                                    '<div class="image-placeholder large" ng-if="component.properties.data_item_image_url"><div>IMG</div></div>' .
+                                '</div>'.
+                            '</div>'.
                             '</div>'
                     ),
                     '_help' =>  array(
