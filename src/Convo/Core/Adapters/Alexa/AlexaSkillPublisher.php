@@ -53,7 +53,6 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
      */
     private $_mediaService;
 
-	private $_isNew = false;
 
 	public function __construct(
 		$publicRestBaseUrl,
@@ -89,7 +88,6 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	public function enable()
 	{
 	    parent::enable();
-        $this->_isNew = true;
 	    $meta = $this->_convoServiceDataProvider->getServiceMeta($this->_user, $this->_serviceId);
 
 		if (!$meta['owner']) {
@@ -546,7 +544,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	        "samples" => [],
 	    ];
 
-	    if ($this->_isNew && empty($intents)) {
+	    if (empty($intents)) {
             $data['interactionModel']['languageModel']['intents'][]    =   [
                 "name" => "HelloWorld",
                 "samples" => ["hello world"],
