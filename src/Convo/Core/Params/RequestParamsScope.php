@@ -66,7 +66,7 @@ class RequestParamsScope implements IServiceParamsScope
 
 	// UTIL
     protected function _sanitizeIdForDao($id) {
-        return md5( $id);
+        return md5( strval( $id));
     }
 
 	public function __toString()

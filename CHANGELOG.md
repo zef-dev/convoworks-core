@@ -2,6 +2,10 @@
 
 ## [Current development]
 
+## [Releases]
+
+### 0.20.0 - 2021-02-22
+
 * Reworked data format returned from `ServiceTestHandler`
     * Now includes component parameters as well
 
@@ -12,18 +16,21 @@
 * Optional property for block container params, `_separate`
     * If true, a separator will be rendered after the container in the editor
 
-## [Releases]
+### 0.19.2 - 2021-02-19
+
+* stringify value before `md5`
+* added missing parent constructor calls in if elements
 
 ### 0.19.1 - 2021-02-13
 
-* use md5 to normalize service params keys
+* use `md5` to normalize service params keys
 
 ### 0.19.0 - 2021-02-09
 
 * Overhauled preview generation
     * No longer done in `PreviewBuilder::read()`, each block now creates its own preview
     
-* add phpseclib/bcmath_compat in composer.json to fix issue with missing bccomp function from bcmath module
+* add `phpseclib/bcmath_compat` in `composer.json` to fix issue with missing `bccomp` function from `bcmath` module
 
 * fix service deletion
 
