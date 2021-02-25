@@ -21,8 +21,6 @@ class CardElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 	private $_dataItemImageUrl;
 	private $_dataItemImageText;
 
-	private $_backButton;
-
     public function __construct($properties)
     {
         parent::__construct($properties);
@@ -34,7 +32,6 @@ class CardElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
         $this->_dataItemDescription3 = $properties['data_item_description_3'];
         $this->_dataItemImageUrl = $properties['data_item_image_url'];
         $this->_dataItemImageText = $properties['data_item_image_text'];
-        $this->_backButton = $properties['back_button'];
     }
 
     public function read(IConvoRequest $request, IConvoResponse $response)
@@ -52,9 +49,6 @@ class CardElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
             "data_item_image_text" => $this->evaluateString($this->_dataItemImageText),
         );
 
-        $backButton	=   $this->evaluateString( $this->_backButton);
-        $this->_logger->debug( 'Back Button ['.$backButton.']');
-
         $this->_logger->debug('Card element read method executed ['.print_r( $data, true).']');
 
         if (is_a( $response, 'Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandResponse'))
@@ -68,7 +62,7 @@ class CardElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
         if (is_a( $response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse'))
         {
             $response->setDataCard( $data);
-            $response->setBackButton( $backButton);
+            $response->setBackButton( 'HIDDEN');
 
             $this->_logger->debug('Amazon command invoked ['.$response->getText().']');
 
