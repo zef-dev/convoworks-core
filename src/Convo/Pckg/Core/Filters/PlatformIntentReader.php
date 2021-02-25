@@ -54,7 +54,7 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
 
         foreach ( $this->_values as $key => $value)
         {
-            $result->setSlotValue( $key, $value);
+            $result->setSlotValue( $key, $this->getService()->evaluateString( $value));
         }
 
         return $result;
