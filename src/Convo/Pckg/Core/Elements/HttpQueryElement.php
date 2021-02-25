@@ -82,12 +82,17 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
 		$name		    =   $this->evaluateString( $this->_name);
 		$url	 	    =   $this->evaluateString( $this->_url);
 		$method		    =   $this->evaluateString( $this->_method);
-		$params		    =	$this->evaluateString( $this->_params);
 		$scope_type     =   $this->evaluateString( $this->_scopeType);
 		$parameters     =   $this->evaluateString( $this->_parameters);
 
-		$uri = $this->_httpFactory->buildUri( $url, $params);
-		$this->_logger->debug('Current uri ['.$uri.']');
+        $query_params = [];
+
+        foreach ($this->_params as $key => $val) {
+            $query_params[$this->evaluateString($key)] = $this->evaluateString($val);
+        }
+
+		$uri = $this->_httpFactory->buildUri($url, $query_params);
+		$this->_logger->debug('Current uri ['.$uri.']['.(print_r($query_params, true)).']');
 
 		if( $parameters == 'block'){
 		    $params 	   =	$this->getBlockParams( $scope_type);
