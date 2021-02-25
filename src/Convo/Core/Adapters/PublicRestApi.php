@@ -71,12 +71,6 @@ class PublicRestApi implements RequestHandlerInterface
 			$class_name = '\Convo\Core\Adapters\Alexa\CatalogRestHandler';
 		}
 
-		// MTG
-
-		else if ($info->startsWith('mtg')) {
-			$class_name = '\Convo\Pckg\Mtg\MtgRestHandler';
-		}
-
 		else {
 			throw new \Convo\Core\Rest\NotFoundException( 'Could not map ['.$info.']');
 		}
