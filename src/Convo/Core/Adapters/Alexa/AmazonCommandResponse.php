@@ -116,6 +116,15 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     {
         return $this->_dataList;
     }
+    
+    public function addListItem( $item)
+    {
+        if ( !isset( $this->_dataList['list_items'])) {
+            $this->_dataList['list_items']  =   [];
+        }
+        $this->_dataList['list_items'][]    =   $item;
+    }
+    
 
     public function setDataCard($dataCard)
     {

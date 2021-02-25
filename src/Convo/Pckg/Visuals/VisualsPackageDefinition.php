@@ -20,9 +20,123 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
         return [
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
+                '\Convo\Pckg\Visuals\Elements\ListTitleElement',
+                'List Title',
+                'Initiates list layout and sets title and list type.',
+                array(
+                    'list_title' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'Title',
+                        'name' => 'List title',
+                        'description' => 'Title line displayed in front of list.',
+                        'valueType' => 'string'
+                    ),
+                    'list_template' => array(
+                        'editor_type' => 'select',
+                        'editor_properties' => array(
+                            'options' => array('LIST' => 'List', 'CAROUSEL'  => 'Carousel'),
+                        ),
+                        'defaultValue' => 'LIST',
+                        'name' => 'List template',
+                        'description' => 'Choose between Vertical or Horizontal list layout.',
+                        'valueType' => 'string'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="list-container">' .
+                        ' <div><span class="title-main">{{component.properties.list_title}}</span> [{{component.properties.list_template}}]</div>' .
+                        '</div>'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'list-title-element.html'
+                    ),
+                    '_workflow' => 'read',
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Visuals\Elements\ListItemElement',
+                'List Item',
+                'Defines content of each list item',
+                array(
+                    'list_item_key' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Key',
+                        'description' => 'Unique key (index, id) of the item which is in the list.',
+                        'valueType' => 'string'
+                    ),
+                    'list_item_title' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'Title',
+                        'name' => 'Title',
+                        'description' => 'Title of the item which is in the list.',
+                        'valueType' => 'string'
+                    ),
+                    'list_item_description_1' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'Description',
+                        'name' => 'Description 1',
+                        'description' => 'Description of the item which is in the list. (works with Google Assistant and Alexa)',
+                        'valueType' => 'string'
+                    ),
+                    'list_item_description_2' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Description 2',
+                        'description' => 'Secondary description of the item which is in the list. (works with Alexa only)',
+                        'valueType' => 'string'
+                    ),
+                    'list_item_image_url' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Image url',
+                        'description' => 'Url of the item image',
+                        'valueType' => 'string'
+                    ),
+                    'list_item_image_text' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Image text',
+                        'description' => 'Accessibility text for the item image. (Required if you want to display the image.)',
+                        'valueType' => 'string'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="list-container">' .
+                            '<div class="list-item">'.
+                            '<div class="row">'.
+                            '<div class="col-md-2">'.
+                                '<div class="image-placeholder" ng-if="component.properties.list_item_image_url"><div>IMG</div></div>' .
+                            '</div>'.
+                            '<div class="col-md-10">'.
+                                '<div class="title">{{component.properties.list_item_title}}</div><div class="subtitle"> {{component.properties.list_item_description_2}}</div>' .
+                                '<div>{{component.properties.list_item_description_1}}</div>' .
+                            '</div>'.
+                            '</div>'.
+                            '</div>'.
+                            '</div>'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'list-item-element.html'
+                    ),
+                    '_workflow' => 'read',
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
                 '\Convo\Pckg\Visuals\Elements\ListElement',
-                'List',
-                'Iterates over a collection and renders a visual representation for each item in the list. (Works with devices that have the screen output capability.)',
+                'x!List',
+                '*** DEPRECATED *** Iterates over a collection and renders a visual representation for each item in the list. (Works with devices that have the screen output capability.)',
                 array(
                     'list_title' => array(
                         'editor_type' => 'text',
@@ -134,14 +248,6 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                 'Card',
                 'Display the properties of an object in an visual layout. (Works with devices that have the screen output capability.)',
                 array(
-                    'data_item' => array(
-                        'editor_type' => 'text',
-                        'editor_properties' => array(),
-                        'defaultValue' => '',
-                        'name' => 'Item',
-                        'description' => 'Single item (object) from which you want to display properties to an visual card element.',
-                        'valueType' => 'string'
-                    ),
                     'back_button' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
@@ -155,8 +261,8 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     'data_item_title' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
-                        'name' => 'Data item title',
+                        'defaultValue' => 'Title',
+                        'name' => 'Title',
                         'description' => 'Title of the item which will be displayed on the card.',
                         'valueType' => 'string'
                     ),
@@ -164,15 +270,15 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'text',
                         'editor_properties' => array(),
                         'defaultValue' => '',
-                        'name' => 'Data item subtitle',
+                        'name' => 'Subtitle',
                         'description' => 'Subtitle of the item which will be displayed on the card.',
                         'valueType' => 'string'
                     ),
                     'data_item_description_1' => array(
                         'editor_type' => 'desc',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
-                        'name' => 'Data item description 1',
+                        'defaultValue' => 'Description',
+                        'name' => 'Description 1',
                         'description' => 'Primary description of the item which will be displayed on the card.',
                         'valueType' => 'string'
                     ),
@@ -180,7 +286,7 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'desc',
                         'editor_properties' => array(),
                         'defaultValue' => '',
-                        'name' => 'Data item description 2',
+                        'name' => 'Description 2',
                         'description' => 'Secondary description of the item which will be displayed on the card. (works with Alexa only)',
                         'valueType' => 'string'
                     ),
@@ -188,7 +294,7 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'desc',
                         'editor_properties' => array(),
                         'defaultValue' => '',
-                        'name' => 'Data item description 3',
+                        'name' => 'Description 3',
                         'description' => 'Tertiary description of the item which will be displayed on the card. (works with Alexa only)',
                         'valueType' => 'string'
                     ),
@@ -196,7 +302,7 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'text',
                         'editor_properties' => array(),
                         'defaultValue' => '',
-                        'name' => 'Data item image url',
+                        'name' => 'Image url',
                         'description' => 'Link to the image of an item in the card.',
                         'valueType' => 'string'
                     ),
@@ -204,24 +310,24 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'text',
                         'editor_properties' => array(),
                         'defaultValue' => '',
-                        'name' => 'Data item image text',
+                        'name' => 'Image text',
                         'description' => 'Accessibility text of the image of an item in the card. (Required if you want to display the image.)',
                         'valueType' => 'string'
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code">' .
-                            '<ul class="list-unstyled">' .
-                            ' <li>Data item: {{component.properties.data_item}}</li>' .
-                            ' <li>Back button: {{component.properties.back_button}}</li>' .
-                            ' <li>Data item title: {{component.properties.data_item_title}}</li>' .
-                            ' <li>Data item subtitle: {{component.properties.data_item_subtitle}}</li>' .
-                            ' <li>Data item description 1: {{component.properties.data_item_description_1}}</li>' .
-                            ' <li>Data item description 2: {{component.properties.data_item_description_2}}</li>' .
-                            ' <li>Data item description 3: {{component.properties.data_item_description_3}}</li>' .
-                            ' <li>Data item image URL: {{component.properties.data_item_image_url}}</li>' .
-                            ' <li>Data item image text: {{component.properties.data_item_image_text}}</li>' .
-                            '</ul>' .
+                        'template' => '<div class="card-container">' .
+                        '<div class="row">' .
+                        '<div class="col-md-8">' .
+                        ' <div class="title-main">{{component.properties.data_item_title}}</div>' .
+                        ' <div><div class="subtitle">{{component.properties.data_item_subtitle}}</div></div>' .
+                        ' <div>{{component.properties.data_item_description_1}}</div>' .
+                        ' <div>{{component.properties.data_item_description_2}}</div>' .
+                            '</div>'.
+                                '<div class="col-md-4">' .
+                                    '<div class="image-placeholder large" ng-if="component.properties.data_item_image_url"><div>IMG</div></div>' .
+                                '</div>'.
+                            '</div>'.
                             '</div>'
                     ),
                     '_help' =>  array(

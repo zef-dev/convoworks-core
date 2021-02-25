@@ -200,6 +200,14 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
         $this->_responseType = $responseType;
         $this->_value = $value;
     }
+    
+    public function addListItem( $item)
+    {
+        if ( !isset( $this->_value['list_items'])) {
+            $this->_value['list_items']  =   [];
+        }
+        $this->_value['list_items'][]    =   $item;
+    }
 
     public function setSuggestions($suggestions)
     {

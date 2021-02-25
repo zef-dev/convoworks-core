@@ -195,7 +195,8 @@ class AmazonAuthService
         }
 
         foreach ($array as $key => $val) {
-            $pairs[] .= "$key=".($urlencode ? urlencode($val) : $val);
+            $val        =   strval( $val);
+            $pairs[]    .=  "$key=".($urlencode ? urlencode($val) : $val);
         }
 
         $query .= implode('&', $pairs);

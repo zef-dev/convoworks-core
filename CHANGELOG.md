@@ -2,6 +2,10 @@
 
 ## [Current development]
 
+* Added List Title and List Item as separate elements in `convo-visuals` package
+* Enhanced preview for visual elements
+* Old list element is marked as deprecated
+
 ## [Releases]
 
 ### 0.20.0 - 2021-02-22
