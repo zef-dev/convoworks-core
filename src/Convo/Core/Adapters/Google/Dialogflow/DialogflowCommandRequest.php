@@ -85,6 +85,13 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
         $this->_intentName = $this->_data['queryResult']['intent']['displayName'];
         $this->_intentType = $this->_data['originalDetectIntentRequest']['payload']['inputs'][0]['intent'] ?? null;
 
+        $this->_logger->info( 'Got intent type ['.$this->_intentType.'] and name ['.$this->_intentName.']');
+        
+        if ( empty( $this->_intentType) && !empty( $this->_intentName)) {
+            $this->_logger->warning( 'No intent type in request but intent is resolved. Using default ['.IActionsIntent::MAIN.']');
+            $this->_intentType  =   IActionsIntent::MAIN;
+        }
+        
         if ($this->_canAccessUserStorage() && !$this->_hasUserStorage()) {
             $this->_preparedInstallationId = StrUtil::uuidV4();
             $this->_installationId = $this->_preparedInstallationId;
