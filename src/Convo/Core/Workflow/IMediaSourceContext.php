@@ -86,6 +86,12 @@ interface IMediaSourceContext extends IServiceContext
     public function isEmpty();
     
     /**
+     * Is there next available.
+     * @return bool
+     */
+    public function hasNext();
+    
+    /**
      * Returns the next song if available and sets the pointer.
      * @return Mp3File
      */
@@ -113,13 +119,13 @@ interface IMediaSourceContext extends IServiceContext
     
     // SETTINGS
     /**
-     * Returns the song offset in milliseconds.
+     * Returns the current song offset in milliseconds.
      * @return int
      */
     public function getOffset() : int;
     
     /**
-     * Sets the song offset in milliseconds.
+     * Sets the current song offset in milliseconds.
      * @param int $offset
      */
     public function setOffset( $offset);
