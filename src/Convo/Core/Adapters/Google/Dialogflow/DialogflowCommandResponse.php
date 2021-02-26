@@ -233,7 +233,10 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
         $text = " ";
         return $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
     }
-
+    
+    /**
+     * @deprecated
+     */
     public function resumeSong(Mp3File $song, $offset) : array
     {
         $text = " ";

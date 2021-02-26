@@ -12,6 +12,12 @@ interface IConvoAudioResponse extends IConvoResponse
 
     public function enqueueSong(Mp3File $playingSong, Mp3File $enqueuingSong) : array;
 
+    /**
+     * @param Mp3File $song
+     * @param int $offset
+     * @return array
+     * @deprecated
+     */
     public function resumeSong(Mp3File $song, $offset) : array;
 
     /**

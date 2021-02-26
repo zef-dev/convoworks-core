@@ -571,6 +571,9 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         return $this->getPlatformResponse();
     }
 
+    /**
+     * @deprecated
+     */
     public function resumeSong(Mp3File $song, $offset) : array
     {
         return $this->playSong($song, $offset);
