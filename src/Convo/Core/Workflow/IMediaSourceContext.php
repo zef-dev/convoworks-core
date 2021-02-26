@@ -89,7 +89,7 @@ interface IMediaSourceContext extends IServiceContext
      * Is there next available.
      * @return bool
      */
-    public function hasNext();
+    public function isLast();
     
     /**
      * Returns current results total count.
@@ -98,8 +98,9 @@ interface IMediaSourceContext extends IServiceContext
     public function getCount();
     
     /**
-     * Returns the next song if available and sets the pointer.
+     * Returns the next song if available and sets the pointer. Will throw DataItemNotFoundException if no results, or single result with loop status off
      * @return Mp3File
+     * @throws DataItemNotFoundException
      */
     public function next() : Mp3File;
     

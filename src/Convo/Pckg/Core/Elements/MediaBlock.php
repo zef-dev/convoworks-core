@@ -623,28 +623,30 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 break;
             case self::COMMAND_LOOP_OFF:
                 $context->setLoopStatus( false);
-                if ( $context->getCount() > 1) {
-                    $response->emptyResponse();
-                } else {
+                if ( $context->isLast()) {
                     $response->clearQueue();
+                } else {
+                    $response->emptyResponse();
                 }
                 break;
                 
                 
             // NOTIFICATIONS
             case self::COMMAND_PLAYBACK_NEARLY_FINISHED:
-                if ( $context->hasNext()) {
+                try {
                     $response->enqueueSong( $context->current(), $context->next());
-                } else if ( $context->getLoopStatus()) {
-                    $response->enqueueSong( $context->current(), $context->current());
-                } else {
+                } catch ( DataItemNotFoundException $e) {
                     $response->clearQueue();
                 }
                 break;
                 
             case self::COMMAND_PLAYBACK_FINISHED:
-                $context->moveNext();
-                $response->emptyResponse();
+                try {
+                    $context->moveNext();
+                } catch ( DataItemNotFoundException $e) {
+                } finally {
+                    $response->emptyResponse();
+                }
                 break;
                 
             case self::COMMAND_PLAYBACK_STOPPED:
