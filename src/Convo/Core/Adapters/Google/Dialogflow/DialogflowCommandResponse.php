@@ -228,10 +228,10 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
         return json_decode($this->getPlatformResponse(), true);
     }
 
-    public function enqueueSong(Mp3File $playingSong, Mp3File $enqueuingSong) : array
+    public function enqueueSong(Mp3File $playingSong, Mp3File $enqueuingSong)
     {
         $text = " ";
-        return $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
+        $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
     }
     
     /**
