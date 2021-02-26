@@ -219,13 +219,13 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
         return $this->_suggestions;
     }
 
-    public function playSong(Mp3File $song, $offset = 0) : array
+    public function playSong(Mp3File $song, $offset = 0)
     {
         $this->setSuggestions([
             ["title" => "Home"]
         ]);
         $this->prepareResponse(IResponseType::MEDIA_RESPONSE, $song);
-        return json_decode($this->getPlatformResponse(), true);
+        $this->getPlatformResponse();
     }
 
     public function enqueueSong(Mp3File $playingSong, Mp3File $enqueuingSong)

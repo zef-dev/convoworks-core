@@ -545,7 +545,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         return $this->_platformResponse;
     }
 
-    public function playSong(Mp3File $song, $offset = 0) : array
+    public function playSong(Mp3File $song, $offset = 0)
     {
         $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
         $this->setMetadata($song->getMetaData());
@@ -554,7 +554,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         $this->setCurrentSongToken(md5($song->getFileUrl()));
         $this->setMode("play");
 
-        return $this->getPlatformResponse();
+        $this->getPlatformResponse();
     }
 
     public function enqueueSong(Mp3File $playingSong, Mp3File $enqueuingSong)

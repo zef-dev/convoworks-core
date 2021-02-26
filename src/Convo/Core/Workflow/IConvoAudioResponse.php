@@ -8,7 +8,12 @@ use Convo\Core\Media\Mp3File;
 
 interface IConvoAudioResponse extends IConvoResponse
 {
-    public function playSong(Mp3File $song, $offset = 0) : array;
+    /**
+     * Plays song from given offset in seconds
+     * @param Mp3File $song
+     * @param int $offset
+     */
+    public function playSong(Mp3File $song, $offset = 0);
 
     /**
      * Enqueue next song to play, while providing the old one too.
