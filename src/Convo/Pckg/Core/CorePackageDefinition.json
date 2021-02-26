@@ -5,5 +5,6 @@
     "source_for": [
         "functions", "intents", "entities", "templates"
     ],
-    "description": "Contains core elements, entities, and intents for basic service functionality."
+    "description": "Contains core elements, entities, and intents for basic service functionality.",
+    "stability": "stable"
 }
