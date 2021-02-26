@@ -371,9 +371,13 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         if (!$result->isEmpty()) {
             if ( $request->isMediaRequest())
             {
-                /** @var IConvoAudioResponse $response */
-                /** @var IConvoAudioRequest $request */
-                $this->_handleResult($result, $response, $request, $context);
+                if ( $context->isEmpty()) {
+                    $this->_readNotFound( $request, $response);
+                } else {
+                    /** @var IConvoAudioResponse $response */
+                    /** @var IConvoAudioRequest $request */
+                    $this->_handleResult( $result, $response, $request, $context);
+                }
             } else {
                 $this->_readFallback($request, $response);
             }
@@ -541,6 +545,9 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         }
     }
 
+    /**
+     * @return IMediaSourceContext
+     */
     private function _getMediaSourceContext()
     {
         $contextId = $this->evaluateString($this->_contextId);
@@ -557,12 +564,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
             
             // SESSION
             case self::COMMAND_START_PLAYBACK:
-                try {
-                    $response->playSong( $context->current());
-                } catch ( DataItemNotFoundException $e) {
-                    $this->_logger->notice( $e->getMessage());
-                    $this->_readNotFound( $request, $response);
-                }
+                $response->playSong( $context->current());
                 break;
                 
             case self::COMMAND_PAUSE:
@@ -571,41 +573,23 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 
             case self::COMMAND_CONTINUE_PLAYBACK:
             case self::COMMAND_RESUME_PLAYBACK:
-                try {
-                    $response->playSong( $context->current(), $context->getOffset());
-                } catch ( DataItemNotFoundException $e) {
-                    $this->_logger->notice( $e->getMessage());
-                    $this->_readNotFound( $request, $response);
-                }
+                $response->playSong( $context->current(), $context->getOffset());
                 break;
                 
             case self::COMMAND_NEXT:
-                try {
-                    $context->moveNext();
-                    $response->playSong( $context->current());
-                } catch ( DataItemNotFoundException $e) {
-                    $this->_logger->notice( $e->getMessage());
-                    $this->_readNotFound( $request, $response); // TODO: next not found
-//                     $response->emptyResponse(); // or empty?
-                }
-                
+                $context->moveNext();
+                $response->playSong( $context->current());
                 break;
                 
             case self::COMMAND_PREVIOUS:
-                try {
-                    $context->movePrevious();
-                    $response->playSong( $context->current());
-                } catch ( DataItemNotFoundException $e) {
-                    $this->_logger->notice( $e->getMessage());
-                    $this->_readNotFound( $request, $response); // TODO: next not found
-//                     $response->emptyResponse(); // or empty?
-                }
+                $context->movePrevious();
+                $response->playSong( $context->current());
                 break;
                 
             
             // PLAYER COMMANDS
             case self::COMMAND_START_OVER:
-                $response->playSong( $context->current(), 0);
+                $response->playSong( $context->current());
                 break;
                 
             case self::COMMAND_LOOP_ON:
