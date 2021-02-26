@@ -18,5 +18,8 @@ interface IConvoAudioResponse extends IConvoResponse
 
     public function emptyResponse() : array;
 
-    public function clearQueue() : array;
+    /**
+     * Clears the playlist queue
+     */
+    public function clearQueue();
 }

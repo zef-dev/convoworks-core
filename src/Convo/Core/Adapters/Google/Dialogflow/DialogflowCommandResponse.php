@@ -252,10 +252,10 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
         return $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
     }
 
-    public function clearQueue() : array
+    public function clearQueue()
     {
         $text = " ";
-        return $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
+        $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
     }
 
     private function _emptyResponse($ssmlText, $text) {
