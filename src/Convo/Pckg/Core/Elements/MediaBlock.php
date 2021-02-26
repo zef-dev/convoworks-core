@@ -553,7 +553,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         switch ( $command) {
             case self::COMMAND_START_PLAYBACK:
                 $searchQuery = $request->getSlotValues();
-                $context->setSearchQuery($searchQuery);
                 $context->setShouldMovePointer(true);
                 try {
                     $context->find();

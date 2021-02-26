@@ -24,6 +24,7 @@ interface IMediaSourceContext extends IServiceContext
      * Sets the search query from provided slots.
      * @param $searchQuery
      * @return mixed
+     * @deprecated
      */
     public function setSearchQuery($searchQuery);
 
