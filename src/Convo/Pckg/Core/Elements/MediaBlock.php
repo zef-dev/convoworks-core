@@ -564,7 +564,12 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
             
             // SESSION
             case self::COMMAND_START_PLAYBACK:
-                $response->playSong( $context->current());
+                try {
+                    $response->playSong( $context->current());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readNotFound( $request, $response);
+                }
                 break;
                 
             case self::COMMAND_PAUSE:
@@ -573,23 +578,43 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 
             case self::COMMAND_CONTINUE_PLAYBACK:
             case self::COMMAND_RESUME_PLAYBACK:
-                $response->playSong( $context->current(), $context->getOffset());
+                try {
+                    $response->playSong( $context->current(), $context->getOffset());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readNotFound( $request, $response);
+                }
                 break;
                 
             case self::COMMAND_NEXT:
                 $context->moveNext();
-                $response->playSong( $context->current());
+                try {
+                    $response->playSong( $context->current());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readNotFound( $request, $response);
+                }
                 break;
                 
             case self::COMMAND_PREVIOUS:
                 $context->movePrevious();
-                $response->playSong( $context->current());
+                try {
+                    $response->playSong( $context->current());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readNotFound( $request, $response);
+                }
                 break;
                 
             
             // PLAYER COMMANDS
             case self::COMMAND_START_OVER:
-                $response->playSong( $context->current());
+                try {
+                    $response->playSong( $context->current());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readNotFound( $request, $response);
+                }
                 break;
                 
             case self::COMMAND_LOOP_ON:

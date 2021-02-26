@@ -100,6 +100,7 @@ interface IMediaSourceContext extends IServiceContext
     /**
      * Returns the current mp3 file. Will throw DataItemNotFoundException if list is empty.
      * @return Mp3File
+     * @throws DataItemNotFoundException
      */
     public function current() : Mp3File;
     
