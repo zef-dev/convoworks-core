@@ -547,142 +547,123 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         return $this->getService()->findContext($contextId)->getComponent();
     }
 
-    private function _handleResult(IRequestFilterResult $result, IConvoAudioResponse $response, IConvoAudioRequest $request, IMediaSourceContext $context) {
+    private function _handleResult( IRequestFilterResult $result, IConvoAudioResponse $response, IConvoAudioRequest $request, IMediaSourceContext $context) 
+    {
         $command    =   $result->getSlotValue( 'command');
-
+    
+        $this->_logger->info( "Handling [" . $command . "]");
+        
         switch ( $command) {
+            
+            // SESSION
             case self::COMMAND_START_PLAYBACK:
-                $searchQuery = $request->getSlotValues();
-                $context->setShouldMovePointer(true);
                 try {
-                    $context->find();
-                    $song = $context->current();
-                    $this->_logger->debug("Handling [" . self::COMMAND_START_PLAYBACK . "]");
-                    if ($song->isEmpty()) {
-                        $this->_readNotFound($request, $response);
-                    } else {
-                        $response->playSong( $song);
-                    }
-                } catch (DataItemNotFoundException $e) {
-                    $response->addText($e->getMessage());
+                    $response->playSong( $context->current());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readNotFound( $request, $response);
                 }
                 break;
-            case self::COMMAND_PLAYBACK_STARTED:
-                $this->_logger->debug("Handling [" . self::COMMAND_PLAYBACK_STARTED . "]");
-                $response->emptyResponse();
-                break;
-            case self::COMMAND_PLAYBACK_NEARLY_FINISHED:
-                $this->_logger->debug("Handling [" . self::COMMAND_PLAYBACK_NEARLY_FINISHED. "]");
-                $context->setShouldMovePointer(false);
-                $playingSong = $context->current();
-                $nextSong = $context->next();
-                if ($nextSong->isEmpty()) {
-                    if ($context->getLoopStatus() === true) {
-                        $nextSong = $context->first();
-                        $response->enqueueSong($playingSong, $nextSong);
-                    } else {
-                        $response->clearQueue();
-                    }
-                } else {
-                    $response->enqueueSong($playingSong, $nextSong);
-                }
-                break;
-            case self::COMMAND_PLAYBACK_FINISHED:
-                $this->_logger->debug("Handling [" . self::COMMAND_PLAYBACK_FINISHED . "]");
-                $context->setShouldMovePointer(false);
-                if ($context->next()->isEmpty()) {
-                    $context->movePointerTo(0);
-                } else {
-                    $currentSongIndex = $context->getPointerPosition() + 1;
-                    $context->movePointerTo($currentSongIndex);
-                }
-                $context->setOffset(0);
-                $response->emptyResponse();
-                break;
-            case self::COMMAND_PLAYBACK_STOPPED:
-                $this->_logger->debug("Handling [" . self::COMMAND_PLAYBACK_STOPPED . "]");
-                $context->setOffset($request->getOffset());
-                $response->emptyResponse();
-                break;
-            case self::COMMAND_PLAYBACK_FAILED:
-                $this->_logger->warning("Handling [" . self::COMMAND_PLAYBACK_FAILED . "]");
-                $response->emptyResponse();
-                break;
+                
             case self::COMMAND_PAUSE:
-                $this->_logger->debug("Handling [" . self::COMMAND_PAUSE . "]");
                 $response->stopSong();
                 break;
+                
             case self::COMMAND_CONTINUE_PLAYBACK:
             case self::COMMAND_RESUME_PLAYBACK:
-                $this->_logger->debug("Handling [" . self::COMMAND_RESUME_PLAYBACK . "]");
-                $song = $context->current();
-                $response->playSong($song, $context->getOffset());
+                try {
+                    $response->playSong( $context->current(), $context->getOffset());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readNotFound( $request, $response);
+                }
                 break;
+                
             case self::COMMAND_NEXT:
-                $this->_logger->debug("Handling [" . self::COMMAND_NEXT . "]");
-                $context->setShouldMovePointer(true);
-                $song = $context->next();
-                if ($context->getLoopStatus() === true) {
-                    if ($song->isEmpty()) {
-                        $song = $context->first();
-                        $response->playSong($song);
-                    } else {
-                        $response->playSong($song);
-                    }
-                } else {
-                    if ($song->isEmpty()) {
-                        $response->emptyResponse();
-                    } else {
-                        $response->playSong($song);
-                    }
+                try {
+                    $context->moveNext();
+                    $response->playSong( $context->current());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readNotFound( $request, $response); // TODO: next not found
+//                     $response->emptyResponse(); // or empty?
                 }
+                
                 break;
+                
             case self::COMMAND_PREVIOUS:
-                $this->_logger->debug("Handling [" . self::COMMAND_PREVIOUS . "]");
-                $context->setShouldMovePointer(true);
-                $song = $context->previous();
-                if ($song->isEmpty()) {
-                    $response->emptyResponse();
-                } else {
-                    $response->playSong($song);
+                try {
+                    $context->movePrevious();
+                    $response->playSong( $context->current());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readNotFound( $request, $response); // TODO: next not found
+//                     $response->emptyResponse(); // or empty?
                 }
                 break;
+                
+            
+            // PLAYER COMMANDS
             case self::COMMAND_START_OVER:
-                $this->_logger->debug("Handling [" . self::COMMAND_START_OVER . "]");
-                $song = $context->current();
-                $response->playSong($song, 0);
+                $response->playSong( $context->current(), 0);
                 break;
-            case self::COMMAND_SHUFFLE_ON:
-                $this->_logger->debug("Handling [" . self::COMMAND_SHUFFLE_ON . "]");
-                $response->emptyResponse();
-                break;
-            case self::COMMAND_SHUFFLE_OFF:
-                $this->_logger->debug("Handling [" . self::COMMAND_SHUFFLE_OFF . "]");
-                $response->emptyResponse();
-                break;
+                
             case self::COMMAND_LOOP_ON:
-                $this->_logger->debug("Handling [" . self::COMMAND_LOOP_ON . "]");
-                $context->setLoopStatus(true);
-                if ($context->next()->isEmpty()) {
-                    $context->setShouldMovePointer(true);
-                    $playingSong = $context->current();
-                    $nextSong = $context->first();
-                    $response->enqueueSong($playingSong, $nextSong);
+                $context->setLoopStatus( true);
+                if ( $context->hasNext()) {
+                    $response->enqueueSong( $context->current(), $context->next());
                 } else {
-                    $response->emptyResponse();
+                    $response->enqueueSong( $context->current(), $context->current());
                 }
                 break;
             case self::COMMAND_LOOP_OFF:
-                $this->_logger->debug("Handling [" . self::COMMAND_LOOP_OFF . "]");
-                $context->setLoopStatus(false);
-                if ($context->next()->isEmpty()) {
-                    $response->clearQueue();
-                } else {
+                $context->setLoopStatus( false);
+                if ( $context->hasNext()) {
                     $response->emptyResponse();
+                } else {
+                    $response->clearQueue();
                 }
                 break;
+                
+                
+            // NOTIFICATIONS
+            case self::COMMAND_PLAYBACK_NEARLY_FINISHED:
+                if ( $context->hasNext()) {
+                    $response->enqueueSong( $context->current(), $context->next());
+                } else if ( $context->getLoopStatus()) {
+                    $response->enqueueSong( $context->current(), $context->current());
+                } else {
+                    $response->clearQueue();
+                }
+                break;
+                
+            case self::COMMAND_PLAYBACK_FINISHED:
+                $context->moveNext();
+                $response->emptyResponse();
+                break;
+                
+            case self::COMMAND_PLAYBACK_STOPPED:
+                $context->setOffset( $request->getOffset());
+                $response->emptyResponse();
+                break;
+                
+                
+            // NOT HANDLED YET
+            case self::COMMAND_PLAYBACK_STARTED:
+                $response->emptyResponse();
+                break;
+            case self::COMMAND_PLAYBACK_FAILED:
+                $response->emptyResponse();
+                break;
+            case self::COMMAND_SHUFFLE_ON:
+                $response->emptyResponse();
+                break;
+            case self::COMMAND_SHUFFLE_OFF:
+                $response->emptyResponse();
+                break;
+                
             default:
-                $this->_logger->debug("Handling default with [" . $command . "]");
+                $this->_logger->notice( "Using default, empty response for [" . $command . "]");
                 $response->emptyResponse();
                 break;
         }
