@@ -240,10 +240,10 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
         return $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
     }
 
-    public function stopSong() : array
+    public function stopSong()
     {
         $text = " ";
-        return $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
+        $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
     }
 
     public function emptyResponse()

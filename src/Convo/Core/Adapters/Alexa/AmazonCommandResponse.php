@@ -576,11 +576,11 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         return $this->playSong($song, $offset);
     }
 
-    public function stopSong() : array
+    public function stopSong()
     {
         $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
         $this->setMode("stop");
-        return $this->getPlatformResponse();
+        $this->getPlatformResponse();
     }
 
     public function emptyResponse()

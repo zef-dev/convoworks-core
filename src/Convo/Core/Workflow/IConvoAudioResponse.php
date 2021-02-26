@@ -14,7 +14,10 @@ interface IConvoAudioResponse extends IConvoResponse
 
     public function resumeSong(Mp3File $song, $offset) : array;
 
-    public function stopSong() : array;
+    /**
+     * Sends stop playing instruction
+     */
+    public function stopSong();
 
     /**
      * Sets empty response for the platform.
