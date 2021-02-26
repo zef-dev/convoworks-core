@@ -108,12 +108,14 @@ interface IMediaSourceContext extends IServiceContext
     
     // ACTIONS
     /**
-     * Moves pointer to the previous song. If not available and loop is off, will throw DataItemNotFoundException
+     * Moves pointer to the previous song. If result is empty or we have single result with loop off, will throw DataItemNotFoundException
+     * @throws DataItemNotFoundException
      */
     public function movePrevious();
 
     /**
-     * Moves pointer to the next song. If not available and loop is off, will throw DataItemNotFoundException
+     * Moves pointer to the next song. If result is empty or we have single result with loop off, will throw DataItemNotFoundException
+     * @throws DataItemNotFoundException
      */
     public function moveNext();
     

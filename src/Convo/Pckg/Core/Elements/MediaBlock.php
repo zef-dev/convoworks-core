@@ -587,8 +587,8 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 break;
                 
             case self::COMMAND_NEXT:
-                $context->moveNext();
                 try {
+                    $context->moveNext();
                     $response->playSong( $context->current());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
@@ -597,8 +597,8 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 break;
                 
             case self::COMMAND_PREVIOUS:
-                $context->movePrevious();
                 try {
+                    $context->movePrevious();
                     $response->playSong( $context->current());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
