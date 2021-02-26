@@ -92,6 +92,12 @@ interface IMediaSourceContext extends IServiceContext
     public function hasNext();
     
     /**
+     * Returns current results total count.
+     * @return int
+     */
+    public function getCount();
+    
+    /**
      * Returns the next song if available and sets the pointer.
      * @return Mp3File
      */

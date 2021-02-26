@@ -619,15 +619,11 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 
             case self::COMMAND_LOOP_ON:
                 $context->setLoopStatus( true);
-                if ( $context->hasNext()) {
-                    $response->enqueueSong( $context->current(), $context->next());
-                } else {
-                    $response->enqueueSong( $context->current(), $context->current());
-                }
+                $response->enqueueSong( $context->current(), $context->next());
                 break;
             case self::COMMAND_LOOP_OFF:
                 $context->setLoopStatus( false);
-                if ( $context->hasNext()) {
+                if ( $context->getCount() > 1) {
                     $response->emptyResponse();
                 } else {
                     $response->clearQueue();
