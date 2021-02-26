@@ -16,7 +16,10 @@ interface IConvoAudioResponse extends IConvoResponse
 
     public function stopSong() : array;
 
-    public function emptyResponse() : array;
+    /**
+     * Sets empty response for the platform.
+     */
+    public function emptyResponse();
 
     /**
      * Clears the playlist queue

@@ -583,11 +583,11 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         return $this->getPlatformResponse();
     }
 
-    public function emptyResponse() : array
+    public function emptyResponse()
     {
         $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
         $this->setMode("other");
-        return $this->getPlatformResponse();
+        $this->getPlatformResponse();
     }
 
     public function clearQueue()
