@@ -1762,17 +1762,6 @@ Additional Processors are used to execute user command, if matched. If no match 
                         'description' => 'Elements to be executed in read phase',
                         'valueType' => 'class'
                     ),
-                    'fallback' => array(
-                        'editor_type' => 'service_components',
-                        'editor_properties' => array(
-                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
-                            'multiple' => true
-                        ),
-                        'defaultValue' => array(),
-                        'name' => 'Fallback',
-                        'description' => 'Elements to be read if none of the processors match',
-                        'valueType' => 'class'
-                    ),
                     'not_found' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
@@ -1793,6 +1782,39 @@ Additional Processors are used to execute user command, if matched. If no match 
                         'defaultValue' => array(),
                         'name' => 'Additional processors',
                         'description' => 'Additional processors to be executed in process phase. E.g. help, repeat ... This procoessors will not trigger loop iteration.',
+                        'valueType' => 'class'
+                    ),
+                    'no_next' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Next not avilable',
+                        'description' => 'Elements to be read if next song is requested but not available',
+                        'valueType' => 'class'
+                    ),
+                    'no_previous' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Previous not avilable',
+                        'description' => 'Elements to be read if previous song is requested but not available',
+                        'valueType' => 'class'
+                    ),
+                    'fallback' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Fallback',
+                        'description' => 'Elements to be read if none of the processors match',
                         'valueType' => 'class'
                     ),
                     '_help' =>  array(

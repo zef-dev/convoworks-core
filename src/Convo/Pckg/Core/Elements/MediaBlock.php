@@ -5,7 +5,6 @@ namespace Convo\Pckg\Core\Elements;
 use Convo\Core\DataItemNotFoundException;
 use Convo\Core\Preview\PreviewBlock;
 use Convo\Core\Preview\PreviewSection;
-use Convo\Core\Preview\PreviewUtterance;
 use Convo\Core\Workflow\IConvoAudioRequest;
 use Convo\Core\Workflow\IConvoAudioResponse;
 use Convo\Core\Workflow\IConvoRequest;
@@ -51,6 +50,16 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
     /**
      * @var \Convo\Core\Workflow\IConversationElement[]
      */
+    private $_noNext        =	array();
+    
+    /**
+     * @var \Convo\Core\Workflow\IConversationElement[]
+     */
+    private $_noPrevious    =	array();
+    
+    /**
+     * @var \Convo\Core\Workflow\IConversationElement[]
+     */
     private $_fallback = [];
 
     /**
@@ -80,6 +89,16 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         $this->_contextId		=	$properties['context_id'];
         $this->_mediaInfoVar	=	$properties['media_info_var'] ?? 'media_info';
 
+        foreach ( $properties['no_next'] as $element) {
+            $this->_noNext[]        =   $element;
+            $this->addChild( $element);
+        }
+        
+        foreach ( $properties['no_previous'] as $element) {
+            $this->_noPrevious[]    =   $element;
+            $this->addChild( $element);
+        }
+        
         if ( isset( $properties['fallback'])) {
             foreach ( $properties['fallback'] as $fallback) {
                 $this->addFallback( $fallback);
@@ -351,48 +370,34 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
     /**
      * @inheritDoc
      */
-    public function run(IConvoRequest $request, IConvoResponse $response)
+    public function run( IConvoRequest $request, IConvoResponse $response)
     {
         $this->_injectCurrentPageInfo();
         
         $context = $this->_getMediaSourceContext();
         $result = new \Convo\Core\Workflow\DefaultFilterResult();
 
-        if (is_a($request, '\Convo\Core\Workflow\IIntentAwareRequest')) {
+        if ( is_a($request, '\Convo\Core\Workflow\IIntentAwareRequest')) {
             $result    =   $this->_filter->filter( $request);
         }
 
         $this->_logger->debug("Filter result empty [" . $result->isEmpty()  . "] and [" . print_r($result->getData(), true) . "]");
 
-        $processors	= $this->_collectAllAccountableProcessors();
-        if ( empty( $processors)) {
-            $this->_logger->debug( 'No service processors defined in ['.$this.']');
-        }
-
-        if (!$result->isEmpty()) {
-            if ( $request->isMediaRequest())
-            {
-                if ( $context->isEmpty()) {
-                    $this->_logger->info( 'Empty result. Reading not found ...');
-                    $this->_readNotFound( $request, $response);
-                } else {
-                    /** @var IConvoAudioResponse $response */
-                    /** @var IConvoAudioRequest $request */
-                    $this->_handleResult( $result, $response, $request, $context);
-                }
-            } else {
-                $this->_readFallback($request, $response);
-            }
-        } else {
-            if (!empty($processors)) {
-                foreach ( $processors as $processor)
-                {
-                    if ( $this->_processAccountableProcessor( $request, $response, $processor)) {
-                        return;
-                    }
+        if ( !$result->isEmpty()) 
+        {
+            /** @var IConvoAudioResponse $response */
+            /** @var IConvoAudioRequest $request */
+            $this->_handleResult( $result, $response, $request, $context);
+        } 
+        else 
+        {
+            $processors	= $this->_collectAllAccountableProcessors();
+            foreach ( $processors as $processor) {
+                if ( $this->_processAccountableProcessor( $request, $response, $processor)) {
+                    return;
                 }
             }
-            $this->_readFallback($request, $response);
+            $this->_readFallback( $request, $response);
         }
     }
 
@@ -603,7 +608,10 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                     $response->playSong( $context->current());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
-                    $this->_readNotFound( $request, $response);
+                    $elements   =   empty( $this->_noNext) ? $this->getFallback() : $this->_noPrevious;
+                    foreach ( $elements as $element) {
+                        $element->read( $request, $response);
+                    }
                 }
                 break;
                 
@@ -613,7 +621,10 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                     $response->playSong( $context->current());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
-                    $this->_readNotFound( $request, $response);
+                    $elements   =   empty( $this->_noPrevious) ? $this->getFallback() : $this->_noPrevious;
+                    foreach ( $elements as $element) {
+                        $element->read( $request, $response);
+                    }
                 }
                 break;
                 
