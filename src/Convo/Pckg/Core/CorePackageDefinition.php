@@ -1740,7 +1740,7 @@ Additional Processors are used to execute user command, if matched. If no match 
                         'editor_properties' => array(),
                         'defaultValue' => '',
                         'name' => 'Source',
-                        'description' => 'A user friendly name for the block',
+                        'description' => 'Source context id',
                         'valueType' => 'string'
                     ),
                     'media_info_var' => array(
@@ -1814,6 +1814,82 @@ Additional Processors are used to execute user command, if matched. If no match 
                             return new \Convo\Pckg\Core\Elements\MediaBlock( $properties, $service, $this->_packageProviderFactory);
                         }
                     }
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Core\Elements\MediaInfoElement',
+                'Media info element',
+                '',
+                array(
+                    'context_id' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Source',
+                        'description' => 'A media source',
+                        'valueType' => 'string'
+                    ),
+                    'media_info_var' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'media_info',
+                        'name' => 'Media info',
+                        'description' => 'Variable name for the media info array',
+                        'valueType' => 'string'
+                    ),
+                    'has_results' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true
+                        ],
+                        'defaultValue' => [],
+                        'name' => 'Has results',
+                        'description' => 'Executed if there are results',
+                        'valueType' => 'class'
+                    ],
+                    'no_results' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true
+                        ],
+                        'defaultValue' => [],
+                        'name' => 'No results',
+                        'description' => 'Executed if there are no results',
+                        'valueType' => 'class'
+                    ],
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code">' .
+                        'Media info from <b>{{ component.properties.context_id }}</b>' .
+                        '</div>'
+                    ),
+                    '_interface' => '\Convo\Core\Workflow\IConversationElement',
+                    '_workflow' => 'read'
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Core\Elements\StartAudioPlayback',
+                'Start Audio playback',
+                '',
+                array(
+                    'context_id' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Source',
+                        'description' => 'A media source',
+                        'valueType' => 'string'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code">START PLAYING <b>{{component.properties.context_id}}</b></div>'
+                    ),
+                    '_interface' => '\Convo\Core\Workflow\IConversationElement',
+                    '_workflow' => 'read'
                 )
             ),
             new \Convo\Core\Factory\ComponentDefinition(
