@@ -13,19 +13,19 @@ interface IMediaSourceContext extends IServiceContext
      * Are there any results
      * @return bool
      */
-    public function isEmpty();
+    public function isEmpty() : bool;
     
     /**
      * Is there next available.
      * @return bool
      */
-    public function isLast();
+    public function isLast() : bool;
     
     /**
      * Returns current results total count.
      * @return int
      */
-    public function getCount();
+    public function getCount() : int;
     
     /**
      * Returns the next song if available and sets the pointer. Will throw DataItemNotFoundException if no results, or single result with loop status off
