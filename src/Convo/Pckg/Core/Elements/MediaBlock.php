@@ -66,6 +66,8 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
     private $_contextId;
 
     private $_blockName;
+    
+    private $_mediaInfoVar;
 
     public function __construct($properties, \Convo\Core\ConvoServiceInstance $service, \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory)
     {
@@ -76,6 +78,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         $this->_blockId		    =	$properties['block_id'];
         $this->_blockName       =   $properties['name'] ?? 'Nameless block';
         $this->_contextId		=	$properties['context_id'];
+        $this->_mediaInfoVar	=	$properties['media_info_var'] ?? 'media_info';
 
         if ( isset( $properties['fallback'])) {
             foreach ( $properties['fallback'] as $fallback) {
@@ -321,6 +324,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
      */
     public function read(IConvoRequest $request, IConvoResponse $response)
     {
+        $this->_injectCurrentPageInfo();
         parent::read( $request, $response);
     }
 
@@ -349,12 +353,9 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
      */
     public function run(IConvoRequest $request, IConvoResponse $response)
     {
-        try {
-            $context = $this->_getMediaSourceContext();
-        } catch (\Exception $e) {
-            $response->addText($e->getMessage());
-            return;
-        }
+        $this->_injectCurrentPageInfo();
+        
+        $context = $this->_getMediaSourceContext();
         $result = new \Convo\Core\Workflow\DefaultFilterResult();
 
         if (is_a($request, '\Convo\Core\Workflow\IIntentAwareRequest')) {
@@ -372,6 +373,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
             if ( $request->isMediaRequest())
             {
                 if ( $context->isEmpty()) {
+                    $this->_logger->info( 'Empty result. Reading not found ...');
                     $this->_readNotFound( $request, $response);
                 } else {
                     /** @var IConvoAudioResponse $response */
@@ -552,6 +554,15 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
     {
         $contextId = $this->evaluateString($this->_contextId);
         return $this->getService()->findContext($contextId)->getComponent();
+    }
+    
+    private function _injectCurrentPageInfo()
+    {
+        $context    =   $this->_getMediaSourceContext();
+        $req_params =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $this);
+        
+        $req_params->setServiceParam(
+            $this->evaluateString( $this->_mediaInfoVar, $context->getMediaInfo()));
     }
 
     private function _handleResult( IRequestFilterResult $result, IConvoAudioResponse $response, IConvoAudioRequest $request, IMediaSourceContext $context) 

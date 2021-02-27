@@ -7,6 +7,13 @@ use Convo\Core\Media\Mp3File;
 
 interface IMediaSourceContext extends IServiceContext
 {
+    const DEFAULT_MEDIA_INFO    =   [
+        'last' => false,
+        'first' => false,
+        'page_no' => 1,
+        'query' => null
+    ];
+    
     // STATE
     
     /**
@@ -81,5 +88,11 @@ interface IMediaSourceContext extends IServiceContext
      * @return bool
      */
     public function getLoopStatus() : bool;
+    
+    /**
+     * Returns the current media info. Associative array as defined in DEFAULT_MEDIA_INFO 
+     * @return array
+     */
+    public function getMediaInfo() : array;
 
 }

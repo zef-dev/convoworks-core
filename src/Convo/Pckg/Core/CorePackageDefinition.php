@@ -1743,6 +1743,14 @@ Additional Processors are used to execute user command, if matched. If no match 
                         'description' => 'A user friendly name for the block',
                         'valueType' => 'string'
                     ),
+                    'media_info_var' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'media_info',
+                        'name' => 'Media info',
+                        'description' => 'Variable name for the media info array',
+                        'valueType' => 'string'
+                    ),
                     'elements' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
