@@ -12,13 +12,11 @@ class StartAudioPlayback extends AbstractWorkflowComponent implements IConversat
 
     
     private $_contextId;
-    private $_rewind;
     
     public function __construct( $properties)
     {
         parent::__construct( $properties);
         $this->_contextId   =   $properties['context_id'];
-        $this->_rewind      =   $properties['rewind'] ?? null;
     }
 
     public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
@@ -31,10 +29,7 @@ class StartAudioPlayback extends AbstractWorkflowComponent implements IConversat
         /** @var $response IConvoAudioResponse */
         $context    =   $this->_getMediaSourceContext();
         
-        if ( $this->_rewind && $this->evaluateString( $this->_rewind)) {
-            $this->_logger->info( 'Rewinding media source ...');
-            $context->rewind();
-        }
+        $this->_logger->info( 'Playing current song ...');
         
         $response->playSong( $context->current());
     }
