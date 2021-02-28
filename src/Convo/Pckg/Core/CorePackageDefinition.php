@@ -1873,6 +1873,14 @@ Additional Processors are used to execute user command, if matched. If no match 
                         'description' => 'A media source',
                         'valueType' => 'string'
                     ),
+                    'rewind' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Rewind if',
+                        'description' => 'Expression, if evaluates to true, will result in moving pointer to the first song in results',
+                        'valueType' => 'string'
+                    ),
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code">START PLAYING <b>{{component.properties.context_id}}</b></div>'
