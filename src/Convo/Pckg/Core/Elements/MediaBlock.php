@@ -552,6 +552,12 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
      */
     private function _readFailbackOr( $request, $response, $collection=[])
     {
+        if ( empty( $request->getSessionId())) {
+            $this->_logger->info( 'Sessionless request. Exiting with empty response ...');
+            $response->emptyResponse();
+            return; 
+        }
+        
         if ( empty( $collection)) {
             $collection =   $this->_fallback;
         }
@@ -594,7 +600,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response, $this->_notFound);
-                    $response->setShouldEndSession( true);
                 }
                 break;
                 
@@ -609,7 +614,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response, $this->_notFound);
-                    $response->setShouldEndSession( true);
                 }
                 break;
                 
@@ -620,7 +624,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response, $this->_noNext);
-                    $response->setShouldEndSession( true);
                 }
                 break;
                 
@@ -631,7 +634,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response, $this->_noPrevious);
-                    $response->setShouldEndSession( true);
                 }
                 break;
                 
@@ -643,7 +645,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response, $this->_notFound);
-                    $response->setShouldEndSession( true);
                 }
                 break;
                 
