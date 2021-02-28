@@ -100,13 +100,13 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
 
         // intents
         // play song intent
-        $reader   =   new \Convo\Pckg\Core\Filters\ConvoIntentReader([
-            'intent' => 'convo-core.PlaySong',
-            'values' => ["command" =>self::COMMAND_START_PLAYBACK]
-        ], $this->_packageProviderFactory);
-        $reader->setLogger( $this->_logger);
-        $reader->setService( $this->getService());
-        $readers[]    =   $reader;
+//         $reader   =   new \Convo\Pckg\Core\Filters\ConvoIntentReader([
+//             'intent' => 'convo-core.PlaySong',
+//             'values' => ["command" =>self::COMMAND_START_PLAYBACK]
+//         ], $this->_packageProviderFactory);
+//         $reader->setLogger( $this->_logger);
+//         $reader->setService( $this->getService());
+//         $readers[]    =   $reader;
 
         // next intent
         $reader   =   new \Convo\Pckg\Core\Filters\ConvoIntentReader([
