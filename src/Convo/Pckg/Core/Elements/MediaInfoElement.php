@@ -58,15 +58,15 @@ class MediaInfoElement extends AbstractWorkflowContainerComponent implements ICo
         
         if ( $context->isEmpty())
         {
-            $this->_logger->info( 'Got results ['.$context->getCount().']');
-            foreach ( $this->_hasResults as $element) {
+            $this->_logger->info( 'Got no results');
+            foreach ( $this->_noResults as $element) {
                 $element->read( $request, $response);
             }
         }
         else
         {
-            $this->_logger->info( 'Got no results');
-            foreach ( $this->_noResults as $element) {
+            $this->_logger->info( 'Got results ['.$context->getCount().']');
+            foreach ( $this->_hasResults as $element) {
                 $element->read( $request, $response);
             }
         }
