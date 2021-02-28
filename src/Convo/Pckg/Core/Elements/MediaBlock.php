@@ -59,11 +59,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
     private $_fallback = [];
 
     /**
-     * @var \Convo\Core\Workflow\IConversationElement[]
-     */
-    private $_notFound = [];
-
-    /**
      * @var IRequestFilter
      */
     private $_filter  =   null;
@@ -98,12 +93,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         if ( isset( $properties['fallback'])) {
             foreach ( $properties['fallback'] as $fallback) {
                 $this->addFallback( $fallback);
-            }
-        }
-
-        if ( isset( $properties['not_found'])) {
-            foreach ( $properties['not_found'] as $notFound) {
-                $this->addNotFound( $notFound);
             }
         }
 
@@ -397,10 +386,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         $section->collect($this->getFallback(), '\Convo\Core\Preview\IBotSpeechResource');
         $pblock->addSection($section);
 
-        $section = new PreviewSection('On Not Found', $this->_logger);
-        $section->collect($this->_notFound, '\Convo\Core\Preview\IBotSpeechResource');
-        $pblock->addSection($section);
-
 
         return $pblock;
     }
@@ -446,12 +431,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
     public function addFallback(\Convo\Core\Workflow\IConversationElement $element)
     {
         $this->_fallback[] = $element;
-        $this->addChild($element);
-    }
-
-    public function addNotFound(\Convo\Core\Workflow\IConversationElement $element)
-    {
-        $this->_notFound[] = $element;
         $this->addChild($element);
     }
 
@@ -528,7 +507,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                     $response->playSong( $context->current());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
-                    $this->_readFailbackOr( $request, $response, $this->_notFound);
+                    $this->_readFailbackOr( $request, $response);
                 }
                 break;
                 
@@ -542,7 +521,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                     $response->playSong( $context->current(), $context->getOffset());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
-                    $this->_readFailbackOr( $request, $response, $this->_notFound);
+                    $this->_readFailbackOr( $request, $response);
                 }
                 break;
                 
@@ -573,7 +552,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                     $response->playSong( $context->current());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
-                    $this->_readFailbackOr( $request, $response, $this->_notFound);
+                    $this->_readFailbackOr( $request, $response);
                 }
                 break;
                 

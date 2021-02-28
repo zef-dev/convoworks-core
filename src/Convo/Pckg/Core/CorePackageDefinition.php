@@ -1751,17 +1751,6 @@ Additional Processors are used to execute user command, if matched. If no match 
                         'description' => 'Variable name for the media info array',
                         'valueType' => 'string'
                     ),
-                    'not_found' => array(
-                        'editor_type' => 'service_components',
-                        'editor_properties' => array(
-                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
-                            'multiple' => true
-                        ),
-                        'defaultValue' => array(),
-                        'name' => 'On Not Found',
-                        'description' => 'Elements to be read if the requested songs were not found.',
-                        'valueType' => 'class'
-                    ),
                     'no_next' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
