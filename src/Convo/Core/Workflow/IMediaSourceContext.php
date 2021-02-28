@@ -63,11 +63,6 @@ interface IMediaSourceContext extends IServiceContext
      */
     public function moveNext();
 
-    /**
-     * Moves pointer to the begining of the songs stream
-     */
-    public function rewind();
-    
     
     // SETTINGS
     /**
