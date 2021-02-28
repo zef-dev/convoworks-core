@@ -62,6 +62,11 @@ interface IMediaSourceContext extends IServiceContext
      * @throws DataItemNotFoundException
      */
     public function moveNext();
+
+    /**
+     * Moves pointer to the begining of the songs stream
+     */
+    public function rewind();
     
     
     // SETTINGS
