@@ -594,6 +594,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response, $this->_notFound);
+                    $response->setShouldEndSession( true);
                 }
                 break;
                 
@@ -608,6 +609,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response, $this->_notFound);
+                    $response->setShouldEndSession( true);
                 }
                 break;
                 
@@ -618,6 +620,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response, $this->_noNext);
+                    $response->setShouldEndSession( true);
                 }
                 break;
                 
@@ -628,6 +631,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response, $this->_noPrevious);
+                    $response->setShouldEndSession( true);
                 }
                 break;
                 
@@ -639,6 +643,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response, $this->_notFound);
+                    $response->setShouldEndSession( true);
                 }
                 break;
                 
