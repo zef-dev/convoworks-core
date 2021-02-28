@@ -576,7 +576,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         $req_params =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $this);
         
         $req_params->setServiceParam(
-            $this->evaluateString( $this->_mediaInfoVar, $context->getMediaInfo()));
+            $this->evaluateString( $this->_mediaInfoVar), $context->getMediaInfo());
     }
 
     private function _handleResult( IRequestFilterResult $result, IConvoAudioResponse $response, IConvoAudioRequest $request, IMediaSourceContext $context) 
