@@ -1751,17 +1751,6 @@ Additional Processors are used to execute user command, if matched. If no match 
                         'description' => 'Variable name for the media info array',
                         'valueType' => 'string'
                     ),
-                    'elements' => array(
-                        'editor_type' => 'service_components',
-                        'editor_properties' => array(
-                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
-                            'multiple' => true
-                        ),
-                        'defaultValue' => array(),
-                        'name' => 'Read',
-                        'description' => 'Elements to be executed in read phase',
-                        'valueType' => 'class'
-                    ),
                     'not_found' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
@@ -1771,17 +1760,6 @@ Additional Processors are used to execute user command, if matched. If no match 
                         'defaultValue' => array(),
                         'name' => 'On Not Found',
                         'description' => 'Elements to be read if the requested songs were not found.',
-                        'valueType' => 'class'
-                    ),
-                    'additional_processors' => array(
-                        'editor_type' => 'service_components',
-                        'editor_properties' => array(
-                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationProcessor'),
-                            'multiple' => true
-                        ),
-                        'defaultValue' => array(),
-                        'name' => 'Additional processors',
-                        'description' => 'Additional processors to be executed in process phase. E.g. help, repeat ... This procoessors will not trigger loop iteration.',
                         'valueType' => 'class'
                     ),
                     'no_next' => array(

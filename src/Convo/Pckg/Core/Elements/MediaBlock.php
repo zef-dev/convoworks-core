@@ -44,11 +44,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
     private $_packageProviderFactory;
 
     /**
-     * @var \Convo\Core\Workflow\IConversationProcessor[]
-     */
-    private $_processors	=	[];
-
-    /**
      * @var \Convo\Core\Workflow\IConversationElement[]
      */
     private $_noNext        =	array();
@@ -110,12 +105,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
             foreach ( $properties['not_found'] as $notFound) {
                 $this->addNotFound( $notFound);
             }
-        }
-
-        foreach ( $properties['additional_processors'] as $processor) {
-            /* @var $processor \Convo\Core\Workflow\IConversationProcessor */
-            $this->_logger->info("Adding cpu ");
-            $this->addProcessor( $processor);
         }
 
         // intents
@@ -342,17 +331,13 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
     /**
      * @inheritDoc
      */
-    public function read(IConvoRequest $request, IConvoResponse $response)
+    public function read( IConvoRequest $request, IConvoResponse $response)
     {
         $this->_injectCurrentPageInfo();
         parent::read( $request, $response);
     }
 
-    public function addProcessor(\Convo\Core\Workflow\IConversationProcessor $processor)
-    {
-        $this->_processors[] = $processor;
-        $this->addChild($processor);
-    }
+
 
     /**
      * {@inheritDoc}
@@ -392,12 +377,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         } 
         else 
         {
-            $processors	= $this->_collectAllAccountableProcessors();
-            foreach ( $processors as $processor) {
-                if ( $this->_processAccountableProcessor( $request, $response, $processor)) {
-                    return;
-                }
-            }
             $this->_readFallback( $request, $response);
         }
     }
@@ -422,17 +401,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         $section->collect($this->_notFound, '\Convo\Core\Preview\IBotSpeechResource');
         $pblock->addSection($section);
 
-        // User <-> Bot back and forth
-        foreach ($this->getProcessors() as $processor)
-        {
-			/** @var \Convo\Pckg\Core\Processors\AbstractServiceProcessor $processor */
-			$name = $processor->getName() !== '' ? $processor->getName() : 'Process - '.(new \ReflectionClass($processor))->getShortName().' ['.($processor->getId()).']';
-			$section = new PreviewSection($name, $this->_logger);
-
-			$section->collectOne($processor, '\Convo\Core\Preview\IUserSpeechResource');
-			$section->collectOne($processor, '\Convo\Core\Preview\IBotSpeechResource');
-			$pblock->addSection($section);
-        }
 
         return $pblock;
     }
@@ -450,7 +418,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
      */
     public function getProcessors()
     {
-        return $this->_processors;
+        return [];
     }
 
     /**
@@ -504,45 +472,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         }
     }
 
-    protected function _collectAllAccountableProcessors()
-    {
-        $processors = $this->_processors;
-        try {
-            $block	=	$this->getService()->getBlockByRole( IRunnableBlock::ROLE_SERVICE_PROCESSORS);
-            $processors = [];
-            $processors	=	array_merge($block->getProcessors(), $this->_processors);
-        } catch ( \Convo\Core\ComponentNotFoundException $e) {
-            $this->_logger->warning($e->getMessage());
-        }
-
-        return $processors;
-    }
-
-    protected function _processAccountableProcessor(
-        \Convo\Core\Workflow\IConvoRequest $request,
-        \Convo\Core\Workflow\IConvoResponse $response,
-        \Convo\Core\Workflow\IConversationProcessor $processor)
-    {
-        $processor->setParent( $this);
-
-        $result	=	$processor->filter( $request);
-
-
-        $this->_logger->debug( 'Result data ['.print_r($result->getData(), true).'] in MediaBlock. Skipping ...');
-
-        if ( $result->isEmpty()) {
-            $this->_logger->debug( 'Processor ['.$processor.'] not appliable for ['.$request.'] in MediaBlock. Skipping ...');
-            return false;
-        }
-
-        $params				=	$this->getBlockParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $this);
-        $params->setServiceParam( 'result', $result->getData());
-
-        $this->_logger->debug('Processing with ['.$processor.'] in MediaBlock');
-
-        $processor->process( $request, $response, $result);
-        return true;
-    }
 
     /**
      * Executes read on given collection of elements or failback if collection is empty
