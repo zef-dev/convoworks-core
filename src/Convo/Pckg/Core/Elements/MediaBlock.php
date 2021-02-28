@@ -71,6 +71,8 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
 
     public function __construct($properties, \Convo\Core\ConvoServiceInstance $service, \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory)
     {
+        $properties['elements'] = [];
+        $properties['processors'] = [];
         parent::__construct($properties);
         $this->setService($service);
         $this->_packageProviderFactory    =   $packageProviderFactory;
