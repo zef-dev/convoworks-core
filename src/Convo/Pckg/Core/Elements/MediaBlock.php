@@ -584,6 +584,8 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
         foreach ( $collection as $element) {
             $element->read( $request, $response);
         }
+        
+        $response->setShouldEndSession( true);
     }
 
     /**
