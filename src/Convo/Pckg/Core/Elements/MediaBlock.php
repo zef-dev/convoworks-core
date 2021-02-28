@@ -13,6 +13,7 @@ use Convo\Core\Workflow\IMediaSourceContext;
 use Convo\Core\Workflow\IRequestFilter;
 use Convo\Core\Workflow\IRequestFilterResult;
 use Convo\Core\Workflow\IRunnableBlock;
+use Convo\Core\Workflow\IConversationElement;
 
 class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements \Convo\Core\Workflow\IRunnableBlock
 {
@@ -543,12 +544,20 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         return true;
     }
 
-    private function _readNotFound( $request, $response)
+    /**
+     * Executes read on given collection of elements or failback if collection is empty
+     * @param IConvoRequest $request
+     * @param IConvoAudioResponse $response
+     * @param IConversationElement[] $collection
+     */
+    private function _readFailbackOr( $request, $response, $collection=[])
     {
-        foreach ($this->_notFound as $notFound)
-        {
-            /** @var \Convo\Core\Workflow\IConversationElement $fallback */
-            $notFound->read( $request, $response);
+        if ( empty( $collection)) {
+            $collection =   $this->_fallback;
+        }
+        
+        foreach ( $collection as $element) {
+            $element->read( $request, $response);
         }
     }
 
@@ -584,7 +593,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                     $response->playSong( $context->current());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
-                    $this->_readNotFound( $request, $response);
+                    $this->_readFailbackOr( $request, $response, $this->_notFound);
                 }
                 break;
                 
@@ -598,7 +607,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                     $response->playSong( $context->current(), $context->getOffset());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
-                    $this->_readNotFound( $request, $response);
+                    $this->_readFailbackOr( $request, $response, $this->_notFound);
                 }
                 break;
                 
@@ -608,10 +617,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                     $response->playSong( $context->current());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
-                    $elements   =   empty( $this->_noNext) ? $this->getFallback() : $this->_noPrevious;
-                    foreach ( $elements as $element) {
-                        $element->read( $request, $response);
-                    }
+                    $this->_readFailbackOr( $request, $response, $this->_noNext);
                 }
                 break;
                 
@@ -621,10 +627,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                     $response->playSong( $context->current());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
-                    $elements   =   empty( $this->_noPrevious) ? $this->getFallback() : $this->_noPrevious;
-                    foreach ( $elements as $element) {
-                        $element->read( $request, $response);
-                    }
+                    $this->_readFailbackOr( $request, $response, $this->_noPrevious);
                 }
                 break;
                 
@@ -635,7 +638,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
                     $response->playSong( $context->current());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
-                    $this->_readNotFound( $request, $response);
+                    $this->_readFailbackOr( $request, $response, $this->_notFound);
                 }
                 break;
                 
