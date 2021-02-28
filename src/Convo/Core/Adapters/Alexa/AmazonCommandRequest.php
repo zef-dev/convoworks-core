@@ -327,8 +327,8 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 
     private function _getAlexaAudioPlayerIntents() {
         return [
-            "PlaySong",
-            "ContinuePlayback",
+//             "PlaySong",
+//             "ContinuePlayback",
             "AMAZON.RepeatIntent",
             "AMAZON.CancelIntent",
             "AMAZON.NextIntent",
