@@ -15,7 +15,7 @@ use Convo\Core\Workflow\IRequestFilterResult;
 use Convo\Core\Workflow\IRunnableBlock;
 use Convo\Core\Workflow\IConversationElement;
 
-class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements \Convo\Core\Workflow\IRunnableBlock
+class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IRunnableBlock
 {
 
     const COMMAND_CONTINUE_PLAYBACK = 'continue_playback';
@@ -36,8 +36,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
     const COMMAND_LOOP_ON = 'loop_on';
     const COMMAND_LOOP_OFF = 'loop_off';
 
-    private $_blockId;
-
     /**
      * @var \Convo\Core\Factory\PackageProviderFactory
      */
@@ -46,23 +44,25 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
     /**
      * @var \Convo\Core\Workflow\IConversationElement[]
      */
-    private $_noNext        =	array();
+    private $_noNext        =   [];
     
     /**
      * @var \Convo\Core\Workflow\IConversationElement[]
      */
-    private $_noPrevious    =	array();
+    private $_noPrevious    =   [];
     
     /**
      * @var \Convo\Core\Workflow\IConversationElement[]
      */
-    private $_fallback = [];
+    private $_fallback      =   [];
 
     /**
      * @var IRequestFilter
      */
     private $_filter  =   null;
-
+    
+    private $_blockId;
+    
     private $_contextId;
 
     private $_blockName;
@@ -71,8 +71,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
 
     public function __construct($properties, \Convo\Core\ConvoServiceInstance $service, \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory)
     {
-        $properties['elements'] = [];
-        $properties['processors'] = [];
         parent::__construct($properties);
         $this->setService($service);
         $this->_packageProviderFactory    =   $packageProviderFactory;
@@ -318,18 +316,7 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         $this->addChild( $filter);
         $this->_filter = $filter;
     }
-
-    /**
-     * @inheritDoc
-     */
-    public function read( IConvoRequest $request, IConvoResponse $response)
-    {
-        $this->_injectCurrentPageInfo();
-        parent::read( $request, $response);
-    }
-
-
-
+    
     /**
      * {@inheritDoc}
      * @see \Convo\Core\Workflow\IRunnableBlock::getRole()
@@ -338,27 +325,54 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
     {
         return IRunnableBlock::ROLE_MEDIA_PLAYER;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     * @see \Convo\Core\Workflow\IRunnableBlock::getName()
+     */
     public function getName()
     {
         return $this->_blockName;
     }
-
+    
     /**
      * @inheritDoc
      */
+    public function getComponentId()
+    {
+        return $this->_blockId;
+    }
+
+    public function read( IConvoRequest $request, IConvoResponse $response)
+    {
+    }
+    
+    public function getElements() {
+        return [];
+    }
+    
+    public function getProcessors() {
+        return [];
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Convo\Core\Workflow\IRunnableBlock::run()
+     */
     public function run( IConvoRequest $request, IConvoResponse $response)
     {
-        $this->_injectCurrentPageInfo();
+        $context    =   $this->_getMediaSourceContext();
+        $req_params =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $this);
+        $req_params->setServiceParam(
+            $this->evaluateString( $this->_mediaInfoVar), $context->getMediaInfo());
         
-        $context = $this->_getMediaSourceContext();
         $result = new \Convo\Core\Workflow\DefaultFilterResult();
 
-        if ( is_a($request, '\Convo\Core\Workflow\IIntentAwareRequest')) {
+        if ( is_a( $request, '\Convo\Core\Workflow\IIntentAwareRequest')) {
             $result    =   $this->_filter->filter( $request);
         }
 
-        $this->_logger->debug("Filter result empty [" . $result->isEmpty()  . "] and [" . print_r($result->getData(), true) . "]");
+        $this->_logger->debug( "Filter result empty [" . $result->isEmpty()  . "] and [" . print_r( $result->getData(), true) . "]");
 
         if ( !$result->isEmpty()) 
         {
@@ -369,6 +383,128 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         else 
         {
             $this->_readFallback( $request, $response);
+        }
+    }
+    
+    private function _handleResult( IRequestFilterResult $result, IConvoAudioResponse $response, IConvoAudioRequest $request, IMediaSourceContext $context)
+    {
+        $command    =   $result->getSlotValue( 'command');
+        
+        $this->_logger->info( "Handling [" . $command . "]");
+        
+        switch ( $command) {
+            
+            // SESSION
+            case self::COMMAND_START_PLAYBACK:
+                try {
+                    $response->playSong( $context->current());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readFailbackOr( $request, $response);
+                }
+                break;
+                
+            case self::COMMAND_PAUSE:
+                $response->stopSong();
+                break;
+                
+            case self::COMMAND_CONTINUE_PLAYBACK:
+            case self::COMMAND_RESUME_PLAYBACK:
+                try {
+                    $response->playSong( $context->current(), $context->getOffset());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readFailbackOr( $request, $response);
+                }
+                break;
+                
+            case self::COMMAND_NEXT:
+                try {
+                    $context->moveNext();
+                    $response->playSong( $context->current());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readFailbackOr( $request, $response, $this->_noNext);
+                }
+                break;
+                
+            case self::COMMAND_PREVIOUS:
+                try {
+                    $context->movePrevious();
+                    $response->playSong( $context->current());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readFailbackOr( $request, $response, $this->_noPrevious);
+                }
+                break;
+                
+                
+                // PLAYER COMMANDS
+            case self::COMMAND_START_OVER:
+                try {
+                    $response->playSong( $context->current());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readFailbackOr( $request, $response);
+                }
+                break;
+                
+            case self::COMMAND_LOOP_ON:
+                $context->setLoopStatus( true);
+                $response->enqueueSong( $context->current(), $context->next());
+                break;
+            case self::COMMAND_LOOP_OFF:
+                $context->setLoopStatus( false);
+                if ( $context->isLast()) {
+                    $response->clearQueue();
+                } else {
+                    $response->emptyResponse();
+                }
+                break;
+                
+                
+                // NOTIFICATIONS
+            case self::COMMAND_PLAYBACK_NEARLY_FINISHED:
+                try {
+                    $response->enqueueSong( $context->current(), $context->next());
+                } catch ( DataItemNotFoundException $e) {
+                    $response->clearQueue();
+                }
+                break;
+                
+            case self::COMMAND_PLAYBACK_FINISHED:
+                try {
+                    $context->moveNext();
+                } catch ( DataItemNotFoundException $e) {
+                } finally {
+                    $response->emptyResponse();
+                }
+                break;
+                
+            case self::COMMAND_PLAYBACK_STOPPED:
+                $context->setOffset( $request->getOffset());
+                $response->emptyResponse();
+                break;
+                
+                
+                // NOT HANDLED YET
+            case self::COMMAND_PLAYBACK_STARTED:
+                $response->emptyResponse();
+                break;
+            case self::COMMAND_PLAYBACK_FAILED:
+                $response->emptyResponse();
+                break;
+            case self::COMMAND_SHUFFLE_ON:
+                $response->emptyResponse();
+                break;
+            case self::COMMAND_SHUFFLE_OFF:
+                $response->emptyResponse();
+                break;
+                
+            default:
+                $this->_logger->notice( "Using default, empty response for [" . $command . "]");
+                $response->emptyResponse();
+                break;
         }
     }
 
@@ -392,21 +528,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         return $pblock;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getComponentId()
-    {
-        return $this->_blockId;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getProcessors()
-    {
-        return [];
-    }
 
     /**
      * @inheritDoc
@@ -417,18 +538,6 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         return parent::evaluateString( $string, array_merge( $own_params, $context));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getBlockParams($scopeType)
-    {
-        // Is it top level block?
-        if ( $this->getParent() === $this->getService()) {
-            return $this->getService()->getComponentParams( $scopeType, $this);
-        }
-
-        return parent::getBlockParams( $scopeType);
-    }
 
     public function addFallback(\Convo\Core\Workflow\IConversationElement $element)
     {
@@ -486,134 +595,8 @@ class MediaBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements 
         return $this->getService()->findContext($contextId)->getComponent();
     }
     
-    private function _injectCurrentPageInfo()
-    {
-        $context    =   $this->_getMediaSourceContext();
-        $req_params =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $this);
-        
-        $req_params->setServiceParam(
-            $this->evaluateString( $this->_mediaInfoVar), $context->getMediaInfo());
-    }
-
-    private function _handleResult( IRequestFilterResult $result, IConvoAudioResponse $response, IConvoAudioRequest $request, IMediaSourceContext $context) 
-    {
-        $command    =   $result->getSlotValue( 'command');
-    
-        $this->_logger->info( "Handling [" . $command . "]");
-        
-        switch ( $command) {
-            
-            // SESSION
-            case self::COMMAND_START_PLAYBACK:
-                try {
-                    $response->playSong( $context->current());
-                } catch ( DataItemNotFoundException $e) {
-                    $this->_logger->notice( $e->getMessage());
-                    $this->_readFailbackOr( $request, $response);
-                }
-                break;
-                
-            case self::COMMAND_PAUSE:
-                $response->stopSong();
-                break;
-                
-            case self::COMMAND_CONTINUE_PLAYBACK:
-            case self::COMMAND_RESUME_PLAYBACK:
-                try {
-                    $response->playSong( $context->current(), $context->getOffset());
-                } catch ( DataItemNotFoundException $e) {
-                    $this->_logger->notice( $e->getMessage());
-                    $this->_readFailbackOr( $request, $response);
-                }
-                break;
-                
-            case self::COMMAND_NEXT:
-                try {
-                    $context->moveNext();
-                    $response->playSong( $context->current());
-                } catch ( DataItemNotFoundException $e) {
-                    $this->_logger->notice( $e->getMessage());
-                    $this->_readFailbackOr( $request, $response, $this->_noNext);
-                }
-                break;
-                
-            case self::COMMAND_PREVIOUS:
-                try {
-                    $context->movePrevious();
-                    $response->playSong( $context->current());
-                } catch ( DataItemNotFoundException $e) {
-                    $this->_logger->notice( $e->getMessage());
-                    $this->_readFailbackOr( $request, $response, $this->_noPrevious);
-                }
-                break;
-                
-            
-            // PLAYER COMMANDS
-            case self::COMMAND_START_OVER:
-                try {
-                    $response->playSong( $context->current());
-                } catch ( DataItemNotFoundException $e) {
-                    $this->_logger->notice( $e->getMessage());
-                    $this->_readFailbackOr( $request, $response);
-                }
-                break;
-                
-            case self::COMMAND_LOOP_ON:
-                $context->setLoopStatus( true);
-                $response->enqueueSong( $context->current(), $context->next());
-                break;
-            case self::COMMAND_LOOP_OFF:
-                $context->setLoopStatus( false);
-                if ( $context->isLast()) {
-                    $response->clearQueue();
-                } else {
-                    $response->emptyResponse();
-                }
-                break;
-                
-                
-            // NOTIFICATIONS
-            case self::COMMAND_PLAYBACK_NEARLY_FINISHED:
-                try {
-                    $response->enqueueSong( $context->current(), $context->next());
-                } catch ( DataItemNotFoundException $e) {
-                    $response->clearQueue();
-                }
-                break;
-                
-            case self::COMMAND_PLAYBACK_FINISHED:
-                try {
-                    $context->moveNext();
-                } catch ( DataItemNotFoundException $e) {
-                } finally {
-                    $response->emptyResponse();
-                }
-                break;
-                
-            case self::COMMAND_PLAYBACK_STOPPED:
-                $context->setOffset( $request->getOffset());
-                $response->emptyResponse();
-                break;
-                
-                
-            // NOT HANDLED YET
-            case self::COMMAND_PLAYBACK_STARTED:
-                $response->emptyResponse();
-                break;
-            case self::COMMAND_PLAYBACK_FAILED:
-                $response->emptyResponse();
-                break;
-            case self::COMMAND_SHUFFLE_ON:
-                $response->emptyResponse();
-                break;
-            case self::COMMAND_SHUFFLE_OFF:
-                $response->emptyResponse();
-                break;
-                
-            default:
-                $this->_logger->notice( "Using default, empty response for [" . $command . "]");
-                $response->emptyResponse();
-                break;
-        }
+    // UTIL
+    public function __toString() {
+        return parent::__toString().'['.$this->_blockId.']['.$this->_blockName.']['.$this->_contextId.']['.$this->_mediaInfoVar.']';
     }
 }
