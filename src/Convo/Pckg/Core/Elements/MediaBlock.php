@@ -19,7 +19,6 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
 {
 
     const COMMAND_CONTINUE_PLAYBACK = 'continue_playback';
-    const COMMAND_START_PLAYBACK = 'start_playback';
     const COMMAND_PLAYBACK_STARTED = 'playback_started';
     const COMMAND_PLAYBACK_NEARLY_FINISHED = 'playback_nearly_finished';
     const COMMAND_PLAYBACK_FINISHED = 'playback_finished';
@@ -97,15 +96,6 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
         }
 
         // intents
-        // play song intent
-//         $reader   =   new \Convo\Pckg\Core\Filters\ConvoIntentReader([
-//             'intent' => 'convo-core.PlaySong',
-//             'values' => ["command" =>self::COMMAND_START_PLAYBACK]
-//         ], $this->_packageProviderFactory);
-//         $reader->setLogger( $this->_logger);
-//         $reader->setService( $this->getService());
-//         $readers[]    =   $reader;
-
         // next intent
         $reader   =   new \Convo\Pckg\Core\Filters\ConvoIntentReader([
             'intent' => 'convo-core.NextIntent',
@@ -395,15 +385,6 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
         switch ( $command) {
             
             // SESSION
-            case self::COMMAND_START_PLAYBACK:
-                try {
-                    $response->playSong( $context->current());
-                } catch ( DataItemNotFoundException $e) {
-                    $this->_logger->notice( $e->getMessage());
-                    $this->_readFailbackOr( $request, $response);
-                }
-                break;
-                
             case self::COMMAND_PAUSE:
                 $response->stopSong();
                 break;
@@ -462,9 +443,14 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                     $response->emptyResponse();
                 }
                 break;
+            case self::COMMAND_SHUFFLE_ON:
+                $response->emptyResponse();
+                break;
+            case self::COMMAND_SHUFFLE_OFF:
+                $response->emptyResponse();
+                break;
                 
-                
-                // NOTIFICATIONS
+            // NOTIFICATIONS
             case self::COMMAND_PLAYBACK_NEARLY_FINISHED:
                 try {
                     $response->enqueueSong( $context->current(), $context->next());
@@ -489,18 +475,11 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                 $response->emptyResponse();
                 break;
                 
-                
-                // NOT HANDLED YET
+            // NOT HANDLED
             case self::COMMAND_PLAYBACK_STARTED:
                 $response->emptyResponse();
                 break;
             case self::COMMAND_PLAYBACK_FAILED:
-                $response->emptyResponse();
-                break;
-            case self::COMMAND_SHUFFLE_ON:
-                $response->emptyResponse();
-                break;
-            case self::COMMAND_SHUFFLE_OFF:
                 $response->emptyResponse();
                 break;
                 
