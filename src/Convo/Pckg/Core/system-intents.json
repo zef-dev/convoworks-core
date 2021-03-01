@@ -624,6 +624,48 @@
             }
         }
     ],
+    "PlayAll": [{
+        "platforms" : ["dialogflow", "amazon"],
+        "definition" : {
+            "name" : "PlayAll",
+            "type" : "custom",
+            "utterances" : [
+                {
+                    "raw" : "play",
+                    "model" : [
+                        { "text" : "play"}
+                    ]
+                }, {
+                    "raw" : "play all",
+                    "model" : [
+                        { "text" : "play all"}
+                    ]
+                }, {
+                    "raw" : "just play",
+                    "model" : [
+                        { "text" : "just play"}
+                    ]
+                },                     {
+                    "raw" : "play a song",
+                    "model" : [
+                        { "text" : "play a song"}
+                    ]
+                },
+                {
+                    "raw" : "play songs",
+                    "model" : [
+                        { "text" : "play songs"}
+                    ]
+                },
+                {
+                    "raw" : "start playback",
+                    "model" : [
+                        { "text" : "start playback"}
+                    ]
+                }
+            ]
+        }
+    }],
     "PlaySong": [
         {
             "platforms" : ["dialogflow", "amazon"],
@@ -631,30 +673,6 @@
                 "name" : "PlaySong",
                 "type" : "custom",
                 "utterances" : [
-                    {
-                        "raw" : "play",
-                        "model" : [
-                            { "text" : "play"}
-                        ]
-                    },
-                    {
-                        "raw" : "play a song",
-                        "model" : [
-                            { "text" : "play a song"}
-                        ]
-                    },
-                    {
-                        "raw" : "play songs",
-                        "model" : [
-                            { "text" : "play songs"}
-                        ]
-                    },
-                    {
-                        "raw" : "start playback",
-                        "model" : [
-                            { "text" : "start playback"}
-                        ]
-                    },
                     {
                         "raw" : "play a song by Lou Bega",
                         "model" : [
