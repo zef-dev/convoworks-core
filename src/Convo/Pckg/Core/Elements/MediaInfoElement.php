@@ -49,12 +49,14 @@ class MediaInfoElement extends AbstractWorkflowContainerComponent implements ICo
     public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
     {
         $context    =   $this->_getMediaSourceContext();
+        $info       =   $context->getMediaInfo();
+        $info_var   =   $this->evaluateString( $this->_mediaInfoVar);
+        
+        $this->_logger->info( 'Injectiong media info ['.$info_var.']['.print_r( $info, true).']'); 
+        
         $params     =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $this);
-        $status_var =   $this->evaluateString( $this->_mediaInfoVar);
         
-        $this->_logger->info( 'Saving results in component variable ['.$status_var.'] in request scope');
-        
-        $params->setServiceParam( $status_var, $context->getMediaInfo());
+        $params->setServiceParam( $info_var, $info);
         
         if ( $context->isEmpty())
         {

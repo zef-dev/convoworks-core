@@ -352,9 +352,13 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
     public function run( IConvoRequest $request, IConvoResponse $response)
     {
         $context    =   $this->_getMediaSourceContext();
+        $info       =   $context->getMediaInfo();
+        $info_var   =   $this->evaluateString( $this->_mediaInfoVar);
+        
+        $this->_logger->info( 'Injectiong media info ['.$info_var.']['.print_r( $info, true).']'); 
+        
         $req_params =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $this);
-        $req_params->setServiceParam(
-            $this->evaluateString( $this->_mediaInfoVar), $context->getMediaInfo());
+        $req_params->setServiceParam( $info_var, $info);
         
         $result = new \Convo\Core\Workflow\DefaultFilterResult();
 
