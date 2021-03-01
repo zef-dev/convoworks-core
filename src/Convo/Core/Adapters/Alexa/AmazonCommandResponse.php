@@ -346,8 +346,18 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                 if (!empty($this->_metadata)) {
                     $data['response']['directives'][0]['audioItem']['metadata'] = [
                         "title" => $this->_metadata["song"],
-                        "subtitle" => $this->_metadata["artist"]
+                        "subtitle" => $this->_metadata["artist"],
                     ];
+                    
+                    if ( isset( $this->_metadata["art"]) && !empty( $this->_metadata["art"])) {
+                        $data['response']['directives'][0]['audioItem']['metadata']['art']  
+                        =   [ "sources" => [[ "url" => $this->_metadata["art"]]]];
+                    }
+                    
+                    if ( isset( $this->_metadata["backgroundImage"]) && !empty( $this->_metadata["backgroundImage"])) {
+                        $data['response']['directives'][0]['audioItem']['metadata']['backgroundImage']  
+                        =   [ "sources" => [[ "url" => $this->_metadata["backgroundImage"]]]];
+                    }
                 }
             } else if ($this->_mode === 'stop') {
                 $data['response']['directives'][] = [
@@ -371,8 +381,18 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                 if (!empty($this->_metadata)) {
                     $data['response']['directives'][0]['audioItem']['metadata'] = [
                         "title" => $this->_metadata["song"],
-                        "subtitle" => $this->_metadata["artist"]
+                        "subtitle" => $this->_metadata["artist"],
                     ];
+                    
+                    if ( isset( $this->_metadata["art"]) && !empty( $this->_metadata["art"])) {
+                        $data['response']['directives'][0]['audioItem']['metadata']['art']
+                        =   [ "sources" => [[ "url" => $this->_metadata["art"]]]];
+                    }
+                    
+                    if ( isset( $this->_metadata["backgroundImage"]) && !empty( $this->_metadata["backgroundImage"])) {
+                        $data['response']['directives'][0]['audioItem']['metadata']['backgroundImage']
+                        =   [ "sources" => [[ "url" => $this->_metadata["backgroundImage"]]]];
+                    }
                 }
             }
             else if ($this->_mode === 'clearEnqueue') {
@@ -550,7 +570,9 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
         $this->setMetadata( [
             'artist' => $song->getArtist(),
-            'song' => $song->getSongTitle()
+            'song' => $song->getSongTitle(),
+            'art' => $song->getSongImageUrl(),
+            'backgroundImage' => $song->getSongBackgroundUrl(),
         ]);
         $this->setOffsetMilliseconds($offset);
         $this->setUrl($song->getFileUrl());
@@ -567,7 +589,9 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         $this->setUrl($enqueuingSong->getFileUrl());
         $this->setMetadata( [
             'artist' => $enqueuingSong->getArtist(),
-            'song' => $enqueuingSong->getSongTitle()
+            'song' => $enqueuingSong->getSongTitle(),
+            'art' => $enqueuingSong->getSongImageUrl(),
+            'backgroundImage' => $enqueuingSong->getSongBackgroundUrl(),
         ]);
         $this->setPreviousSongToken(md5($playingSong->getFileUrl()));
         $this->setCurrentSongToken(md5($enqueuingSong->getFileUrl()));

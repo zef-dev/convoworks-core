@@ -11,10 +11,15 @@ class Mp3File implements IAudioFile
     private $_fileUrl;
     private $_fileMetaData  =   [];
 
-    public function __construct( $filePath, $fileUrl)
+    private $_artworkUrl;
+    private $_backgroundUrl;
+    
+    public function __construct( $filePath, $fileUrl, $artwork=null, $background=null)
     {
-        $this->_filePath    =   $filePath;
-        $this->_fileUrl     =   $fileUrl;
+        $this->_filePath        =   $filePath;
+        $this->_fileUrl         =   $fileUrl;
+        $this->_artworkUrl      =   $artwork;
+        $this->_backgroundUrl   =   $background;
         
         try {
             $info                   =   new Mp3Info( $filePath, true);
@@ -45,6 +50,14 @@ class Mp3File implements IAudioFile
 
     public function getSongTitle() : string {
         return $this->_fileMetaData['song'];
+    }
+    
+    public function getSongImageUrl() : string {
+        return $this->_artworkUrl;
+    }
+    
+    public function getSongBackgroundUrl() : string {
+        return $this->_backgroundUrl;
     }
 
     public function __toString()
