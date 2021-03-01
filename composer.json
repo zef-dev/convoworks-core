@@ -22,6 +22,7 @@
         "google/cloud-dialogflow" : "^0.17.4",
         "facebook/graph-sdk": "^5.7",
         "symfony/expression-language" : "^4.3",
+        "wapmorgan/mp3info": "^0.0.5",
         "zef-dev/zef-expression-language": "^1.0"
 	},
 	"autoload" : {

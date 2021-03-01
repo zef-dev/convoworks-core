@@ -8,39 +8,24 @@ interface IAudioFile
 {
 
     
+    /**
+     * Returns full url to the audio file
+     * @return string
+     */
     public function getFileUrl() : string;
     
-    public function getFileName() : string;
-    
-    
+    /**
+     * Returns song title
+     * @return string
+     */
     public function getArtist() : string;
     
+    /**
+     * Returns song artist
+     * @return string
+     */
     public function getSongTitle() : string;
     
-    public function getGenre() : string;
-    
-    
-    
-    /**
-     * @deprecated
-     */
-    public function isMetaDataAvailable() : bool;
-    
-    /**
-     * @deprecated
-     */
-    public function getMetaData() : array;
-    
-    
-    /**
-     * @deprecated
-     */
-    public function getDirectoryName() : string;
-    
-    /**
-     * @deprecated
-     */
-    public function isEmpty() : bool;
     
 }
 
