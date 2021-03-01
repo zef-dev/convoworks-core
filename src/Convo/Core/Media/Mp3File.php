@@ -7,7 +7,6 @@ use wapmorgan\Mp3Info\Mp3Info;
 
 class Mp3File implements IAudioFile
 {
-    private $_filepath;
     private $_fileUrl;
     private $_fileMetaData  =   [];
 
@@ -16,7 +15,6 @@ class Mp3File implements IAudioFile
     
     public function __construct( $filePath, $fileUrl, $artwork=null, $background=null)
     {
-        $this->_filePath        =   $filePath;
         $this->_fileUrl         =   $fileUrl;
         $this->_artworkUrl      =   $artwork;
         $this->_backgroundUrl   =   $background;
@@ -32,7 +30,7 @@ class Mp3File implements IAudioFile
         }
         
         if ( !isset( $this->_fileMetaData['song']) || empty( $this->_fileMetaData['song'])) {
-            $name   =   basename( $this->_filePath, '.mp3');
+            $name   =   basename( $filePath, '.mp3');
             $name   =   str_replace( "_", " ", $name);
             $name   =   str_replace( "-", " ", $name);
             $this->_fileMetaData['song']    =   $name;
