@@ -66,6 +66,12 @@ interface IMediaSourceContext extends IServiceContext
      * @throws DataItemNotFoundException
      */
     public function moveNext();
+    
+    
+    /**
+     * Rewinds internal pointer to the first song in playlist.
+     */
+    public function rewind();
 
     
     // SETTINGS
