@@ -8,10 +8,14 @@ use Convo\Core\Media\Mp3File;
 interface IMediaSourceContext extends IServiceContext
 {
     const DEFAULT_MEDIA_INFO    =   [
-        'last' => false,
-        'first' => false,
-        'page_no' => 1,
-        'query' => null
+        'current' => null,
+        'next' => null,
+        'count' => 0,
+        'last' => true,
+        'first' => true,
+        'song_no' => 0,
+        'loop_status' => false,
+        'shuffle_status' => false
     ];
     
     // STATE
