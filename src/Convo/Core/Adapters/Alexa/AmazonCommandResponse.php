@@ -548,7 +548,10 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     public function playSong(Mp3File $song, $offset = 0)
     {
         $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
-        $this->setMetadata($song->getMetaData());
+        $this->setMetadata( [
+            'artist' => $song->getArtist(),
+            'song' => $song->getSongTitle()
+        ]);
         $this->setOffsetMilliseconds($offset);
         $this->setUrl($song->getFileUrl());
         $this->setCurrentSongToken(md5($song->getFileUrl()));
@@ -562,7 +565,10 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
         $this->setOffsetMilliseconds(0);
         $this->setUrl($enqueuingSong->getFileUrl());
-        $this->setMetadata($enqueuingSong->getMetaData());
+        $this->setMetadata( [
+            'artist' => $enqueuingSong->getArtist(),
+            'song' => $enqueuingSong->getSongTitle()
+        ]);
         $this->setPreviousSongToken(md5($playingSong->getFileUrl()));
         $this->setCurrentSongToken(md5($enqueuingSong->getFileUrl()));
 
