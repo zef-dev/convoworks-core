@@ -456,6 +456,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
             case self::COMMAND_LOOP_OFF:
                 $context->setLoopStatus( false);
                 if ( $context->isLast()) {
+                    $this->_logger->info( 'Last song. Clearing queue.');
                     $response->clearQueue();
                 } else {
                     $response->emptyResponse();
@@ -468,6 +469,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                 try {
                     $response->enqueueSong( $context->current(), $context->next());
                 } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->info( 'No next song. Clearing queue.');
                     $response->clearQueue();
                 }
                 break;
@@ -476,6 +478,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                 try {
                     $context->moveNext();
                 } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->info( 'No next song. Ending.');
                 } finally {
                     $response->emptyResponse();
                 }
