@@ -94,6 +94,18 @@ interface IMediaSourceContext extends IServiceContext
     public function getLoopStatus() : bool;
     
     /**
+     * Sets the status of the shuffle playback mode.
+     * @param bool $loopStatus
+     */
+    public function setShuffleStatus( $shuffleStatus);
+    
+    /**
+     * Returns player's shuffle mode
+     * @return bool
+     */
+    public function getShuffleStatus() : bool;
+    
+    /**
      * Returns the current media info. Associative array as defined in DEFAULT_MEDIA_INFO 
      * @return array
      */

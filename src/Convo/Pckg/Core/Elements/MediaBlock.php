@@ -448,9 +448,11 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                 }
                 break;
             case self::COMMAND_SHUFFLE_ON:
+                $context->setShuffleStatus( true);
                 $response->emptyResponse();
                 break;
             case self::COMMAND_SHUFFLE_OFF:
+                $context->setShuffleStatus( false);
                 $response->emptyResponse();
                 break;
                 
