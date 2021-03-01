@@ -39,24 +39,23 @@ class Mp3File implements IAudioFile
         }
     }
 
-    public function getFileUrl() : string
-    {
+    public function getFileUrl() {
         return $this->_fileUrl;
     }
 
-    public function getArtist() : string {
+    public function getArtist() {
         return $this->_fileMetaData['artist'];
     }
 
-    public function getSongTitle() : string {
+    public function getSongTitle() {
         return $this->_fileMetaData['song'];
     }
     
-    public function getSongImageUrl() : string {
+    public function getSongImageUrl() {
         return $this->_artworkUrl;
     }
     
-    public function getSongBackgroundUrl() : string {
+    public function getSongBackgroundUrl() {
         return $this->_backgroundUrl;
     }
 
