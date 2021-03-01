@@ -4,31 +4,31 @@
 namespace Convo\Core\Workflow;
 
 
-use Convo\Core\Media\Mp3File;
+use Convo\Core\Media\IAudioFile;
 
 interface IConvoAudioResponse extends IConvoResponse
 {
     /**
      * Plays song from given offset in seconds
-     * @param Mp3File $song
+     * @param IAudioFile $song
      * @param int $offset
      */
-    public function playSong(Mp3File $song, $offset = 0);
+    public function playSong(IAudioFile $song, $offset = 0);
 
     /**
      * Enqueue next song to play, while providing the old one too.
-     * @param Mp3File $playingSong
-     * @param Mp3File $enqueuingSong
+     * @param IAudioFile $playingSong
+     * @param IAudioFile $enqueuingSong
      */
-    public function enqueueSong(Mp3File $playingSong, Mp3File $enqueuingSong);
+    public function enqueueSong(IAudioFile $playingSong, IAudioFile $enqueuingSong);
 
     /**
-     * @param Mp3File $song
+     * @param IAudioFile $song
      * @param int $offset
      * @return array
      * @deprecated
      */
-    public function resumeSong(Mp3File $song, $offset) : array;
+    public function resumeSong(IAudioFile $song, $offset) : array;
 
     /**
      * Sends stop playing instruction

@@ -9,7 +9,7 @@ use Convo\Core\Adapters\Google\Common\Intent\GoogleActionsSystemIntent;
 use Convo\Core\Adapters\Google\Common\IResponseType;
 use Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse;
 use Convo\Core\Params\IServiceParams;
-use Convo\Core\Media\Mp3File;
+use Convo\Core\Media\IAudioFile;
 use Convo\Core\Workflow\IConvoAudioResponse;
 
 class DialogflowCommandResponse extends DefaultTextCommandResponse implements IConvoAudioResponse
@@ -135,7 +135,7 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
 
     private function _prepareMediaResponse() {
         /**
-         * @var Mp3File $mp3Song
+         * @var IAudioFile $mp3Song
          */
         $mp3Song = $this->_value;
         $responseText = "Playing " . $mp3Song->getSongTitle() . " by " . $mp3Song->getArtist();
@@ -219,7 +219,7 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
         return $this->_suggestions;
     }
 
-    public function playSong(Mp3File $song, $offset = 0)
+    public function playSong(IAudioFile $song, $offset = 0)
     {
         $this->setSuggestions([
             ["title" => "Home"]
@@ -228,7 +228,7 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
         $this->getPlatformResponse();
     }
 
-    public function enqueueSong(Mp3File $playingSong, Mp3File $enqueuingSong)
+    public function enqueueSong(IAudioFile $playingSong, IAudioFile $enqueuingSong)
     {
         $text = " ";
         $this->_emptyResponse("<speak><p>$text</p></speak>", $text);
@@ -237,7 +237,7 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
     /**
      * @deprecated
      */
-    public function resumeSong(Mp3File $song, $offset) : array
+    public function resumeSong(IAudioFile $song, $offset) : array
     {
         $text = " ";
         return $this->_emptyResponse("<speak><p>$text</p></speak>", $text);

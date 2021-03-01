@@ -3,7 +3,7 @@
 namespace Convo\Core\Workflow;
 
 use Convo\Core\DataItemNotFoundException;
-use Convo\Core\Media\Mp3File;
+use Convo\Core\Media\IAudioFile;
 
 interface IMediaSourceContext extends IServiceContext
 {
@@ -40,17 +40,17 @@ interface IMediaSourceContext extends IServiceContext
     
     /**
      * Returns the next song if available and sets the pointer. Will throw DataItemNotFoundException if no results, or single result with loop status off
-     * @return Mp3File
+     * @return IAudioFile
      * @throws DataItemNotFoundException
      */
-    public function next() : Mp3File;
+    public function next() : IAudioFile;
     
     /**
      * Returns the current mp3 file. Will throw DataItemNotFoundException if list is empty.
-     * @return Mp3File
+     * @return IAudioFile
      * @throws DataItemNotFoundException
      */
-    public function current() : Mp3File;
+    public function current() : IAudioFile;
     
     
     

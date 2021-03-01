@@ -4,14 +4,14 @@
 namespace Convo\Core\Media;
 
 
-class Mp3File
+class Mp3File implements IAudioFile
 {
     private $_fileName;
     private $_fileUrl;
     private $_fileMetaData;
     private $_directoryName;
 
-    public function __construct($fileName, $fileUrl, $fileMetaData, $directoryName)
+    public function __construct( $fileName, $fileUrl, $fileMetaData, $directoryName)
     {
         $this->_fileName = $fileName;
         $this->_fileUrl = $fileUrl;
@@ -19,17 +19,11 @@ class Mp3File
         $this->_directoryName = $directoryName;
     }
 
-    /**
-     * @return mixed
-     */
     public function getFileUrl()
     {
         return $this->_fileUrl;
     }
 
-    /**
-     * @return mixed
-     */
     public function getFileName()
     {
         return str_replace("_", " ", basename($this->_fileName, '.mp3'));
@@ -41,9 +35,6 @@ class Mp3File
             array_key_exists('genre', $this->_fileMetaData);
     }
 
-    /**
-     * @return mixed
-     */
     public function getDirectoryName()
     {
         return $this->_directoryName;

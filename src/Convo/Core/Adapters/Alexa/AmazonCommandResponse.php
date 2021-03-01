@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Convo\Core\Adapters\Alexa;
 
-use Convo\Core\Media\Mp3File;
+use Convo\Core\Media\IAudioFile;
 use Convo\Core\Workflow\IConvoAudioResponse;
 
 class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse implements IConvoAudioResponse
@@ -545,7 +545,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         return $this->_platformResponse;
     }
 
-    public function playSong(Mp3File $song, $offset = 0)
+    public function playSong(IAudioFile $song, $offset = 0)
     {
         $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
         $this->setMetadata( [
@@ -560,7 +560,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         $this->getPlatformResponse();
     }
 
-    public function enqueueSong(Mp3File $playingSong, Mp3File $enqueuingSong)
+    public function enqueueSong(IAudioFile $playingSong, IAudioFile $enqueuingSong)
     {
         $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
         $this->setOffsetMilliseconds(0);
@@ -580,7 +580,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     /**
      * @deprecated
      */
-    public function resumeSong(Mp3File $song, $offset) : array
+    public function resumeSong(IAudioFile $song, $offset) : array
     {
         return $this->playSong($song, $offset);
     }
