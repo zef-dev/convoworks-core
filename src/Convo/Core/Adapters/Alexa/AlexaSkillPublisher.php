@@ -137,6 +137,22 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                     $config[$this->getPlatformId()]['self_signed_certificate'] = null;
                 }
             }
+            try {
+                $accountLinkingResponse = $this->_amazonPublishingService->getAccountLinkingInformation($this->_user, $config[$this->getPlatformId()]['app_id'], 'development');
+                $config[$this->getPlatformId()]['enable_account_linking'] = true;
+                $config[$this->getPlatformId()]['account_linking_config']['skip_on_enablement'] = $accountLinkingResponse['skipOnEnablement'];
+                $config[$this->getPlatformId()]['account_linking_config']['authorization_url'] = $accountLinkingResponse['authorizationUrl'];
+                $config[$this->getPlatformId()]['account_linking_config']['access_token_url'] = $accountLinkingResponse['accessTokenUrl'];
+                $config[$this->getPlatformId()]['account_linking_config']['client_id'] = $accountLinkingResponse['clientId'];
+                $config[$this->getPlatformId()]['account_linking_config']['scopes'] = $accountLinkingResponse['scopes'];
+                $config[$this->getPlatformId()]['account_linking_config']['domains'] = $accountLinkingResponse['domains'];
+            } catch (ClientExceptionInterface $e) {
+                if ($e->getCode() !== 404) {
+                    throw new \Exception($e->getMessage(), 0, $e);
+                } else {
+                    $this->_logger->warning("Can't get account linking partner with skill id [". $config[$this->getPlatformId()]['app_id'] . "] because it could not be found.");
+                }
+            }
             $config[$this->getPlatformId()]['time_updated'] = time();
             $this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
             return;
@@ -245,7 +261,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
 
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $res['skillId']);
-
+        $this->_manageAccountLinking($owner, $res['skillId'], 'development', $config[$this->getPlatformId()]);
         // TODO pool as loong as skill status gets other then IN_PROGRESS
 	}
 
@@ -346,7 +362,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
 
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $skillId);
-
+        $this->_manageAccountLinking($owner, $skillId, 'development', $config[$this->getPlatformId()]);
         // TODO pool as loong as skill status gets other then IN_PROGRESS
 
 		$this->_recordPropagation();
@@ -951,6 +967,43 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 $this->_amazonPublishingService->uploadSelfSignedSslCertificateToSkill($owner, $skillId, $sslCertificate);
             }
         }
+    }
+
+    private function _manageAccountLinking($owner, $skillId, $stage, $amazonConfiguration) {
+        if (isset($amazonConfiguration['enable_account_linking']) && isset($amazonConfiguration['account_linking_config'])) {
+            if ($amazonConfiguration['enable_account_linking']) {
+                $body = [
+                    "accountLinkingRequest" => [
+                        "skipOnEnablement" => $amazonConfiguration['account_linking_config']["skip_on_enablement"] ?? false,
+                        "type" => "AUTH_CODE",
+                        "authorizationUrl" => $amazonConfiguration['account_linking_config']["authorization_url"] ?? "",
+                        "domains" => isset($amazonConfiguration['account_linking_config']["domains"]) ? explode(";", $amazonConfiguration['account_linking_config']["domains"]) : [],
+                        "scopes" => isset($amazonConfiguration['account_linking_config']["scopes"]) ? explode(";", $amazonConfiguration['account_linking_config']["scopes"]) : [],
+                        "accessTokenUrl" => $amazonConfiguration['account_linking_config']["access_token_url"] ?? "",
+                        "clientId" => $amazonConfiguration['account_linking_config']["client_id"] ?? "",
+                        "clientSecret" => $amazonConfiguration['account_linking_config']["client_secret"] ?? "",
+                        "accessTokenScheme" => "HTTP_BASIC"
+                    ]
+                ];
+
+                $this->_amazonPublishingService->enableAccountLinking($owner, $skillId, $stage, $body);
+            } else {
+                try {
+                    $this->_amazonPublishingService->getAccountLinkingInformation($owner, $skillId, $stage);
+                    $this->_amazonPublishingService->disableAccountLinking($owner, $skillId, $stage);
+                } catch (ClientExceptionInterface $e) {
+                    if ($e->getCode() !== 404) {
+                        throw new \Exception($e->getMessage(), 0, $e);
+                    } else {
+                        $this->_logger->warning("Can't delete account linking partner with skill id [". $skillId . "] because it could not be found.");
+                    }
+                }
+            }
+        }
+    }
+
+    private function _getAccountLinkingInformation() {
+        return [];
     }
 
     private function _getDownloadLink($serviceId, $mediaItemId, $alternativeDownloadLink = '') {
