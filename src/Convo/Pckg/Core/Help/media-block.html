@@ -2,13 +2,17 @@
     <h3>Media Block</h3>
     
     <p>Serves for handling media playing requests (they are sessionless).</p>
-
-    <h3>When to use?</h3>
-
-    <p>When we want to create custom media player and play mp3 files through device.</p>
-
-    <h3>How to use: </h3>
-    <ol>
-    	<li>In the <b>SOURCE</b> field enter the name for the block to connect with <b>Media source context</b> <br>example: <i>filesystemMediaContext</i></li>
-    </ol>
+    
+    <h4>Overview</h4>
+    <p>
+        Audio players on the smart speaker devices are working a bit differently than the regular conversation services. Once you initiate the audio stream your service stops
+        and the audio player takes control.
+        <br>
+        While in that mode the user can take just a few different actions, by voice or by tapping on the screen. Users can ask for the Next or Previous song, they can turn the loop and shuffle on and off.
+        All these commands are handled automatically by the <b>Media Block</b>.
+    </p>
+    <p>
+        While executing the child flows (next not available, ...) you have access to the <b>media info</b> which you can use to enhance your responses. 
+        E.g. "There are ${media_info.count} songs found and you are on the last one." 
+    </p>
 </div>

@@ -1722,10 +1722,7 @@ In default phase you can inform users about problem you have interpreting comman
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\MediaBlock',
                 'Media block',
-                'A step in the conversation flow. It has initial read phase serves for informing user about thing he can do.
-In Fallback phase you can inform users about problem you have interpreting command.
-On Not Found phase serves for messages when certain mp3 file is not found in the playlist.
-Additional Processors are used to execute user command, if matched. If no match is found the default phase is executed.',
+                'A special role "media_player" block, that handles audio player requests (not in standard service session).',
                 array(
                     'role' => array(
                         'defaultValue' => IRunnableBlock::ROLE_MEDIA_PLAYER
@@ -1741,9 +1738,9 @@ Additional Processors are used to execute user command, if matched. If no match 
                     'context_id' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'search_media',
                         'name' => 'Source',
-                        'description' => 'Source context id',
+                        'description' => 'Source Media Context id',
                         'valueType' => 'string'
                     ),
                     'media_info_var' => array(
