@@ -39,7 +39,8 @@ class StartAudioPlayback extends AbstractWorkflowComponent implements IConversat
      */
     private function _getMediaSourceContext()
     {
-        $contextId = $this->evaluateString( $this->_contextId);
-        return $this->getService()->findContext($contextId)->getComponent();
+        return $this->getService()->findContext( 
+            $this->evaluateString( $this->_contextId), 
+            IMediaSourceContext::class);
     }
 }
