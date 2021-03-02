@@ -45,9 +45,14 @@ class AmazonAlexaSkillInfo implements \Psr\Http\Server\RequestHandlerInterface
 
         $user = $this->_adminUserDataProvider->findUser($json['owner']);
 
-        if ($info->post() && $route = $info->route('get-existing-alexa-skill/{skillId}'))
+        if ($info->post() && $route = $info->route('get-existing-alexa-skill/{skillId}/manifest'))
         {
-            return $this->_httpFactory->buildResponse($this->_getAlexaSkill($user, $route->get('skillId')), 200, []);
+            return $this->_httpFactory->buildResponse($this->_getAlexaSkill($user, $route->get('skillId')));
+        }
+
+        if ($info->post() && $route = $info->route('get-existing-alexa-skill/{skillId}/account-linking-information'))
+        {
+            return $this->_httpFactory->buildResponse($this->_getAlexaSkillAccountLinkingInformation($user, $route->get('skillId')));
         }
 
         throw new \Convo\Core\Rest\NotFoundException('Could not map info ['.$info.']');
@@ -55,5 +60,8 @@ class AmazonAlexaSkillInfo implements \Psr\Http\Server\RequestHandlerInterface
 
     private function _getAlexaSkill($user, $skillId) {
         return $this->_amazonPublishingService->getSkill($user, $skillId, 'development');
+    }
+    private function _getAlexaSkillAccountLinkingInformation($user, $skillId) {
+        return $this->_amazonPublishingService->getAccountLinkingInformation($user, $skillId, 'development');
     }
 }
