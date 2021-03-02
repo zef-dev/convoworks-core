@@ -451,6 +451,54 @@ class AmazonPublishingService
         return $statusCode;
     }
 
+    public function enableAccountLinking($owner, $skillId, $stage, $body) {
+        $url = self::BASE_SMAPI_URL.'/v1/skills/'.$skillId.'/stages/'.$stage.'/accountLinkingClient';
+
+        $this->_logger->debug("Going to enable account linking from url [$url]");
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_PUT,
+            $url,
+            [],
+            $body
+        );
+
+        $statusCode = $response->getStatusCode();
+        return $statusCode;
+    }
+
+    public function disableAccountLinking($owner, $skillId, $stage) {
+        $url = self::BASE_SMAPI_URL.'/v1/skills/'.$skillId.'/stages/'.$stage.'/accountLinkingClient';
+
+        $this->_logger->debug("Going to enable account linking from url [$url]");
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_DELETE,
+            $url
+        );
+
+        $statusCode = $response->getStatusCode();
+        return $statusCode;
+    }
+
+    public function getAccountLinkingInformation($owner, $skillId, $stage) {
+        $url = self::BASE_SMAPI_URL.'/v1/skills/'.$skillId.'/stages/'.$stage.'/accountLinkingClient';
+
+        $this->_logger->debug("Going to enable account linking from url [$url]");
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_GET,
+            $url
+        );
+
+        $body = json_decode($response->getBody()->__toString(), true);
+        return $body['accountLinkingResponse'];
+    }
+
+
     // UTIL
     private function _executeRequest($user, $method, $url, $headers = [], $body = null)
     {
