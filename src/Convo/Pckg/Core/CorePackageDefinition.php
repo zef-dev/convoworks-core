@@ -149,6 +149,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('is_numeric');
         $functions[] = ExpressionFunction::fromPhp('substr');
         $functions[] = ExpressionFunction::fromPhp('stripos');
+        $functions[] = ExpressionFunction::fromPhp('strtotime');
+        $functions[] = ExpressionFunction::fromPhp('time');
 
         // CUSTOM
         $functions[] = new ExpressionFunction(

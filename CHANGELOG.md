@@ -6,7 +6,7 @@
 * Enhanced preview for visual elements
 * Old list element is marked as deprecated
 * IMediaSourceContext refactored, added 2 new media playing elements
-* PHP functions added: stripos
+* PHP functions added: stripos, strtotime, time
 
 ## [Releases]
 
