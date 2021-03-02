@@ -494,14 +494,23 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     /**
      * @param string $contextId
+     * @param string $strClass
      * @throws \Convo\Core\ComponentNotFoundException
      * @return \Convo\Core\Workflow\IServiceContext
      */
-    public function findContext( $contextId) {
-        if ( isset( $this->_contexts[$contextId])) {
-            return $this->_contexts[$contextId];
+    public function findContext( $contextId, $strClass=null) {
+        if ( isset( $this->_contexts[$contextId])) 
+        {
+            $context    =   $this->_contexts[$contextId];
+            if ( $strClass) {
+                if ( is_a( $context, $strClass)) {
+                    return $context;
+                }
+                throw new ComponentNotFoundException( 'Could not find context ['.$contextId.'] of type ['.$strClass.']');
+            }
+            return $context;
         }
-        throw new \Convo\Core\ComponentNotFoundException( 'Unexisting context ['.$contextId.']');
+        throw new ComponentNotFoundException( 'Unexisting context ['.$contextId.']');
     }
 
     public function previewString( $string, $context=[])
