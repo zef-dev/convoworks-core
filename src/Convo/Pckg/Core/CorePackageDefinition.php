@@ -1812,7 +1812,7 @@ Additional Processors are used to execute user command, if matched. If no match 
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\MediaInfoElement',
                 'Media info element',
-                '',
+                'Provides info about current songs in the connected Media Context component',
                 array(
                     'context_id' => array(
                         'editor_type' => 'text',
@@ -1859,7 +1859,11 @@ Additional Processors are used to execute user command, if matched. If no match 
                         '</div>'
                     ),
                     '_interface' => '\Convo\Core\Workflow\IConversationElement',
-                    '_workflow' => 'read'
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'media-info-element.html'
+                    ),
                 )
             ),
             new \Convo\Core\Factory\ComponentDefinition(
