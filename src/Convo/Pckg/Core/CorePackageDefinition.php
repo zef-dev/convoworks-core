@@ -340,6 +340,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Comment to show in editor',
                         'valueType' => 'string'
                     ),
+                    'context' => [
+                        'editor_type' => 'select_context',
+                        'editor_properties' => [],
+                        'defaultValue' => null,
+                        'name' => 'Context',
+                        'description' => 'Context to select',
+                        'valueType' => 'string'
+                    ],
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="editor-comment">' .
@@ -1993,7 +2001,7 @@ Additional Processors are used to execute user command, if matched. If no match 
                     'name' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'New elements fragment',
                         'name' => 'Fragment name',
                         'description' => 'Name for easier fragment reference',
                         'valueType' => 'string'
@@ -2031,7 +2039,7 @@ Additional Processors are used to execute user command, if matched. If no match 
                     'name' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'New processor fragment',
                         'name' => 'Fragment name',
                         'description' => 'Name for easier fragment reference',
                         'valueType' => 'string'
