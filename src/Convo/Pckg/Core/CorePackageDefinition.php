@@ -1817,9 +1817,9 @@ Additional Processors are used to execute user command, if matched. If no match 
                     'context_id' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'search_media',
                         'name' => 'Source',
-                        'description' => 'A media source',
+                        'description' => 'A media source context id',
                         'valueType' => 'string'
                     ),
                     'media_info_var' => array(
@@ -1866,14 +1866,14 @@ Additional Processors are used to execute user command, if matched. If no match 
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\StartAudioPlayback',
                 'Start Audio playback',
-                '',
+                'Initiates audio playback and automatically stops the current session.',
                 array(
                     'context_id' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'search_media',
                         'name' => 'Source',
-                        'description' => 'A media source',
+                        'description' => 'A media source context id',
                         'valueType' => 'string'
                     ),
                     '_preview_angular' => array(
@@ -1881,7 +1881,11 @@ Additional Processors are used to execute user command, if matched. If no match 
                         'template' => '<div class="code">START PLAYING <b>{{component.properties.context_id}}</b></div>'
                     ),
                     '_interface' => '\Convo\Core\Workflow\IConversationElement',
-                    '_workflow' => 'read'
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'start-audio-playback.html'
+                    ),
                 )
             ),
             new \Convo\Core\Factory\ComponentDefinition(
