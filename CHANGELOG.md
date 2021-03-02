@@ -5,6 +5,8 @@
 * Added List Title and List Item as separate elements in `convo-visuals` package
 * Enhanced preview for visual elements
 * Old list element is marked as deprecated
+* IMediaSourceContext refactored, added 2 new media playing elements
+* PHP functions added: stripos
 
 ## [Releases]
 
