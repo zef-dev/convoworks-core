@@ -515,6 +515,11 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     public function evaluateString( $string, $context=[])
     {
+        if ( !is_string( $string) || strpos( $string, '${') === false) {
+            $this->_logger->debug( 'Nothing to evaluate. Returning raw ...');
+            return $string;
+        }
+        
         // 		$this->_logger->debug( 'Evaluating ['.$string.']');
         // 		$this->_logger->debug( 'Starting context ['.print_r( $context, true).']');
 

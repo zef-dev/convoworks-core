@@ -3,5 +3,6 @@
     "author": "ZEF Development",
     "email": "marko@zefdev.com",
     "source_for": [],
-    "description": "Contains elements and filters for utilizing Google's Natural Language Processing."
+    "description": "Contains elements and filters for utilizing Google's Natural Language Processing.",
+    "stability": "experimental"
 }

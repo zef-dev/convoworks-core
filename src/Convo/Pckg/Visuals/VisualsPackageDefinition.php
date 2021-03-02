@@ -248,16 +248,6 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                 'Card',
                 'Display the properties of an object in an visual layout. (Works with devices that have the screen output capability.)',
                 array(
-                    'back_button' => array(
-                        'editor_type' => 'select',
-                        'editor_properties' => array(
-                            'options' => array('VISIBLE' => 'VISIBLE', 'HIDDEN'  => 'HIDDEN'),
-                        ),
-                        'defaultValue' => 'VISIBLE',
-                        'name' => 'Back Button',
-                        'description' => 'Choose between hidden or visible back button. (works only on Alexa)',
-                        'valueType' => 'string'
-                    ),
                     'data_item_title' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
