@@ -138,7 +138,7 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 				throw new \Exception( 'Not expected request type ['.$this->_intentType.']');
 		}
 		
-		if ( !$this->_isMediaRequest && $this->_isNewSession && $this->_playerRunning &&
+		if ( !$this->_isMediaRequest && $this->_isNewSession &&
 		    in_array( $this->_intentName, $this->_getAlexaAudioPlayerIntents()) && isset( $this->_data['context']['AudioPlayer'])) {
 		        $this->_logger->info( 'Marking request as media request for new session intent ['.$this->_intentName.']');
 		        $this->_isMediaRequest = true;
