@@ -48,6 +48,9 @@ class StartAudioPlayback extends AbstractWorkflowContainerComponent implements I
         
         /** @var $response IConvoAudioResponse */
         $context    =   $this->_getMediaSourceContext();
+        $params     =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $this);
+        $params->setServiceParam( $this->evaluateString( $this->_mediaInfoVar), $context->getMediaInfo());
+        
         $index      =   $this->evaluateString( $this->_playIndex);
         
         if ( !is_numeric( $index)) {
@@ -70,9 +73,6 @@ class StartAudioPlayback extends AbstractWorkflowContainerComponent implements I
             
             if ( !empty( $this->_failback))
             {
-                $params     =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $this);
-                $params->setServiceParam( $this->evaluateString( $this->_mediaInfoVar), $context->getMediaInfo());
-                
                 foreach ( $this->_failback as $element) {
                     $element->read( $request, $response);
                 }
