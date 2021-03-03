@@ -318,8 +318,8 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
     {
         if ($this->_isNewSession && in_array($this->_intentName, $this->_getAlexaAudioPlayerIntents())) {
             $this->_isMediaRequest = true;
-        } else if (!$this->_isNewSession && in_array($this->_intentName, array_slice($this->_getAlexaAudioPlayerIntents(), 0, 2))) {
-            $this->_isMediaRequest = true;
+//         } else if (!$this->_isNewSession && in_array($this->_intentName, array_slice($this->_getAlexaAudioPlayerIntents(), 0, 2))) {
+//             $this->_isMediaRequest = true;
         }
 
         return $this->_isMediaRequest;
