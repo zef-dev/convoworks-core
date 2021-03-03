@@ -1877,6 +1877,34 @@ In default phase you can inform users about problem you have interpreting comman
                         'description' => 'A media source context id',
                         'valueType' => 'string'
                     ),
+                    'play_index' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Song to play',
+                        'description' => 'Expression which evaluates to integer index of the desired song to play',
+                        'valueType' => 'string'
+                    ),
+                    'media_info_var' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'media_info',
+                        'name' => 'Media info',
+                        'description' => 'Variable name for the media info array',
+                        'valueType' => 'string'
+                    ),
+                    'failback' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true,
+                            'hideWhenEmpty' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Failback phase',
+                        'description' => 'Elements to be executed if element fails to play desired song',
+                        'valueType' => 'class'
+                    ),
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code">START PLAYING <b>{{component.properties.context_id}}</b></div>'
