@@ -83,5 +83,14 @@ abstract class AbstractWorkflowContainerComponent extends AbstractWorkflowCompon
         }
         return $all;
     }
+    
+    /**
+     * @inheritDoc
+     */
+    public function evaluateString( $string, $context = [])
+    {
+        $own_params		=	$this->getService()->getAllComponentParams( $this);
+        return parent::evaluateString( $string, array_merge( $own_params, $context));
+    }
 	
 }
