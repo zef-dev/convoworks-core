@@ -528,16 +528,6 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
     }
 
 
-    /**
-     * @inheritDoc
-     */
-    public function evaluateString($string, $context = [])
-    {
-        $own_params		=	$this->getService()->getAllComponentParams( $this);
-        return parent::evaluateString( $string, array_merge( $own_params, $context));
-    }
-
-
     public function addFallback(\Convo\Core\Workflow\IConversationElement $element)
     {
         $this->_fallback[] = $element;

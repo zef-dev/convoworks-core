@@ -84,15 +84,6 @@ class MediaInfoElement extends AbstractWorkflowContainerComponent implements ICo
             IMediaSourceContext::class);
     }
     
-    /**
-     * @inheritDoc
-     */
-    public function evaluateString($string, $context = [])
-    {
-        $own_params		=	$this->getService()->getAllComponentParams( $this);
-        return parent::evaluateString( $string, array_merge( $own_params, $context));
-    }
-    
     // UTIL
     public function __toString() {
         return parent::__toString().'['.$this->_contextId.']['.$this->_mediaInfoVar.']';
