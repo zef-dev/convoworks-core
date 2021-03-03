@@ -69,6 +69,13 @@ interface IMediaSourceContext extends IServiceContext
     
     
     /**
+     * Moves pointer to the target song. If inedx is out of range, will throw DataItemNotFoundException
+     * @param int $offset
+     * @throws DataItemNotFoundException
+     */
+    public function seek( $index);
+    
+    /**
      * Rewinds internal pointer to the first song in playlist.
      */
     public function rewind();
