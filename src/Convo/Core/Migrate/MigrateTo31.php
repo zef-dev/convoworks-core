@@ -63,16 +63,16 @@ class MigrateTo31 extends AbstractMigration
 
             if (!isset($config["amazon"]["privacy_and_compliance"])) {
                 if (!isset($config["amazon"]["privacy_and_compliance"]['allows_purchases'])) {
-                    $config["amazon"]["privacy_and_compliance"]['allows_purchases'] = 'false';
+                    $config["amazon"]["privacy_and_compliance"]['allows_purchases'] = false;
                 }
                 if (!isset($config["amazon"]["privacy_and_compliance"]['uses_personal_info'])) {
-                    $config["amazon"]["privacy_and_compliance"]['uses_personal_info'] = 'false';
+                    $config["amazon"]["privacy_and_compliance"]['uses_personal_info'] = false;
                 }
                 if (!isset($config["amazon"]["privacy_and_compliance"]['is_child_directed'])) {
-                    $config["amazon"]["privacy_and_compliance"]['is_child_directed'] = 'false';
+                    $config["amazon"]["privacy_and_compliance"]['is_child_directed'] = false;
                 }
                 if (!isset($config["amazon"]["privacy_and_compliance"]['contains_ads'])) {
-                    $config["amazon"]["privacy_and_compliance"]['contains_ads'] = 'false';
+                    $config["amazon"]["privacy_and_compliance"]['contains_ads'] = false;
                 }
                 if (!isset($config["amazon"]["privacy_and_compliance"]['is_export_compliant'])) {
                     $config["amazon"]["privacy_and_compliance"]['is_export_compliant'] = true;
