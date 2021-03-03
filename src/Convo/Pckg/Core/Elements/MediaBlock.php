@@ -449,17 +449,29 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                 break;
                 
             case self::COMMAND_LOOP_ON:
-                $context->setLoopStatus( true);
-                $response->enqueueSong( $context->current(), $context->next());
+                if ( !$context->getLoopStatus()) {
+                    $this->_logger->info( 'Enabling loop');
+                    $was_last   =   $context->isLast();
+                    $context->setLoopStatus( true);
+                    if ( $was_last) {
+                        $this->_logger->info( 'Enqueueing next song for looped playlist');
+                        $response->enqueueSong( $context->current(), $context->next());
+                        break;
+                    }
+                }
+                $response->emptyResponse();
                 break;
             case self::COMMAND_LOOP_OFF:
-                $context->setLoopStatus( false);
-                if ( $context->isLast()) {
-                    $this->_logger->info( 'Last song. Clearing queue.');
-                    $response->clearQueue();
-                } else {
-                    $response->emptyResponse();
+                if ( $context->getLoopStatus()) {
+                    $this->_logger->info( 'Disabling loop');
+                    $context->setLoopStatus( false);
+                    if ( $context->isLast()) {
+                        $this->_logger->info( 'Last song. Clearing queue.');
+                        $response->clearQueue();
+                        break;
+                    }
                 }
+                $response->emptyResponse();
                 break;
             case self::COMMAND_SHUFFLE_ON:
                 $context->setShuffleStatus( true);
