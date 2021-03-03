@@ -513,6 +513,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
             // NOT HANDLED
             case self::COMMAND_PLAYBACK_STARTED:
                 $response->emptyResponse();
+                $context->setPlaying(); 
                 break;
             case self::COMMAND_PLAYBACK_FAILED:
                 $response->emptyResponse();
