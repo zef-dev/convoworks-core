@@ -38,10 +38,13 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 
     private $_isNewSession = true;
 
+    private $_playerRunning =   false;
+    
 	/**
 	 * @var \Psr\Log\LoggerInterface
 	 */
 	private $_logger;
+	
 
 	public function __construct( \Psr\Log\LoggerInterface $logger, $serviceId, $requestData)
 	{
@@ -88,6 +91,12 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 		if (array_key_exists('Display', $this->_data['context']['System']['device']['supportedInterfaces'])) {
 		    $this->_isDisplayInterfaceEnabled = true;
         }
+        
+        $player =   $this->_data['context']['AudioPlayer']['playerActivity'] ?? null;
+        if ( $player && in_array( $player, ['IDLE', 'PAUSED', 'PLAYING', 'STOPPED'])) {
+            $this->_logger->info( 'Seems that the player is running ['.$player.']');
+            $this->_playerRunning   =   true;
+        }
 
 		switch( $this->_intentType ) {
 			case 'LaunchRequest':
@@ -127,6 +136,12 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 
 			default:
 				throw new \Exception( 'Not expected request type ['.$this->_intentType.']');
+		}
+		
+		if ( !$this->_isMediaRequest && $this->_isNewSession && $this->_playerRunning &&
+		    in_array( $this->_intentName, $this->_getAlexaAudioPlayerIntents()) && isset( $this->_data['context']['AudioPlayer'])) {
+		        $this->_logger->info( 'Marking request as media request for new session intent ['.$this->_intentName.']');
+		        $this->_isMediaRequest = true;
 		}
 
 		if ( isset( $this->_data['request']['intent']['slots'])) {
@@ -316,12 +331,6 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
      */
     public function isMediaRequest()
     {
-        if ($this->_isNewSession && in_array($this->_intentName, $this->_getAlexaAudioPlayerIntents())) {
-            $this->_isMediaRequest = true;
-//         } else if (!$this->_isNewSession && in_array($this->_intentName, array_slice($this->_getAlexaAudioPlayerIntents(), 0, 2))) {
-//             $this->_isMediaRequest = true;
-        }
-
         return $this->_isMediaRequest;
     }
 
@@ -341,14 +350,14 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
             "AMAZON.LoopOffIntent",
             "AMAZON.ShuffleOnIntent",
             "AMAZON.ShuffleOffIntent",
-            "PlaybackController.NextCommandIssued",
-            "PlaybackController.PreviousCommandIssued",
-            "PlaybackController.PlayCommandIssued",
-            "PlaybackController.PauseCommandIssued",
-            "AudioPlayer.PlaybackStarted",
-            "AudioPlayer.PlaybackNearlyFinished",
-            "AudioPlayer.PlaybackFinished",
-            "AudioPlayer.PlaybackFailed"
+//             "PlaybackController.NextCommandIssued",
+//             "PlaybackController.PreviousCommandIssued",
+//             "PlaybackController.PlayCommandIssued",
+//             "PlaybackController.PauseCommandIssued",
+//             "AudioPlayer.PlaybackStarted",
+//             "AudioPlayer.PlaybackNearlyFinished",
+//             "AudioPlayer.PlaybackFinished",
+//             "AudioPlayer.PlaybackFailed"
         ];
     }
 
