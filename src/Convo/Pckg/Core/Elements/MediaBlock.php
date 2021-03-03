@@ -392,12 +392,14 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
             // SESSION
             case self::COMMAND_PAUSE:
                 $response->stopSong();
+                $context->setStopped();
                 break;
                 
             case self::COMMAND_CONTINUE_PLAYBACK:
             case self::COMMAND_RESUME_PLAYBACK:
                 try {
                     $response->playSong( $context->current(), $context->getOffset());
+                    $context->setPlaying();
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response);
@@ -408,6 +410,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                 try {
                     $context->moveNext();
                     $response->playSong( $context->current());
+                    $context->setPlaying();
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response, $this->_noNext);
@@ -429,6 +432,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
             case self::COMMAND_REPEAT:
                 try {
                     $response->playSong( $context->current());
+                    $context->setPlaying();
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
                     $this->_readFailbackOr( $request, $response);
@@ -460,6 +464,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
             case self::COMMAND_SHUFFLE_ON:
                 $context->setShuffleStatus( true);
                 $response->playSong( $context->current());
+                $context->setPlaying();
 //                 $response->emptyResponse();
                 break;
             case self::COMMAND_SHUFFLE_OFF:
@@ -482,13 +487,14 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                     $context->moveNext();
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->info( 'No next song. Ending.');
+                    $context->setStopped();
                 } finally {
                     $response->emptyResponse();
                 }
                 break;
                 
             case self::COMMAND_PLAYBACK_STOPPED:
-                $context->setOffset( $request->getOffset());
+                $context->setStopped( $request->getOffset());
                 $response->emptyResponse();
                 break;
                 
@@ -498,6 +504,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                 break;
             case self::COMMAND_PLAYBACK_FAILED:
                 $response->emptyResponse();
+                $context->setStopped();
                 break;
                 
             default:

@@ -95,6 +95,17 @@ interface IMediaSourceContext extends IServiceContext
     public function setOffset( $offset);
     
     /**
+     * Marks player as stopped. If offset is provided, it will be also saved.
+     * @param int $offset
+     */
+    public function setStopped( $offset=-1);
+    
+    /**
+     * Marks player as playing.
+     */
+    public function setPlaying();
+    
+    /**
      * Sets the status of the loop playback mode.
      * @param bool $loopStatus
      */

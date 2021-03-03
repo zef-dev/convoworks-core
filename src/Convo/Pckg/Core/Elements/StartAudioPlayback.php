@@ -56,6 +56,7 @@ class StartAudioPlayback extends AbstractWorkflowContainerComponent implements I
         if ( !is_numeric( $index)) {
             $this->_logger->info( 'Playing current song ...');
             $response->playSong( $context->current());
+            $context->setPlaying();
             return ;
         }
         
@@ -66,6 +67,7 @@ class StartAudioPlayback extends AbstractWorkflowContainerComponent implements I
         {
             $context->seek( $index);
             $response->playSong( $context->current());
+            $context->setPlaying();
         } 
         catch ( DataItemNotFoundException $e) 
         {
