@@ -488,6 +488,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 	    $intents           =   [];
 	    $entities          =   [];
+        $numberOfValidIntents =   0;
 
 	    $provider = $this->_packageProviderFactory->getProviderFromPackageIds($service->getPackageIds());
 
@@ -532,7 +533,13 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	    }
 
 	    foreach ( $intents as $intent) {
-	        $data['interactionModel']['languageModel']['intents'][] = $this->_buildIntent( $intent);
+            /** @var IntentModel $intent */
+            $numberOfSampleUtterances = count($intent->getUtterances());
+
+            if ($numberOfSampleUtterances > 0) {
+                $numberOfValidIntents++;
+                $data['interactionModel']['languageModel']['intents'][] = $this->_buildIntent( $intent);
+            }
 	    }
 
 	    $data['interactionModel']['languageModel']['intents'][]    =   [
@@ -560,7 +567,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	        "samples" => [],
 	    ];
 
-	    if (empty($intents)) {
+	    if ($numberOfValidIntents === 0) {
             $data['interactionModel']['languageModel']['intents'][]    =   [
                 "name" => "HelloWorld",
                 "samples" => ["hello world"],
