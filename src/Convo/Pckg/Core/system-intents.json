@@ -641,23 +641,41 @@
                         { "text" : "play all"}
                     ]
                 }, {
+                    "raw" : "play any",
+                    "model" : [
+                        { "text" : "play any"}
+                    ]
+                }, {
+                    "raw" : "play anything",
+                    "model" : [
+                        { "text" : "play anything"}
+                    ]
+                }, {
                     "raw" : "just play",
                     "model" : [
                         { "text" : "just play"}
                     ]
-                },                     {
+                }, {
+                    "raw" : "just play something",
+                    "model" : [
+                        { "text" : "just play something"}
+                    ]
+                }, {
                     "raw" : "play a song",
                     "model" : [
                         { "text" : "play a song"}
                     ]
-                },
-                {
+                }, {
                     "raw" : "play songs",
                     "model" : [
                         { "text" : "play songs"}
                     ]
-                },
-                {
+                }, {
+                    "raw" : "play evrything",
+                    "model" : [
+                        { "text" : "play evrything"}
+                    ]
+                }, {
                     "raw" : "start playback",
                     "model" : [
                         { "text" : "start playback"}
@@ -723,6 +741,27 @@
                         "model" : [
                             { "text" : "play"},
                             { "text" : "Mambo No. 5", "type" : "@convo-core.song", "slot_value" : "Song"}
+                        ]
+                    },
+                    {
+                        "raw" : "play Lou Bega",
+                        "model" : [
+                            { "text" : "play"},
+                            { "text" : "Lou Bega", "type" : "@convo-core.artist", "slot_value" : "Artist"}
+                        ]
+                    },
+                    {
+                        "raw" : "play Rock",
+                        "model" : [
+                            { "text" : "play"},
+                            { "text" : "Rock", "type" : "@convo-core.genre", "slot_value" : "Genre"}
+                        ]
+                    },
+                    {
+                        "raw" : "play Techno",
+                        "model" : [
+                            { "text" : "play"},
+                            { "text" : "Techno", "type" : "@convo-core.music_playlist", "slot_value" : "Playlist"}
                         ]
                     }
                 ]
