@@ -8,6 +8,7 @@ use Convo\Core\Adapters\Alexa\AlexaSkillLanguageMapper;
 use Convo\Core\Adapters\Alexa\AmazonCommandRequest;
 use Convo\Core\Adapters\Dialogflow\DialogflowLanguageMapper;
 use Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandRequest;
+use Convo\Core\ComponentNotFoundException;
 use Convo\Core\Rest\OwnerNotSpecifiedException;
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IntentAwareWrapperRequest;
@@ -65,7 +66,7 @@ class PlatformRequestFactory implements IPlatformRequestFactory
                 $this->_logger->info("Accessing Platform Request Factory with Dialogflow Command Request");
                 return $this->_prepareDialogflowIntentRequest($request, $user, $serviceId, $platformId);
             default:
-                return [];
+                return new ComponentNotFoundException('Platform ' . $platformId . ' not supported.');
         }
     }
 
