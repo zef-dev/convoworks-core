@@ -30,6 +30,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
     const COMMAND_PREVIOUS = 'previous';
     const COMMAND_RESUME_PLAYBACK = 'resume_playback';
     const COMMAND_START_OVER = 'start_over';
+    const COMMAND_REPEAT = 'repeat';
     const COMMAND_SHUFFLE_ON = 'shuffle_on';
     const COMMAND_SHUFFLE_OFF = 'shuffle_off';
     const COMMAND_LOOP_ON = 'loop_on';
@@ -167,7 +168,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
         // repeat intent
         $reader   =   new \Convo\Pckg\Core\Filters\ConvoIntentReader([
             'intent' => 'convo-core.RepeatIntent',
-            'values' => ["command" =>self::COMMAND_START_OVER]
+            'values' => ["command" =>self::COMMAND_REPEAT]
         ], $this->_packageProviderFactory);
         $reader->setLogger( $this->_logger);
         $reader->setService( $this->getService());
@@ -425,8 +426,17 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                 
                 
                 // PLAYER COMMANDS
+            case self::COMMAND_REPEAT:
+                try {
+                    $response->playSong( $context->current());
+                } catch ( DataItemNotFoundException $e) {
+                    $this->_logger->notice( $e->getMessage());
+                    $this->_readFailbackOr( $request, $response);
+                }
+                break;
             case self::COMMAND_START_OVER:
                 try {
+                    $context->rewind();
                     $response->playSong( $context->current());
                 } catch ( DataItemNotFoundException $e) {
                     $this->_logger->notice( $e->getMessage());
