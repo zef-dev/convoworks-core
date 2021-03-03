@@ -359,6 +359,146 @@ class AmazonPublishingService
         return json_decode($response->getBody()->__toString(), true);
     }
 
+    public function getSkillStatus($owner, $skillId) {
+        $url = self::BASE_SMAPI_URL."/v1/skills/".$skillId."/status";
+
+        $this->_logger->debug("Going to delete skill [$skillId]");
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_GET,
+            $url
+        );
+
+        $body = json_decode($response->getBody()->__toString(), true);
+        return $body;
+    }
+
+    public function validateSkill($owner, $skillId, $stage, $locales)
+    {
+        $url = self::BASE_SMAPI_URL.'/v1/skills/'.$skillId.'/stages/'.$stage.'/validations';
+
+        $payload = [
+            'locales' => $locales
+        ];
+
+        $this->_logger->debug('Going to validate skill ['.print_r($payload, true).']');
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_POST,
+            $url,
+            [],
+            $payload
+        );
+
+        $body = json_decode($response->getBody()->__toString(), true);
+        return $body;
+    }
+
+    public function pollUntilSkillValidated($owner, $skillId, $stage, $validationId)
+    {
+        $url = self::BASE_SMAPI_URL.'/v1/skills/'.$skillId.'/stages/'.$stage.'/validations/'.$validationId;
+
+        $this->_logger->debug('Going to check skill ['.$skillId.'] status');
+        $tries = 1;
+        do {
+            $this->_logger->debug('Poll number ['.$tries.'/'.self::MAX_POLL_TRIES.']');
+            $response = $this->_executeRequest(
+                $owner,
+                IHttpFactory::METHOD_GET,
+                $url
+            );
+            $body = json_decode($response->getBody()->__toString(), true);
+            $status = $body['status'];
+
+            $this->_logger->debug('Skill status response ['.$response->getStatusCode().']['.print_r($body, true).']');
+            sleep(30); // im sleep half a minute
+        } while (($status === 'IN_PROGRESS') && (++$tries <= self::MAX_POLL_TRIES));
+
+        $this->_logger->debug('Final polling response ['.$response->getStatusCode().']['.print_r($body, true).']');
+
+        return $body;
+    }
+
+    public function enableSkillForUse($owner, $skillId, $stage) {
+        $url = self::BASE_SMAPI_URL.'/v1/skills/'.$skillId.'/stages/'.$stage.'/enablement';
+
+        $this->_logger->debug("Going to enable skill to use from url [$url]");
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_PUT,
+            $url
+        );
+
+        $statusCode = $response->getStatusCode();
+        return $statusCode;
+    }
+
+    public function checkSkillEnablementStatus($owner, $skillId, $stage) {
+        $url = self::BASE_SMAPI_URL.'/v1/skills/'.$skillId.'/stages/'.$stage.'/enablement';
+
+        $this->_logger->debug("Going to enable skill to use from url [$url]");
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_GET,
+            $url
+        );
+
+        $statusCode = $response->getStatusCode();
+        return $statusCode;
+    }
+
+    public function enableAccountLinking($owner, $skillId, $stage, $body) {
+        $url = self::BASE_SMAPI_URL.'/v1/skills/'.$skillId.'/stages/'.$stage.'/accountLinkingClient';
+
+        $this->_logger->debug("Going to enable account linking from url [$url]");
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_PUT,
+            $url,
+            [],
+            $body
+        );
+
+        $statusCode = $response->getStatusCode();
+        return $statusCode;
+    }
+
+    public function disableAccountLinking($owner, $skillId, $stage) {
+        $url = self::BASE_SMAPI_URL.'/v1/skills/'.$skillId.'/stages/'.$stage.'/accountLinkingClient';
+
+        $this->_logger->debug("Going to enable account linking from url [$url]");
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_DELETE,
+            $url
+        );
+
+        $statusCode = $response->getStatusCode();
+        return $statusCode;
+    }
+
+    public function getAccountLinkingInformation($owner, $skillId, $stage) {
+        $url = self::BASE_SMAPI_URL.'/v1/skills/'.$skillId.'/stages/'.$stage.'/accountLinkingClient';
+
+        $this->_logger->debug("Going to enable account linking from url [$url]");
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_GET,
+            $url
+        );
+
+        $body = json_decode($response->getBody()->__toString(), true);
+        return $body['accountLinkingResponse'];
+    }
+
+
     // UTIL
     private function _executeRequest($user, $method, $url, $headers = [], $body = null)
     {

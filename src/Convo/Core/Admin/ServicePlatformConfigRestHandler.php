@@ -146,7 +146,7 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
 
             // log and report the error
             $errorMessage = $this->_propagationErrorReport->craftErrorReport($e->getMessage(), $platformId);
-            return $this->_httpFactory->buildResponse($errorMessage, 500);
+            return $this->_httpFactory->buildResponse($errorMessage, 400);
         }
 	}
 
@@ -187,7 +187,7 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
         } catch (\Exception $e) {
             $this->_logger->critical($e->getMessage());
 	        $errorMessage = $this->_propagationErrorReport->craftErrorReport($e->getMessage(), $platformId);
-	        return $this->_httpFactory->buildResponse($errorMessage, 500);
+	        return $this->_httpFactory->buildResponse($errorMessage, 400);
         }
 	}
 

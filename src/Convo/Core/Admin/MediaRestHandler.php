@@ -66,6 +66,7 @@ class MediaRestHandler implements \Psr\Http\Server\RequestHandlerInterface
     {
         /** @var \Psr\Http\Message\UploadedFileInterface[] $files */
         $files = $request->getUploadedFiles();
+        $response = [];
 
         foreach ($files as $filename => $image) {
             $this->_logger->debug("Handling file [$filename]");
@@ -75,10 +76,18 @@ class MediaRestHandler implements \Psr\Http\Server\RequestHandlerInterface
                 $image->getClientMediaType(),
                 $image->getStream()->__toString()
             );
-    
-            $mediaItemId = $this->_mediaService->saveMediaItem($serviceId, $file);
 
-            return $this->_httpFactory->buildResponse(['mediaItemId' => $mediaItemId]);
+            $mediaItemId = $this->_mediaService->saveMediaItem($serviceId, $file);
+            array_push($response, [
+                'mediaItemId' => $mediaItemId,
+                'imageWidth' => getimagesizefromstring($file->getContent())[0],
+                'imageHeight' => getimagesizefromstring($file->getContent())[1],
+                "type" => $image->getClientMediaType()
+            ]);
+        }
+
+        if (!empty($response)) {
+            return $this->_httpFactory->buildResponse($response);
         }
     }
 

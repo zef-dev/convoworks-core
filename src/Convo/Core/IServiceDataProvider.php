@@ -15,7 +15,7 @@ namespace Convo\Core;
  *
  * Service data is an associaive array.
  * You can notice that there is no DEFAULT definition for configurations. That is because we can not know what parameters platform configuration has.
- * 
+ *
  * This interface allows you to store service data how it is the most appropriate for your application.
  */
 interface IServiceDataProvider
@@ -41,6 +41,8 @@ interface IServiceDataProvider
         'name' => null,
         'description' => null,
         'default_language' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH,
+        'default_locale' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_US,
+        'supported_locales' => [IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH_US],
         'active' => 0,
         'is_private' => false,
         'owner' => null,
@@ -61,6 +63,37 @@ interface IServiceDataProvider
         'time_updated' => 0,
     ];
 
+    const DEFAULT_AMAZON_CONFIG = [
+        'mode' => 'manual',
+        'invocation' => 'Default Name',
+        'app_id' => null,
+        'interaction_model_sensitivity' => 'LOW',
+        'endpoint_ssl_certificate_type' => 'Wildcard',
+        'self_signed_certificate' => null,
+        'auto_display' => false,
+        'skill_preview_in_store' => [
+            'public_name' => 'Default Name',
+            'one_sentence_description' => 'Default Name',
+            'detailed_description' => 'Default Name',
+            'whats_new' => 'Default Name',
+            'example_phrases' => ['Alexa, open Default Name'],
+            'small_skill_icon' => 'https://via.placeholder.com/108.png/09f/fffC/O',
+            'large_skill_icon' => 'https://via.placeholder.com/512.png/09f/fffC/O',
+            'category' => 'ALARMS_AND_CLOCKS',
+            'keywords' => [],
+            'privacy_policy_url' => '',
+            'terms_of_use_url' => '',
+        ],
+        'privacy_and_compliance' => [
+            'allows_purchases' => false,
+            'uses_personal_info' => false,
+            'is_child_directed' => false,
+            'contains_ads' => false,
+            'is_export_compliant' => false,
+            'testing_instructions' => false
+        ]
+    ];
+
 
     /**
      * Returns all services which are visible to the given admin user. Returned services are represented as service meta definition.
@@ -74,12 +107,14 @@ interface IServiceDataProvider
      * @param \Convo\Core\IAdminUser $user
      * @param string $serviceName Name for the service.
      * @param string $defaultLanguage Default language of the service.
+     * @param string $defaultLocale
+     * @param string[] $supportedLocales
      * @param bool $isPrivate Non private services are accessible by all admin users.
      * @param string[] $serviceAdmins array of user emails which should be able to access service even if it is private.
      * @param array $workflowData
      * @return string new service_id
      */
-    public function createNewService( \Convo\Core\IAdminUser $user, $serviceName, $defaultLanguage, $isPrivate, $serviceAdmins, $workflowData);
+    public function createNewService( \Convo\Core\IAdminUser $user, $serviceName, $defaultLanguage, $defaultLocale, $supportedLocales, $isPrivate, $serviceAdmins, $workflowData);
 
 
     /**
@@ -172,9 +207,10 @@ interface IServiceDataProvider
 	 * @param string $stage
 	 * @param string $alias
 	 * @param string $versionId
+	 * @param array $meta
 	 * @return string Newly created release tag
 	 */
-	public function createRelease( \Convo\Core\IAdminUser $user, $serviceId, $platformId, $type, $stage, $alias, $versionId);
+	public function createRelease(\Convo\Core\IAdminUser $user, $serviceId, $platformId, $type, $stage, $alias, $versionId, $meta);
 
 
 	/**
@@ -201,8 +237,9 @@ interface IServiceDataProvider
 	 * @param string $serviceId
 	 * @param string $releaseId
 	 * @param string $versionId
+	 * @param array $meta
 	 */
-	public function setReleaseVersion( \Convo\Core\IAdminUser $user, $serviceId, $releaseId, $versionId);
+	public function setReleaseVersion(\Convo\Core\IAdminUser $user, $serviceId, $releaseId, $versionId, $meta);
 
 
 	/**
