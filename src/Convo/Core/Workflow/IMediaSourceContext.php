@@ -18,8 +18,12 @@ interface IMediaSourceContext extends IServiceContext
         'shuffle_status' => false
     ];
     
-    // STATE
+    /**
+     * @return \Iterator
+     */
+    public function getSongs();
     
+    // STATE
     /**
      * Are there any results
      * @return bool

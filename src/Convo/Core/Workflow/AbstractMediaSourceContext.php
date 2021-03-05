@@ -51,12 +51,6 @@ abstract class AbstractMediaSourceContext extends AbstractBasicComponent impleme
         return $this;
     }
     
-    // READ SONGS
-    /**
-     * @return \Iterator
-     */
-    abstract public function getSongs();
-    
     // MEDIA
     public function isEmpty() : bool
     {
