@@ -36,6 +36,7 @@ class Mp3Id3File extends Mp3File
                 $name   =   basename( $this->_filePath, '.mp3');
                 $name   =   str_replace( "_", " ", $name);
                 $name   =   str_replace( "-", " ", $name);
+                $name   =   preg_replace( '/\s+/', ' ', $name);
                 $this->_fileMetaData['song']    =   $name;
             }
         }
