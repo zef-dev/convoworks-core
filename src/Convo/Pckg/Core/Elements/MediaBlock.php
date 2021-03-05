@@ -451,13 +451,13 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
             case self::COMMAND_LOOP_ON:
                 if ( !$context->getLoopStatus()) {
                     $this->_logger->info( 'Enabling loop');
-                    $was_last   =   $context->isLast();
+//                     $was_last   =   $context->isLast();
                     $context->setLoopStatus( true);
-                    if ( $was_last) {
-                        $this->_logger->info( 'Enqueueing next song for looped playlist');
-                        $response->enqueueSong( $context->current(), $context->next());
-                        break;
-                    }
+//                     if ( $was_last) {
+//                         $this->_logger->info( 'Enqueueing next song for looped playlist');
+//                         $response->enqueueSong( $context->current(), $context->next());
+//                         break;
+//                     }
                 }
                 $response->emptyResponse();
                 break;
