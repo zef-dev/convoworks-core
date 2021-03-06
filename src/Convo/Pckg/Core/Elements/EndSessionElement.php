@@ -14,6 +14,7 @@ class EndSessionElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 	
 	public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
+	    $this->_logger->info( 'Sending end session signal ...');
 		$response->setShouldEndSession( true);
 	}
 	
