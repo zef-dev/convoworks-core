@@ -15,7 +15,7 @@ class IfElement extends AbstractWorkflowContainerComponent implements IConversat
     private $_then;
 
     /**
-     * @var \Convo\Core\Workflow\IConversationElement[]
+     * @var \Convo\Pckg\Core\Elements\ElseIfElement[]
      */
     private $_elseIf;
 
@@ -60,7 +60,7 @@ class IfElement extends AbstractWorkflowContainerComponent implements IConversat
 
         if ($then_result)
         {
-            $this->_logger->debug('Going to read then elements');
+            $this->_logger->info('Going to read then elements');
 
             foreach ($this->_then as $then) {
                 $then->read($request, $response);
@@ -71,21 +71,21 @@ class IfElement extends AbstractWorkflowContainerComponent implements IConversat
 
         if (!empty($this->_elseIf))
         {
-            $this->_logger->debug('Else if elements present, going to iterate and check');
+            $this->_logger->info('Else if elements present, going to iterate and check');
 
             /** @var \Convo\Pckg\Core\Elements\ElseIfElement $elseIf */
             foreach ($this->_elseIf as $elseIf) {
                 $elif_result = $elseIf->evaluateTest();
 
                 if ($elif_result) {
-                    $this->_logger->debug('Found true result in else if element ['.$elseIf.']');
+                    $this->_logger->info('Found true result in else if element ['.$elseIf.']');
                     $elseIf->read($request, $response);
                     return;
                 }
             }
         }
 
-        $this->_logger->debug('Nothing matched, going to read else elements if any are present');
+        $this->_logger->info('Nothing matched, going to read else elements if any are present');
 
         foreach ($this->_else as $else) {
             $else->read($request, $response);
