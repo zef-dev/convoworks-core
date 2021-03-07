@@ -1852,7 +1852,8 @@ In default phase you can inform users about problem you have interpreting comman
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code">' .
-                        'Media info from <b>{{ component.properties.context_id }}</b>' .
+                        '<span class="statement">LET</span> <b>{{ component.properties.media_info_var }}</b> = ' .
+                        'media info <span class="statement">FROM</span> <b>{{ component.properties.context_id }}</b>' .
                         '</div>'
                     ),
                     '_interface' => '\Convo\Core\Workflow\IConversationElement',
@@ -1907,7 +1908,7 @@ In default phase you can inform users about problem you have interpreting comman
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code">START PLAYING <b>{{component.properties.context_id}}</b></div>'
+                        'template' => '<div class="code"><span class="statement">START PLAYBACK</span> on <b>{{component.properties.context_id}}</b></div>'
                     ),
                     '_interface' => '\Convo\Core\Workflow\IConversationElement',
                     '_workflow' => 'read',
