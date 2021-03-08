@@ -496,7 +496,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_properties' => array(
                             'options' => array('session' => 'Session', 'installation' => 'Installation', 'request' => 'Request'),
                         ),
-                        'defaultValue' => 'session',
+                        'defaultValue' => 'request',
                         'name' => 'Scope type',
                         'description' => 'Id under which parameters are stored',
                         'valueType' => 'string'
@@ -513,7 +513,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code">' .
+                        'template' => '<div class="code">Set parameters in <span class="statement">{{ component.properties.scope_type.toUpperCase() }}</span><br>' .
                             ' <span ng-repeat="(key, val) in component.properties.properties track by key"><span class="statement">LET</span> <b>{{ key}}</b> = <b>{{ val}};</b><br></span>' .
                             '</div>'
                     ),
