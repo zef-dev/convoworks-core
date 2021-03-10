@@ -139,6 +139,16 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
          */
         $mp3Song = $this->_value;
         $responseText = "Playing " . $mp3Song->getSongTitle() . " by " . $mp3Song->getArtist();
+        
+        $icon   =   [];
+        
+        if ( $mp3Song->getSongImageUrl()) {
+            $icon['icon']   =   [
+                'url' => $mp3Song->getSongImageUrl(),
+                'accessibilityText' => $mp3Song->getSongTitle()
+            ];
+        }
+        
         return array (
             "items" => array(
                 array(
@@ -151,11 +161,11 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
                     "mediaResponse" => array(
                         "mediaType" => "AUDIO",
                         "mediaObjects" => array(
-                            array(
+                            array_merge( $icon, array(
                                 "contentUrl" => $mp3Song->getFileUrl(),
                                 "description" => $mp3Song->getSongTitle(),
                                 "name" => $mp3Song->getArtist()
-                            )
+                            ))
                         )
                     )
                 )
