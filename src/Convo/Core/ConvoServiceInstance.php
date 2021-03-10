@@ -341,8 +341,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         if ( $request->isMediaRequest()) {
             $this->_logger->info( 'Media control request.');
             $block  =   $this->getBlockByRole( IRunnableBlock::ROLE_MEDIA_PLAYER);
-            $this->_processBlock( $block, $request, $response);
-            $this->_checkNextState();
+            $block->run( $request, $response);
             $this->_logger->info( 'Exiting ...');
             return;
         }
