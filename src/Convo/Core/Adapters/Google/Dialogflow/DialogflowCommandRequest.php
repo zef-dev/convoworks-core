@@ -178,7 +178,7 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
 				if ( is_array( $slot) && isset( $slot['name'])) {
 				    $values[$newKey]	=	$slot['name'];
 				} else {
-				    $values[$newKey]	=	$slot;
+				    $values[$newKey]	=	$this->_useOriginalISlotValuefExists( $newKey, $slot);
 				}
 
 				$this->_logger->debug( 'Parsed slot value ['.$newKey.'] => ['.print_r($values[$newKey], true).']');
@@ -186,6 +186,19 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
 		}
 
 		return $values;
+	}
+	
+	private function _useOriginalISlotValuefExists( $name, $value) {
+	    
+	    if ( isset( $this->_data['queryResult']['outputContexts']) && is_array( $this->_data['queryResult']['outputContexts'])) {
+	        foreach ( $this->_data['queryResult']['outputContexts'] as $context) {
+	            if ( isset( $context['parameters'][$name.'.original']) && !empty( $context['parameters'][$name.'.original'])) {
+	                return $context['parameters'][$name.'.original'];
+	            }
+	        }
+	    }
+	    
+	    return $value;
 	}
 
     private function _isSlotValid($key, $slot) {
@@ -339,7 +352,6 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
 
     private function _getDialogflowAudioPlayerIntents() {
         return [
-            "PlaySong",
             "MediaStatus",
             "actions.intent.MEDIA_STATUS",
             "LoopOnIntent",
