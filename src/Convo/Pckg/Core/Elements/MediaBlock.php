@@ -377,6 +377,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
         } 
         else 
         {
+            $this->_logger->info( 'Result is empty. Going to read failback.');
             $this->_readFallback( $request, $response);
         }
     }
