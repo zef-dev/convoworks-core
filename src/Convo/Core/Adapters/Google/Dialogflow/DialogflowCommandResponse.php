@@ -138,7 +138,7 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
          * @var IAudioFile $mp3Song
          */
         $mp3Song = $this->_value;
-        $responseText = "Playing " . $mp3Song->getSongTitle() . " by " . $mp3Song->getArtist();
+        $responseText = "Playing " . $mp3Song->getSongTitle();
         
         $icon   =   [];
         
