@@ -230,9 +230,24 @@ abstract class AbstractPackageDefinition
 	}
 
     private function _intentToRow( SystemIntent $intent) {
+        $utterances = [];
+
+        foreach ($intent->getPlatforms() as $platform) {
+            $model = $intent->getPlatformModel($platform);
+
+            foreach ($model->getUtterances() as $utterance)
+            {
+                $utterances[] = [
+                    'raw' => $utterance->getText(),
+                    'model' => $utterance->getParts()
+                ];
+            }
+        }
+
         $row   =   [
             'name' => $this->getNamespace().'.'.$intent->getName(),
-            'platforms' => $intent->getPlatforms()
+            'platforms' => $intent->getPlatforms(),
+            'utterances' => $utterances
         ];
 
         return $row;

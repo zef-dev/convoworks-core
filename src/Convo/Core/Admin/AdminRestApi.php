@@ -60,6 +60,8 @@ class AdminRestApi implements RequestHandlerInterface
 		    $class_name =   '\Convo\Core\Admin\TemplatesRestHandler';
         } else if ($info->startsWith( 'config-options')) {
 		    $class_name =   '\Convo\Core\Admin\ConfigurationRestHandler';
+        } else if ($info->startsWith( 'get-existing-alexa-skill')) {
+		    $class_name = '\Convo\Core\Admin\AmazonAlexaSkillInfo';
         } else {
 		    throw new \Convo\Core\Rest\NotFoundException( 'Could not map ['.$info.']');
 		}

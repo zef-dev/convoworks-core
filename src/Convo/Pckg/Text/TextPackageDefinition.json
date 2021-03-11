@@ -3,5 +3,6 @@
     "author": "ZEF Development",
     "email": "marko@zefdev.com",
     "source_for": [],
-    "description": "Contains simple text filters."
+    "description": "Contains simple text filters.",
+    "stability": "experimental"
 }

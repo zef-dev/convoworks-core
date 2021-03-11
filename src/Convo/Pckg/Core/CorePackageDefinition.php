@@ -343,6 +343,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Comment to show in editor',
                         'valueType' => 'string'
                     ),
+                    'context' => [
+                        'editor_type' => 'select_context',
+                        'editor_properties' => [],
+                        'defaultValue' => null,
+                        'name' => 'Context',
+                        'description' => 'Context to select',
+                        'valueType' => 'string'
+                    ],
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="editor-comment">' .
@@ -491,7 +499,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_properties' => array(
                             'options' => array('session' => 'Session', 'installation' => 'Installation', 'request' => 'Request'),
                         ),
-                        'defaultValue' => 'session',
+                        'defaultValue' => 'request',
                         'name' => 'Scope type',
                         'description' => 'Id under which parameters are stored',
                         'valueType' => 'string'
@@ -508,7 +516,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code">' .
+                        'template' => '<div class="code">Set parameters in <span class="statement">{{ component.properties.scope_type.toUpperCase() }}</span><br>' .
                             ' <span ng-repeat="(key, val) in component.properties.properties track by key"><span class="statement">LET</span> <b>{{ key}}</b> = <b>{{ val}};</b><br></span>' .
                             '</div>'
                     ),
@@ -2103,7 +2111,7 @@ In default phase you can inform users about problem you have interpreting comman
                     'name' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'New elements fragment',
                         'name' => 'Fragment name',
                         'description' => 'Name for easier fragment reference',
                         'valueType' => 'string'
@@ -2141,7 +2149,7 @@ In default phase you can inform users about problem you have interpreting comman
                     'name' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'New processor fragment',
                         'name' => 'Fragment name',
                         'description' => 'Name for easier fragment reference',
                         'valueType' => 'string'

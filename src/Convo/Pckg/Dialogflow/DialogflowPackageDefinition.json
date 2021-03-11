@@ -3,5 +3,6 @@
     "author": "ZEF Development",
     "email": "marko@zefdev.com",
     "source_for": [],
-    "description": "Package containing Dialogflow-specific elements, intents, or entities."
+    "description": "Package containing Dialogflow-specific elements, intents, or entities.",
+    "stability": "experimental"
 }
