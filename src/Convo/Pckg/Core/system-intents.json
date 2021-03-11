@@ -721,6 +721,13 @@
                         ]
                     },
                     {
+                        "raw" : "play something by Lou Bega",
+                        "model" : [
+                            { "text" : "play something by"},
+                            { "text" : "Lou Bega", "type" : "@convo-core.artist", "slot_value" : "Artist"}
+                        ]
+                    },
+                    {
                         "raw" : "play songs from Rock",
                         "model" : [
                             { "text" : "play songs from"},
