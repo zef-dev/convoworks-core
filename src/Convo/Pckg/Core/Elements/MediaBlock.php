@@ -534,9 +534,12 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
         $pblock = new PreviewBlock($this->getName(), $this->getComponentId());
         $pblock->setLogger($this->_logger);
 
-        // What the bot says first
-        $section = new PreviewSection('Read', $this->_logger);
-        $section->collect($this->getElements(), '\Convo\Core\Preview\IBotSpeechResource');
+        $section = new PreviewSection('Next not available', $this->_logger);
+        $section->collect( $this->_noNext, '\Convo\Core\Preview\IBotSpeechResource');
+        $pblock->addSection($section);
+
+        $section = new PreviewSection('Previous not available', $this->_logger);
+        $section->collect( $this->_noPrevious, '\Convo\Core\Preview\IBotSpeechResource');
         $pblock->addSection($section);
 
         // Fallback text
