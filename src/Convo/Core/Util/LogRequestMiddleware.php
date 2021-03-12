@@ -20,6 +20,8 @@ class LogRequestMiddleware implements \Psr\Http\Server\MiddlewareInterface
 	
 	public function process( ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 	{
+	    $start = microtime( true);
+	    
 		$this->_logger->info( '============================================================');
 		if (isset($_SERVER['REQUEST_SCHEME']) && isset($_SERVER['HTTP_HOST'])) {
 			$this->_logger->info( $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
@@ -46,7 +48,12 @@ class LogRequestMiddleware implements \Psr\Http\Server\MiddlewareInterface
 		}
 		
 		$this->_logger->info( '============================================================');
-		return $handler->handle( $request);
+		$response =   $handler->handle( $request);
+		
+		$time_elapsed_us = microtime( true) - $start;
+		$this->_logger->info( 'Returning HTTP ['.$response->getStatusCode().'] in ' . ($time_elapsed_us * 1000) . ' ms');
+		
+		return $response; 
 	}
 	
 	// UTIL
