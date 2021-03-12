@@ -14,7 +14,7 @@ interface IURLSupplier
      * throw DataItemNotFoundException
      * @return array
      */
-    public function getStaticUrl($forWhat);
+    public function getSystemUrl($forWhat);
 
     /**
      * Used to generate urs based on serviceId, $platformId and purpose.
@@ -26,5 +26,5 @@ interface IURLSupplier
      * throw DataItemNotFoundException
      * @return array
      */
-    public function getDynamicUrl($serviceId, $platformId, $forWhat, $accountLinkingMode = '');
+    public function getServiceUrl($serviceId, $platformId, $forWhat, $accountLinkingMode = '');
 }
