@@ -536,9 +536,11 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             /** @var IntentModel $intent */
             $numberOfSampleUtterances = count($intent->getUtterances());
 
-            if ($numberOfSampleUtterances > 0) {
+            if ($numberOfSampleUtterances > 0 || $intent->isSystem()) {
                 $numberOfValidIntents++;
                 $data['interactionModel']['languageModel']['intents'][] = $this->_buildIntent( $intent);
+            } else {
+                $this->_logger->warning( 'Skipping empty intent ['.$intent.']');
             }
 	    }
 
