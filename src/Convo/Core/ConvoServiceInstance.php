@@ -406,15 +406,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         try {
             $block->run( $request, $response);
         } catch (\Convo\Core\SessionEndedException $e) {
-            $this->_logger->info('Session terminate signal. Will try reading session ended block if available');
-
-            try {
-                $session_ended = $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_ENDED);
-                $this->_logger->info('Block with session ended role found. Reading');
-                $session_ended->read($request, $response);
-            } catch ( \Convo\Core\ComponentNotFoundException $e) {
-                $this->_logger->info($e->getMessage());
-            }
+            $this->_logger->info('Session terminate signal.');
         } catch ( \Convo\Core\StateChangedException $e) {
             $this->_logger->info('Caught state change ['.$e->getMessage().']');
             $params->setServiceParam(self::SERVICE_STATE_PREV_NAME, $block->getComponentId());
@@ -432,15 +424,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         try {
             $block->read( $request, $response);
         } catch (\Convo\Core\SessionEndedException $e) {
-            $this->_logger->info('Session terminate signal. Will try reading session ended block if available');
-
-            try {
-                $session_ended = $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_ENDED);
-                $this->_logger->info('Block with session ended role found. Reading');
-                $session_ended->read($request, $response);
-            } catch ( \Convo\Core\ComponentNotFoundException $e) {
-                $this->_logger->info($e->getMessage());
-            }
+            $this->_logger->info('Session terminate signal.');
         } catch ( \Convo\Core\StateChangedException $e) {
             $this->_logger->info('Caught state change ['.$e->getMessage().']');
             if ( $e->getState() === $state) {
@@ -459,15 +443,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         try {
             $block->read( $request, $response);
         } catch (\Convo\Core\SessionEndedException $e) {
-            $this->_logger->info('Session terminate signal. Will try reading session ended block if available');
-
-            try {
-                $session_ended = $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_ENDED);
-                $this->_logger->info('Block with session ended role found. Reading');
-                $session_ended->read($request, $response);
-            } catch ( \Convo\Core\ComponentNotFoundException $e) {
-                $this->_logger->info($e->getMessage());
-            }
+            $this->_logger->info('Session terminate signal.');
         } catch ( \Convo\Core\StateChangedException $e) {
             $this->_logger->info( $e->getMessage());
             if ( $e->getState() === $block->getComponentId()) {
