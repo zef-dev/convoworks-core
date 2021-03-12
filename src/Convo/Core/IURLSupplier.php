@@ -6,9 +6,10 @@ namespace Convo\Core;
 
 interface IURLSupplier
 {
-    const AMAZON_LWA_SECURITY_PROFILE_URL = 'https://developer.amazon.com/loginwithamazon/console/site/lwa/overview.html';
-    const AMAZON_VENDOR_ID_URL = 'https://developer.amazon.com/settings/console/mycid';
-
+    const SYSTEM_URL_FOR_AMAZON_ALLOWED_RETURN_URL = 'allowed_return_url_for_amazon';
+    const SERVICE_URL_FOR_PRIVACY_POLICY = 'privacy_policy';
+    const SERVICE_URL_FOR_TERMS_OF_USE = 'terms_of_use';
+    const SERVICE_URL_FOR_ACCOUNT_LINKING = 'account_linking';
     /**
      * @param $forWhat
      * throw DataItemNotFoundException
