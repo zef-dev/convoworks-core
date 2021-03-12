@@ -2,8 +2,6 @@
 
 namespace Convo\Pckg\Core\Elements;
 
-
-
 /**
  * This elements just sets the session end flag in response. This intent should be used when matched Amazon.StopIntent.
  * 
@@ -18,7 +16,7 @@ class EndSessionElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 		
 		$response->setShouldEndSession(true);
 		
-		throw new \Convo\Core\StateChangedException('');
+		throw new \Convo\Core\SessionEndedException();
 	}
 	
 	// UTIL
