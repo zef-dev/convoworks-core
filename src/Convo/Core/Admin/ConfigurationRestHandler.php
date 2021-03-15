@@ -66,7 +66,7 @@ class ConfigurationRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
                 ['value' => 'HIGH', 'name' => 'High']
             ],
             'CONVO_AMAZON_ACCOUNT_LINKING_OFFERS' => [
-                ['value' => 'convoworks_installation', 'name' => 'Convoworks Installation'],
+                ['value' => 'installation', 'name' => 'Installation'],
                 ['value' => 'amazon', 'name' => 'Amazon'],
                 ['value' => 'something_else', 'name' => 'Something Else']
             ],
