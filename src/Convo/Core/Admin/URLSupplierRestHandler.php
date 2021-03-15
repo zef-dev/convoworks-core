@@ -24,34 +24,28 @@ class URLSupplierRestHandler implements RequestHandlerInterface
     /**
      * @var IURLSupplier
      */
-    private $_serviceURLSupplier;
+    private $_URLSupplier;
 
-    public function __construct($logger, $httpFactory, $serviceURLSupplier)
+    public function __construct($logger, $httpFactory, $URLSupplier)
     {
-        $this->_logger				= 	$logger;
-        $this->_httpFactory			= 	$httpFactory;
-        $this->_serviceURLSupplier  = 	$serviceURLSupplier;
+        $this->_logger		= $logger;
+        $this->_httpFactory = $httpFactory;
+        $this->_URLSupplier = $URLSupplier;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $info			=	new \Convo\Core\Rest\RequestInfo( $request);
 
-        // todo rather load all system urls instead of giving reason
-        // json for system and service level
-        if ($info->get() && $route = $info->route( 'supply-urls/system-url/{forWhat}')) {
-            $forWhat = $route->get('forWhat');
-            $data = $this->_serviceURLSupplier->getSystemUrl($forWhat);
+        if ($info->get() && $route = $info->route( 'supply-urls/system-urls')) {
+            $data = $this->_URLSupplier->getSystemUrls();
 
             return $this->_httpFactory->buildResponse($data);
         }
 
-        if ($info->get() && $route = $info->route( 'supply-urls/service-url/{serviceId}/{platformId}/{forWhat}/{accountLinkingMode}')) {
+        if ($info->get() && $route = $info->route( 'supply-urls/service-urls/{serviceId}')) {
             $serviceId = $route->get('serviceId');
-            $platformId = $route->get('platformId');
-            $forWhat = $route->get('forWhat');
-            $accountLinkingMode = $route->get('accountLinkingMode');
-            $data = $this->_serviceURLSupplier->getServiceUrl($serviceId, $platformId, $forWhat, $accountLinkingMode);
+            $data = $this->_URLSupplier->getServiceUrls($serviceId);
 
             return $this->_httpFactory->buildResponse($data);
         }
