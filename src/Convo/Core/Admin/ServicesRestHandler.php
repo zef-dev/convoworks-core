@@ -358,6 +358,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 		unset($body['service_id']);
 		unset($body['release_mapping']);
 
+        $this->_addOwnerToServiceAdminsInPrivateService($existing, $body);
 		$meta = array_merge($existing, $body);
 
 		$this->_logger->debug('Final data to update with ['.print_r($meta, true).']');
@@ -368,6 +369,20 @@ class ServicesRestHandler implements RequestHandlerInterface
 
 		return $this->_httpFactory->buildResponse($updated);
 	}
+
+	private function _addOwnerToServiceAdminsInPrivateService($existingMeta, &$incomingMetaRequestBody) {
+        $isPrivate = $incomingMetaRequestBody['is_private'] ?? false;
+
+        if ($isPrivate) {
+            $previousOwnerAsAdminOfPrivateService = $this->_adminUserDataProvider->findUser($existingMeta['owner']);
+            $newOwnerOfPrivateService = $this->_adminUserDataProvider->findUser($incomingMetaRequestBody['owner']);
+
+            if ($previousOwnerAsAdminOfPrivateService->getId() !== $newOwnerOfPrivateService->getId()) {
+                array_push($incomingMetaRequestBody['admins'], $previousOwnerAsAdminOfPrivateService->getEmail());
+                $incomingMetaRequestBody['admins'] = array_unique($incomingMetaRequestBody['admins']);
+            }
+        }
+    }
 
 	// UTIL
 	public function __toString()
