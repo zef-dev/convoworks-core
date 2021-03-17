@@ -722,7 +722,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	            }
 	            else
 	            {
-	                $sentence[] =   $part_data['text'];
+	                $sentence[] = $this->_sanitizeText($part_data['text']);
 	            }
 	        }
 
@@ -1024,5 +1024,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             return $this->_mediaService->getMediaUrl($serviceId, $mediaItemId);
         }
         return $alternativeDownloadLink;
+    }
+
+    private function _sanitizeText($text) {
+        return preg_replace('/[^a-zA-Z ]/', '', $text);
     }
 }

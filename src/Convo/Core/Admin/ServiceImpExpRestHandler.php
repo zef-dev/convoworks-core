@@ -120,6 +120,7 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 		}
 
 		$service_data['service_id'] = $serviceId;
+		$service_data['name'] = $original_meta['name'];
 
         if ( !$keep_configs && isset($service_data['configurations'])) {
             $previous_conf = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);

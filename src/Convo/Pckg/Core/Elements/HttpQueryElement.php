@@ -195,21 +195,28 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
      */
     public function provideContent(string $contentType, \Psr\Http\Message\ResponseInterface $apiResponse)
     {
-        $content = null;
-        if ($contentType === 'AUTO') {
+        if ( $contentType === 'AUTO') {
             $headerLine = explode( ';', $apiResponse->getHeaderLine('Content-Type'));
             $headerLine = array_shift( $headerLine);
-            if ($headerLine !== 'application/json') {
-                throw new InvalidJsonException('Invalid header Content-Type was provided. We need Content-Type ' . 'application/json' . ', instead of ['.$headerLine.']');
+            
+            if ( $headerLine === 'application/json') {
+                return $this->_readJson( $apiResponse);
             }
-
-            $content = json_decode($apiResponse->getBody()->__toString(), true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                $content = null;
-                throw new InvalidJsonException('Invalid json response.');
-            }
-        } else {
-            $content = json_decode($apiResponse->getBody()->__toString(), true);
+            
+            return $apiResponse->getBody()->__toString();
+        } else if ( $contentType === 'TEXT')  {
+            return $apiResponse->getBody()->__toString();
+        } else if ( $contentType === 'JSON')  {
+            return $this->_readJson( $apiResponse);
+        }
+        
+        throw new \Exception( 'Unexpected content type parameter ['.$contentType.']'); 
+    }
+    
+    private function _readJson( \Psr\Http\Message\ResponseInterface $apiResponse) {
+        $content = json_decode( $apiResponse->getBody()->__toString(), true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new InvalidJsonException('Invalid json response.');
         }
         return $content;
     }

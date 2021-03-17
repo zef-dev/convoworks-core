@@ -1392,7 +1392,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'select',
                         'editor_properties' => array(
                             'multiple' => false,
-                            'options' => array( 'AUTO'=> 'AUTO', 'JSON' => 'JSON')
+                            'options' => array( 'AUTO'=> 'AUTO', 'JSON' => 'JSON', 'TEXT' => 'TEXT')
                         ),
                         'defaultValue' => 'AUTO',
                         'name' => 'Content Type',
