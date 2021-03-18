@@ -3,6 +3,8 @@
 namespace Convo\Pckg\Alexa;
 
 use Convo\Core\Factory\AbstractPackageDefinition;
+use Convo\Core\Factory\ComponentDefinition;
+use Convo\Core\Factory\IComponentFactory;
 
 class AmazonPackageDefinition extends AbstractPackageDefinition
 {
@@ -28,5 +30,62 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 
 		parent::__construct( $logger, self::NAMESPACE, __DIR__);
 	}
+
+	protected function _initDefintions()
+    {
+        return [
+            new ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\GetAmazonUserElement',
+                'Init Amazon user',
+                'Initialize an Amazon user.',
+                [
+                    'name' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => 'user',
+                        'name' => 'Name',
+                        'description' => 'Name under which to store the loaded user object in the context',
+                        'valueType' => 'string'
+                    ],
+                    'prompt_for_linking' => [
+                        'editor_type' => 'boolean',
+                        'editor_properties' => [],
+                        'defaultValue' => false,
+                        'name' => 'Prompt for linking',
+                        'description' => 'Prompt the user to link their account if an authenticated user could not be loaded.',
+                        'valueType' => 'boolean'
+                    ],
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        'template' => '<div class="code">' .
+                            'Load Amazon User and set it as <span class="statement"><b>{{ component.properties.name }}</b></span>' .
+                            '</div>'
+                    ],
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'get-amazon-user-element.html'
+                    ),
+                    '_factory' => new class ($this->_httpFactory, $this->_convoServiceDataProvider) implements IComponentFactory
+                    {
+                        private $_httpFactory;
+                        private $_convoServiceDataProvider;
+
+                        public function __construct($httpFactory, $convoServiceDataProvider)
+                        {
+                            $this->_httpFactory = $httpFactory;
+                            $this->_convoServiceDataProvider = $convoServiceDataProvider;
+                        }
+
+                        public function createComponent($properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Elements\GetAmazonUserElement($properties, $this->_httpFactory, $this->_convoServiceDataProvider);
+                        }
+                    }
+                ]
+            )
+        ];
+    }
 
 }
