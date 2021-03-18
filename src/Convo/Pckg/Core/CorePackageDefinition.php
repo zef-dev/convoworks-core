@@ -1110,7 +1110,9 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     'namespace' => array(
                         'editor_type' => 'text',
-                        'editor_properties' => array(),
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.mode === 'smart'"
+                        ),
                         'defaultValue' => null,
                         'name' => 'Namespace',
                         'description' => 'A string of your choosing that will be used as a "pool" for Smart mode',
@@ -1120,6 +1122,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'select',
                         'editor_properties' => array(
                             'options' => array('session' => 'Session', 'installation' => 'Installation'),
+                            'dependency' => "component.properties.mode === 'smart'"
                         ),
                         'defaultValue' => 'installation',
                         'name' => 'Scope type',
