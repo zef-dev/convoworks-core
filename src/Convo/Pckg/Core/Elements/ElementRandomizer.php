@@ -26,6 +26,8 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
         $this->_mode    =   $properties['mode'];
 
 	    if ( $this->_mode === self::RANDOM_MODE_SMART && !isset( $properties['namespace'])) {
+            $this->_logger->warning('No namespace provided. Going to use component\'s ID.');
+            $this->_namespace = $this->getId();
         } else if ( $this->_mode == self::RANDOM_MODE_SMART && isset( $properties['namespace'])) {
             $this->_namespace   =   $properties['namespace'];
         }

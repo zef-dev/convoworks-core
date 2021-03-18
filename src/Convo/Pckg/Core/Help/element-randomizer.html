@@ -1,19 +1,26 @@
 <div class="randomizer-help">
     <h3>Element randomizer</h3>
     
-    <p>Picks just one child element end executes it.</p>
+    <p>Picks one child element at a time and executes it. You can either have it set to <code>wild</code> for truly random output, or <code>smart</code>, to avoid repetitions of previously used elements.</p>
 
     <h3>When to use?</h3>
 
-	<p>When we want to randomize our output.</p>
+	<p>Whenever you need random output, this element comes in handy. Some example usages might be randomized greetings/farewells, or perhaps random number guessing games.</p>
 
     <h3>How to use: </h3>
     <ol>
-    	<li>Select the <b>Wild</b>(picks random output every time and executes it) or <b>Smart</b>(picks different random output every time and executes it) from <b>ELEMENT STORAGE MODE</b> drop-down</li>
-    	<li>Add random string to <b>NAMESPACE</b> when using <b>Smart</b> mode</li>
-    	<li>Select the <b>SCOPE TYPE</b> from the drop-down</li>
-        <li>Scope type <b>installation</b> is for the duration of the whole installation and has the longest life span</li>
-        <li>Scope type <b>session</b> is for the duration of the session</li>
-        
+    	<li>
+            For <b>Element Storage Mode</b>, pick <code>wild</code> if you do not care about repetition; this will execute elements wholly randomly. Otherwise, pick <code>smart</code>.<br>
+            <ul>
+                <li>If you picked <code>smart</code> for <b>Element Storage Mode</b>, you will need to enter any string of your choice for the <b>Namespace</b> property. This is the key under which previously executed elements will be stored to avoid repetition. You can share this key between multiple element randomizers too.</li>
+                <li>
+                    In addition, you will need to select the <b>Scope Type</b> from the drop-down, which dictates <i>how long</i> smart mode elements will be stored.
+                    <ul>
+                        <li>Scope type <code>installation</code> stores the data for as long the skill is installed on any given device. This option preserves data the longest.</li>
+                        <li>Scope type <code>session</code> stores the data for the duration of a session.</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
     </ol>
 </div>

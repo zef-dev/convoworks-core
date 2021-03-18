@@ -1093,7 +1093,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         ),
                         'defaultValue' => 'wild',
                         'name' => 'Element storage mode',
-                        'description' => 'Selects wild or smart mode',
+                        'description' => '"Wild" executes elements completely at random. "Smart" will keep track of what\'s been read, and will avoid repetition untill all elements have been used up.',
                         'valueType' => 'string'
                     ),
                     'elements' => array(
@@ -1105,25 +1105,25 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'defaultValue' => array(),
                         'defaultOpen' => true,
                         'name' => 'Elements',
-                        'description' => 'Containing text to be randomized',
+                        'description' => 'Elements to be executed at random',
                         'valueType' => 'class'
                     ),
                     'namespace' => array(
-                        'editor_type' => 'string',
+                        'editor_type' => 'text',
                         'editor_properties' => array(),
                         'defaultValue' => null,
                         'name' => 'Namespace',
-                        'description' => 'Stored text variations for smart mode.',
+                        'description' => 'A string of your choosing that will be used as a "pool" for Smart mode',
                         'valueType' => 'string'
                     ),
                     'scope_type' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
-                            'options' => array('session' => 'Session', 'installation' => 'Installation', 'request' => 'Request'),
+                            'options' => array('session' => 'Session', 'installation' => 'Installation'),
                         ),
                         'defaultValue' => 'installation',
                         'name' => 'Scope type',
-                        'description' => 'Id under which parameters are stored',
+                        'description' => 'Dictates how long the smart mode pool will live. "Installation" is per-device, while "Session" lasts for only one given session.',
                         'valueType' => 'string'
                     ),
                     '_help' =>  array(
