@@ -5,13 +5,17 @@
 
     <h3>When to use?</h3>
 
-	<p>When we want to run a block of code only once per device (children container) or when we want to run a block of code (else container) every time we start the service.</p>
+	<p>When you want to run something only once per installation on a device or per session. You can also use the <code>else</code> flow to execute something if the "run once" flow has already been executed. A particular example might be to offer the user help the first time they run the skill, and then redirect them elsewhere on subsequent runs.</p>
 
     <h3>How to use: </h3>
     <ol>
-        <li>Select the <b>RUN ONCE PER</b> from the drop-down</li>
-        <li>Run once per <b>installation</b> is for the duration of the whole installation and has the longest life span</li>
-        <li>Run once per <b>session</b> is for the duration of the session</li>
-        <li>Add other elements to children or else container</li>
+        <li>
+            Choose the type of check you want from the <b>Run Once Per</b> dropdown.
+            <ul>
+                <li><b>Installation</b> is checked once per skill installation. This essentially equates to "run this only once and never again."</li>
+                <li><b>Session</b> will run whichever elements once each time the user invokes your skill.</li>
+            </ul>
+        </li>
+        <li>If you want to run something else if the "run once" part has already been executed, you can add elements to the <code>else</code> flow.</li>
     </ol>
 </div>

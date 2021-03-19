@@ -446,7 +446,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         ],
                         'defaultValue' => 'session',
                         'name' => 'Run once per',
-                        'description' => 'Run the child once per either session or installation',
+                        'description' => 'Run children once per either session or installation',
                         'valueType' => 'string'
                     ],
                     'name' => array(
@@ -467,7 +467,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         ],
                         'defaultValue' => [],
                         'name' => 'Children',
-                        'description' => 'Children to be run',
+                        'description' => 'Children to be run once per either installation or session',
                         'valueType' => 'class'
                     ],
                     'else' => [
@@ -479,7 +479,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         ],
                         'defaultValue' => [],
                         'name' => 'Else',
-                        'description' => 'Else flow',
+                        'description' => 'Children to be run if the run once flow has already been triggered',
                         'valueType' => 'class'
                     ],
                     '_help' =>  array(
