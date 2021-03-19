@@ -1916,7 +1916,10 @@ In default phase you can inform users about problem you have interpreting comman
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code"><span class="statement">START PLAYBACK</span> on <b>{{component.properties.context_id}}</b></div>'
+                        'template' => '<div class="code"><span class="statement">START PLAYBACK</span> on <b>{{component.properties.context_id}}</b>'.
+                        '<span class="statement">{{ component.properties.play_index ? \' FROM \' : \'\'}}</span>' .
+                        '<b> {{ component.properties.play_index ? component.properties.play_index : \'\'}}</b>' .
+                        '</div>'
                     ),
                     '_interface' => '\Convo\Core\Workflow\IConversationElement',
                     '_workflow' => 'read',
