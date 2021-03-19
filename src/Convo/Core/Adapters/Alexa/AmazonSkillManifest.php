@@ -434,6 +434,26 @@ class AmazonSkillManifest implements LoggerAwareInterface
 
         return $this;
     }
+    /**
+     * Sets Opt in to automated locale distribution.
+     * @param string $isActive
+     * @param string $defaultLocale
+     * @return self
+     */
+    public function setOptInToAutomaticLocaleDistribution($isActive, $defaultLocale)
+    {
+        $this->_logger->info("Incoming active value [" . $isActive . "]");
+
+        if ($isActive === true) {
+            $language = explode('-', $defaultLocale)[0];
+
+            $this->_manifest['publishingInformation']['automaticDistribution']['isActive'] = $isActive;
+            $this->_manifest['publishingInformation']['automaticDistribution']['sourceLocaleForLanguages'][0]['language'] = $language;
+            $this->_manifest['publishingInformation']['automaticDistribution']['sourceLocaleForLanguages'][0]['sourceLocale'] = $defaultLocale;
+        }
+
+        return $this;
+    }
 
     // PRIVACY AND COMPLIANCE
 
