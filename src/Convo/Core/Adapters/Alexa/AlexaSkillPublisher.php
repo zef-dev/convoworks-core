@@ -177,6 +177,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
 
 		$locales = $meta['supported_locales'];
+		$defaultLocale = $meta['default_locale'];
+		$optInAutomaticDistribution = isset($config[$this->getPlatformId()]['availability']['automatic_distribution']) ?
+            $config[$this->getPlatformId()]['availability']['automatic_distribution'] : true;
 
         $interfaces = isset($config[$this->getPlatformId()]['interfaces']) ? $config[$this->getPlatformId()]['interfaces'] : [];
 
@@ -219,6 +222,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 			->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
 			->setIsAvailableWorldwide(true)
 			->setDistributionMode(AmazonSkillManifest::DISTRIBUTION_MODE_PUBLIC)
+            ->setOptInToAutomaticLocaleDistribution($optInAutomaticDistribution, $defaultLocale)
 			->setGlobalEndpoint( $this->_serviceReleaseManager->getWebhookUrl( $this->_user, $this->_serviceId, $this->getPlatformId()))
 			->setGlobalCertificateType($endpointCertificate);
 
@@ -293,8 +297,12 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 		$skillId = $config[$this->getPlatformId()]['app_id'];
 
         $locales = $meta['supported_locales'];
+        $defaultLocale = $meta['default_locale'];
+        $optInAutomaticDistribution = isset($config[$this->getPlatformId()]['availability']['automatic_distribution']) ?
+            $config[$this->getPlatformId()]['availability']['automatic_distribution'] : true;;
 
 		$manifest = new AmazonSkillManifest();
+		$manifest->setLogger($this->_logger);
         $interfaces = isset($config[$this->getPlatformId()]['interfaces']) ? $config[$this->getPlatformId()]['interfaces'] : [];
 
         if (count($interfaces) > 0) {
@@ -343,6 +351,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             ->containsAds($config[$this->getPlatformId()]['privacy_and_compliance']['contains_ads'])
             ->isExportCompliant($config[$this->getPlatformId()]['privacy_and_compliance']['is_export_compliant'])
             ->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
+            ->setOptInToAutomaticLocaleDistribution($optInAutomaticDistribution, $defaultLocale)
             ->setGlobalCertificateType($endpointCertificate)
             ->setIsAvailableWorldwide(true);
 
