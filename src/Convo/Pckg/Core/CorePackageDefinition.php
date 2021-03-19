@@ -2107,7 +2107,7 @@ In default phase you can inform users about problem you have interpreting comman
                         'editor_type' => 'block_id',
                         'editor_properties' => array(),
                         'defaultValue' => 'read-fragment',
-                        'name' => 'Fragment name',
+                        'name' => 'Fragment ID',
                         'description' => 'Unique string identificator',
                         'valueType' => 'string'
                     ),
@@ -2145,7 +2145,7 @@ In default phase you can inform users about problem you have interpreting comman
                         'editor_type' => 'block_id',
                         'editor_properties' => array(),
                         'defaultValue' => 'process-fragment',
-                        'name' => 'Fragment name',
+                        'name' => 'Fragment ID',
                         'description' => 'Unique string identificator',
                         'valueType' => 'string'
                     ),
