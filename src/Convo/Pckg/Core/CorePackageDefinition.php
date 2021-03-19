@@ -532,14 +532,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\IfElement',
                 'IF',
-                'Test against an expression and if it evaluates to true executes the THEN flow. If it is false, this element searches for ELSE IF sub-component which will evaluate to true and if it fails, will execute ELSE flow',
+                'Test against an expression and execute various flows depending on the result',
                 [
                     'test' => [
                         'editor_type' => 'text',
                         'editor_properties' => [],
                         'defaultValue' => null,
                         'name' => 'Test',
-                        'description' => 'String variable to evaluate',
+                        'description' => 'An expression to evaluate and decide the flow',
                         'valueType' => 'string'
                     ],
                     'then' => [
@@ -551,7 +551,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'defaultValue' => [],
                         'defaultOpen' => false,
                         'name' => 'Then',
-                        'description' => 'Flow to be executed if test is evaluated as TRUE',
+                        'description' => 'Flow to be executed if test is evaluated as truthy',
                         'valueType' => 'class'
                     ],
                     'else_if' => [
@@ -577,7 +577,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'defaultValue' => [],
                         'defaultOpen' => false,
                         'name' => 'Else',
-                        'description' => 'Flow to be executed if test is evaluated as FALSE',
+                        'description' => 'Flow to be executed if test is evaluated as falsy',
                         'valueType' => 'class'
                     ],
                     '_preview_angular' => [

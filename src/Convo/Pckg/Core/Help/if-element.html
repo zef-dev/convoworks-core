@@ -1,18 +1,17 @@
 <div class="if-help">
     <h3>IF element</h3>
     
-    <p>Test against an expression and if it evaluates to true executes the <b>THEN</b> flow container.</p>
+    <p>Test against an expression and if it evaluates to a truthy value, execute the <b>Then</b> flow container. You can also add <code>Else If</code> elements into the <b>Else If</b> flow for additional cases. Lastly, you can add elements to the <b>Else</b> flow as a fallback.</p>
 
     <h3>When to use?</h3>
 
-	<p>When we want to test an <b>if</b> expression and execute certain block of code depending on the outcome.</p>
+	<p>Whenever you have a condition that dictates the flow of a part of your skill, you can use this element to junction these possible outcomes.</p>
 
     <h3>How to use: </h3>
     <ol>
-    	<li>In the <b>TEST</b> field enter an expression, <br>example: <i>${number == 8}</i></li>
-        <li>Add other elements to <b>THEN</b> container, <br>example(text response):<i> number ${number} is correct</i></li>
-        <li>Add <b>ELSE IF</b> element to <b>IF</b> element in <b>ELSE IF</b> container (optional), <br>example: <i>${number == 10}</i></li>
-        <li>Add other elements in <b>ELSE</b> container (otpional)</li>
-        <li>example(text response):<i> correct number is ${number}</i></li>
+    	<li>In the <b>Test</b> field, enter any expression that you want to evaluate. For example, <code>${result.number == correctNumber}</code></li>
+        <li>Add the elements you wish to execute if the expression is truthy in the <b>Then</b> flow.</li>
+        <li>In the <b>Else If</b> flow, you can place special <code>Else If</code> elements that also have a <b>Test</b> property and a <b>Then</b> flow. These can be used to test for other cases so that you don't have to chain <code>If</code> elements.</li>
+        <li>Lastly, in the <b>Else</b> flow, you can place elements that will trigger in case the expression evaluates to a falsy value.</li>
     </ol>
 </div>
