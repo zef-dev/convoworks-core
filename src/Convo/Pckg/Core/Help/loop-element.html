@@ -1,35 +1,39 @@
 <div class="loop-help">
     <h3>Loop</h3>
 
-    <p>Iterates over a collection and runs children for each item.</p>
+    <p>Go over each element in a collection and do something with it.</p>
 
     <h3>When to use?</h3>
 
-    <p>When you want to iterate over each item in an array and do something with it.</p>
+    <p>If you have an array of items, or any other collection that can be traversed, and you want to perform an operation with each item, use this element.</p>
 
     <h3>How to use: </h3>
     <ol>
-        <li>You can name the element in the <b>Name</b> field</li>
-        <li>Make sure you've got an indexed array by the way of <b>Http Client</b>, <b>Json Reader</b> or <b>Set Parameter</b> element</li>
-        <li>In the <b>Items</b> field enter the name of the array, as shown in this example: <i>${array_name}</i></li>
-        <li>In the <b>Data collection item name</b> enter the name under which you'll be able to access individual array items, for example: <i>item</i></li>
+        <li>Make sure you've got an indexed array obtained with e.g. an <code>Http Client</code>, a <code>Json Reader</code>, or set manually with <code>Set Parameter</code>.</li>
+        <li>In the <b>Items</b> field, enter the name of the array wrapped in the expression syntax, for example <code>${array_name}</code></li>
+        <li>
+            In the <b>Data Collection Item Name</b> enter the name under which you'll be able to access individual array items, for example: <code>item</code>.
+            The item object has several built in properties:
+            <ul>
+                <li>To access the actual value of the item, use the <code>value</code> property: <code>${item.value}</code></li>
+                <li>To get an item's index, use <code>${item.index}</code></li>
+                <li>Since arrays number from 0 instead of 1, you can use the convenience property <code>${item.natural}</code> to get the item's index as if it were counted by a human, that is to say, starting from 1.</li>
+                <li>To identify the first, or the last iteration, use <code>${item.first}</code> and <code>{item.last}</code></li>
+            </ul>
+        </li>
         <li>You can skip iterations of as many items as you wish, starting from the beginning of the array, by entering an offset number in the <b>Offset</b> field</li>
         <li>Entering a limit number in the <b>Limit</b> field limits the loop to the specified number of iterations</li>
         <li>You can place any number of other elements inside the <b>Loop</b> element</li>
-        <li>To access array values, use this syntax: <i>${item.value}</i></li>
-        <li>To access array indexes, use this syntax: <i>${item.index}</i></li>
-        <li>If you want to output array indexes, counting from number one instead of zero, use this: <i>${item.natural}</i></li>
-        <li>To identify the first, or the last iteration, use this syntax: <i>${item.first}</i>, <i>{item.last}</i></li>
     </ol>
 
-    <h3>Example of usage in case of a two dimensional array:</h3>
+    <h3>Example of usage:</h3>
     <div>
-        <p>We created a two-dimensional array in this format: players[index]["score"], and we want to output player scores.</p>
+        <p>Suppose you have an array of players, imaginatively called <code>players</code>, and each player has a <code>score</code>. Here is an example showing how you could output each player's score:</p>
         <ul>
-            <li><b>Items:</b> <i>${players}</i></li>
-            <li><b>Data collection item name:</b> <i>player</i></li>
-            <li>Next, we place a <b>Text Response</b> element inside the <b>Loop</b> element</li>
-            <li>For output, in the <b>Text Response</b> element's <b>TEXT</b> field, we enter this: <i>${player.value.score}</i></li>
+            <li>For the <b>Items</b> property, set <code>${players}</code></li>
+            <li>For <b>Data collection item name</b>, write <code>player</code>. <b>Note the lack of expression syntax wrapper! Do not write <code>${player}</code> by mistake!</b></li>
+            <li>Place a <code>Text Response</code> element inside the <code>Loop</code> element</li>
+            <li>In the <code>Text Response</code> element's <b>Text</b> field, write <q>Player <code>${player.natural}</code>'s score is <code>${player.value.score}</code></q></li>
         </ul>
     </div>
 </div>
