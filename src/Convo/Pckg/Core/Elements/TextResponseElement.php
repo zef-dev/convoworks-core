@@ -78,13 +78,11 @@ class TextResponseElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
             if (is_a($response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse'))
             {
                 /* @var AmazonCommandResponse $response */
-                if ($this->_alexaEmotion !== self::ALEXA_EMOTION_TYPE) {
-                    $response->addEmotionText($this->_alexaEmotion, $this->_alexaEmotionIntensity, $text, $this->_append);
-                }
                 if ($this->_alexaDomain !== self::ALEXA_DOMAIN) {
                     $response->addDomainText($this->_alexaDomain, $text, $this->_append);
-                }
-                if ($this->_alexaEmotion === self::ALEXA_EMOTION_TYPE && $this->_alexaDomain === self::ALEXA_DOMAIN) {
+                } else if ($this->_alexaEmotion !== self::ALEXA_EMOTION_TYPE) {
+                    $response->addEmotionText($this->_alexaEmotion, $this->_alexaEmotionIntensity, $text, $this->_append);
+                } else if ($this->_alexaEmotion === self::ALEXA_EMOTION_TYPE && $this->_alexaDomain === self::ALEXA_DOMAIN) {
                     $response->addText($text, $this->_append);
                 }
             } else {
