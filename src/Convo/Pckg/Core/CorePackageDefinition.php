@@ -259,7 +259,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\TextResponseElement',
                 'Text response',
-                'Text which will be responded to the user. Response can be default response or reprompt. You can use SSML to tune up response.',
+                'Present the user with a text response. Use SSML for finer control.',
                 array(
                     'type' => array(
                         'editor_type' => 'select',
@@ -268,7 +268,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         ),
                         'defaultValue' => 'default',
                         'name' => 'Type',
-                        'description' => 'Type of the response definition',
+                        'description' => 'Type of response. "Default" is a standard message. "Reprompt" is what is said after some period of no user input.',
                         'valueType' => 'string'
                     ),
                     'text' => array(
@@ -276,6 +276,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_properties' => array(),
                         'defaultValue' => '',
                         'name' => 'Text',
+                        'description' => 'The message you wish to present.',
                         'valueType' => 'string'
                     ),
                     'append' => array(
@@ -289,11 +290,11 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'alexa_domain' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
-                            'options' => array('normal' => 'Normal', 'long-form' => 'Long Form', 'music' => 'Music', 'news' => 'News'),
+                            'options' => array('normal' => 'Normal', 'conversational' => 'Conversational', 'long-form' => 'Long Form', 'music' => 'Music', 'news' => 'News'),
                         ),
                         'defaultValue' => 'normal',
                         'name' => 'Alexa Domain',
-                        'description' => 'Domain of spoken text by Alexa',
+                        'description' => 'Change the speech style for Amazon Alexa.',
                         'valueType' => 'string'
                     ),
                     'alexa_emotion' => array(
@@ -303,7 +304,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         ),
                         'defaultValue' => 'neutral',
                         'name' => 'Alexa Emotion',
-                        'description' => 'Emotion of spoken text by Alexa',
+                        'description' => 'Emotion of spoken text by Alexa.',
                         'valueType' => 'string'
                     ),
                     'alexa_emotion_intensity' => array(
@@ -313,7 +314,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         ),
                         'defaultValue' => 'medium',
                         'name' => 'Alexa Emotion Intensity',
-                        'description' => 'Emotion intensity of spoken text by Alexa',
+                        'description' => 'Emotion intensity of spoken text by Alexa.',
                         'valueType' => 'string'
                     ),
                     '_preview_angular' => array(

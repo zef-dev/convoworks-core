@@ -1,36 +1,68 @@
 <div class="text-help">
     <h3>Text response</h3>
     
-    <p>Text which will be responded to the user. Response can be default response or reprompt.</p>
+    <p>Present a message to the user. You can define either a standard message, or a reprompt to ask the user for input after a period of inactivity.</p>
 
     <h3>When to use?</h3>
 
-    <p>When we want to create a response(speech) to the user via device. </p>
+    <p>Any time you need to tell the user something. Introductions, notifications, confirmations, updates... This is how you present the user with information.</p>
 
     <h3>How to use: </h3>
     <ol>
-        <li>Select the <b>TYPE</b> from the drop-down</li>
-        <li>Select the <b>ALEXA DOMAIN</b> from the drop-down</li>
-        <li>Select the <b>ALEXA EMOTION</b> from the drop-down</li>
-        <li>Select the <b>ALEXA EMOTION INTENSITY</b> from the drop-down</li>
-        <li>Add message to <b>TEXT</b></li>
-        <li>Select <b>APPEND</b> and text will be appended to the preceding sentence (if any) instead of creating a new one.</li>
+        <li>First decide on the message's <b>Type</b>, which you can choose from the drop down menu.</li>
+        <li>
+            For Amazon's Alexa, you have some additional control over the message.
+            <ul>
+                <li>
+                    Change the speaking style with <b>Alexa Domain</b>.
+                    <ul>
+                        <li><i>Normal:</i> Standard style and cadence for Alexa.</li>
+                        <li><i>Conversational:</i> This is an informal style, like something you would hear between friends talking. Looser cadence and overall flow.</li>
+                        <li><i>Long Form:</i> This is more suited for longer formats of text, e.g. podcasts. This will slightly even out the pitch and cadence, and will introduce slightly longer pauses between sentences for easier listening.</li>
+                        <li><i>Music: </i> Style the speech for talking about music, video, or other multi-media content.</li>
+                        <li><i>News: </i> Alexa will speak with a news-anchor like cadence and intonation. Stronger emphasis on certain parts of a sentence.</li>
+                    </ul>
+                </li>
+                <li>You can alter the emotion with which Alexa speaks the message with the <b>Alexa Emotion</b> property. Adjust the intensity of this emotion with <b>Alexa Emotion Intensity</b>.</li>
+            </ul>
+        </li>
+        <li>Place your message in the <b>Text</b> box. You can <a href="https://developer.amazon.com/en-US/docs/alexa/custom-skills/speech-synthesis-markup-language-ssml-reference.html">spruce up your message with SSML.</a></li>
+        <li>Toggle <b>Append</b> on, and whatever text you write will be appended to the preceding sentence (if any) instead of creating a new one.</li>
     </ol>
     
     <h3>Example of usage for creating simple text response</h3>
     <div>
-        <p>We're going to create simple text response</p>
+        <p>Here is a very simple text response.</p>
         <ul>
-            <li><b>TYPE: </b>
+            <li><b>Type:</b>
                 <p><i>Default</i></p></li>
-            <li><b>ALEXA DOMAIN: </b>
+            <li><b>Alexa Domain:</b>
                 <p><i>Normal</i></p></li>
-            <li><b>ALEXA EMOTION: </b>
+            <li><b>Alexa Emotion:</b>
                 <p><i>Neutral</i></p></li>
-            <li><b>ALEXA EMOTION INTENSITY: </b>
+            <li><b>Alexa Emotion Intensity:</b>
                 <p><i>Medium</i></p></li>
-            <li><b>TEXT: </b>
+            <li><b>Text:</b>
                 <p><i>Hello world!</i></p></li>
+            <li><b>Append:</b>
+                <p><code>false</code></p></li>
+        </ul>
+    </div>
+    <div>
+        <p>This is a simple reprompt. Naturally, you can tailor the message to fit your needs.</p>
+        <ul>
+            <li><b>Type:</b>
+                <p><i>Reprompt</i></p></li>
+            <li><b>Alexa Domain:</b>
+                <p><i>Normal</i></p></li>
+            <li><b>Alexa Emotion:</b>
+                <p><i>Neutral</i></p></li>
+            <li><b>Alexa Emotion Intensity:</b>
+                <p><i>Medium</i></p></li>
+            <li><b>Text:</b>
+                <p><i>In order to continue, please tell me your name.</i></p></li>
+            <li><b>Append:</b>
+                <p><code>false</code></p></li>
         </ul>
     </div>
 </div>
