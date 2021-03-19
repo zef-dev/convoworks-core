@@ -596,15 +596,15 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\ElseIfElement',
-                'ELSE IF',
-                'Test against an expression and execute own THEN flow if true',
+                'Else If',
+                'Test against an expression and run children if true',
                 [
                     'test' => [
                         'editor_type' => 'text',
                         'editor_properties' => [],
                         'defaultValue' => null,
                         'name' => 'Test',
-                        'description' => 'Test to be checked',
+                        'description' => 'An expression to be evaluated',
                         'valueType' => 'string'
                     ],
                     'then' => [
@@ -616,7 +616,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'defaultValue' => [],
                         'defaultOpen' => false,
                         'name' => 'Then',
-                        'description' => 'Flow to be executed if test is evaluated as TRUE',
+                        'description' => 'Flow to be run if test is evaluated as a truthy value',
                         'valueType' => 'class'
                     ],
                     '_preview_angular' => [
