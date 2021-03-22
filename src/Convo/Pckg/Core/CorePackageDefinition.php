@@ -721,7 +721,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_properties' => array(),
                         'defaultValue' => '',
                         'name' => 'Count',
-                        'description' => 'How many times should be executed',
+                        'description' => 'Number of loop iterations',
                         'valueType' => 'string'
                     ),
                     'status_var' => array(
@@ -729,7 +729,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_properties' => array(),
                         'defaultValue' => '',
                         'name' => 'Status variable',
-                        'description' => 'Result variable name',
+                        'description' => 'Variable name for accessing loop iteration information, such as the current index',
                         'valueType' => 'string'
                     ),
                     'elements' => array(
