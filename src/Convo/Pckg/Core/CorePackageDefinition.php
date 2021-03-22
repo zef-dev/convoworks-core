@@ -502,7 +502,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         ),
                         'defaultValue' => 'request',
                         'name' => 'Scope type',
-                        'description' => 'Id under which parameters are stored',
+                        'description' => 'Scope under which to store parameters',
                         'valueType' => 'string'
                     ),
                     'properties' => array(
@@ -1363,7 +1363,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         ),
                         'defaultValue' => 'session',
                         'name' => 'Scope type',
-                        'description' => 'Id under which parameters are stored',
+                        'description' => 'Scope under which to store parameters',
                         'valueType' => 'string'
                     ),
                     'parameters' => array(
