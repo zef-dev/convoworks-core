@@ -368,7 +368,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\GoToElement',
-                'GOTO',
+                'Go To',
                 'Stops current block execution and continues with read flow of selected block. You can call the same block, but only from process or failback flow.',
                 array(
                     'value' => array(
@@ -406,7 +406,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\ReadElementsFragment',
-                'INCLUDE',
+                'Include Read Fragment',
                 'Includes referenced read fragment',
                 array(
                     'fragment_id' => array(
@@ -531,7 +531,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\IfElement',
-                'IF',
+                'If Junction',
                 'Test against an expression and execute various flows depending on the result',
                 [
                     'test' => [
@@ -636,7 +636,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\LoopElement',
-                'LOOP',
+                'For-each Loop',
                 'Iterates over a collection and runs children for each item.',
                 array(
                     'name' => array(
@@ -703,7 +703,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\ForElement',
-                'FOR',
+                'For Loop',
                 'Loops through a block of code a specified number of times.',
                 array(
                     'name' => array(
@@ -754,7 +754,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\EndSessionElement',
-                'END session',
+                'End Session',
                 'Sends end session signal to device',
                 array(
                     '_help' =>  array(
@@ -767,7 +767,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Processors\SimpleProcessor',
-                'Simple processor',
+                'Simple Processor',
                 'Process elements if child filters are activated',
                 array(
                     'name' => array(
@@ -973,7 +973,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Processors\YesNoProcessor',
-                'Yes/No processor',
+                'Yes/No Processor',
                 'A simple yes/no junction processor',
                 array(
                     'name' => array(
@@ -1074,7 +1074,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\ElementRandomizer',
-                'Element randomizer',
+                'Element Randomizer',
                 'Picks just one child element end executes it',
                 array(
                     'name' => array(
@@ -1353,7 +1353,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\HttpQueryElement',
-                'HTTP client',
+                'HTTP Query',
                 'Perform an HTTP request to a specified endpoint',
                 array(
                     'scope_type' => array(
@@ -1666,7 +1666,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\ConversationBlock',
-                'Conversation block',
+                'Conversation Block',
                 'A step in the conversation flow. It has initial read phase serves for informing user about thing he can do.
 Process phase tries to execute user command, if matched. If no match is found the default phase is executed.
 In default phase you can inform users about problem you have interpreting command.',
@@ -1737,7 +1737,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\MediaBlock',
-                'Media block',
+                'Media Block',
                 'A special role "media_player" block, that handles audio player requests (not in standard service session).',
                 array(
                     'role' => array(
@@ -1824,7 +1824,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\MediaInfoElement',
-                'Media info element',
+                'Media Info',
                 'Provides info about current songs in the connected Media Context component',
                 array(
                     'context_id' => array(
@@ -1883,7 +1883,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\StartAudioPlayback',
-                'Start Audio playback',
+                'Start Audio Playback',
                 'Initiates audio playback and automatically stops the current session.',
                 array(
                     'context_id' => array(
@@ -1937,7 +1937,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\LoopBlock',
-                'Loop block',
+                'Loop Block',
                 'Special conversation block type that will iterate over given array by itself.',
                 array(
                     'role' => array(
@@ -2061,7 +2061,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Filters\NopRequestFilter',
-                'NOP filter',
+                'No-Op filter',
                 'No operation - does nothing',
                 array(
                     'empty' => array(
@@ -2105,7 +2105,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\ElementsFragment',
-                'Elements fragment',
+                'Elements Fragment',
                 'Read workflow fragment',
                 array(
                     'fragment_id' => array(
@@ -2143,7 +2143,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Processors\ProcessorFragment',
-                'Processors fragment',
+                'Processors Fragment',
                 'Fragment which contains processors',
                 array(
                     'fragment_id' => array(
@@ -2215,7 +2215,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Processors\ProcessProcessorFragment',
-                'INCLUDE',
+                'Include Processor Fragment',
                 'Include processor fragment',
                 array(
                     'fragment_id' => array(
