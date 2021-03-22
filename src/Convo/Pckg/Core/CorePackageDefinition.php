@@ -492,8 +492,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\SetParamElement',
-                'Set parameter element',
-                'Sets parameters',
+                'Set Parameter',
+                'Set up key-value pairs in a given scope',
                 array(
                     'scope_type' => array(
                         'editor_type' => 'select',
@@ -850,7 +850,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Filters\PlatformIntentReader',
                 'Platform Intent',
-                'Reads platform intents. Use here specific platform intent names',
+                'Reads platform intents. Use for matching specific platform intents.',
                 array(
                     'intent' => array(
                         'editor_type' => 'text',
@@ -879,7 +879,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         ),
                         'defaultValue' => array(),
                         'name' => 'Rename values',
-                        'description' => 'Use values but with different name',
+                        'description' => 'Use incoming values under a different name',
                         'valueType' => 'array'
                     ),
                     '_preview_angular' => array(
