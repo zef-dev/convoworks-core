@@ -48,14 +48,6 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         'description' => 'Name under which to store the loaded user object in the context',
                         'valueType' => 'string'
                     ],
-                    'prompt_for_linking' => [
-                        'editor_type' => 'boolean',
-                        'editor_properties' => [],
-                        'defaultValue' => false,
-                        'name' => 'Prompt for linking',
-                        'description' => 'Prompt the user to link their account if an authenticated user could not be loaded.',
-                        'valueType' => 'boolean'
-                    ],
                     '_preview_angular' => [
                         'type' => 'html',
                         'template' => '<div class="code">' .

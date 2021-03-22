@@ -8,7 +8,6 @@ use Convo\Core\Rest\RestSystemUser;
 use Convo\Core\Util\IHttpFactory;
 use Convo\Core\Workflow\AbstractWorkflowComponent;
 use Convo\Core\Workflow\IConversationElement;
-use Psr\Http\Client\ClientExceptionInterface;
 
 class GetAmazonUserElement extends AbstractWorkflowComponent implements IConversationElement
 {
@@ -67,11 +66,6 @@ class GetAmazonUserElement extends AbstractWorkflowComponent implements IConvers
                 {
                     $this->_logger->warning('User not authorized.');
                     $params->setServiceParam($this->_name, null);
-
-                    if ($this->_promptForLinking) {
-                        /** @var \Convo\Core\Adapters\Alexa\AmazonCommandResponse $response */
-                        $response->promptAccountLinking();
-                    }
                 }
                 catch (\Exception $e)
                 {
