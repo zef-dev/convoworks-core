@@ -216,7 +216,7 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
     private function _readJson( \Psr\Http\Message\ResponseInterface $apiResponse) {
         $content = json_decode( $apiResponse->getBody()->__toString(), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidJsonException('Invalid json response.');
+            throw new InvalidJsonException('The received response was not valid JSON.');
         }
         return $content;
     }

@@ -1,44 +1,72 @@
 <div class="http-client-help">
     <h3>Http Client</h3>
 
-    <p>Perform an HTTP request to a specified endpoint</p>
+    <p>Perform an HTTP request to a specified endpoint.</p>
 
     <h3>When to use?</h3>
 
-    <p>When you want to access data from a web service endpoint</p>
+    <p>Whenever you have some data that you need from a separate web end point, or if perhaps you're trying to update something. This will allow you to perform HTTP requests.</p>
 
     <h3>How to use: </h3>
     <ol>
-        <li>Select a <b>Scope type</b> from the drop-down</li>
-        <li>Scope type <b>installation</b> is for the duration of the whole installation and has the longest life span</li>
-        <li>Scope type <b>session</b> is for the duration of the session</li>
-        <li>Scope type <b>request</b> is for the duration of a single request</li>
-        <li>Select if the result <b>Parameters</b> will be stored as either <i>service</i> or <i>block</i> variables</li>
-        <li>In the <b>Result name</b> field enter the name the result will be stored under</li>
-        <li>In the <b>Endpoint URL</b> field enter the URL you wish to send request to</li>
-        <li>In the <b>Content type</b> drop-down enter the content type you're expecting to get in the headers</li>
-        <li>In the <b>HTTP method</b> drop-down choose between GET or POST methods</li>
-        <li>You can cache GET requests by entering a <b>Cache timeout</b> number in seconds</li>
-        <li>In the <b>Timeout</b> field enter how long should a request wait for a response in seconds</li>
-        <li>In the <b>Headers</b> field you can add HTTP headers, and in the <b>Parameters</b> field you can add parameters to be sent with the request</li>
-        <li>You can also send  JSON format <b>Request Body</b> in the POST request</li>
-        <li>The element contains two flows to be executed, depending on the request success: OK and NOK</li>
-        <li>You can access the result body in the OK flow like this: <i>${resultName.body.valueYouWantToAccess}</i></li>
-        <li>To access the response status code and error messages use this syntax: <i>${resultName.status}</i></li>
+        <li>
+            Select a <b>Scope type</b> from the drop-down
+            <ul>
+                <li>Scope type <b>installation</b> is for the duration of the whole installation and has the longest life span. This is essentially stored on the device.</li>
+                <li>Scope type <b>session</b> is for the duration of the current session. This will persist until the user exits the skill.</li>
+                <li>Scope type <b>request</b> is for the duration of a single request. This is the shortest life span and is useful if you're only interested in a bit of data short term.</li>
+            </ul>
+        </li>
+        <li>
+            From the <b>Parameters</b> drop down, pick where you want to store responses.
+            <ul>
+                <li>Storing parameters in the <b>Service</b> level makes them available anywhere else in the service.</li>
+                <li>Storing them at <b>Block</b> level makes them availalbe only in the current block.</li>
+            </ul>
+        </li>
+        <li>In the <b>Result name</b> field enter the name the result will be stored under.</li>
+        <li>In the <b>Endpoint URL</b> field enter the URL you wish to send the request to.</li>
+        <li>From the <b>Content type</b> drop-down, select the content type you're expecting to get in the headers. If you're unsure, leave it at <code>Auto</code>.</li>
+        <li>
+            In the <b>HTTP method</b> drop-down choose between <code>GET</code>, <code>POST</code>, or <code>PUT</code> methods
+            <ul>
+                <li>You can cache <code>GET</code> requests by entering a <b>Cache timeout</b> value, numbered in seconds.</li>
+                <li>For <code>POST</code> and <code>PUT</code> requests, you can add a JSON <b>Body</b> to send.</li>
+            </ul>
+        </li>
+        <li>In the <b>Timeout</b> field enter an amount, in seconds, the request can hang for before it is terminated.</li>
+        <li>In the <b>Headers</b> field you can add HTTP headers, and in the <b>Parameters</b> field you can add URL query parameters (<code>?parameter=value</code>)</li>
+        <li>
+            The element contains two flows to be executed, depending on the request success: OK and NOK
+            <ul>
+                <li>To access the body of the response, use the <code>body</code> property on your result variable. For example, if for <b>Result name</b> you chose <code>row</code>, then you could access the body with <code>${row.body}</code></li>
+                <li>To access the HTTP status of the request, use the <code>status</code> attribute on your response, e.g. <code>${row.status}</code>.</li>
+                <li>For errors, you can access the message with the <code>error</code> parameter, e.g. <code>${row.error}</code>.</li>
+            </ul>
+        </li>
     </ol>
 
     <h3>Example of usage</h3>
     <div>
-        <p>Accessing horoscope API endpoint and outputting horoscope data:</p>
+        <p>Here's an example of how you might fetch and read the horoscope for any given sign. Start off by using a <code>Set Parameter</code> element to set a parameter called <code>sign</code> to any of the horoscope signs, in lower case. For example, <code>virgo</code></p>
+        <p>Next, place an <code>HTTP Query</code> element. Configure it as follows:</p>
         <ul>
             <li><b>Scope type:</b> <i>Installation</i></li>
             <li><b>Parameters:</b> <i>Block Params</i></li>
-            <li><b>Result name:</b> <i>row</i></li>
-            <li><b>Endpoint URL:</b> <i>http://ohmanda.com/api/horoscope/${horoscopeSign}/</i></li>
-            <li><b>Content type:</b> <i>JSON</i></li>
-            <li><b>HTTP method:</b> <i>GET</i></li>
-            <li><b>Timeout:</b> <i>1</i></li>
-            <li>For output, place the <b>Text Response</b> element in the OK flow and enter this in the <b>TEXT</b> field,: <i>${row.body.horoscope}</i></li>
+            <li><b>Result name:</b> <code>row</code></li>
+            <li>
+                <b>Endpoint URL:</b> <code>http://ohmanda.com/api/horoscope/${sign}/</code>
+                <ul>
+                    <li><i>Note:</i> The URL is extrapolated! We're using the sign you previously set as part of the URL here.</li>
+                </ul>
+            </li>
+            <li><b>Content type:</b> <code>JSON</code> <i>or</i> <code>Auto</code></li>
+            <li><b>HTTP method:</b> <code>GET</code></li>
+            <li><b>Timeout:</b> <i>10</i></li>
+            <li>
+                For output, place a <code>Text Response</code> element in the OK flow. In the <b>Text</b> field of the <code>Text Response</code> element, write the following (without the quotation marks)
+                <q>The current horoscope for <code>${sign}</code> is: <code>${row.body.horoscope}</code></q>
+            </li>
         </ul>
     </div>
 </div>

@@ -1396,7 +1396,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'select',
                         'editor_properties' => array(
                             'multiple' => false,
-                            'options' => array( 'AUTO'=> 'AUTO', 'JSON' => 'JSON', 'TEXT' => 'TEXT')
+                            'options' => array( 'AUTO'=> 'Auto', 'JSON' => 'JSON', 'TEXT' => 'Plain Text')
                         ),
                         'defaultValue' => 'AUTO',
                         'name' => 'Content Type',
@@ -1407,7 +1407,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'select',
                         'editor_properties' => array(
                             'multiple' => false,
-                            'options' => array( 'GET'=> 'GET', 'POST' => 'POST')
+                            'options' => array( 'GET'=> 'GET', 'POST' => 'POST', 'PUT' => 'PUT')
                         ),
                         'defaultValue' => 'GET',
                         'name' => 'HTTP method',
@@ -1416,7 +1416,9 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     'cache_timeout' => array(
                         'editor_type' => 'text',
-                        'editor_properties' => array(),
+                        'editor_properties' => array(
+                            'dependency' => 'component.properties.method === "GET"'
+                        ),
                         'defaultValue' => 0,
                         'name' => 'Cache timeout',
                         'description' => 'Cache GET requests. Expiration value is in seconds',
@@ -1452,10 +1454,12 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     'body' => array(
                         'editor_type' => 'desc',
-                        'editor_properties' => array(),
+                        'editor_properties' => array(
+                            'dependency' => 'component.properties.method === "POST" || component.properties.method === "PUT"'
+                        ),
                         'defaultValue' => null,
                         'name' => 'Request body',
-                        'description' => 'JSON body to send with POST request',
+                        'description' => 'JSON body to send with POST or PUT request',
                         'valueType' => 'string'
                     ),
                     'ok' => [
@@ -1467,7 +1471,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'defaultValue' => [],
                         'defaultOpen' => false,
                         'name' => 'OK',
-                        'description' => 'Flow to be executed if an http request was successful. [example usage in ok flow: ${row.body} -> to get data from the retrieved response]',
+                        'description' => 'Flow to be executed if an HTTP request was successful',
                         'valueType' => 'class'
                     ],
                     'nok' => [
@@ -1479,7 +1483,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'defaultValue' => [],
                         'defaultOpen' => false,
                         'name' => 'NOK',
-                        'description' => 'Flow to be executed if an http request was unsuccessful. [example usage in nok flow: ${row.code} -> to get error code ${row.error} -> to get error message]',
+                        'description' => 'Flow to be executed if an HTTP request was unsuccessful',
                         'valueType' => 'class'
                     ],
                     '_preview_angular' => array(
