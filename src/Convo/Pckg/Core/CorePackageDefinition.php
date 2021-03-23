@@ -1014,8 +1014,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'type' => 'html',
                         'template' => '<div class="user-say">' .
                             'User says: <b>"yes"</b>, <b>"sure"</b>, <b>"cool"</b>, <b>"no"</b>, <b>"nope"</b>,   ...' .
-                            '</div>' .
-                            ''
+                            '</div>'
                     ),
                     '_help' =>  array(
                         'type' => 'file',
