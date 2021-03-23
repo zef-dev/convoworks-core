@@ -789,7 +789,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'defaultValue' => [],
                         'defaultOpen' => false,
                         'name' => 'OK flow',
-                        'description' => 'Flow to be executed if processor is matched',
+                        'description' => 'Flow to be executed if filters are matched',
                         'valueType' => 'class',
                     ),
                     'request_filters' => array(
