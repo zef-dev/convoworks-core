@@ -2215,7 +2215,7 @@ In default phase you can inform users about problem you have interpreting comman
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Processors\ProcessProcessorFragment',
                 'Include Processor Fragment',
-                'Include processor fragment',
+                'Include a processor fragment to reuse behavior',
                 array(
                     'fragment_id' => array(
                         'editor_type' => 'process_fragment',
@@ -2229,9 +2229,9 @@ In default phase you can inform users about problem you have interpreting comman
                         'type' => 'html',
                         'template' => '<div class="code">' .
                             '<span class="statement">INCLUDE</span> ' .
-                        "<span ng-if=\"!isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id\">{{ getSubroutineName( component.properties.fragment_id)}}</span>" .
-                        "<span ng-if=\"isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id linked\"".
-                        " ng-click=\"selectSubroutine( component.properties.fragment_id); \$event.stopPropagation()\">{{ getSubroutineName( component.properties.fragment_id)}}</span>" .
+                            "<span ng-if=\"!isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id\">{{ getSubroutineName( component.properties.fragment_id)}}</span>" .
+                            "<span ng-if=\"isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id linked\"".
+                            " ng-click=\"selectSubroutine( component.properties.fragment_id); \$event.stopPropagation()\">{{ getSubroutineName( component.properties.fragment_id)}}</span>" .
                             '</div>'
                     ),
                     '_help' =>  array(
