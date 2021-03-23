@@ -115,7 +115,10 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                             '<div class="list-item">'.
                             '<div class="row">'.
                             '<div class="col-md-2">'.
-                                '<div class="image-placeholder" ng-if="component.properties.list_item_image_url"><div>IMG</div></div>' .
+                                '<div class="image-placeholder" ng-if="component.properties.list_item_image_url && component.properties.list_item_image_url.indexOf(\'http\') !== 0"><div>IMG</div></div>' .
+                                '<div class="image-placeholder" ng-if="component.properties.list_item_image_url && component.properties.list_item_image_url.indexOf(\'http\') === 0">'.
+                                    '<img src="{{component.properties.list_item_image_url}}" alt="IMG">'.
+                                '</div>' .
                             '</div>'.
                             '<div class="col-md-10">'.
                                 '<div class="title">{{component.properties.list_item_title}}</div><div class="subtitle"> {{component.properties.list_item_description_2}}</div>' .
