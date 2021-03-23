@@ -5,29 +5,28 @@
 
     <h3>When to use?</h3>
 
-    <p>When we want to catch the certain <b>convo</b> intent which activates this filter and then execute block of code in <b>simple processor</b> element.</p>
+    <p>Whenever you want to react to a request carrying an intent you have previously defined, also known as a <i>Convo intent</i>.</p>
 
-    <h3>How to use 1.1: </h3>
+    <h3>How to use</h3>
     <ol>
-    	<li>Select the certain <b>INTENT</b> from the drop-down <br>example: <i>GuessTheNumber</i></li>
-    	<li>Intent GuessTheNumber has Slot name <b>guess</b> and Slot type <b>@convo-core.number</b></li>
-    </ol>
-    <h3>How to use 1.2: </h3>
-    <ol>
-    	<li>Select the certain <b>INTENT</b> from the drop-down <br>example: <i>NumberFailbackFour</i> (sample utterances for this intent: <i>is it <b>for</b>, is your number <b>for</b>, <b> for</b></i>)</li>
-    	<li><i>(Optional)</i> In the <b>Required Slots</b> field, add <b>slot name</b>(if required slot is empty, filter will not activate even if intent name is correct.) <br>example: <i>MySlotName</i></li>
-    	<li>Add predefined values you wish to store into the <b>Predefined Values</b> field <br>example: <i>guess : 4</i> <br>When we try to guess the number and for some reason the device understands word <b>for</b> instead number <b>four</b> then we catch <b>NumberFailbackFour</b> intent instead <b>GuessTheNumber</b> intent and we set slot name <b>guess</b> to <b>4</b></li>
-    </ol>
-    
-    <h3>How to use 2.1: </h3>
-    <ol>
-    	<li>Select the certain <b>INTENT</b> from the drop-down <br>example: <i>SetDeviceName</i>(sample utterances for this intent: <i>is it <b>Adam</b>, call it <b>Adam</b></i>)</li>
-    	<li>Intent SetDeviceName has Slot name <b>device_name</b> and Slot type <b>@convo-core.any</b></li>
-    </ol>
-    <h3>How to use 2.2: </h3>
-    <ol>
-    	<li>Select the certain <b>INTENT</b> from the drop-down <br>example: <i>SetDeviceNameSolo</i> (sample utterances for this intent: <i><b>Billy</b></i>)</li>
-    	<li><i>(Optional)</i> In the <b>Required Slots</b> field, add <b>slot name</b>(if required slot is empty, filter will not activate even if intent name is correct.) <br>example: <i>MySlotName</i></li>
-    	<li>Add values you wish to store into the <b>Rename Values</b> field <br>example: <i>device_name_solo : device_name</i> <br>When we try to say new invocation name for the device, for some reason some platform does not support mixing sample utterance with one word and sample utterance with more words in same intent, so we need new intent(SetDeviceNameSolo) with just one sample utterance and then we can rename device_name_solo to device_name and then we can use this slot name. </li>
+        <li>
+            Select the intent you wish to filter from the <b>Intent</b> drop-down. This drop-down menu is automatically populated with intents you have defined, and <i>system intents</i> that are defined in the packages you have included.
+            <ul>
+                <li>A list of slot names and their values that are used in the selected intent's utterance list will be displayed below the menu, if any are available. This gives you an idea of the data you can expect from an intent.</li>
+            </ul>
+        </li>
+        <li>If you want to make absolutely sure that a slot value is present before even considering an intent, add the slot name(s) to the <b>Required slots</b> field. If even one slot from the list is empty in the incoming request, the whole filter is rejected, even if the intent name matches.</li>
+        <li>
+            You can add <b>Predefined values</b> if you want to make them available on the <code>result</code> object.
+            <ul>
+                <li><b>These are not slots!</b> They will not activate the filter if you create a predefined value with the same name as a member of the <b>Required slots</b> list.</li>
+            </ul>
+        </li>
+        <li>
+            You can rename incoming slot values if you want to, by setting up <b>Rename values</b> pairs.
+            <ul>
+                <li>Just like <b>Predefined values</b>, these will not trigger the filter if you rename a slot to a memeber on the <b>Required slots</b> list.</li>
+            </ul>
+        </li>
     </ol>
 </div>
