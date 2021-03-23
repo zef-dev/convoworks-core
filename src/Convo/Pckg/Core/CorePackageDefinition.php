@@ -258,7 +258,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\TextResponseElement',
-                'Text response',
+                'Text Response',
                 'Present the user with a text response. Use SSML for finer control.',
                 array(
                     'type' => array(
@@ -333,7 +333,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\CommentElement',
-                'Editor comment',
+                'Editor Comment',
                 'A simple element that only serves to leave a comment in the editor',
                 array(
                     'comment' => array(
