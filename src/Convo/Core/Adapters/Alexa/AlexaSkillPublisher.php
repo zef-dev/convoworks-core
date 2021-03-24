@@ -1020,19 +1020,25 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
     }
 
-    private function _getAccountLinkingInformation() {
-        return [];
-    }
-
-    private function _getDownloadLink($serviceId, $mediaItemId, $alternativeDownloadLink = '') {
-        if ($mediaItemId !== '') {
-            $parsedUrl = parse_url($mediaItemId);
-            if (is_array($parsedUrl) && count($parsedUrl) > 1) {
-                return $mediaItemId;
+    private function _getDownloadLink($serviceId, $mediaItem, $alternativeDownloadLink = '') {
+        $iconUrl = $alternativeDownloadLink;
+        try {
+            if ($mediaItem !== '') {
+                $parsedUrl = parse_url($mediaItem);
+                if (is_array($parsedUrl) && count($parsedUrl) > 1) {
+                    $iconUrl = $mediaItem;
+                } else if (is_array($parsedUrl) && count($parsedUrl) === 1) {
+                    $iconUrl = $this->_mediaService->getMediaUrl($serviceId, $mediaItem);
+                }
             }
-            return $this->_mediaService->getMediaUrl($serviceId, $mediaItemId);
+            $this->_amazonPublishingService->checkSkillIconAvailability($iconUrl);
+        } catch (ClientExceptionInterface $e) {
+            $this->_logger->warning("Could not fetch image with url " . [$iconUrl]);
+            $this->_logger->warning("More info [" . $e->getMessage() . "]");
+            $iconUrl = $alternativeDownloadLink;
         }
-        return $alternativeDownloadLink;
+
+        return $iconUrl;
     }
 
     private function _sanitizeText($text) {
