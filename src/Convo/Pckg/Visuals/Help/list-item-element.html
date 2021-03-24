@@ -1,6 +1,28 @@
 <div class="list-help">
     <h3>List Item Element</h3>
 
-    <p>Defines the content for a single list item. Most practical when used inside some Loop type component. Ignored on non display capable devices.</p>
-    <p>Make sure you have <b>List Title Element</b> before this one, in your workflow</p>
+    <p>Defines the content for a single list item. Most practical when used inside some form of a loop, such as <code>For-each Loop</code> or a <code>For Loop</code>. Ignored on non display capable devices.</p>
+    <p>Make sure you have <b>List Title</b> element before this one in your workflow.</p>
+
+    <h3>When to use?</h3>
+
+    <p>After you place a <code>List Title</code> element, use this element to fill out the list you wish to create.</p>
+
+    <h3>How to use</h3>
+    <ol>
+        <li>Under the <b>Key</b> property, enter any string that will uniquely identify this list item. Most often this will be the index of the item within an array or some other such collection.</li>
+        <li>Give the item a <b>Title</b>. This is the most prominent bit of text on the item.</li>
+        <li>
+            <b>Description 1</b> and <b>Description 2</b> are optional parameters to give your list item some more details.
+            <ul>
+                <li><i>N.B.</i> <b>Description 1</b> will be displayed on both Google Assistant and Alexa, while <b>Description 2</b> only works on Alexa.</li>
+            </ul>
+        </li>
+        <li>
+            You can display an image from a publically visible <b>Image URL</b>.
+            <ul>
+                <li>It is extremely important you enter <b>Image Text</b> if you have an image. This is used as accessiblity text, and your image <b>will not be displayed</b> if this text is missing.</li>
+            </ul>
+        </li>
+    </ol>
 </div>
