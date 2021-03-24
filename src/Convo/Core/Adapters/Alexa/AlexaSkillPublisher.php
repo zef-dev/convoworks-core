@@ -187,10 +187,13 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $manifest->setInterfaces($interfaces);
         }
 
+        $owner = $this->_adminUserDataProvider->findUser($meta['owner']);
+
         $smallSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon']) ?
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon'],
+                $owner,
                 self::PLACEHOLDER_SMALL_SKILL_URL
             ) : self::PLACEHOLDER_SMALL_SKILL_URL;
 
@@ -198,6 +201,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon'],
+                $owner,
                 self::PLACEHOLDER_LARGE_SKILL_URL
             ) : self::PLACEHOLDER_LARGE_SKILL_URL;
 
@@ -225,8 +229,6 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             ->setOptInToAutomaticLocaleDistribution($optInAutomaticDistribution, $defaultLocale)
 			->setGlobalEndpoint( $this->_serviceReleaseManager->getWebhookUrl( $this->_user, $this->_serviceId, $this->getPlatformId()))
 			->setGlobalCertificateType($endpointCertificate);
-
-		$owner = $this->_adminUserDataProvider->findUser($meta['owner']);
 
 		$vendorId = $sys_config['vendor_id'];
 		$this->_logger->info("Going to print manifest [" . $manifest->getManifest(true) . "]");
@@ -318,6 +320,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon'],
+                $owner,
                 self::PLACEHOLDER_SMALL_SKILL_URL
             ) : self::PLACEHOLDER_SMALL_SKILL_URL;
 
@@ -325,6 +328,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon'],
+                $owner,
                 self::PLACEHOLDER_LARGE_SKILL_URL
             ) : self::PLACEHOLDER_LARGE_SKILL_URL;
 
@@ -1020,7 +1024,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
     }
 
-    private function _getDownloadLink($serviceId, $mediaItem, $alternativeDownloadLink = '') {
+    private function _getDownloadLink($serviceId, $mediaItem, $owner, $alternativeDownloadLink = '') {
         $iconUrl = $alternativeDownloadLink;
         try {
             if ($mediaItem !== '') {
@@ -1031,7 +1035,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                     $iconUrl = $this->_mediaService->getMediaUrl($serviceId, $mediaItem);
                 }
             }
-            $this->_amazonPublishingService->checkSkillIconAvailability($iconUrl);
+            $this->_amazonPublishingService->checkSkillIconAvailability($iconUrl, $owner);
         } catch (ClientExceptionInterface $e) {
             $this->_logger->warning("Could not fetch image with url " . [$iconUrl]);
             $this->_logger->warning("More info [" . $e->getMessage() . "]");
