@@ -2,7 +2,9 @@
 
 namespace Convo\Core\Adapters\Alexa;
 
+use Convo\Core\Rest\RestSystemUser;
 use Convo\Core\Util\IHttpFactory;
+use Psr\Http\Client\ClientExceptionInterface;
 
 class AmazonPublishingService
 {
@@ -496,6 +498,25 @@ class AmazonPublishingService
 
         $body = json_decode($response->getBody()->__toString(), true);
         return $body['accountLinkingResponse'];
+    }
+
+    /**
+     * @param $imageUrl
+     * @param $owner
+     * @return mixed
+     * @throws ClientExceptionInterface
+     */
+    public function checkSkillIconAvailability($imageUrl, $owner) {
+        $this->_logger->debug("Going to check skill icon availability from url [$imageUrl]");
+
+        $response = $this->_executeRequest(
+            $owner,
+            IHttpFactory::METHOD_GET,
+            $imageUrl
+        );
+
+        $code = $response->getStatusCode();
+        return $code;
     }
 
 

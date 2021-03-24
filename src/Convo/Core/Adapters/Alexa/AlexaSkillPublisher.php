@@ -177,6 +177,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
 
 		$locales = $meta['supported_locales'];
+		$defaultLocale = $meta['default_locale'];
+		$optInAutomaticDistribution = isset($config[$this->getPlatformId()]['availability']['automatic_distribution']) ?
+            $config[$this->getPlatformId()]['availability']['automatic_distribution'] : true;
 
         $interfaces = isset($config[$this->getPlatformId()]['interfaces']) ? $config[$this->getPlatformId()]['interfaces'] : [];
 
@@ -184,10 +187,13 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $manifest->setInterfaces($interfaces);
         }
 
+        $owner = $this->_adminUserDataProvider->findUser($meta['owner']);
+
         $smallSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon']) ?
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon'],
+                $owner,
                 self::PLACEHOLDER_SMALL_SKILL_URL
             ) : self::PLACEHOLDER_SMALL_SKILL_URL;
 
@@ -195,6 +201,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon'],
+                $owner,
                 self::PLACEHOLDER_LARGE_SKILL_URL
             ) : self::PLACEHOLDER_LARGE_SKILL_URL;
 
@@ -219,10 +226,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 			->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
 			->setIsAvailableWorldwide(true)
 			->setDistributionMode(AmazonSkillManifest::DISTRIBUTION_MODE_PUBLIC)
+            ->setOptInToAutomaticLocaleDistribution($optInAutomaticDistribution, $defaultLocale)
 			->setGlobalEndpoint( $this->_serviceReleaseManager->getWebhookUrl( $this->_user, $this->_serviceId, $this->getPlatformId()))
 			->setGlobalCertificateType($endpointCertificate);
-
-		$owner = $this->_adminUserDataProvider->findUser($meta['owner']);
 
 		$vendorId = $sys_config['vendor_id'];
 		$this->_logger->info("Going to print manifest [" . $manifest->getManifest(true) . "]");
@@ -293,8 +299,12 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 		$skillId = $config[$this->getPlatformId()]['app_id'];
 
         $locales = $meta['supported_locales'];
+        $defaultLocale = $meta['default_locale'];
+        $optInAutomaticDistribution = isset($config[$this->getPlatformId()]['availability']['automatic_distribution']) ?
+            $config[$this->getPlatformId()]['availability']['automatic_distribution'] : true;;
 
 		$manifest = new AmazonSkillManifest();
+		$manifest->setLogger($this->_logger);
         $interfaces = isset($config[$this->getPlatformId()]['interfaces']) ? $config[$this->getPlatformId()]['interfaces'] : [];
 
         if (count($interfaces) > 0) {
@@ -310,6 +320,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon'],
+                $owner,
                 self::PLACEHOLDER_SMALL_SKILL_URL
             ) : self::PLACEHOLDER_SMALL_SKILL_URL;
 
@@ -317,6 +328,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon'],
+                $owner,
                 self::PLACEHOLDER_LARGE_SKILL_URL
             ) : self::PLACEHOLDER_LARGE_SKILL_URL;
 
@@ -343,6 +355,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             ->containsAds($config[$this->getPlatformId()]['privacy_and_compliance']['contains_ads'])
             ->isExportCompliant($config[$this->getPlatformId()]['privacy_and_compliance']['is_export_compliant'])
             ->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
+            ->setOptInToAutomaticLocaleDistribution($optInAutomaticDistribution, $defaultLocale)
             ->setGlobalCertificateType($endpointCertificate)
             ->setIsAvailableWorldwide(true);
 
@@ -1011,19 +1024,25 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
     }
 
-    private function _getAccountLinkingInformation() {
-        return [];
-    }
-
-    private function _getDownloadLink($serviceId, $mediaItemId, $alternativeDownloadLink = '') {
-        if ($mediaItemId !== '') {
-            $parsedUrl = parse_url($mediaItemId);
-            if (is_array($parsedUrl) && count($parsedUrl) > 1) {
-                return $mediaItemId;
+    private function _getDownloadLink($serviceId, $mediaItem, $owner, $alternativeDownloadLink = '') {
+        $iconUrl = $alternativeDownloadLink;
+        try {
+            if ($mediaItem !== '') {
+                $parsedUrl = parse_url($mediaItem);
+                if (is_array($parsedUrl) && count($parsedUrl) > 1) {
+                    $iconUrl = $mediaItem;
+                } else if (is_array($parsedUrl) && count($parsedUrl) === 1) {
+                    $iconUrl = $this->_mediaService->getMediaUrl($serviceId, $mediaItem);
+                }
             }
-            return $this->_mediaService->getMediaUrl($serviceId, $mediaItemId);
+            $this->_amazonPublishingService->checkSkillIconAvailability($iconUrl, $owner);
+        } catch (ClientExceptionInterface $e) {
+            $this->_logger->warning("Could not fetch image with url " . [$iconUrl]);
+            $this->_logger->warning("More info [" . $e->getMessage() . "]");
+            $iconUrl = $alternativeDownloadLink;
         }
-        return $alternativeDownloadLink;
+
+        return $iconUrl;
     }
 
     private function _sanitizeText($text) {

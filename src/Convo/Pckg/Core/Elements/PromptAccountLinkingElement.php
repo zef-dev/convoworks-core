@@ -18,6 +18,9 @@ class PromptAccountLinkingElement extends \Convo\Core\Workflow\AbstractWorkflowC
         {
             /** @var \Convo\Core\Adapters\Alexa\AmazonCommandResponse $response */
             $response->promptAccountLinking();
+            $response->setShouldEndSession(true);
+
+            throw new \Convo\Core\SessionEndedException();
         } else if (is_a($request, '\Convo\Core\Adapters\Gactions\ActionsCommandRequest'))
         {
             /** @var \Convo\Core\Adapters\Google\Gactions\ActionsCommandResponse $response */
@@ -25,6 +28,9 @@ class PromptAccountLinkingElement extends \Convo\Core\Workflow\AbstractWorkflowC
                 \Convo\Core\Adapters\Google\Common\IResponseType::SIGN_IN_RESPONSE,
                 null
             );
+            $response->setShouldEndSession(true);
+
+            throw new \Convo\Core\SessionEndedException();
         }
     }
 }

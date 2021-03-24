@@ -1,0 +1,31 @@
+<div class="for-help">
+    <h3>Get Amazon Amazon User Element</h3>
+
+    <p>Authenticates Amazon Users and displays their data.</p>
+
+    <h3>When to use?</h3>
+
+    <p>When you want to link Amazon End User Accounts to an Alexa Skill.</p>
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>
+            <span>Make sure you already have configured and propagated your service to Amazon Alexa with Account Linking enabled in <b>Account Linking Mode</b> <i>'Amazon'</i> and entered one or more of the following scopes:</span>
+            <ul>
+                <li><b>profile</b></li>
+                <li><b>profile:user_id</b></li>
+                <li><b>postal_code</b></li>
+            </ul>
+        </li>
+
+        <li>
+            <span>After the account linking process was successfully finished, you'll be able to access the user data like in the following examples:</span>
+            <ul>
+                <li><b>${user.user_id}</b> when <b>profile</b> or <b>profile:user_id</b> scope is present</li>
+                <li><b>${user.name}</b> when <b>profile</b> scope is present</li>
+                <li><b>${user.email}</b> when <b>profile</b> scope is present</li>
+                <li><b>${user.postal_code}</b> when <b>postal_code</b> scope is present</li>
+            </ul>
+        </li>
+    </ol>
+</div>

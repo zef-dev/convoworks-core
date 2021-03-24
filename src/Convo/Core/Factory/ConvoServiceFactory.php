@@ -9,7 +9,7 @@ use Convo\Core\Intent\EntityModel;
 class ConvoServiceFactory
 {
 	const SERVICE_VERSION_ATTRIBUTE		=	'convo_service_version';
-	const SERVICE_VERSION	=	33;
+	const SERVICE_VERSION	=	34;
 
 	/**
 	 * @var \Convo\Core\Factory\PackageProviderFactory
@@ -265,6 +265,7 @@ class ConvoServiceFactory
 		$migrations[]	=	new \Convo\Core\Migrate\MigrateTo31();
 		$migrations[]	=	new \Convo\Core\Migrate\MigrateTo32();
 		$migrations[]	=	new \Convo\Core\Migrate\MigrateTo33();
+		$migrations[]	=	new \Convo\Core\Migrate\MigrateTo34();
 
 		return $migrations;
 	}
