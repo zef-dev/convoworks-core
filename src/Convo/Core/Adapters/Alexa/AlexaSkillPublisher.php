@@ -1024,7 +1024,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
     }
 
-    private function _getDownloadLink($serviceId, $mediaItem, $owner, $alternativeDownloadLink = '') {
+    private function _getDownloadLink($serviceId, $mediaItem, $owner, $alternativeDownloadLink) {
         $iconUrl = $alternativeDownloadLink;
         try {
             if ($mediaItem !== '') {
@@ -1036,7 +1036,21 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 }
             }
             $this->_amazonPublishingService->checkSkillIconAvailability($iconUrl, $owner);
-        } catch (ClientExceptionInterface $e) {
+            $imageSize = getimagesize($iconUrl);
+
+            $width = $imageSize[0];
+            $height = $imageSize[1];
+
+            if ($alternativeDownloadLink === self::PLACEHOLDER_SMALL_SKILL_URL) {
+                if ($width !== 108 && $height !== 108) {
+                    throw new \Exception('Invalid dimensions for Small Skill Icon');
+                }
+            } else if ($alternativeDownloadLink === self::PLACEHOLDER_LARGE_SKILL_URL) {
+                if ($width !== 512 && $height !== 512) {
+                    throw new \Exception('Invalid dimensions for Large Skill Icon');
+                }
+            }
+        } catch (\Exception $e) {
             $this->_logger->warning("Could not fetch image with url " . [$iconUrl]);
             $this->_logger->warning("More info [" . $e->getMessage() . "]");
             $iconUrl = $alternativeDownloadLink;
