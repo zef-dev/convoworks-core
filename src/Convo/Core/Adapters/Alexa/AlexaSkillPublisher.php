@@ -126,12 +126,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                     $certFile = $this->_serviceId . "_cert.pem";
                     $this->_logger->debug("Going to create cert file [" . $certFile . "]");
                     $config[$this->getPlatformId()]['endpoint_ssl_certificate_type'] = $sslCertificateType;
-                    $file = new SimpleFileResource(
-                        $certFile,
-                        "application/octet-stream",
-                        $selfSignedSslCertificateFromSkill
-                    );
-                    $config[$this->getPlatformId()]['self_signed_certificate'] = $this->_mediaService->saveMediaItem($this->_serviceId, $file);
+                    $config[$this->getPlatformId()]['self_signed_certificate'] = $selfSignedSslCertificateFromSkill;
                 } else {
                     $config[$this->getPlatformId()]['endpoint_ssl_certificate_type'] = AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD;
                     $config[$this->getPlatformId()]['self_signed_certificate'] = null;
@@ -982,9 +977,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
     {
         if ($config['endpoint_ssl_certificate_type'] === AmazonSkillManifest::CERTIFICATE_TYPE_SELF_SIGNED) {
             if (isset($config['self_signed_certificate'])) {
-                $sslCertificate = $this->_mediaService->getMediaItem(
-                    $this->_serviceId, $config['self_signed_certificate']
-                    )->getContent();
+                $sslCertificate = $config['self_signed_certificate'];
                 $this->_logger->debug("Printing self signed ssl certificate [" . $sslCertificate . "] when [" . $config['endpoint_ssl_certificate_type'] . "] is selected." );
                 $this->_amazonPublishingService->uploadSelfSignedSslCertificateToSkill($owner, $skillId, $sslCertificate);
             }
