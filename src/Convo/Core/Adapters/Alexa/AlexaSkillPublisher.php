@@ -584,7 +584,20 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             ];
         }
 
-	    /* REQUIRED FOR DISPLAY */
+        /* REQUIRED FOR AUDIO_PLAYER */
+        if (in_array("AUDIO_PLAYER", $interfaces)) {
+            $data['interactionModel']['languageModel']['intents'][] = [
+                "name" => "AMAZON.ResumeIntent",
+                "samples" => [],
+            ];
+
+            $data['interactionModel']['languageModel']['intents'][] = [
+                "name" => "AMAZON.PauseIntent",
+                "samples" => [],
+            ];
+        }
+
+        /* REQUIRED FOR DISPLAY */
         if (in_array("RENDER_TEMPLATE", $interfaces)) {
             $data['interactionModel']['languageModel']['intents'][] = [
                 "name" => "AMAZON.ScrollLeftIntent",
