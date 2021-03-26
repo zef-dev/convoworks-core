@@ -7,6 +7,12 @@
 * Old list element is marked as deprecated
 * IMediaSourceContext refactored, added 2 new media playing elements
 * PHP functions added: stripos, strtotime, time
+* Allow propagation on Alexa Distribution Information from Convoworks
+* Do not allow propagation of custom intents without sample utterances to Amazon Alexa
+* Add the ability to generate System Relevant URLS for the Editor
+* When transferring ownership of private service, add the previous owner to service Admins
+* Add New Element in Alexa Package Init Amazon User 
+* Minor fixes
 
 ## [Releases]
 
