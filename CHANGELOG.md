@@ -2,6 +2,10 @@
 
 ## [Current development]
 
+## [Releases]
+
+### 0.21.0 - 2021-03-27
+
 * Added List Title and List Item as separate elements in `convo-visuals` package
 * Enhanced preview for visual elements
 * Old list element is marked as deprecated
@@ -9,12 +13,10 @@
 * PHP functions added: stripos, strtotime, time
 * Allow propagation on Alexa Distribution Information from Convoworks
 * Do not allow propagation of custom intents without sample utterances to Amazon Alexa
-* Add the ability to generate System Relevant URLS for the Editor
+* Add the ability to generate System Relevant URLs for the Editor
 * When transferring ownership of private service, add the previous owner to service Admins
 * Add New Element in Alexa Package Init Amazon User 
 * Minor fixes
-
-## [Releases]
 
 ### 0.20.0 - 2021-02-22
 
