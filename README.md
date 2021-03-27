@@ -38,7 +38,7 @@ Admin rest allows access and management of the conversation workflow and publish
 
 You can use the [Convoworks Editor](https://github.com/zef-dev/convoworks-editor) which is tailored to cover all Convoworks admin api functionalities.
 
-There is a also Postman definition you can find in the docs folder which describes full API.
+There is also a Postman definition you can find in the docs folder which describes full API.
 
 ### Adapters
 
@@ -70,7 +70,7 @@ In order to mount Convoworks REST handlers, we have to bootstrap them somehow an
 
 ### Admin users
 
-Serves for accessing logged user and enables saving some specific user data (e.g. platform access configuration), service ownership and sharing.
+Serves for accessing the logged user and enables saving some specific user data (e.g. platform access configuration), service ownership and sharing.
 
 Convoworks is accessing user data through `\Convo\Core\IAdminUserDataProvider` interface which returns `\Convo\Core\IAdminUser` objects. You have to implement these two interfaces, because the user management is always system specific.
 
@@ -166,7 +166,7 @@ Here is the full ecosystem:
 Our handlers are always expecting `convo/v1` as a base for all Convoworks requests, so you can use wildcard to route all such requests to the Convoworks request handlers. Please note that we have two separate REST APIs, public and admin so they are treated and mounted separately.
 
 Instead of mapping each request handler we have, you can use our "grouped" handlers, just one per API. `\Convo\Core\Adapters\PublicRestApi` for public and `\Convo\Core\Admin\AdminRestApi` for admin API.
- Only difference is that in such case you have to use DI container.
+ Only difference is that in such a case you have to use a DI container.
 
 
 ### Registering packages
@@ -204,6 +204,7 @@ $request    =   $request->withAttribute( \Convo\Core\IAdminUser::class, $user);
 
 ## Roadmap
 
+* APL support - Alexa Presentation Language allows creation of much more delightful user interfaces for Alexa devices. 
 * Prefix our intent model on target platforms - It will enable users to manually create additional intents and entities directly on platform and not to be overwritten when model is propagated
 * Propagate platform system events - Ability to reference some platform intent or entity in a manner that it will be automatically turned on when we propagate Convoworks intent model
 * Component migration interface to packages - Ability to migrate component definitions to the new version. Right now it is on the core level, but should be on the package.
@@ -219,5 +220,3 @@ You can check our example integration called Convoworks Prototype. You can [down
 ---
 
 For more information, please check out [convoworks.com](https://convoworks.com)
-
-
