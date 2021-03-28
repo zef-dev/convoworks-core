@@ -77,6 +77,11 @@ class PackageProviderFactory
         return new PackageProvider($this->_logger, $available);
     }
 
+    /**
+     * @param string $namespace
+     * @throws DataItemNotFoundException
+     * @return \Convo\Core\Factory\IPackageDefinition
+     */
     public function getProviderByNamespace($namespace)
     {
         foreach ($this->_descriptors as $descriptor)
