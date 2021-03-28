@@ -64,8 +64,7 @@ class ComponentHelpRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
         ];
 
         return $this->_httpFactory->buildResponse($help, 200, [
-            'Content-Type' => 'application/json',
-            'Content-Length' => strlen($help['html_content'])
+            'Content-Type' => 'application/json'
         ]);
     }
 }

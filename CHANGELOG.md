@@ -2,6 +2,8 @@
 
 ## [Current development]
 
+* Removed content-length from comonent help handler
+
 ## [Releases]
 
 ### 0.21.0 - 2021-03-27
