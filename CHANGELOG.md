@@ -2,9 +2,11 @@
 
 ## [Current development]
 
-* Removed content-length from comonent help handler
-
 ## [Releases]
+
+### 0.21.1 - 2021-03-29
+
+* Removed content-length from comonent help handler
 
 ### 0.21.0 - 2021-03-27
 
