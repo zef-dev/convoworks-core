@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 
 use Convo\Core\EvaluationContext;
+use Convo\Core\Params\SimpleParams;
+use Convo\Core\Util\ArrayUtil;
 use PHPUnit\Framework\TestCase;
 use Convo\Core\Util\EchoLogger;
 use Psr\Log\LoggerInterface;
@@ -117,6 +119,39 @@ class EvaluationContextTest extends TestCase
         $context = new ArrayResolver($context);
 
         $actual = $this->_evalContext->evalArray($array, $context->getValues());
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @dataProvider paramParsingProvider
+     * @param array $expected
+     * @param string $array
+     * @param string $context
+     */
+    public function testParamSet($data, $string, $expected)
+    {
+        $params = new SimpleParams();
+
+        foreach ($data as $key => $val) {
+			$key	=	$this->_evalContext->evalString($key);
+			$parsed =   $this->_evalContext->evalString($val);
+
+
+			if (!ArrayUtil::isComplexKey($key))
+			{
+				$params->setServiceParam($key, $parsed);
+			}
+			else
+            {
+                $root = ArrayUtil::getRootOfKey($key);
+                $final = ArrayUtil::setDeepObject($key, $parsed, $params->getServiceParam($root) ?? []);
+                $params->setServiceParam($root, $final);
+			}
+		}
+
+        $context = new ArrayResolver($params->getData());
+        $actual = $this->_evalContext->evalString($string, $context->getValues());
 
         $this->assertEquals($expected, $actual);
     }
@@ -329,6 +364,36 @@ class EvaluationContextTest extends TestCase
                         ]
                     ]
                 ])
+            ]
+        ];
+    }
+
+    public function paramParsingProvider()
+    {
+        return [
+            [
+                [
+                    'simple' => '1',
+                ],
+                '${simple}', '1'
+            ],
+            [
+                [
+                    'array' => '${[1, 2, 3]}'
+                ],
+                '${array[0]}', '1'
+            ],
+            [
+                [
+                    'data["name"]' => "John"
+                ],
+                'My name is ${data["name"]}', 'My name is John'
+            ],
+            [
+                [
+                    'user' => '${{"name": "Bolvar"}}'
+                ],
+                'User name: ${user.name}', 'User name: Bolvar'
             ]
         ];
     }
