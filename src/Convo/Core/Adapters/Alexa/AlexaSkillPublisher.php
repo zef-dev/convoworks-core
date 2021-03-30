@@ -1056,8 +1056,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 }
             }
         } catch (\Exception $e) {
-            $this->_logger->warning("Could not fetch image with url " . [$iconUrl]);
-            $this->_logger->warning("More info [" . $e->getMessage() . "]");
+            $this->_logger->warning($e->getMessage());
             $iconUrl = $alternativeDownloadLink;
         }
 
