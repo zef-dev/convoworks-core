@@ -253,10 +253,10 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 );
                 $this->_logger->debug('Updated interaction model for [' . $locale . '], res ['.print_r($interaction_model_update_res, true).']');
             } catch (ClientExceptionInterface $e) {
+                $this->_logger->critical($e->getMessage());
                 $report = ['errors' => []];
                 $report['errors']['convoworks']['skill'] = "Interaction model couldn't be created, going to delete skill with id [" . $res['skillId'] . "]";
                 $this->delete($report);
-                throw new InvalidRequestException($e->getMessage(), 0, $e);
             }
         }
 
