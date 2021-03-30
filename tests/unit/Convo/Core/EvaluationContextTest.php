@@ -394,6 +394,12 @@ class EvaluationContextTest extends TestCase
                     'user' => '${{"name": "Bolvar"}}'
                 ],
                 'User name: ${user.name}', 'User name: Bolvar'
+            ],
+            [
+                [
+                    'card' => '${{"name": "Pack Rat", "mana_cost": "{1}{B}", "cmc": 2}}'
+                ],
+                '${card.name} (${card.mana_cost}) ${card.cmc}', 'Pack Rat ({1}{B}) 2'
             ]
         ];
     }
