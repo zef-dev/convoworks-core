@@ -14,9 +14,8 @@ use Psr\Http\Client\ClientExceptionInterface;
 
 class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 {
-    const PLACEHOLDER_SMALL_SKILL_URL = 'https://via.placeholder.com/108.png/09f/fffC/O';
-
-    const PLACEHOLDER_LARGE_SKILL_URL = 'https://via.placeholder.com/512.png/09f/fffC/O';
+    const PLACEHOLDER_SMALL_SKILL_URL = '';
+    const PLACEHOLDER_LARGE_SKILL_URL = '';
 
 	/**
 	 * @var string
@@ -254,10 +253,10 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 );
                 $this->_logger->debug('Updated interaction model for [' . $locale . '], res ['.print_r($interaction_model_update_res, true).']');
             } catch (ClientExceptionInterface $e) {
+                $this->_logger->critical($e->getMessage());
                 $report = ['errors' => []];
                 $report['errors']['convoworks']['skill'] = "Interaction model couldn't be created, going to delete skill with id [" . $res['skillId'] . "]";
                 $this->delete($report);
-                throw new InvalidRequestException($e->getMessage(), 0, $e);
             }
         }
 
@@ -1057,8 +1056,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 }
             }
         } catch (\Exception $e) {
-            $this->_logger->warning("Could not fetch image with url " . [$iconUrl]);
-            $this->_logger->warning("More info [" . $e->getMessage() . "]");
+            $this->_logger->warning($e->getMessage());
             $iconUrl = $alternativeDownloadLink;
         }
 
