@@ -14,9 +14,8 @@ use Psr\Http\Client\ClientExceptionInterface;
 
 class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 {
-    const PLACEHOLDER_SMALL_SKILL_URL = 'https://via.placeholder.com/108.png/09f/fffC/O';
-
-    const PLACEHOLDER_LARGE_SKILL_URL = 'https://via.placeholder.com/512.png/09f/fffC/O';
+    const PLACEHOLDER_SMALL_SKILL_URL = '';
+    const PLACEHOLDER_LARGE_SKILL_URL = '';
 
 	/**
 	 * @var string
