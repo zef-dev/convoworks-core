@@ -1056,6 +1056,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                     throw new \Exception('Invalid dimensions for Large Skill Icon');
                 }
             }
+        } catch (ClientExceptionInterface $e) {
+            $this->_logger->warning($e);
+            $iconUrl = $alternativeDownloadLink;
         } catch (\Exception $e) {
             $this->_logger->warning($e);
             $iconUrl = $alternativeDownloadLink;
