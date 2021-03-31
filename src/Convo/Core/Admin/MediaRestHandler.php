@@ -86,9 +86,7 @@ class MediaRestHandler implements \Psr\Http\Server\RequestHandlerInterface
             ]);
         }
 
-        if (!empty($response)) {
-            return $this->_httpFactory->buildResponse($response);
-        }
+        return $this->_httpFactory->buildResponse($response);
     }
 
     private function _handleMediaPathServiceIdPathMediaItemIdPathDownloadGet(\Psr\Http\Message\ServerRequestInterface $request, $serviceId, $mediaItemId)
