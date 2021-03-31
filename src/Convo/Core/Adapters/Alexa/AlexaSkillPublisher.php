@@ -14,8 +14,8 @@ use Psr\Http\Client\ClientExceptionInterface;
 
 class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 {
-    const PLACEHOLDER_SMALL_SKILL_URL = '';
-    const PLACEHOLDER_LARGE_SKILL_URL = '';
+    const TYPE_SMALL_SKILL_URL = 'small_skill_icon';
+    const TYPE_LARGE_SKILL_URL = 'large_skill_icon';
 
 	/**
 	 * @var string
@@ -188,16 +188,16 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon'],
                 $owner,
-                self::PLACEHOLDER_SMALL_SKILL_URL
-            ) : self::PLACEHOLDER_SMALL_SKILL_URL;
+                self::TYPE_SMALL_SKILL_URL
+            ) : '';
 
         $largeSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon']) ?
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon'],
                 $owner,
-                self::PLACEHOLDER_LARGE_SKILL_URL
-            ) : self::PLACEHOLDER_LARGE_SKILL_URL;
+                self::TYPE_LARGE_SKILL_URL
+            ) : '';
 
         $endpointCertificate = isset($config[$this->getPlatformId()]['endpoint_ssl_certificate_type']) ? $config[$this->getPlatformId()]['endpoint_ssl_certificate_type'] :
             AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD;
@@ -316,16 +316,16 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon'],
                 $owner,
-                self::PLACEHOLDER_SMALL_SKILL_URL
-            ) : self::PLACEHOLDER_SMALL_SKILL_URL;
+                self::TYPE_SMALL_SKILL_URL
+            ) : '';
 
         $largeSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon']) ?
             $this->_getDownloadLink(
                 $this->_serviceId,
                 $config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon'],
                 $owner,
-                self::PLACEHOLDER_LARGE_SKILL_URL
-            ) : self::PLACEHOLDER_LARGE_SKILL_URL;
+                self::TYPE_LARGE_SKILL_URL
+            ) : '';
 
         $manifest->setGlobalEndpoint(
             $this->_serviceReleaseManager->getWebhookUrl(
@@ -1030,8 +1030,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
     }
 
-    private function _getDownloadLink($serviceId, $mediaItem, $owner, $alternativeDownloadLink) {
-        $iconUrl = $alternativeDownloadLink;
+    private function _getDownloadLink($serviceId, $mediaItem, $owner, $typeSkillIconUrl) {
+        $iconUrl = '';
         try {
             if ($mediaItem !== '') {
                 $parsedUrl = parse_url($mediaItem);
@@ -1047,21 +1047,21 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $width = $imageSize[0];
             $height = $imageSize[1];
 
-            if ($alternativeDownloadLink === self::PLACEHOLDER_SMALL_SKILL_URL) {
+            if ($typeSkillIconUrl === self::TYPE_SMALL_SKILL_URL) {
                 if ($width !== 108 && $height !== 108) {
                     throw new \Exception('Invalid dimensions for Small Skill Icon');
                 }
-            } else if ($alternativeDownloadLink === self::PLACEHOLDER_LARGE_SKILL_URL) {
+            } else if ($typeSkillIconUrl === self::TYPE_LARGE_SKILL_URL) {
                 if ($width !== 512 && $height !== 512) {
                     throw new \Exception('Invalid dimensions for Large Skill Icon');
                 }
             }
         } catch (ClientExceptionInterface $e) {
             $this->_logger->warning($e);
-            $iconUrl = $alternativeDownloadLink;
+            $iconUrl = '';
         } catch (\Exception $e) {
             $this->_logger->warning($e);
-            $iconUrl = $alternativeDownloadLink;
+            $iconUrl = '';
         }
 
         return $iconUrl;
