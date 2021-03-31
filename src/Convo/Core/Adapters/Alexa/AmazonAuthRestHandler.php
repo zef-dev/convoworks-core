@@ -51,18 +51,18 @@ class AmazonAuthRestHandler implements RequestHandlerInterface
         {
             $query_params = $request->getQueryParams();
 
-            $this->_logger->debug('Got query params ['.print_r($query_params, true).']');
+            $this->_logger->info('Amazon auth with query params ['.print_r($query_params, true).']');
 
             $code = $query_params['code'] ?? null;
 
             if (isset($query_params['username']))
             {
-                $this->_logger->debug('Found actual username parameter in request');
+                $this->_logger->info('Found actual username parameter in request');
                 $username = $request->getQueryParams()['username'];
             }
             else if (isset($query_params['state']))
             {
-                $this->_logger->debug('Going to try parsing username from state ['.$query_params['state'].']');
+                $this->_logger->info('Going to try parsing username from state ['.$query_params['state'].']');
                 $username = base64_decode($query_params['state']);
             }
             else
@@ -70,7 +70,7 @@ class AmazonAuthRestHandler implements RequestHandlerInterface
                 throw new InvalidRequestException('Can not determine username in request ['.$info.']');
             }
 
-            $this->_logger->debug('Got username ['.$username.']');
+            $this->_logger->info('Got username ['.$username.']');
 
             $user = $this->_adminUserDataProvider->findUser($username);
 
@@ -91,6 +91,8 @@ class AmazonAuthRestHandler implements RequestHandlerInterface
     {
         $loginUrl = $this->_amazonAuthService->getAuthUri($user);
 
+        $this->_logger->info('Got Amazon auth URI ['.$loginUrl->__toString().']');
+
         return $this->_httpFactory->buildResponse([
             'authUrl' => $loginUrl->__toString()
         ]);
@@ -99,11 +101,14 @@ class AmazonAuthRestHandler implements RequestHandlerInterface
     private function _handleAdminAuthPathAmazonGet(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $code)
     {
         $res = $this->_amazonAuthService->redeemCodeForAccessToken($user, $code);
+        $t = time();
 
         $credentials = json_decode($res->getBody()->__toString(), true);
-        $credentials['created'] = time();
+        $credentials['created'] = $t;
 
         $this->_amazonAuthService->storeAuthCredentials($user, $credentials);
+
+        $this->_logger->info('Stored credentials for user ['.$user->getId().']['.$user->getUsername().']['.$t.']');
 
         return $this->_httpFactory->buildResponse([], 302, ['Location' => $this->_baseUrl]);
     }
