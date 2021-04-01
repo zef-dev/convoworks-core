@@ -4,6 +4,10 @@
 
 ## [Releases]
 
+### 0.21.2 - 2021-04-01
+
+* default Amazon skill images fix
+
 ### 0.21.1 - 2021-03-29
 
 * Removed content-length from comonent help handler
