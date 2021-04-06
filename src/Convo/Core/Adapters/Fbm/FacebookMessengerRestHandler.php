@@ -114,10 +114,11 @@ class FacebookMessengerRestHandler implements RequestHandlerInterface
 
         if ($mode && $token) {
             if ($mode === 'subscribe' && $token === $verify_token) {
-                $this->_logger->debug('Verified webhook from FB');
+                $this->_logger->info('Verified webhook from FB');
 
                 return $this->_httpFactory->buildResponse($challenge);
             } else {
+                $this->_logger->info('FB token could not be verified. Returning 403.');
                 return $this->_httpFactory->buildResponse([], 403);
             }
         }
@@ -134,7 +135,7 @@ class FacebookMessengerRestHandler implements RequestHandlerInterface
             $this->_handleRequest($variant, $serviceId, $request);
             return $this->_httpFactory->buildResponse('EVENT_RECEIVED');
         } else {
-          $this->_logger->warning("Messenger request not verified.");
+            $this->_logger->warning("Messenger request not verified.");
             return $errorResponse;
         }
     }
@@ -156,7 +157,7 @@ class FacebookMessengerRestHandler implements RequestHandlerInterface
 
         $signature = $request->getHeaderLine('X-Hub-Signature');
 
-        $this->_logger->info("Signature as array [" . $signature . "]");
+        $this->_logger->info("Signature header from request [" . $signature . "]");
         $meta = $this->_convoServiceDataProvider->getServiceMeta(
             new AdminUser('', '', '', '', ''), // todo @tole why does this method need an AdminUser when it doesn't do anything with it?
             $serviceId
@@ -171,11 +172,15 @@ class FacebookMessengerRestHandler implements RequestHandlerInterface
         $user = $this->_adminUserDataProvider->findUser($owner);
 
         $config = $this->_convoServiceDataProvider->getServicePlatformConfig(
-        $user,
-        $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+            $user,
+            $serviceId,
+            IPlatformPublisher::MAPPING_TYPE_DEVELOP
+        );
+
         $appsecret = $config['facebook_messenger']['app_secret'];
 
         if (!$this->_facebookAuthService->verifyPayloadVerity($appsecret, $signature, json_encode($request->getParsedBody()))) {
+            $this->_logger->info('Could not verify verity of payload.');
             $errorResponse =  $this->_httpFactory->buildResponse([], 400);
         }
 
@@ -183,7 +188,7 @@ class FacebookMessengerRestHandler implements RequestHandlerInterface
     }
 
     /**
-     * Handles the request and sends and response to facebook send api.
+     * Handles the request and sends a response to Facebook `send` API.
      *
      * @param $serviceId
      * @param $request
@@ -201,33 +206,39 @@ class FacebookMessengerRestHandler implements RequestHandlerInterface
         $service 	=	$this->_convoServiceFactory->getService( $owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
         $servicePlatformConfig = $this->_convoServiceDataProvider->getServicePlatformConfig(
             new RestSystemUser(),
-            $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+            $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP
+        );
 
         $messenger_request = new FacebookMessengerCommandRequest($this->_logger, $serviceId, $request->getParsedBody());
         /** @var FacebookMessengerApi $facebookMessengerApi */
         $facebookMessengerApi = $this->_facebookMessengerApiFactory->getApi($owner, $serviceId, $this->_convoServiceDataProvider);
-        foreach($messenger_request->getPlatformData()['entry'] as $entry) {
+        
+        foreach ($messenger_request->getPlatformData()['entry'] as $entry)
+        {
             $messenger_request->setEntry($entry);
             $messenger_request->init();
 
             $messenger_response = new FacebookMessengerCommandResponse();
-            $delegationNlp = $servicePlatformConfig["facebook_messenger"]["delegateNlp"] ?? null;
+            $delegation_nlp = $servicePlatformConfig["facebook_messenger"]["delegateNlp"] ?? null;
 
-            if ($delegationNlp) {
-                $messenger_request = $this->_platformRequestFactory->toIntentRequest($messenger_request, $owner, $serviceId, $delegationNlp);
-                $debugData = print_r($messenger_request->getPlatformData(), true);
-                $this->_logger->info("Debug request with delegate [$debugData]");
+            if ($delegation_nlp) {
+                $messenger_request = $this->_platformRequestFactory->toIntentRequest($messenger_request, $owner, $serviceId, $delegation_nlp);
+                
+                $this->_logger->info("Debug request with delegate [".print_r($messenger_request->getPlatformData(), true)."]");
             }
 
             $service->run($messenger_request, $messenger_response);
 
             $senderId = $entry["messaging"][0]["sender"]["id"];
-            if (count($messenger_response->getTexts()) > 0) {
-              foreach ($messenger_response->getTexts() as $text) {
-                $messenger_response->setText($text);
-                $data = $messenger_response->getPlatformResponse();
-                $facebookMessengerApi->callSendApi($senderId, $data);
-              }
+
+            if (count($messenger_response->getTexts()) > 0)
+            {
+                foreach ($messenger_response->getTexts() as $text)
+                {
+                    $messenger_response->setText($text);
+                    $data = $messenger_response->getPlatformResponse();
+                    $facebookMessengerApi->callSendApi($senderId, $data);
+                }
             }
         }
     }

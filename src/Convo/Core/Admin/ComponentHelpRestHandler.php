@@ -58,6 +58,8 @@ class ComponentHelpRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
             throw new \Convo\Core\Rest\NotFoundException('Package is not component provider ['.$packageId.']');
         }
 
+        $this->_logger->info('Getting help for component ['.$componentName.']['.$packageId.']');
+
         /** @var \Convo\Core\Factory\IComponentProvider $provider */
         $help = [
             "html_content" => $provider->getComponentHelp($componentName)
