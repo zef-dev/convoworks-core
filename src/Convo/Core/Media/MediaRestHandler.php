@@ -48,7 +48,7 @@ class MediaRestHandler implements \Psr\Http\Server\RequestHandlerInterface
 	{
 		$image = $this->_serviceMediaManager->getMediaItem($serviceId, $mediaItemId);
 
-		$this->_logger->debug('Got media item ['.$image.']');
+		$this->_logger->info('Got media item ['.$image.']');
 
 		return $this->_httpFactory->buildResponse($image->getContent(), 200, [
 			'Content-Type' => $image->getContentType(),

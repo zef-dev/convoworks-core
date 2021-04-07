@@ -53,6 +53,8 @@ class TemplatesRestHandler implements \Psr\Http\Server\RequestHandlerInterface
 
         $data = [];
 
+        $this->_logger->info('Getting all templates');
+
         foreach ($template_sources as $template_source)
         {
             $data = array_merge($data, $template_source->getRow()['templates']);

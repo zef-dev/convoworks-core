@@ -99,6 +99,8 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
 	{
 	    $data = $this->_serviceReleaseManager->getAllServiceVersionsMeta( $user, $serviceId);
 
+		$this->_logger->info('Getting all versions for ['.$serviceId.']');
+
 		return $this->_httpFactory->buildResponse( $data);
 	}
 
@@ -114,6 +116,8 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
             $user, $serviceId, $versionId, $version_tag
         );
 
+		$this->_logger->info('Getting version ['.$versionId.'] for ['.$serviceId.']');
+
         return $this->_httpFactory->buildResponse(['version_id' => $data]);
     }
 
@@ -121,6 +125,8 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
 	\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId) {
 
 	    $json         =   $request->getParsedBody();
+
+		$this->_logger->info('Creating release for ['.$serviceId.']['.$json['platform_id'].']['.$json['type'].']['.$json['stage'].']');
 
 	    $release       =   $this->_serviceReleaseManager->createServiceRelease(
 	        $user, $serviceId, $json['platform_id'], $json['type'], $json['stage']);
@@ -131,6 +137,8 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
 	\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId) {
 
 	    $json         =   $request->getParsedBody();
+
+		$this->_logger->info('Promoting release for ['.$serviceId.']['.$json['release_id'].']['.$json['type'].']['.$json['stage'].']');
 
 	    $release       =   $this->_serviceReleaseManager->promoteRelease(
 	        $user, $serviceId, $json['release_id'], $json['type'], $json['stage']);
@@ -144,6 +152,8 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
         $release = $this->_serviceReleaseManager->importWorkflowIntoRelease(
             $user, $serviceId, $releaseId, $versionId);
 
+		$this->_logger->info('Importing workflow ['.$serviceId.']['.$releaseId.']['.$versionId.']');
+
 	    return $this->_httpFactory->buildResponse( $release);
 	}
 
@@ -154,6 +164,8 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
         $release = $this->_serviceReleaseManager->importWorkflowIntoDevelop(
             $user, $serviceId, $versionId
         );
+
+		$this->_logger->info('Importing workflow from version ['.$serviceId.']['.$versionId.'] into development.');
 
         return $this->_httpFactory->buildResponse( $release);
     }
@@ -166,6 +178,7 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
 			throw new \Convo\Core\Rest\NotFoundException( 'Service meta ['.$serviceId.'] not found', 0, $e);
 		}
 
+		$this->_logger->info('Getting all releases for ['.$serviceId.']');
 
 	    $data  =   [];
 

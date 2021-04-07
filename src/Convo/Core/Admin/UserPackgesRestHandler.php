@@ -49,6 +49,8 @@ class UserPackgesRestHandler implements RequestHandlerInterface
 	{
         $available = $this->_packageProviderFactory->getAvailablePackages();
 
+		$this->_logger->info('Got ['.count($available).'] user packages');
+
         return $this->_httpFactory->buildResponse($available);
 	}
 
