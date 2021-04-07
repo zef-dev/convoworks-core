@@ -270,6 +270,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 					$publisher->delete($report);
 				} catch (\Exception $e) {
 					$this->_logger->error($e);
+					$report['errors'][$platform]['skill'] = $e->getMessage();
 				}
 			}
         }
