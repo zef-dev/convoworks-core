@@ -239,26 +239,6 @@ class ServicesRestHandler implements RequestHandlerInterface
         if (!$localOnly)
         {
 			$this->_logger->info('Deleting from remote vendors as well.');
-            // AMAZON
-            // if (isset($platform_config['amazon']))
-            // {
-            //     $publisher = $this->_platformPublisherFactory->getPublisher(
-            //         $owner, $serviceId, \Convo\Core\Adapters\Alexa\AmazonCommandRequest::PLATFORM_ID
-            //     );
-
-            //     $publisher->delete($report);
-            // }
-
-            // DIALOGFLOW
-            // if (isset($platform_config['dialogflow']))
-            // {
-            //     $publisher = $this->_platformPublisherFactory->getPublisher(
-            //         $owner, $serviceId, \Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandRequest::PLATFORM_ID
-            //     );
-
-            //     $publisher->delete($report);
-            // }
-            // @todo CHECK OTHER REMOTE VENDORS
 
 			foreach ($platform_config as $platform => $_)
 			{
