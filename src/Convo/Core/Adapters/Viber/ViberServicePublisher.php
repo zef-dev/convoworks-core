@@ -5,6 +5,7 @@ namespace Convo\Core\Adapters\Viber;
 
 
 use Convo\Core\Publish\IPlatformPublisher;
+use Convo\Core\Util\NotImplementedException;
 
 class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
 {
@@ -125,6 +126,6 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
     public function delete(array &$report)
     {
-        // TODO: Implement delete() method.
+        throw new NotImplementedException('Deletion not yet implemented for ['.$this->getPlatformId().'] platform');
     }
 }
