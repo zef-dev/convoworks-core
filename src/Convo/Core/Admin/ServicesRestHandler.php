@@ -7,6 +7,7 @@ use Convo\Core\Rest\OwnerNotSpecifiedException;
 use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Publish\IPlatformPublisher;
 use Convo\Core\Util\ArrayUtil;
+use Convo\Core\Util\NotImplementedException;
 
 class ServicesRestHandler implements RequestHandlerInterface
 {
@@ -248,6 +249,8 @@ class ServicesRestHandler implements RequestHandlerInterface
 						$owner, $serviceId, $platform
 					);
 					$publisher->delete($report);
+				} catch (NotImplementedException $e) {
+					$this->_logger->info($e->getMessage());
 				} catch (\Exception $e) {
 					$this->_logger->error($e);
 					$report['errors'][$platform]['skill'] = $e->getMessage();
