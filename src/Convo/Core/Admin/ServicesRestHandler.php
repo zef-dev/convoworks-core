@@ -230,10 +230,10 @@ class ServicesRestHandler implements RequestHandlerInterface
             $owner = $user;
         }
 
-		$this->_logger->info('Deleting skill ['.$serviceId.'] local only? ['.($localOnly ? 'true' : 'false').']');
+		$this->_logger->info('Deleting service ['.$serviceId.'] local only? ['.($localOnly ? 'true' : 'false').']');
 
         if ($user->getId() !== $owner->getId()) {
-            $report['errors']['convoworks']['skill'] = 'User "' . $user->getEmail() . '" is not authorized to delete the service with id "' . $serviceId . '"';
+            $report['errors']['convoworks']['service'] = 'User "'.$user->getEmail().'" is not authorized to delete the service "'.$serviceId.'"';
             return $this->_httpFactory->buildResponse($report);
         }
 
@@ -245,7 +245,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 
 			foreach ($platform_config as $platform => $config)
 			{
-				$this->_logger->info('Trying to delete skill from platform ['.$platform.']');
+				$this->_logger->info('Trying to delete service from platform ['.$platform.']');
 				try {
 					$publisher = $this->_platformPublisherFactory->getPublisher(
 						$owner, $serviceId, $platform
@@ -255,17 +255,17 @@ class ServicesRestHandler implements RequestHandlerInterface
 					$this->_logger->info($e->getMessage());
 				} catch (\Exception $e) {
 					$this->_logger->error($e);
-					$report['errors'][$platform]['skill'] = $e->getMessage();
+					$report['errors'][$platform]['service'] = $e->getMessage();
 				}
 			}
         }
 
         try {
             $this->_convoServiceDataProvider->deleteService($owner, $serviceId);
-            $report['successes']['convoworks']['skill'] = 'Successfully deleted skill ['.$serviceId.']';
+            $report['successes']['convoworks']['service'] = 'Successfully deleted service ['.$serviceId.']';
         } catch (\Exception $e) {
             $this->_logger->error($e);
-            $report['errors']['convoworks']['skill'] = $e->getMessage();
+            $report['errors']['convoworks']['service'] = $e->getMessage();
         }
 
         return $this->_httpFactory->buildResponse($report);

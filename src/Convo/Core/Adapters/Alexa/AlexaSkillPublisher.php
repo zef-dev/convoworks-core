@@ -952,10 +952,10 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 $delete_res = $this->_amazonPublishingService->deleteSkill($this->_user, $skill_id);
                 $this->_logger->info('Amazon skill ['.$skill_id.'] deleted successfully, response ['.print_r($delete_res, true).']');
 
-                $report['successes'][$this->getPlatformId()]['skill'] = "Amazon skill $skill_id successfully deleted.";
+                $report['successes'][$this->getPlatformId()]['service'] = "Amazon skill $skill_id successfully deleted.";
             } catch (\Exception $e) {
                 $this->_logger->error($e);
-                $report['errors'][$this->getPlatformId()]['skill'] = $e->getMessage();
+                $report['errors'][$this->getPlatformId()]['service'] = $e->getMessage();
             }
 
             if (isset($platform_config['amazon']['catalogs']))
@@ -965,7 +965,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 foreach ($platform_config['amazon']['catalogs'] as $catalog_name => $catalog)
                 {
 					$this->_logger->info('Deleting versions for catalog ['.$catalog_name.']');
-					
+
                     foreach ($catalog as $version => $catalog_data)
 					{
 						try {
@@ -984,7 +984,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             }
         } else {
             $this->_logger->info('Will not delete service due to manual mode selection.');
-            $report['warnings'][$this->getPlatformId()]['skill'] = "Skill with id [" . $skill_id . "] will not be deleted due to manual mode selection in the service platform configuration.";
+            $report['warnings'][$this->getPlatformId()]['service'] = "Skill with ID [".$skill_id."] will not be deleted due to manual mode selection in the service platform configuration.";
         }
     }
 
