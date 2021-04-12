@@ -661,9 +661,14 @@
                         { "text" : "just play something"}
                     ]
                 }, {
-                    "raw" : "play a song",
+                    "raw" : "play all songs",
                     "model" : [
-                        { "text" : "play a song"}
+                        { "text" : "play all songs"}
+                    ]
+                }, {
+                    "raw" : "all songs",
+                    "model" : [
+                        { "text" : "all songs"}
                     ]
                 }, {
                     "raw" : "play songs",
