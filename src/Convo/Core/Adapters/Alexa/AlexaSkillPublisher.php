@@ -950,34 +950,41 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         if ($mode === 'auto') {
             try {
                 $delete_res = $this->_amazonPublishingService->deleteSkill($this->_user, $skill_id);
-                $this->_logger->debug('Amazon skill ['.$skill_id.'] deleted successfully, response ['.print_r($delete_res, true).']');
+                $this->_logger->info('Amazon skill ['.$skill_id.'] deleted successfully, response ['.print_r($delete_res, true).']');
 
-                $report['success']['amazon']['skill'] = $delete_res;
+                $report['successes'][$this->getPlatformId()]['skill'] = "Amazon skill $skill_id successfully deleted.";
             } catch (\Exception $e) {
                 $this->_logger->error($e);
-                $report['errors']['amazon'] = $e->getMessage();
+                $report['errors'][$this->getPlatformId()]['skill'] = $e->getMessage();
             }
 
             if (isset($platform_config['amazon']['catalogs']))
             {
-                $this->_logger->debug('Going to delete amazon catalogs');
+                $this->_logger->info('Going to delete Amazon catalogs');
 
-                foreach ($platform_config['amazon']['catalogs'] as $catalog_name => $catalog_data)
+                foreach ($platform_config['amazon']['catalogs'] as $catalog_name => $catalog)
                 {
-                    try {
-                        $catalog_id = $catalog_data['catalog_id'];
-                        $catalog_delete_res = $this->_amazonPublishingService->deleteCatalog($this->_user, $catalog_id);
+					$this->_logger->info('Deleting versions for catalog ['.$catalog_name.']');
+					
+                    foreach ($catalog as $version => $catalog_data)
+					{
+						try {
+							$catalog_id = $catalog_data['catalog_id'];
+							$catalog_delete_res = $this->_amazonPublishingService->deleteCatalog($this->_user, $catalog_id);
+	
+							$this->_logger->debug('Catalog ['.$catalog_name.'] deletion response ['.print_r($catalog_delete_res, true).']');
 
-                        $report['success']['amazon']['catalogs'][$catalog_name] = $catalog_delete_res;
-                    } catch (\Exception $e) {
-                        $this->_logger->error($e);
-                        $report['errors']['amazon']['catalogs'][$catalog_name] = $e->getMessage();
-                    }
+							$report['successes'][$this->getPlatformId()][$catalog_name] = "Catalog $catalog_name successfully deleted.";
+						} catch (\Exception $e) {
+							$this->_logger->error($e->getMessage()); //@todo Logging just $e breaks the next line. Buffer overflow?
+							$report['errors'][$this->getPlatformId()][$catalog_name] = $e->getMessage();
+						}
+					}
                 }
             }
         } else {
-            $this->_logger->debug('Will not delete service due to manual mode selection.');
-            $report['success']['amazon']['skill'] = "Skill with id [" . $skill_id . "] will not be deleted due to manual mode selection in the service platform configuration.";
+            $this->_logger->info('Will not delete service due to manual mode selection.');
+            $report['warnings'][$this->getPlatformId()]['skill'] = "Skill with id [" . $skill_id . "] will not be deleted due to manual mode selection in the service platform configuration.";
         }
     }
 

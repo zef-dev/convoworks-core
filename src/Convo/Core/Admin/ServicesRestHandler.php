@@ -216,12 +216,12 @@ class ServicesRestHandler implements RequestHandlerInterface
 	private function _performConvoPathServiceIdDelete(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId, $localOnly)
     {
         $report = [
-            'success' => [],
+            'successes' => [],
+			'warnings' => [],
             'errors' => []
         ];
 
         $meta = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId);
-        $platform_config = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 
         if (isset($meta['owner'])) {
             $owner = $this->_adminUserDataProvider->findUser($meta['owner']);
@@ -241,7 +241,9 @@ class ServicesRestHandler implements RequestHandlerInterface
         {
 			$this->_logger->info('Deleting from remote vendors as well.');
 
-			foreach ($platform_config as $platform => $_)
+			$platform_config = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+
+			foreach ($platform_config as $platform => $config)
 			{
 				$this->_logger->info('Trying to delete skill from platform ['.$platform.']');
 				try {
@@ -260,7 +262,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 
         try {
             $this->_convoServiceDataProvider->deleteService($owner, $serviceId);
-            $report['success']['convoworks']['skill'] = 'Successfully deleted skill ['.$serviceId.']';
+            $report['successes']['convoworks']['skill'] = 'Successfully deleted skill ['.$serviceId.']';
         } catch (\Exception $e) {
             $this->_logger->error($e);
             $report['errors']['convoworks']['skill'] = $e->getMessage();
