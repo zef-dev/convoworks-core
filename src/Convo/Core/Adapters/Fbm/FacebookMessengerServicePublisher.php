@@ -125,4 +125,14 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
     {
         // TODO: Implement delete() method.
     }
+
+    public function getStatus()
+    {
+        $config = $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+        $status = ['status' => IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED];
+        if (isset($config[$this->getPlatformId()]['webhook_build_status'])) {
+            $status['status'] = $config[$this->getPlatformId()]['webhook_build_status'];
+        }
+        return $status;
+    }
 }
