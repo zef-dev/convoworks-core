@@ -53,6 +53,11 @@ interface IPlatformPublisher
 
 	public function delete(array &$report);
 
+    /**
+     * @return array
+     */
+	public function getStatus();
+
 // 	public function createRelease( $platformId, $alias, $targerReleaseType, $versionId=null, $targerReleaseStage=null);
 
 // 	public function promoteToRelease( $targerReleaseType, $versionId, $targerReleaseStage=null);
