@@ -811,4 +811,9 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $report['success']['amazon']['skill'] = "Dialogflow agent with will not be deleted due to manual mode selection in the service platform configuration.";
         }
     }
+
+    public function getStatus()
+    {
+        return ['status' => IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED];
+    }
 }
