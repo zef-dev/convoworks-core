@@ -118,6 +118,9 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
     private function _updateViberChatBot() {
         $config            =   $this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+        $config[$this->getPlatformId()]['webhook_build_status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_IN_PROGRESS;
+        $this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
+
         $url = $this->_serviceReleaseManager->getWebhookUrl($this->_user, $this->_serviceId, $this->getPlatformId());
         $this->_viberApi->setupViberApi($this->_user, $this->_serviceId, $config);
         $this->_viberApi->callSetupWebhook($url);
