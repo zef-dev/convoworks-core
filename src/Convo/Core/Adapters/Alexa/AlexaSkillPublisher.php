@@ -263,7 +263,6 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $res['skillId']);
         $this->_manageAccountLinking($owner, $res['skillId'], 'development', $config[$this->getPlatformId()]);
-        // TODO pool as loong as skill status gets other then IN_PROGRESS
 	}
 
 	public function propagate()
