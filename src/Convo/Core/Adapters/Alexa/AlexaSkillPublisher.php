@@ -267,6 +267,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 	public function propagate()
 	{
+        $this->_checkOperationReady();
 		$config = $this->_convoServiceDataProvider->getServicePlatformConfig(
 		    $this->_user,
 		    $this->_serviceId,
