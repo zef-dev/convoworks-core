@@ -110,6 +110,10 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
     }
 
     private function _updateFacebookMessengerBot() {
+        $config = $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+        $config[$this->getPlatformId()]['webhook_build_status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_IN_PROGRESS;
+        $this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
+
         $facebookMessengerApi = $this->_facebookMessengerApiFactory->getApi($this->_user, $this->_serviceId, $this->_convoServiceDataProvider);
         $url = $this->_serviceReleaseManager->getWebhookUrl($this->_user, $this->_serviceId, $this->getPlatformId());
         $facebookMessengerApi->callSubscriptionsApi($url);
