@@ -354,12 +354,13 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             ->setGlobalCertificateType($endpointCertificate)
             ->setIsAvailableWorldwide(true);
 
+        $manifestToPropagate = $manifest->getManifest();
         if (!in_array('en-US', $locales)) {
-            unset($manifest['publishingInformation']['locales']['en-US']);
+            unset($manifestToPropagate['publishingInformation']['locales']['en-US']);
         }
 
 		$this->_amazonPublishingService->updateSkill(
-			$owner, $skillId, 'development', ['manifest' => $manifest->getManifest() ]
+			$owner, $skillId, 'development', ['manifest' => $manifestToPropagate ]
 		);
 
         $model = json_decode($this->export()->getContent(), true);
