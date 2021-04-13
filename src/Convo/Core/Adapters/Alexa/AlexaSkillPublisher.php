@@ -6,7 +6,7 @@ use Convo\Core\Intent\EntityModel;
 use Convo\Core\Intent\IntentModel;
 use Convo\Core\ComponentNotFoundException;
 use Convo\Core\Rest\InvalidRequestException;
-use Convo\Core\Util\SimpleFileResource;
+use Convo\Core\Rest\ServiceBuildingException;
 use Convo\Core\Util\StrUtil;
 use Convo\Core\Workflow\ICatalogSource;
 use Convo\Core\Publish\IPlatformPublisher;
@@ -1107,6 +1107,13 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
 
         return $iconUrl;
+    }
+
+    private function _checkOperationReady() {
+        $skillStatus = $this->getStatus()['status'];
+        if ($skillStatus === IPlatformPublisher::SERVICE_PROPAGATION_STATUS_IN_PROGRESS) {
+            throw new ServiceBuildingException('Alexa Skill Interaction model is not finished yet building. Please try again later', 405);
+        }
     }
 
     private function _sanitizeText($text) {
