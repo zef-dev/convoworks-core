@@ -191,7 +191,7 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
             $publisher->propagate();
             return $this->_performServicePlatformPropagatePathServiceIdPathPlatformIdGet( $request, $user, $serviceId, $platformId);
         } catch (\Exception $e) {
-            $this->_logger->critical($e->getMessage());
+            $this->_logger->critical($e);
 	        $errorMessage = $this->_propagationErrorReport->craftErrorReport($e->getMessage(), $platformId);
 	        return $this->_httpFactory->buildResponse($errorMessage, 400);
         }
