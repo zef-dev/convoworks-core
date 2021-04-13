@@ -981,6 +981,48 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
     }
 
+    public function getStatus()
+    {
+        $status = ['status' => IPlatformPublisher::SERVICE_PROPAGATION_STATUS_IN_PROGRESS];
+
+        $config = $this->_convoServiceDataProvider->getServicePlatformConfig(
+            $this->_user,
+            $this->_serviceId,
+            IPlatformPublisher::MAPPING_TYPE_DEVELOP
+        );
+
+        if ($config[$this->getPlatformId()]['mode'] === 'manual') {
+            return ['status' => IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED];
+        }
+
+        $meta = $this->_convoServiceDataProvider->getServiceMeta(
+            $this->_user, $this->_serviceId
+        );
+
+        $owner = $this->_adminUserDataProvider->findUser($meta['owner']);
+        $skillId = $config[$this->getPlatformId()]['app_id'];
+
+        $existingManifest = $this->_amazonPublishingService->getSkill($this->_user, $skillId, 'development');
+        $manifestData = $existingManifest['manifest'];
+
+        $skillStatus = $this->_amazonPublishingService->getSkillStatus($owner, $skillId);
+        $finishedBuilds = 0;
+
+        $localesFromExistingManifest = array_keys($manifestData['publishingInformation']['locales']);
+        foreach ($localesFromExistingManifest as $locale) {
+            if ($skillStatus['interactionModel'][$locale]['lastUpdateRequest']['status'] !== 'IN_PROGRESS') {
+                $finishedBuilds++;
+            }
+        }
+        $finishedBuilding = $finishedBuilds === count($localesFromExistingManifest);
+
+        if ($finishedBuilding) {
+            $status['status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED;
+        }
+
+        return $status;
+    }
+
     /**
      * @param $config
      * @param \Convo\Core\IAdminUser $owner
