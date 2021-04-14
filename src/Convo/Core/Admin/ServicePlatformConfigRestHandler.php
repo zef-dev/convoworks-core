@@ -92,6 +92,12 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
 		        $request, $user, $route->get( 'serviceId'), $route->get( 'platformId'));
 		}
 
+		if ( $info->get() && $route = $info->route( 'service-platform-status/{serviceId}/{platformId}'))
+		{
+		    return $this->_performServicePlatformPropagateStatusPathServiceIdPathPlatformIdGet(
+		        $request, $user, $route->get( 'serviceId'), $route->get( 'platformId'));
+		}
+
 		throw new \Convo\Core\Rest\NotFoundException( 'Could not map ['.$info.']');
 	}
 
@@ -185,7 +191,7 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
             $publisher->propagate();
             return $this->_performServicePlatformPropagatePathServiceIdPathPlatformIdGet( $request, $user, $serviceId, $platformId);
         } catch (\Exception $e) {
-            $this->_logger->critical($e->getMessage());
+            $this->_logger->critical($e);
 	        $errorMessage = $this->_propagationErrorReport->craftErrorReport($e->getMessage(), $platformId);
 	        return $this->_httpFactory->buildResponse($errorMessage, 400);
         }
@@ -199,6 +205,15 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
 
 	    return $this->_httpFactory->buildResponse( $data);
 	}
+
+    private function _performServicePlatformPropagateStatusPathServiceIdPathPlatformIdGet(
+        \Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId, $platformId)
+    {
+        $publisher = $this->_platformPublisherFactory->getPublisher( $user, $serviceId, $platformId);
+        $status = $publisher->getStatus();
+
+        return $this->_httpFactory->buildResponse( $status);
+    }
 
 
 	private function _loadServicePlatformConfig(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId)

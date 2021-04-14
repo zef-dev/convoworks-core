@@ -811,4 +811,31 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $report['success']['amazon']['skill'] = "Dialogflow agent with will not be deleted due to manual mode selection in the service platform configuration.";
         }
     }
+
+    public function getStatus()
+    {
+        $status = ['status' => IPlatformPublisher::SERVICE_PROPAGATION_STATUS_IN_PROGRESS];
+        $config = $this->_convoServiceDataProvider->getServicePlatformConfig(
+            $this->_user,
+            $this->_serviceId,
+            IPlatformPublisher::MAPPING_TYPE_DEVELOP
+        );
+
+        if ($config[$this->getPlatformId()]['mode'] === 'manual') {
+            $status['status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED;
+            return $status;
+        }
+
+        $api = $this->_dialogflowApiFactory->getApi(
+            $this->_user,
+            $this->_serviceId
+        );
+        $existingAgent = $api->getAgent();
+
+        if ($existingAgent !== null) {
+            $status['status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED;
+        }
+
+        return $status;
+    }
 }

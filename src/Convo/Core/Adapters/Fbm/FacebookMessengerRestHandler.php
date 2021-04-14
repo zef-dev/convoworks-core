@@ -112,6 +112,8 @@ class FacebookMessengerRestHandler implements RequestHandlerInterface
         $token			=	$params['hub_verify_token'] ?? null;
         $challenge		=	$params['hub_challenge'] ?? null;
 
+        $config['facebook_messenger']['webhook_build_status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED;
+        $this->_convoServiceDataProvider->updateServicePlatformConfig($user, $serviceId, $config);
         if ($mode && $token) {
             if ($mode === 'subscribe' && $token === $verify_token) {
                 $this->_logger->debug('Verified webhook from FB');

@@ -2,6 +2,8 @@
 
 namespace Convo\Core\Adapters\ConvoChat;
 
+use Convo\Core\Publish\IPlatformPublisher;
+
 class ConvoChatServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
 {
 
@@ -30,5 +32,10 @@ class ConvoChatServicePublisher extends \Convo\Core\Publish\AbstractServicePubli
 	public function delete(array &$report)
     {
         // TODO: Implement delete() method.
+    }
+
+    public function getStatus()
+    {
+        return ['status' => IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED];
     }
 }

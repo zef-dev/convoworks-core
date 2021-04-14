@@ -48,7 +48,7 @@ class AdminRestApi implements RequestHandlerInterface
 		    $class_name	=	'\Convo\Core\Admin\TestServiceRestHandler';
 		} else if ( $info->startsWith( 'service-imp-exp')) {
 		    $class_name	=	'\Convo\Core\Admin\ServiceImpExpRestHandler';
-		} else if ( $info->startsWith( 'service-platform-config') || $info->startsWith( 'service-platform-propagate')) {
+		} else if ( $info->startsWith( 'service-platform-config') || $info->startsWith( 'service-platform-propagate') || $info->startsWith( 'service-platform-status')) {
 		    $class_name	=	'\Convo\Core\Admin\ServicePlatformConfigRestHandler';
 		} else if ( $info->startsWith( 'media')) {
 		    $class_name	=	'\Convo\Core\Admin\MediaRestHandler';

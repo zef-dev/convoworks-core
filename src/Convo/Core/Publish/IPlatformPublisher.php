@@ -22,6 +22,9 @@ interface IPlatformPublisher
         'available' => false
     ];
 
+    const SERVICE_PROPAGATION_STATUS_IN_PROGRESS = 'SERVICE_PROPAGATION_STATUS_IN_PROGRESS';
+    const SERVICE_PROPAGATION_STATUS_FINISHED    = 'SERVICE_PROPAGATION_STATUS_FINISHED';
+
 	/**
 	 * @return string
 	 */
@@ -49,6 +52,11 @@ interface IPlatformPublisher
 	public function export();
 
 	public function delete(array &$report);
+
+    /**
+     * @return array
+     */
+	public function getStatus();
 
 // 	public function createRelease( $platformId, $alias, $targerReleaseType, $versionId=null, $targerReleaseStage=null);
 
