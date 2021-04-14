@@ -1075,36 +1075,39 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
     private function _getDownloadLink($serviceId, $mediaItem, $owner, $typeSkillIconUrl) {
         $iconUrl = '';
-        try {
-            if ($mediaItem !== '') {
+
+        if (!empty($mediaItem)) {
+            try {
                 $parsedUrl = parse_url($mediaItem);
                 if (is_array($parsedUrl) && count($parsedUrl) > 1) {
                     $iconUrl = $mediaItem;
                 } else if (is_array($parsedUrl) && count($parsedUrl) === 1) {
                     $iconUrl = $this->_mediaService->getMediaUrl($serviceId, $mediaItem);
                 }
-            }
-            $this->_amazonPublishingService->checkSkillIconAvailability($iconUrl, $owner);
-            $imageSize = getimagesize($iconUrl);
+                $this->_amazonPublishingService->checkSkillIconAvailability($iconUrl, $owner);
+                $imageSize = getimagesize($iconUrl);
 
-            $width = $imageSize[0];
-            $height = $imageSize[1];
+                $width = $imageSize[0];
+                $height = $imageSize[1];
 
-            if ($typeSkillIconUrl === self::TYPE_SMALL_SKILL_URL) {
-                if ($width !== 108 && $height !== 108) {
-                    throw new \Exception('Invalid dimensions for Small Skill Icon');
+                if ($typeSkillIconUrl === self::TYPE_SMALL_SKILL_URL) {
+                    if ($width !== 108 && $height !== 108) {
+                        throw new \Exception('Invalid dimensions for Small Skill Icon');
+                    }
+                } else if ($typeSkillIconUrl === self::TYPE_LARGE_SKILL_URL) {
+                    if ($width !== 512 && $height !== 512) {
+                        throw new \Exception('Invalid dimensions for Large Skill Icon');
+                    }
                 }
-            } else if ($typeSkillIconUrl === self::TYPE_LARGE_SKILL_URL) {
-                if ($width !== 512 && $height !== 512) {
-                    throw new \Exception('Invalid dimensions for Large Skill Icon');
-                }
+            } catch (ClientExceptionInterface $e) {
+                $this->_logger->warning('Could not fetch image due to invalid Icon URL [' . $iconUrl . ']');
+                $iconUrl = '';
+            } catch (\Exception $e) {
+                $this->_logger->warning($e->getMessage());
+                $iconUrl = '';
             }
-        } catch (ClientExceptionInterface $e) {
-            $this->_logger->warning($e);
-            $iconUrl = '';
-        } catch (\Exception $e) {
-            $this->_logger->warning($e);
-            $iconUrl = '';
+        } else {
+            $this->_logger->warning('Icon URL could not be generated from the provided media item id [' . $mediaItem . ']');
         }
 
         return $iconUrl;
