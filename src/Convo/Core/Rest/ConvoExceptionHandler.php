@@ -8,24 +8,24 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class ConvoExceptionHandler implements \Psr\Http\Server\MiddlewareInterface
-{	
-	
+{
+
 	/**
 	 * @var \Psr\Log\LoggerInterface
 	 */
 	private $_logger;
-	
+
 	/**
 	 * @var \Convo\Core\Util\IHttpFactory
 	 */
 	private $_httpFactory;
-	
+
 	public function __construct( \Psr\Log\LoggerInterface $logger, \Convo\Core\Util\IHttpFactory $httpFactory)
 	{
 		$this->_logger		=	$logger;
 		$this->_httpFactory	=	$httpFactory;
 	}
-	
+
 	public function process( ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 	{
 		try {
@@ -45,9 +45,15 @@ class ConvoExceptionHandler implements \Psr\Http\Server\MiddlewareInterface
         } catch (\Convo\Core\Rest\OwnerNotSpecifiedException $e) {
             $this->_logger->notice( $e);
             return $this->_httpFactory->buildResponse( [ 'message' => $e->getMessage()], 403, ['Content-Type'=>'application/json']);
+        } catch (\Convo\Core\Rest\ServiceBuildingException $e) {
+            $this->_logger->notice( $e);
+            return $this->_httpFactory->buildResponse( [ 'message' => $e->getMessage()], 405, ['Content-Type'=>'application/json']);
+        } catch (\Convo\Core\Rest\ServiceDeletionException $e) {
+            $this->_logger->notice( $e);
+            return $this->_httpFactory->buildResponse( [ 'message' => $e->getMessage()], 405, ['Content-Type'=>'application/json']);
         }
 	}
-	
+
 	// UTIL
 	public function __toString()
 	{

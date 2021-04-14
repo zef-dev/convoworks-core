@@ -107,6 +107,8 @@ class ViberRestHandler implements RequestHandlerInterface
         $viberCommandRequest->init();
 
         if ($viberCommandRequest->isWebhookRequest()) {
+            $servicePlatformConfig['viber']['webhook_build_status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED;
+            $this->_convoServiceDataProvider->updateServicePlatformConfig($owner, $serviceId, $servicePlatformConfig);
             $response = $this->_httpFactory->buildResponse(['EVENT_RECEIVED_AND_WEBHOOK_VERIFIED'], 200);
         } else if ($viberCommandRequest->isMessageRequest() || $viberCommandRequest->isLaunchRequest()) {
             $this->_viberApi = new ViberApi($this->_logger, $this->_httpFactory);
@@ -126,6 +128,8 @@ class ViberRestHandler implements RequestHandlerInterface
             $viberCommandResponse->setReceiver($viberCommandRequest->getSessionId());
             $this->_viberApi->callSendMessage($viberCommandResponse->getPlatformResponse());
         } else if ($viberCommandRequest->hasFailed()) {
+            $servicePlatformConfig['viber']['webhook_build_status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED;
+            $this->_convoServiceDataProvider->updateServicePlatformConfig($owner, $serviceId, $servicePlatformConfig);
             $response = $this->_httpFactory->buildResponse(['AN_ERROR_OCCURRED'], 400);
         }
 

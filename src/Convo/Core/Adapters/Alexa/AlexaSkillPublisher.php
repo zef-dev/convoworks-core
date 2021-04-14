@@ -6,7 +6,7 @@ use Convo\Core\Intent\EntityModel;
 use Convo\Core\Intent\IntentModel;
 use Convo\Core\ComponentNotFoundException;
 use Convo\Core\Rest\InvalidRequestException;
-use Convo\Core\Util\SimpleFileResource;
+use Convo\Core\Rest\ServiceBuildingException;
 use Convo\Core\Util\StrUtil;
 use Convo\Core\Workflow\ICatalogSource;
 use Convo\Core\Publish\IPlatformPublisher;
@@ -263,11 +263,11 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $res['skillId']);
         $this->_manageAccountLinking($owner, $res['skillId'], 'development', $config[$this->getPlatformId()]);
-        // TODO pool as loong as skill status gets other then IN_PROGRESS
 	}
 
 	public function propagate()
 	{
+        $this->_checkOperationReady();
 		$config = $this->_convoServiceDataProvider->getServicePlatformConfig(
 		    $this->_user,
 		    $this->_serviceId,
@@ -354,12 +354,13 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             ->setGlobalCertificateType($endpointCertificate)
             ->setIsAvailableWorldwide(true);
 
+        $manifestToPropagate = $manifest->getManifest();
         if (!in_array('en-US', $locales)) {
-            unset($manifest['publishingInformation']['locales']['en-US']);
+            unset($manifestToPropagate['publishingInformation']['locales']['en-US']);
         }
 
 		$this->_amazonPublishingService->updateSkill(
-			$owner, $skillId, 'development', ['manifest' => $manifest->getManifest() ]
+			$owner, $skillId, 'development', ['manifest' => $manifestToPropagate ]
 		);
 
         $model = json_decode($this->export()->getContent(), true);
@@ -981,6 +982,48 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
     }
 
+    public function getStatus()
+    {
+        $status = ['status' => IPlatformPublisher::SERVICE_PROPAGATION_STATUS_IN_PROGRESS];
+
+        $config = $this->_convoServiceDataProvider->getServicePlatformConfig(
+            $this->_user,
+            $this->_serviceId,
+            IPlatformPublisher::MAPPING_TYPE_DEVELOP
+        );
+
+        if ($config[$this->getPlatformId()]['mode'] === 'manual') {
+            return ['status' => IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED];
+        }
+
+        $meta = $this->_convoServiceDataProvider->getServiceMeta(
+            $this->_user, $this->_serviceId
+        );
+
+        $owner = $this->_adminUserDataProvider->findUser($meta['owner']);
+        $skillId = $config[$this->getPlatformId()]['app_id'];
+
+        $existingManifest = $this->_amazonPublishingService->getSkill($this->_user, $skillId, 'development');
+        $manifestData = $existingManifest['manifest'];
+
+        $skillStatus = $this->_amazonPublishingService->getSkillStatus($owner, $skillId);
+        $finishedBuilds = 0;
+
+        $localesFromExistingManifest = array_keys($manifestData['publishingInformation']['locales']);
+        foreach ($localesFromExistingManifest as $locale) {
+            if ($skillStatus['interactionModel'][$locale]['lastUpdateRequest']['status'] !== 'IN_PROGRESS') {
+                $finishedBuilds++;
+            }
+        }
+        $finishedBuilding = $finishedBuilds === count($localesFromExistingManifest);
+
+        if ($finishedBuilding) {
+            $status['status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED;
+        }
+
+        return $status;
+    }
+
     /**
      * @param $config
      * @param \Convo\Core\IAdminUser $owner
@@ -1065,6 +1108,13 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
 
         return $iconUrl;
+    }
+
+    private function _checkOperationReady() {
+        $skillStatus = $this->getStatus()['status'];
+        if ($skillStatus === IPlatformPublisher::SERVICE_PROPAGATION_STATUS_IN_PROGRESS) {
+            throw new ServiceBuildingException('Alexa Skill Interaction model is not finished yet building. Please try again later', 405);
+        }
     }
 
     private function _sanitizeText($text) {
