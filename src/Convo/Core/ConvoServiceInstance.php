@@ -831,7 +831,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
             if (!ArrayUtil::isComplexKey($key))
             {
                 // old simple setting
-                $this->_logger->debug( "Parsed [$key][".gettype($val)."][$val]");
+                // $this->_logger->debug( "Parsed [$key][".gettype($val)."][$val]");
                 $variables[$key] = $val;
             }
             else

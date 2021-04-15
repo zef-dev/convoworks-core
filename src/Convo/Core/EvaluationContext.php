@@ -81,8 +81,12 @@ class EvaluationContext
 			if ( is_string( $value) || is_numeric( $value) || is_null( $value) || is_bool( $value)) {
 
 			    if  ( !$skipEmpty || $skipEmpty && !empty( $value)) {
-			        $pattern = '/\${\s*'.(preg_quote($expression, '/')).'\s*}/';
-			        $string = preg_replace($pattern, $value, $string);
+					$quot_expr = preg_quote($expression, '/');
+
+					$this->_logger->debug('preg_quoted expression ['.$quot_expr.']');
+
+			        $pattern = '/\${\s*'.$quot_expr.'\s*}/';
+			        $string = preg_replace($pattern, strval($value), $string);
 			    }
 
 				if ( $string === '') {
@@ -110,7 +114,7 @@ class EvaluationContext
 		$matches = [];
 		$expressions = [];
 
-		preg_match_all('/\${(.*?)}/', $string, $matches);
+		preg_match_all('/\${(.*?)}(?=[\s\w\-_\/\\;,.?!()|]|$)/', $string, $matches);
 
 		if (isset($matches[1])) {
 			foreach ($matches[1] as $match) {
