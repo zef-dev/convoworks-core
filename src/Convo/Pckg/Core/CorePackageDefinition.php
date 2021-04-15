@@ -392,8 +392,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'template' => '<div class="code">' .
                             "<span class=\"statement\">{{ component.properties.value == 'next' ? 'NEXT' : 'GOTO' }}</span> ".
                             "<span ng-if=\"!isBlockLinkable( component.properties.value)\" class=\"block-id\">{{ getBlockName( component.properties.value)}}</span>" .
-                            "<span ng-if=\"isBlockLinkable( component.properties.value)\" class=\"block-id linked\"".
-                            " ng-click=\"selectBlock( component.properties.value); \$event.stopPropagation()\">{{ getBlockName( component.properties.value)}}</span>" .
+                            "<a ng-if=\"isBlockLinkable( component.properties.value)\" class=\"block-id linked\" ui-sref=\"convoworks-editor-service.editor({ sb: component.properties.value, sv: 'steps' })\" ui-sref-opts=\"{inherit:true, reload:false, notify:true, location:true}\">{{ getBlockName( component.properties.value)}}</a>".
                             '</div>'
                     ),
                     '_help' =>  array(
@@ -422,8 +421,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'template' => '<div class="code">' .
                             '<span class="statement">INCLUDE</span> ' .
                         "<span ng-if=\"!isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id\">{{ getSubroutineName( component.properties.fragment_id)}}</span>" .
-                        "<span ng-if=\"isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id linked\"".
-                        " ng-click=\"selectSubroutine( component.properties.fragment_id); \$event.stopPropagation()\">{{ getSubroutineName( component.properties.fragment_id)}}</span>" .
+                        "<a ng-if=\"isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id linked\"".
+                        " ui-sref=\"convoworks-editor-service.editor({ sb: component.properties.fragment_id, sv: 'fragments' })\" ui-sref-opts=\"{ inherit:true, reload:false, notify:true, location:true }\">{{ getSubroutineName( component.properties.fragment_id)}}</a>" .
                             '</div>'
                     ),
                     '_help' =>  array(
@@ -945,7 +944,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code">Catch Convoworks intent '.
-                            '<span ng-if="component.properties.intent && !isSystemIntent(component.properties.intent)" class="block-id linked" ng-click="gotoIntent(component.properties.intent); $event.stopPropagation();">{{ component.properties.intent}}</span>'.
+                            '<a ng-if="component.properties.intent && !isSystemIntent(component.properties.intent)" class="block-id linked" ui-sref="convoworks-editor-service.intent-details({ index: getIntentIndex(component.properties.intent) })", ui-sref-opts="{ inherit: true, reload: false, notify: true, location: true }">{{ component.properties.intent}}</a>'.
                             '<b ng-if="component.properties.intent && isSystemIntent(component.properties.intent)">{{ component.properties.intent}}</b>'.
                             '<span ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span>'.
                             '<span ng-repeat="(key,val) in component.properties.rename track by key">, rename slot <b>{{ key }} => result.{{ val }}</b></span></div>'
