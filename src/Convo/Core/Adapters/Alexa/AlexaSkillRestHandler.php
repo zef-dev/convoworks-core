@@ -99,34 +99,34 @@ class AlexaSkillRestHandler implements RequestHandlerInterface
 
     	$service 	=	$this->_convoServiceFactory->getService( $owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
 
-        $this->_logger->debug("Running variant [$variant] of [$serviceId]");
+        $this->_logger->info("Running variant [$variant] of [$serviceId]");
 
         $text_request = new \Convo\Core\Adapters\Alexa\AmazonCommandRequest( $this->_logger, $serviceId, $request->getParsedBody());
         $text_request->init();
 
-        $this->_logger->debug('Got request [' . $text_request . ']');
+        $this->_logger->info('Got request [' . $text_request . ']');
         $text_response = new \Convo\Core\Adapters\Alexa\AmazonCommandResponse($text_request);
         $text_response->setLogger($this->_logger);
 
-        $this->_logger->debug('Running with request [' . $text_request . ']');
-
         $service->run($text_request, $text_response);
 
-        $this->_logger->debug('Got response [' . $text_response . ']');
+        $this->_logger->info('Got response [' . $text_response . ']');
 
         $text_response->setIsDisplaySupported($text_request->getIsDisplaySupported());
         $text_response->setServiceAmazonConfig($servicePlatformConfig['amazon']);
 
         $data = $text_response->getPlatformResponse();
 
-        $this->_logger->debug('Got amazon response [' . json_encode($data) . ']');
+        $this->_logger->info('Got amazon response [' . json_encode($data) . ']');
 
-        $this->_logger->debug('Checking request ['.$text_request->getIntentName().']['.$text_request->getIntentType().']');
+        $this->_logger->info('Checking request ['.$text_request->getIntentName().']['.$text_request->getIntentType().']');
 
         if ( $text_request->getIntentType() === 'SessionEndedRequest') {
-            $this->_logger->debug('Building empty response for SessionEndedRequest');
+            $this->_logger->info('Building empty response for SessionEndedRequest');
+            
             $text_response->prepareResponse(IAlexaResponseType::EMPTY_RESPONSE);
             $emptySessionEndResponse = $text_response->getPlatformResponse();
+            
             return $this->_httpFactory->buildResponse($emptySessionEndResponse);
         }
 

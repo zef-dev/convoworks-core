@@ -68,6 +68,8 @@ class TestServiceRestHandler implements RequestHandlerInterface
 			throw new \Convo\Core\Rest\InvalidRequestException( 'Could not get device_id from request body');
 		}
 
+		$this->_logger->info('Performing test request ['.$text.']['.$device_id.']['.$platform_id.'] init ['.($is_init ? 'true' : 'false').'] end ['.($is_end ? 'true' : 'false').']');
+
 		$text_request   =   new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest( $service_id, $device_id, $device_id, $device_id, $text, $is_init, $is_end, $platform_id);
 		$text_response	=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse();
 		$text_response->setLogger($this->_logger);
@@ -86,14 +88,14 @@ class TestServiceRestHandler implements RequestHandlerInterface
         ];
 
         try {
+			$this->_logger->info('Running service instance ['.$service->getId().']');
             $service->run($text_request, $text_response);
         } catch (\Exception $e) {
             $exception["exceptionMessage"] = $e->getMessage();
             $stack = explode('#', $e->getTraceAsString());
             array_shift($stack);
             $exception["exceptionStackTrace"] = $stack;
-            $this->_logger->error($e->getMessage());
-            $this->_logger->error($e->getTraceAsString());
+            $this->_logger->error($e);
         }
 
         $request_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData();
@@ -107,7 +109,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 			try {
 				$child_params[] = $this->_getChildData($service, $child);
 			} catch (DataItemNotFoundException $e) {
-			    $this->_logger->debug( $e->getMessage());
+			    $this->_logger->info($e->getMessage());
 			}
 		}
 

@@ -42,6 +42,8 @@ class ConfigurationRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
 
     private function _handleConfigOptionsGet(IAdminUser $user)
     {
+        $this->_logger->info('Getting configuration options');
+
         $data = [
             'CONVO_SERVICE_LANGUAGES' => [
                 ['code' => IConvoServiceLanguageMapper::CONVO_SERVICE_ENGLISH, 'name' => 'English']
@@ -202,6 +204,8 @@ class ConfigurationRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
                 'type', 'project_id', 'private_key_id', 'private_key', 'client_email', 'client_id', 'auth_uri', 'token_uri', 'auth_provider_x509_cert_url', 'client_x509_cert_url'
             ]
         ];
+
+        $this->_logger->debug('Configuration data object ['.print_r($data, true).']');
 
         return $this->_httpFactory->buildResponse($data);
     }

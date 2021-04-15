@@ -803,12 +803,13 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 );
 
                 $api->deleteAgent();
+                $report['successes'][$this->getPlatformId()]['service'] = 'Dialogflow agent successfully deleted.';
             } catch (\Exception $e) {
                 $this->_logger->error($e);
-                $report['errors']['dialogflow']['skill'] = $e->getMessage();
+                $report['errors'][$this->getPlatformId()]['service'] = $e->getMessage();
             }
         } else {
-            $report['success']['amazon']['skill'] = "Dialogflow agent with will not be deleted due to manual mode selection in the service platform configuration.";
+            $report['warnings'][$this->getPlatformId()]['service'] = "Dialogflow agent will not be deleted due to manual mode selection in the service platform configuration.";
         }
     }
 

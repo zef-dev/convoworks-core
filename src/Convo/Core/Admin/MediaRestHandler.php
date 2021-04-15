@@ -82,7 +82,7 @@ class MediaRestHandler implements \Psr\Http\Server\RequestHandlerInterface
                 'mediaItemId' => $mediaItemId,
                 'imageWidth' => getimagesizefromstring($file->getContent())[0],
                 'imageHeight' => getimagesizefromstring($file->getContent())[1],
-                "type" => $image->getClientMediaType()
+                'type' => $image->getClientMediaType()
             ]);
         }
 
@@ -92,8 +92,9 @@ class MediaRestHandler implements \Psr\Http\Server\RequestHandlerInterface
     private function _handleMediaPathServiceIdPathMediaItemIdPathDownloadGet(\Psr\Http\Message\ServerRequestInterface $request, $serviceId, $mediaItemId)
     {
         $meta = $this->_mediaService->getMediaInfo($serviceId, $mediaItemId);
-
         $image = $this->_mediaService->getMediaItem($serviceId, $mediaItemId);
+
+        $this->_logger->info('Got item ['.$mediaItemId.']['.$meta['mime_type'].']['.$meta['size'].']');
 
         return $this->_httpFactory->buildResponse($image->getContent(), 200, [
             'Content-Type' => $meta['mime_type'],

@@ -66,6 +66,8 @@ class ServicePackagesRestHandler implements RequestHandlerInterface
 	{
         $packages = $this->_getServicePackages($user, $serviceId);
 
+        $this->_logger->info('Got packages for service ['.$serviceId.']['.print_r($packages, true).']');
+
 		return $this->_httpFactory->buildResponse($packages);
 	}
 
@@ -76,6 +78,8 @@ class ServicePackagesRestHandler implements RequestHandlerInterface
         if (!isset($body['package_id'])) {
             throw new InvalidRequestException('Missing required property [package_id] in request body.');
         }
+
+        $this->_logger->info('Activating package ['.$body['package_id'].'] for service ['.$serviceId.']');
 
         $packages = $this->_addPackageToService($user, $serviceId, $body['package_id']);
 
@@ -92,7 +96,7 @@ class ServicePackagesRestHandler implements RequestHandlerInterface
 
         $packageId = $body['package_id'];
 
-        $this->_logger->debug('Removing package ['.$packageId.'] from service ['.$serviceId.']');
+        $this->_logger->info('Removing package ['.$packageId.'] from service ['.$serviceId.']');
 
         $packages = $this->_removePackageFromService($user, $serviceId, $packageId);
 

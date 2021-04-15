@@ -123,6 +123,8 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
 		    throw new \Convo\Core\Rest\InvalidRequestException( 'Service ['.$serviceId.'] config ['.$platformId.'] already exists');
 		}
 
+		$this->_logger->info('Creating configuration ['.$platformId.'] for service ['.$serviceId.']');
+
 		$json =   $request->getParsedBody();
 
 		if ( empty( $json)) {
@@ -137,11 +139,15 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
 		$this->_convoServiceDataProvider->updateServicePlatformConfig( $user, $serviceId, $config);
 
         try {
+			$this->_logger->info('Enabling platform publisher');
+
             $publisher->enable();
-            return $this->_performServicePlatformPathServiceIdPathPlatformIdConfigGet( $request, $user, $serviceId, $platformId);
+            
+			return $this->_performServicePlatformPathServiceIdPathPlatformIdConfigGet( $request, $user, $serviceId, $platformId);
         } catch (\Exception $e) {
             $this->_logger->critical( $e);
-            // remove release mapping
+            
+			// remove release mapping
             $meta = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
             unset($meta['release_mapping'][$platformId]);
             $this->_convoServiceDataProvider->saveServiceMeta( $user, $serviceId, $meta);
@@ -172,6 +178,8 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
 		    throw new \Convo\Core\Rest\NotFoundException( 'No configuration data in payload');
 		}
 
+		$this->_logger->info('Updating configuration ['.$platformId.'] for service ['.$serviceId.']');
+
 		$config[$platformId]  =   array_merge( $config[$platformId], $json);
 		$config[$platformId]['time_updated'] = time();
 
@@ -186,6 +194,8 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
 	    \Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId, $platformId)
 	{
         $publisher	=	$this->_platformPublisherFactory->getPublisher( $user, $serviceId, $platformId);
+
+		$this->_logger->info('Propagating changes for service ['.$serviceId.'] to platform ['.$platformId.']');
 
 	    try {
             $publisher->propagate();
@@ -202,6 +212,8 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
 	{
 	    $publisher  =   $this->_platformPublisherFactory->getPublisher( $user, $serviceId, $platformId);
         $data       =   $publisher->getPropagateInfo();
+
+		$this->_logger->info('Getting propagation info for ['.$serviceId.']['.$platformId.']');
 
 	    return $this->_httpFactory->buildResponse( $data);
 	}

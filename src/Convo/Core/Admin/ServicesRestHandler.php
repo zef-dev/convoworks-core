@@ -7,6 +7,7 @@ use Convo\Core\Rest\OwnerNotSpecifiedException;
 use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Publish\IPlatformPublisher;
 use Convo\Core\Util\ArrayUtil;
+use Convo\Core\Util\NotImplementedException;
 
 class ServicesRestHandler implements RequestHandlerInterface
 {
@@ -138,6 +139,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 	private function _performConvoPathServiceIdGet(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId)
 	{
 		try {
+			$this->_logger->info('Getting service ['.$serviceId.']');
 			$this->_convoServiceFactory->migrateService( $user, $serviceId, $this->_convoServiceDataProvider);
 			$data = $this->_convoServiceDataProvider->getServiceData( $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 		} catch (\Convo\Core\DataItemNotFoundException $e) {
@@ -149,40 +151,56 @@ class ServicesRestHandler implements RequestHandlerInterface
 
 	private function _performConvoServiceCreatePost(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user)
 	{
-		$json         =   $request->getParsedBody();
+		$json = $request->getParsedBody();
 
-		$service_name     = $json['service_name'];
+		$service_name = $json['service_name'];
 		$default_language = $json['default_language'];
 		$default_locale = $json['default_locale'];
 		$supported_locales = $json['supported_locales'];
- 		$is_private       = $json['is_private'];
-		$template_id      = $json['template_id'];
-        $service_admins   = $json['admins'] ?? [];
+ 		$is_private = $json['is_private'];
+		$template_id = $json['template_id'];
+        $service_admins = $json['admins'] ?? [];
+		
 		$template_namespace = explode('.', $template_id)[0];
-
 		$provider = $this->_packageProviderFactory->getProviderByNamespace($template_namespace);
 
-		$template     =   $provider->getTemplate( $template_id);
-        $this->_convoServiceFactory->fixComponentIds( $template['service']);
-		$service_id   =   $this->_convoServiceDataProvider->createNewService( $user, $service_name, $default_language, $default_locale, $supported_locales, $is_private, $service_admins, $template['service']);
+		$template = $provider->getTemplate($template_id);
+        $this->_convoServiceFactory->fixComponentIds($template['service']);
+		
+		$service_id = $this->_convoServiceDataProvider->createNewService(
+			$user,
+			$service_name,
+			$default_language,
+			$default_locale,
+			$supported_locales,
+			$is_private,
+			$service_admins,
+			$template['service']
+		);
+
+		$this->_logger->info('Created new service ['.$service_name.']['.$service_id.'] from template ['.$template_id.']');
 
 		return $this->_httpFactory->buildResponse(['service_id' => $service_id]);
 	}
 
 	private function _performConvoPathServiceIdPut(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId)
 	{
-		$service  =   $request->getParsedBody();
+		$service = $request->getParsedBody();
 
-		$this->_convoServiceFactory->fixComponentIds( $service);
+		$this->_convoServiceFactory->fixComponentIds($service);
 
-		$old      =   $this->_convoServiceDataProvider->getServiceData( $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
-		if ( !ArrayUtil::areArraysEqual( $old['intents'], $service['intents'])
-		    || !ArrayUtil::areArraysEqual( $old['entities'], $service['entities'])
-		    || !isset( $service['intents_time_updated'])) {
-	        $service['intents_time_updated']     =   time();
+		$old = $this->_convoServiceDataProvider->getServiceData($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+		
+		if (!ArrayUtil::areArraysEqual($old['intents'], $service['intents']) ||
+		    !ArrayUtil::areArraysEqual($old['entities'], $service['entities']) ||
+		    !isset($service['intents_time_updated']))
+		{
+			$this->_logger->info('Updating service time updated');
+	        $service['intents_time_updated'] = time();
 	    }
 
-		$data     =   $this->_convoServiceDataProvider->saveServiceData( $user, $serviceId, $service);
+		$this->_logger->info('Updating service ['.$serviceId.']');
+		$data = $this->_convoServiceDataProvider->saveServiceData($user, $serviceId, $service);
 
 		// quickfix
 		$meta = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId);
@@ -198,12 +216,12 @@ class ServicesRestHandler implements RequestHandlerInterface
 	private function _performConvoPathServiceIdDelete(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId, $localOnly)
     {
         $report = [
-            'success' => [],
+            'successes' => [],
+			'warnings' => [],
             'errors' => []
         ];
 
         $meta = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId);
-        $platform_config = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 
         if (isset($meta['owner'])) {
             $owner = $this->_adminUserDataProvider->findUser($meta['owner']);
@@ -212,41 +230,42 @@ class ServicesRestHandler implements RequestHandlerInterface
             $owner = $user;
         }
 
+		$this->_logger->info('Deleting service ['.$serviceId.'] local only? ['.($localOnly ? 'true' : 'false').']');
+
         if ($user->getId() !== $owner->getId()) {
-            $report['errors']['convoworks']['skill'] = 'User "' . $user->getEmail() . '" is not authorized to delete the service with id "' . $serviceId . '"';
+            $report['errors']['convoworks']['service'] = 'User "'.$user->getEmail().'" is not authorized to delete the service "'.$serviceId.'"';
             return $this->_httpFactory->buildResponse($report);
         }
 
         if (!$localOnly)
         {
-            // AMAZON
-            if (isset($platform_config['amazon']))
-            {
-                $publisher = $this->_platformPublisherFactory->getPublisher(
-                    $owner, $serviceId, \Convo\Core\Adapters\Alexa\AmazonCommandRequest::PLATFORM_ID
-                );
+			$this->_logger->info('Deleting from remote vendors as well.');
 
-                $publisher->delete($report);
-            }
+			$platform_config = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 
-            // DIALOGFLOW
-            if (isset($platform_config['dialogflow']))
-            {
-                $publisher = $this->_platformPublisherFactory->getPublisher(
-                    $owner, $serviceId, \Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandRequest::PLATFORM_ID
-                );
-
-                $publisher->delete($report);
-            }
-            // @todo CHECK OTHER REMOTE VENDORS
+			foreach ($platform_config as $platform => $config)
+			{
+				$this->_logger->info('Trying to delete service from platform ['.$platform.']');
+				try {
+					$publisher = $this->_platformPublisherFactory->getPublisher(
+						$owner, $serviceId, $platform
+					);
+					$publisher->delete($report);
+				} catch (NotImplementedException $e) {
+					$this->_logger->info($e->getMessage());
+				} catch (\Exception $e) {
+					$this->_logger->error($e);
+					$report['errors'][$platform]['service'] = $e->getMessage();
+				}
+			}
         }
 
         try {
             $this->_convoServiceDataProvider->deleteService($owner, $serviceId);
-            $report['success']['convoworks']['skill'] = 'Successfully deleted skill ['.$serviceId.']';
+            $report['successes']['convoworks']['service'] = 'Successfully deleted service ['.$serviceId.']';
         } catch (\Exception $e) {
             $this->_logger->error($e);
-            $report['errors']['convoworks']['skill'] = $e->getMessage();
+            $report['errors']['convoworks']['service'] = $e->getMessage();
         }
 
         return $this->_httpFactory->buildResponse($report);
@@ -257,6 +276,8 @@ class ServicesRestHandler implements RequestHandlerInterface
 		$instance = $this->_convoServiceFactory->getService(
 		    $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory
 		);
+
+		$this->_logger->info('Building preview for service ['.$serviceId.']');
 
 		$previewBuilder = new ServicePreviewBuilder($serviceId);
 		$previewBuilder->setLogger($this->_logger);
@@ -324,6 +345,8 @@ class ServicesRestHandler implements RequestHandlerInterface
             throw new \Exception('No such block with ID ['.$blockId.'] in service ['.$serviceId.']');
         }
 
+		$this->_logger->info('Got block ['.$blockId.']['.$serviceId.']');
+
         $previewBuilder = new ServicePreviewBuilder($serviceId);
         $previewBuilder->setLogger($this->_logger);
 
@@ -338,6 +361,8 @@ class ServicesRestHandler implements RequestHandlerInterface
 			$user, $serviceId
 		);
 
+		$this->_logger->info('Getting metadata for service ['.$serviceId.']');
+
 		return $this->_httpFactory->buildResponse( $meta);
 	}
 
@@ -349,7 +374,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 		    throw new OwnerNotSpecifiedException("Please specify an owner for the service [" . $serviceId . "]");
         }
 
-		$this->_logger->debug('Got meta to update ['.print_r($body, true).']');
+		$this->_logger->info('Updating service meta ['.$serviceId.']['.print_r($body, true).']');
 
 		$existing = $this->_convoServiceDataProvider->getServiceMeta(
 			$user, $serviceId

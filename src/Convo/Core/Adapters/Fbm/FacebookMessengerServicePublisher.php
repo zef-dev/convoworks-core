@@ -3,6 +3,7 @@
 namespace Convo\Core\Adapters\Fbm;
 
 use Convo\Core\Publish\IPlatformPublisher;
+use Convo\Core\Util\NotImplementedException;
 
 class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
 {
@@ -123,7 +124,7 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
 
     public function delete(array &$report)
     {
-        // TODO: Implement delete() method.
+        throw new NotImplementedException('Deletion not yet implemented for ['.$this->getPlatformId().'] platform');
     }
 
     public function getStatus()

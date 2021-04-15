@@ -52,15 +52,21 @@ class UserPlatformConfigRestHandler implements RequestHandlerInterface
 	
 	private function _loadUserPlatformConfig(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user)
 	{
-		$config		=	$this->_adminUserDataProvider->getPlatformConfig( $user->getId());
-		return $this->_httpFactory->buildResponse( $config);
+		$config = $this->_adminUserDataProvider->getPlatformConfig($user->getId());
+		
+		$this->_logger->info('Getting platform config for user ['.$user->getId().']');
+		
+		return $this->_httpFactory->buildResponse($config);
 	}
 	
 	private function _updateUserPlatformConfig(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user)
 	{
-	    $this->_adminUserDataProvider->updatePlatformConfig( $user->getId(), $request->getParsedBody());
+	    $this->_adminUserDataProvider->updatePlatformConfig($user->getId(), $request->getParsedBody());
 		
-		$config		=	$this->_adminUserDataProvider->getPlatformConfig( $user->getId());
+		$this->_logger->info('Updating platform config for user ['.$user->getId().']['.print_r($request->getParsedBody(), true).']');
+
+		$config = $this->_adminUserDataProvider->getPlatformConfig($user->getId());
+		
 		return $this->_httpFactory->buildResponse( $config);
 	}
 

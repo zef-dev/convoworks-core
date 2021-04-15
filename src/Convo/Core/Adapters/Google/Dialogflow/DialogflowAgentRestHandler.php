@@ -62,13 +62,12 @@ class DialogflowAgentRestHandler implements RequestHandlerInterface
         /** @var RequestInfo */
         $info	=	new RequestInfo( $request);
 
-        $this->_logger->debug( 'Google request info ['.$info->__toString().']');
-        if ( $info->post() && $route = $info->route( 'service-run/dialogflow/{variant}/{serviceId}'))
+        if ($info->post() && $route = $info->route( 'service-run/dialogflow/{variant}/{serviceId}'))
         {
             $variant = $route->get('variant');
             $serviceId = $route->get('serviceId');
 
-            $this->_logger->debug( 'Got service id ['.$serviceId.']['.$variant.']');
+            $this->_logger->info( 'Running service ['.$serviceId.']['.$variant.']');
             return $this->_handleServiceRunPathGoogleAssistantPathVariantPathServiceIdPost( $request, $variant, $serviceId, "dialogflow");
         }
 
@@ -77,7 +76,7 @@ class DialogflowAgentRestHandler implements RequestHandlerInterface
 
     private function _handleServiceRunPathGoogleAssistantPathVariantPathServiceIdPost(ServerRequestInterface $request, $variant, $serviceId, $type)
     {
-        $owner		=	new RestSystemUser();
+        $owner = new RestSystemUser();
         $platform_id = $type;
 
         try {
@@ -86,7 +85,7 @@ class DialogflowAgentRestHandler implements RequestHandlerInterface
             throw new NotFoundException( 'Service variant ['.$serviceId.']['.$variant.'] not found', 0, $e);
         }
 
-        $this->_logger->debug( 'Got variant version ['.$variant.']['.$version_id.']');
+        $this->_logger->info( 'Got variant version ['.$variant.']['.$version_id.']');
 
         if ( empty( $version_id)) {
             throw new InvalidRequestException( 'Service ['.$serviceId.'] not published yet');
@@ -103,13 +102,17 @@ class DialogflowAgentRestHandler implements RequestHandlerInterface
 
         $text_response = new DialogflowCommandResponse($serviceParams, $client);
         $text_response->setLogger($this->_logger);
-        if ($client->isRePromptRequest()) {
+        
+        if ($client->isRePromptRequest())
+        {
             $serviceParams->setServiceParam('__finalReprompt', false);
+        
             if (!$serviceParams->getServiceParam('__keepRePrompt')) {
                 $serviceParams->setServiceParam('__reprompt', '');
             }
 
             $arguments = $client->getPlatformData()['originalDetectIntentRequest']['payload']['inputs'][0]['arguments'];
+        
             if ($arguments[0]['name'] === "REPROMPT_COUNT" && $arguments[0]['intValue'] == 1) {
                 $serviceParams->setServiceParam('__reprompt', '');
             }
@@ -120,18 +123,20 @@ class DialogflowAgentRestHandler implements RequestHandlerInterface
 
             /** @var DialogflowRePromptResponse $dialogflowRePromptResponse */
             $dialogflowRePromptResponse = new DialogflowRePromptResponse($serviceParams);
+        
             return $this->_httpFactory->buildResponse($dialogflowRePromptResponse->getPlatformResponse());
-        } else {
+        }
+        else
+        {
             $serviceParams->setServiceParam('__keepRePrompt', false);
 
             /**  @var ConvoServiceInstance $service */
             $service = $this->_convoServiceFactory->getService( $owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
             $service->run($client, $text_response);
 
-            $json   		=   $text_response->getPlatformResponse();
+            $json = $text_response->getPlatformResponse();
 
-            $this->_logger->debug( 'Going to return data ['.print_r( json_decode( $json, true), true).']');
-            $this->_logger->debug('Going to return detected intent ['.$client->getText().']');
+            $this->_logger->info('Going to return ['.print_r(json_decode($json, true), true).']');
 
             return $this->_httpFactory->buildResponse( $json);
         }

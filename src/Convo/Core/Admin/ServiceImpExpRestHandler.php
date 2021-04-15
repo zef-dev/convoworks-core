@@ -80,7 +80,6 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 
 	private function _performConvoProtoImportServicePost(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId)
 	{
-	    $isTemplate = false;
 	    $original_data	=	$this->_convoServiceDataProvider->getServiceData( $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 	    $original_meta	=	$this->_convoServiceDataProvider->getServiceMeta( $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 		$files			=	$request->getUploadedFiles();
@@ -93,7 +92,7 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 		$keep_configs	=	$post_data['keep_configs'] ?? false;
 		$keep_configs   =   StrUtil::parseBoolean($keep_configs);
 
-		$this->_logger->debug( 'keep vars ['.$keep_vars.'] configs ['.$keep_configs.']');
+		$this->_logger->info('Going to import service data with keep_vars ['.$keep_vars.'] and keep_configs ['.$keep_configs.']');
 
 		$file			=	$files['service_definition'] ?? null;
 
@@ -102,16 +101,16 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 		}
 
 		/* @var \Psr\Http\Message\UploadedFileInterface  $file */
-		$this->_logger->debug( 'Got file ['.$file->getClientFilename().']');
+		$this->_logger->info('Got file ['.$file->getClientFilename().']');
 		$content		=	$file->getStream()->getContents();
 		$service_data	=	json_decode( $content, true);
 
 		if ( false === $service_data) {
-			throw new \Convo\Core\Rest\InvalidRequestException( 'Not valid json in ['.$file->getClientFilename().']');
+			throw new \Convo\Core\Rest\InvalidRequestException('Invalid JSON in ['.$file->getClientFilename().']');
 		}
 
 		if (json_last_error() !== 0) {
-			throw new \Convo\Core\Rest\InvalidRequestException( 'Not valid json in ['.$file->getClientFilename().']. Reason ['.json_last_error_msg().']');
+			throw new \Convo\Core\Rest\InvalidRequestException('Invalid JSON in ['.$file->getClientFilename().']['.json_last_error_msg().']');
 		}
 
 		if ( $keep_vars) {
@@ -134,13 +133,12 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
                 $this->_convoServiceDataProvider->updateServicePlatformConfig($user, $serviceId, $previous_conf);
             }
         }
+
         unset($service_data['configurations']);
         unset($service_data['release_mappings']);
-        if (isset($service_data['service'])) {
-            $isTemplate = true;
-        }
-
-        if ($isTemplate) {
+        
+		if (isset($service_data['service']))
+		{
             $service_data_from_template = $service_data['service'];
             $service_data_from_template['template_id'] = $service_data['template_id'];
             $service_data_from_template['service_id'] = $original_meta['service_id'];
@@ -157,65 +155,79 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 
 	private function _performConvoProtoExportServiceGet( \Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId)
 	{
+		$this->_logger->info('Exporting Convoworks service model');
         $configurations = [];
         $service_data = $this->_convoServiceDataProvider->getServiceData( $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 
-	    $includeConfigurations = filter_var($request->getQueryParams()['include_configurations']??false, FILTER_VALIDATE_BOOLEAN);
-	    if ($includeConfigurations === true) {
+	    $include_configurations = filter_var(($request->getQueryParams()['include_configurations'] ?? false), FILTER_VALIDATE_BOOLEAN);
+	    
+		if ($include_configurations) {
+			$this->_logger->info('Including configurations in export.');
             $configurations = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
             $service_data['configurations'] = $configurations;
         } else {
+			$this->_logger->info('Not going to export configurations.');
 	        unset($service_data['configurations']);
         }
 
         if (!empty($configurations)) {
             $service_data['release_mappings'] = [];
+
             foreach ($configurations as $platform => $configuration) {
-                if ($platform === AmazonCommandRequest::PLATFORM_ID) {
-                    if (isset($configuration['mode']) && $configuration['mode'] === 'auto' && isset($configuration['app_id']) && !empty($configuration['app_id'])) {
-                        $service_data['release_mappings'][$platform]['a'] = [
-                            "type" => "develop",
-                            "time_updated" => $configuration['time_created'] ?? time(),
-                            "time_propagated" => 0
-                        ];
-                    }
-                } else if ($platform === DialogflowCommandRequest::PLATFORM_ID) {
-                    if (isset($configuration['mode']) && $configuration['mode'] === 'auto' && isset($configuration['serviceAccount']) && !empty($configuration['serviceAccount'])) {
-                        $service_data['release_mappings'][$platform]['a'] = [
-                            "type" => "develop",
-                            "time_updated" => $configuration['time_created'] ?? time(),
-                            "time_propagated" => 0
-                        ];
-                    }
-                } else if ($platform === FacebookMessengerCommandRequest::PLATFORM_ID) {
-                    if (isset($configuration['page_access_token']) && !empty($configuration['page_access_token'])) {
-                        $service_data['release_mappings'][$platform]['a'] = [
-                            "type" => "develop",
-                            "time_updated" => $configuration['time_created'] ?? time(),
-                            "time_propagated" => 0
-                        ];
-                    }
-                } else if ($platform === ViberCommandRequest::PLATFORM_ID) {
-                    if (isset($configuration['auth_token']) && !empty($configuration['auth_token'])) {
-                        $service_data['release_mappings'][$platform]['a'] = [
-                            "type" => "develop",
-                            "time_updated" => $configuration['time_created'] ?? time(),
-                            "time_propagated" => 0
-                        ];
-                    }
-                } else if ($platform === 'convo_chat') {
-                    if (isset($configuration['time_created']) && !empty($configuration['time_created'])) {
-                        $service_data['release_mappings'][$platform]['a'] = [
-                            "type" => "develop",
-                            "time_updated" => $configuration['time_created'] ?? time(),
-                            "time_propagated" => 0
-                        ];
-                    }
-                }
+				switch ($platform)
+				{
+					case AmazonCommandRequest::PLATFORM_ID:
+						if (isset($configuration['mode']) && $configuration['mode'] === 'auto' && isset($configuration['app_id']) && !empty($configuration['app_id'])) {
+							$service_data['release_mappings'][$platform]['a'] = [
+								"type" => "develop",
+								"time_updated" => $configuration['time_created'] ?? time(),
+								"time_propagated" => 0
+							];
+						}
+						break;
+					case DialogflowCommandRequest::PLATFORM_ID:
+						if (isset($configuration['mode']) && $configuration['mode'] === 'auto' && isset($configuration['serviceAccount']) && !empty($configuration['serviceAccount'])) {
+							$service_data['release_mappings'][$platform]['a'] = [
+								"type" => "develop",
+								"time_updated" => $configuration['time_created'] ?? time(),
+								"time_propagated" => 0
+							];
+						}
+						break;
+					case FacebookMessengerCommandRequest::PLATFORM_ID:
+						if (isset($configuration['page_access_token']) && !empty($configuration['page_access_token'])) {
+							$service_data['release_mappings'][$platform]['a'] = [
+								"type" => "develop",
+								"time_updated" => $configuration['time_created'] ?? time(),
+								"time_propagated" => 0
+							];
+						}
+						break;
+					case ViberCommandRequest::PLATFORM_ID:
+						if (isset($configuration['auth_token']) && !empty($configuration['auth_token'])) {
+							$service_data['release_mappings'][$platform]['a'] = [
+								"type" => "develop",
+								"time_updated" => $configuration['time_created'] ?? time(),
+								"time_propagated" => 0
+							];
+						}
+						break;
+					case 'convo_chat':
+						if (isset($configuration['time_created']) && !empty($configuration['time_created'])) {
+							$service_data['release_mappings'][$platform]['a'] = [
+								"type" => "develop",
+								"time_updated" => $configuration['time_created'] ?? time(),
+								"time_propagated" => 0
+							];
+						}
+						break;
+					default: 
+						throw new \Exception('Unexpected configuration platform ID ['.$platform.']');
+				}
             }
         }
 
-		return $this->_httpFactory->buildResponse( json_encode( $service_data, JSON_PRETTY_PRINT), 200, [
+		return $this->_httpFactory->buildResponse(json_encode($service_data, JSON_PRETTY_PRINT), 200, [
 				'Content-Disposition' => 'attachment; filename="'.$serviceId.'.json"',
 				'Content-Type' => 'application/json'
 		]);
@@ -226,7 +238,9 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 	    $publisher     =   $this->_platformPublisherFactory->getPublisher( $user, $serviceId, $platformId);
 	    $export        =   $publisher->export();
 
-	    return $this->_httpFactory->buildResponse( $export->getContent(), 200, [
+		$this->_logger->info('Exporting ['.$serviceId.'] for ['.$platformId.']');
+
+	    return $this->_httpFactory->buildResponse($export->getContent(), 200, [
 	        'Content-Disposition' => 'attachment; filename="'.$export->getFilename().'"',
 	        'Content-Type' => $export->getContentType()
 		]);
