@@ -379,6 +379,20 @@ class EvaluationContextTest extends TestCase
             ],
             [
                 [
+                    'number' => 22,
+                ],
+                'The number is ${number}', 'The number is 22'
+            ],
+            [
+                [
+                    'first' => true,
+                    'second' => false
+                ],
+                'The next statement is ${first ? "true" : "false"}. The previous statement is ${second ? "true" : "false"}.',
+                'The next statement is true. The previous statement is false.'
+            ],
+            [
+                [
                     'array' => '${[1, 2, 3]}'
                 ],
                 '${array[0]}', '1'
@@ -391,9 +405,9 @@ class EvaluationContextTest extends TestCase
             ],
             [
                 [
-                    'user' => '${{"name": "Bolvar"}}'
+                    'user' => '${{"name": "Test"}}'
                 ],
-                'User name: ${user.name}', 'User name: Bolvar'
+                'User name: ${user.name}', 'User name: Test'
             ],
             [
                 [
