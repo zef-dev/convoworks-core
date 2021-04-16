@@ -238,6 +238,25 @@ class ServicesRestHandler implements RequestHandlerInterface
 
                 $publisher->delete($report);
             }
+            // FACEBOOK MESSENGER
+            if (isset($platform_config['facebook_messenger']))
+            {
+                $publisher = $this->_platformPublisherFactory->getPublisher(
+                    $owner, $serviceId, \Convo\Core\Adapters\Fbm\FacebookMessengerCommandRequest::PLATFORM_ID
+                );
+
+                $publisher->delete($report);
+            }
+
+            // VIBER
+            if (isset($platform_config['viber']))
+            {
+                $publisher = $this->_platformPublisherFactory->getPublisher(
+                    $owner, $serviceId, \Convo\Core\Adapters\Viber\ViberCommandRequest::PLATFORM_ID
+                );
+
+                $publisher->delete($report);
+            }
             // @todo CHECK OTHER REMOTE VENDORS
         }
 

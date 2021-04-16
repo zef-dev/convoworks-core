@@ -3,6 +3,7 @@
 namespace Convo\Core\Adapters\Fbm;
 
 use Convo\Core\Publish\IPlatformPublisher;
+use Psr\Http\Client\ClientExceptionInterface;
 
 class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
 {
@@ -123,7 +124,19 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
 
     public function delete(array &$report)
     {
-        // TODO: Implement delete() method.
+        $facebookMessengerApi = $this->_facebookMessengerApiFactory->getApi($this->_user, $this->_serviceId, $this->_convoServiceDataProvider);
+        try {
+            $facebookMessengerApi->unsubscribeApp();
+            $facebookMessengerApi->callSubscriptionsApiToUnsubscribe();
+            $facebookMessengerApi->callMessengerProfileApiToDelete();
+            $report['success'][$this->getPlatformId()]['messenger_bot'] = "Messenger bot was successfully unsubscribed from you facebook page.";
+        } catch (ClientExceptionInterface $e) {
+            $this->_logger->warning($e->getMessage());
+            $report['errors'][$this->getPlatformId()]['messenger_bot'] = $e->getMessage();
+        } catch (\Exception $e) {
+            $this->_logger->warning($e->getMessage());
+            $report['errors'][$this->getPlatformId()]['messenger_bot'] = $e->getMessage();
+        }
     }
 
     public function getStatus()
