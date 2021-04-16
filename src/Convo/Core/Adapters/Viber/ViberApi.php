@@ -73,6 +73,25 @@ class ViberApi
     }
 
     /**
+     * Removes the webhook from viber chat bot.
+     * @param $url
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
+    public function removeWebhook() {
+        $requestBody = [
+            "url" => ''
+        ];
+
+        $uri = $this->_httpFactory->buildUri(self::VIBER_BASE_API_URL . '/pa/set_webhook');
+
+        $request = $this->_httpFactory->buildRequest("POST", $uri, $this->_headers, $requestBody);
+        $client = $this->_httpFactory->getHttpClient();
+        $client->sendRequest($request);
+        $response = $client->sendRequest($request);
+        $this->_checkResponseCode($response->getBody()->getContents());
+    }
+
+    /**
      * For use in rest handler
      * @throws \Psr\Http\Client\ClientExceptionInterface
      */

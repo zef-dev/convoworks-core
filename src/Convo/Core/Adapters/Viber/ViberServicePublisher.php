@@ -5,7 +5,7 @@ namespace Convo\Core\Adapters\Viber;
 
 
 use Convo\Core\Publish\IPlatformPublisher;
-use Convo\Core\Util\NotImplementedException;
+use Psr\Http\Client\ClientExceptionInterface;
 
 class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
 {
@@ -129,7 +129,18 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
     public function delete(array &$report)
     {
-        throw new NotImplementedException('Deletion not yet implemented for ['.$this->getPlatformId().'] platform');
+        try {
+            $config            =   $this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+            $this->_viberApi->setupViberApi($this->_user, $this->_serviceId, $config);
+            $this->_viberApi->removeWebhook();
+            $report['success'][$this->getPlatformId()]['viber_bot'] = "Viber bot has successfully removed the webhook.";
+        } catch (ClientExceptionInterface $e) {
+            $this->_logger->warning($e);
+            $report['errors'][$this->getPlatformId()]['viber_bot'] = $e->getMessage();
+        } catch (\Exception $e) {
+            $this->_logger->warning($e);
+            $report['errors'][$this->getPlatformId()]['viber_bot'] = $e->getMessage();
+        }
     }
 
     public function getStatus()

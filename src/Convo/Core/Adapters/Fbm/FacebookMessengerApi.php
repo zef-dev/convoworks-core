@@ -117,6 +117,34 @@ class FacebookMessengerApi
         $this->_fb->post("/{$pageId}/subscribed_apps", $requestBody, $pageAccessToken);
     }
 
+    public function unsubscribeApp() {
+        $pageId = $this->_serviceConfig['facebook_messenger']['page_id'];
+
+        $this->_fb->delete("/{$pageId}/subscribed_apps", [], $this->_getAccessToken());
+    }
+
+    public function callSubscriptionsApiToUnsubscribe() {
+        $appId = $this->_serviceConfig['facebook_messenger']['app_id'];
+
+        $requestBody = [
+            'object' => 'page',
+            'fields' => $this->_provideWebhookEvents()
+        ];
+        $this->_fb->delete("/{$appId}/subscriptions", $requestBody, $this->_getAccessToken());
+    }
+
+    public function callMessengerProfileApiToDelete() {
+        $requestBody = [
+            'fields' => [
+                'get_started',
+                'greeting',
+            ]
+        ];
+        $pageAccessToken = $this->_serviceConfig['facebook_messenger']['page_access_token'];
+
+        $this->_fb->delete("/me/messenger_profile", $requestBody, $pageAccessToken);
+    }
+
     private function _getAccessToken() {
         $appId = $this->_serviceConfig['facebook_messenger']['app_id'];
         $appSecret = $this->_serviceConfig['facebook_messenger']['app_secret'];

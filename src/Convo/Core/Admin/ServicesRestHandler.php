@@ -160,13 +160,13 @@ class ServicesRestHandler implements RequestHandlerInterface
  		$is_private = $json['is_private'];
 		$template_id = $json['template_id'];
         $service_admins = $json['admins'] ?? [];
-		
+
 		$template_namespace = explode('.', $template_id)[0];
 		$provider = $this->_packageProviderFactory->getProviderByNamespace($template_namespace);
 
 		$template = $provider->getTemplate($template_id);
         $this->_convoServiceFactory->fixComponentIds($template['service']);
-		
+
 		$service_id = $this->_convoServiceDataProvider->createNewService(
 			$user,
 			$service_name,
@@ -190,7 +190,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 		$this->_convoServiceFactory->fixComponentIds($service);
 
 		$old = $this->_convoServiceDataProvider->getServiceData($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
-		
+
 		if (!ArrayUtil::areArraysEqual($old['intents'], $service['intents']) ||
 		    !ArrayUtil::areArraysEqual($old['entities'], $service['entities']) ||
 		    !isset($service['intents_time_updated']))
