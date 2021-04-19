@@ -83,6 +83,10 @@ class ViberCommandRequest implements \Convo\Core\Workflow\IConvoRequest
         return $this->_isLaunchRequest;
     }
 
+    public function isSessionStart() {
+        return $this->isLaunchRequest();
+    }
+
     /**
      * @inheritDoc
      */

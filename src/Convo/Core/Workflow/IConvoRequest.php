@@ -10,7 +10,13 @@ interface IConvoRequest
 	 * @return boolean
 	 */
 	public function isLaunchRequest();
-	
+
+    /**
+     *
+     * @return boolean
+     */
+    public function isSessionStart();
+
 	/**
 	 *
 	 * @return boolean

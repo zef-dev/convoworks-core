@@ -312,9 +312,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         }
 
         // SET first_call
-        $last_state		=	$this->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getServiceParam( self::SERVICE_STATE_NAME);
-        $this->_logger->info( 'Found last state ['.$last_state.']');
-        if ( empty( $last_state)) {
+        if ( $request->isSessionStart()) {
             $this->_logger->debug( 'First session call. Setting [first_call=true]');
             $this->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->setServiceParam( 'first_call', true);
         }
@@ -348,7 +346,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
 
         // SESSION START
-        if ( empty( $last_state) || $request->isLaunchRequest())
+        if ( $request->isSessionStart())
         {
             if ( $request->isEmpty())
             {

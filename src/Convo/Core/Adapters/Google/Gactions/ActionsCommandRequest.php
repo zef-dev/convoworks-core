@@ -30,6 +30,8 @@ class ActionsCommandRequest implements IConvoRequest, LoggerAwareInterface
 	private $_isEnd     =   false;
 	private $_isMediaRequest     =   false;
 
+	private $_conversationType   =   '';
+
 	/**
 	 * Logger
 	 *
@@ -59,6 +61,7 @@ class ActionsCommandRequest implements IConvoRequest, LoggerAwareInterface
 	{
 	    $this->_installationId      = isset($this->_data['user']['userId']) ? $this->_data['user']['userId'] : null;
 		$this->_sessionId           =   $this->_data['conversation']['conversationId'];
+		$this->_conversationType    =   $this->_data['conversation']['type'];
 
 		$this->_conversationToken   =   isset( $this->_data['conversation']['conversationToken']) ?
 			$this->_data['conversation']['conversationToken'] : self::DEFAULT_CONVERSATION_TOKEN;
@@ -127,6 +130,10 @@ class ActionsCommandRequest implements IConvoRequest, LoggerAwareInterface
 	{
 		return $this->_isLaunch;
 	}
+
+    public function isSessionStart() {
+        return ($this->isLaunchRequest() || $this->_conversationType === 'NEW') && !$this->isMediaRequest();
+    }
 
 	/**
 	 * @return bool

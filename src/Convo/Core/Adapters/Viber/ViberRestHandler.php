@@ -110,7 +110,7 @@ class ViberRestHandler implements RequestHandlerInterface
             $servicePlatformConfig['viber']['webhook_build_status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED;
             $this->_convoServiceDataProvider->updateServicePlatformConfig($owner, $serviceId, $servicePlatformConfig);
             $response = $this->_httpFactory->buildResponse(['EVENT_RECEIVED_AND_WEBHOOK_VERIFIED'], 200);
-        } else if ($viberCommandRequest->isMessageRequest() || $viberCommandRequest->isLaunchRequest()) {
+        } else if ($viberCommandRequest->isMessageRequest() || $viberCommandRequest->isSessionStart()) {
             $this->_viberApi = new ViberApi($this->_logger, $this->_httpFactory);
             $this->_viberApi->setupViberApi($owner, $serviceId, $servicePlatformConfig);
 
