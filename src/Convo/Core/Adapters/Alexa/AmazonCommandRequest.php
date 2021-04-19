@@ -173,6 +173,10 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 		return $this->_intentType == 'LaunchRequest';
 	}
 
+    public function isSessionStart() {
+        return ($this->isLaunchRequest() || $this->_isNewSession) && !$this->isMediaRequest();
+    }
+
 	public function isSessionEndRequest() {
 		return $this->_intentType == 'SessionEndedRequest';
 	}

@@ -82,6 +82,10 @@ class FacebookMessengerCommandRequest implements IConvoRequest
         return $this->_isLaunchRequest;
     }
 
+    public function isSessionStart() {
+        return $this->isLaunchRequest();
+    }
+
     /**
      * @inheritDoc
      */
@@ -105,7 +109,7 @@ class FacebookMessengerCommandRequest implements IConvoRequest
     {
         $isEmpty = empty($this->_text);
 
-        if (!$this->isLaunchRequest()) {
+        if (!$this->isSessionStart()) {
             if (is_numeric($this->_text)) {
                 $isEmpty = false;
             }

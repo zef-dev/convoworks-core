@@ -46,6 +46,7 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
     private $_isAccountLinkingSupported = false;
 
     private $_isRePromptRequest = false;
+    private $_conversationType = '';
 
     public function __construct( $serviceId, $data)
     {
@@ -103,6 +104,7 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
         }
 
         $this->_sessionId           =   $conversation['conversationId'];
+        $this->_conversationType    =   $conversation['type'];
         $this->_accessToken = $this->_data['originalDetectIntentRequest']['payload']['user']['accessToken'] ?? null;
 
         switch ($this->_intentType)
@@ -234,6 +236,10 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
     public function isLaunchRequest()
     {
         return $this->_intentType === IActionsIntent::MAIN;
+    }
+
+    public function isSessionStart() {
+        return ($this->isLaunchRequest() || $this->_conversationType == 'NEW') && !$this->isMediaRequest();
     }
 
     /**

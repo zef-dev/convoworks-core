@@ -65,7 +65,11 @@ class IntentAwareWrapperRequest implements IIntentAwareRequest
 	public function isLaunchRequest() {
 	    return $this->_parent->isLaunchRequest();
 	}
-	
+
+    public function isSessionStart() {
+        return $this->_parent->isSessionStart();
+    }
+
 	public function isSessionEndRequest() {
 	    return $this->_parent->isSessionEndRequest();
 	}

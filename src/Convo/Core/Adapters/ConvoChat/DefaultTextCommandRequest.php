@@ -46,6 +46,10 @@ class DefaultTextCommandRequest implements \Convo\Core\Workflow\IConvoRequest
 		return $this->_isLaunch;
 	}
 
+    public function isSessionStart() {
+        return $this->isLaunchRequest();
+    }
+
 	public function isSessionEndRequest() {
 		return $this->_isEnd;
 	}
