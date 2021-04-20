@@ -66,7 +66,7 @@ class ServicePackagesRestHandler implements RequestHandlerInterface
 	{
         $packages = $this->_getServicePackages($user, $serviceId);
 
-        $this->_logger->info('Got packages for service ['.$serviceId.']['.print_r($packages, true).']');
+        // $this->_logger->info('Got packages for service ['.$serviceId.']['.print_r($packages, true).']');
 
 		return $this->_httpFactory->buildResponse($packages);
 	}
