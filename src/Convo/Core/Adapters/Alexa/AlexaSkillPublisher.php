@@ -497,7 +497,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 	    $intents           =   [];
 	    $entities          =   [];
-        $numberOfValidIntents =   0;
+        $numberOfSystemIntents =   0;
+        $numberOfCustomIntents =   0;
 
 	    $provider = $this->_packageProviderFactory->getProviderFromPackageIds($service->getPackageIds());
 
@@ -545,8 +546,11 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             /** @var IntentModel $intent */
             $numberOfSampleUtterances = count($intent->getUtterances());
 
-            if ($numberOfSampleUtterances > 0 || $intent->isSystem()) {
-                $numberOfValidIntents++;
+            if ($intent->isSystem()) {
+                $numberOfSystemIntents++;
+                $data['interactionModel']['languageModel']['intents'][] = $this->_buildIntent( $intent);
+            } else if (!$intent->isSystem() && $numberOfSampleUtterances > 0 ) {
+                $numberOfCustomIntents++;
                 $data['interactionModel']['languageModel']['intents'][] = $this->_buildIntent( $intent);
             } else {
                 $this->_logger->warning( 'Skipping empty intent ['.$intent.']');
@@ -578,7 +582,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	        "samples" => [],
 	    ];
 
-	    if ($numberOfValidIntents === 0) {
+	    if ($numberOfCustomIntents === 0) {
             $data['interactionModel']['languageModel']['intents'][]    =   [
                 "name" => "HelloWorld",
                 "samples" => ["hello world"],
@@ -972,7 +976,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 						try {
 							$catalog_id = $catalog_data['catalog_id'];
 							$catalog_delete_res = $this->_amazonPublishingService->deleteCatalog($this->_user, $catalog_id);
-	
+
 							$this->_logger->debug('Catalog ['.$catalog_name.'] deletion response ['.print_r($catalog_delete_res, true).']');
 
 							$report['successes'][$this->getPlatformId()][$catalog_name] = "Catalog $catalog_name successfully deleted.";
