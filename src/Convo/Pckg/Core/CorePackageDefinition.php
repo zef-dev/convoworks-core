@@ -1937,6 +1937,49 @@ In default phase you can inform users about problem you have interpreting comman
             ),
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
+                '\Convo\Pckg\Core\Elements\StartVideoPlayback',
+                'Start Video Playback',
+                'Initiates video playback and automatically stops the current session.',
+                array(
+                    'url' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Video URL',
+                        'description' => 'A URL to video.',
+                        'valueType' => 'string'
+                    ),
+                    'title' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Video Title',
+                        'description' => 'Video Title.',
+                        'valueType' => 'string'
+                    ),
+                    'subtitle' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Video Subtitle',
+                        'description' => 'Video Subtitle.',
+                        'valueType' => 'string'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code"><span class="statement">START VIDEO PLAYBACK</span> from <b>{{component.properties.url}}</b>'.
+                            '</div>'
+                    ),
+                    '_interface' => '\Convo\Core\Workflow\IConversationElement',
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'start-video-playback.html'
+                    ),
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\LoopBlock',
                 'Loop Block',
                 'Special conversation block type that will iterate over given array by itself.',

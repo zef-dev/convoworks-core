@@ -12,6 +12,10 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     private $_mp3url;
     private $_offsetMilliseconds;
 
+    private $_videoUrl = null;
+    private $_videoTitle = null;
+    private $_videoSubtitle = null;
+
     private $_currentSongToken;
     private $_previousSongToken;
 
@@ -116,7 +120,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     {
         return $this->_dataList;
     }
-    
+
     public function addListItem( $item)
     {
         if ( !isset( $this->_dataList['list_items'])) {
@@ -124,7 +128,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         }
         $this->_dataList['list_items'][]    =   $item;
     }
-    
+
 
     public function setDataCard($dataCard)
     {
@@ -185,6 +189,9 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                 break;
             case IAlexaResponseType::EMPTY_RESPONSE:
                 $this->_platformResponse = $this->_prepareEmptySessionEndResponse();
+                break;
+            case IAlexaResponseType::VIDEO_RESPONSE:
+                $this->_platformResponse = $this->_prepareVideoResponse();
                 break;
             default:
                 $this->_platformResponse = $this->_prepareSimpleResponse();
@@ -348,14 +355,14 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                         "title" => $this->_metadata["song"],
                         "subtitle" => $this->_metadata["artist"],
                     ];
-                    
+
                     if ( isset( $this->_metadata["art"]) && !empty( $this->_metadata["art"])) {
-                        $data['response']['directives'][0]['audioItem']['metadata']['art']  
+                        $data['response']['directives'][0]['audioItem']['metadata']['art']
                         =   [ "sources" => [[ "url" => $this->_metadata["art"]]]];
                     }
-                    
+
                     if ( isset( $this->_metadata["backgroundImage"]) && !empty( $this->_metadata["backgroundImage"])) {
-                        $data['response']['directives'][0]['audioItem']['metadata']['backgroundImage']  
+                        $data['response']['directives'][0]['audioItem']['metadata']['backgroundImage']
                         =   [ "sources" => [[ "url" => $this->_metadata["backgroundImage"]]]];
                     }
                 }
@@ -383,12 +390,12 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                         "title" => $this->_metadata["song"],
                         "subtitle" => $this->_metadata["artist"],
                     ];
-                    
+
                     if ( isset( $this->_metadata["art"]) && !empty( $this->_metadata["art"])) {
                         $data['response']['directives'][0]['audioItem']['metadata']['art']
                         =   [ "sources" => [[ "url" => $this->_metadata["art"]]]];
                     }
-                    
+
                     if ( isset( $this->_metadata["backgroundImage"]) && !empty( $this->_metadata["backgroundImage"])) {
                         $data['response']['directives'][0]['audioItem']['metadata']['backgroundImage']
                         =   [ "sources" => [[ "url" => $this->_metadata["backgroundImage"]]]];
@@ -408,6 +415,39 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                     'response' => (object) [],
                 ];
             }
+        }
+
+        return $data;
+    }
+
+    private function _prepareVideoResponse() {
+        $data = array(
+            'version' => '1.0',
+            'response' => array()
+        );
+
+        if (!empty($this->_videoUrl)) {
+            if ($this->getText() != null) {
+                $data['response']['outputSpeech']['type'] = 'SSML';
+                $data['response']['outputSpeech']['ssml'] = $this->getTextSsml();
+            }
+
+            $data['response']['directives'] = [];
+            $data['response']['directives'][] = [
+                'type' => 'VideoApp.Launch',
+                'videoItem' => [
+                    'source' => $this->_videoUrl
+                ]
+            ];
+
+            if (!empty($this->_videoTitle)) {
+                $data['response']['directives'][0]['videoItem']['metadata']['title'] = $this->_videoTitle;
+            }
+
+            if (!empty($this->_videoSubtitle)) {
+                $data['response']['directives'][0]['videoItem']['metadata']['subtitle'] = $this->_videoSubtitle;
+            }
+
         }
 
         return $data;
@@ -543,6 +583,14 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         } else {
             $this->_reprompts[] = "<p><amazon:domain name='$domain'>" . $this->_clearWrappers($emotionText) . "</amazon:domain></p>";
         }
+    }
+
+    public function startVideoPlayback($url, $title, $subTitle) {
+        $this->_videoUrl = $url;
+        $this->_videoTitle =$title;
+        $this->_videoSubtitle = $subTitle;
+        $this->prepareResponse(IAlexaResponseType::VIDEO_RESPONSE);
+        $this->getPlatformResponse();
     }
 
     private function _appendText($text, &$array)
