@@ -92,7 +92,7 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
         }
 
 		$uri = $this->_httpFactory->buildUri($url, $query_params);
-		$this->_logger->debug('Current uri ['.$uri.']['.(print_r($query_params, true)).']');
+		$this->_logger->info('Current uri ['.$uri.']['.(print_r($query_params, true)).']');
 
 		if( $parameters == 'block'){
 		    $params 	   =	$this->getBlockParams( $scope_type);
