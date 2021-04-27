@@ -430,6 +430,16 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
             if ($this->getText() != null) {
                 $data['response']['outputSpeech']['type'] = 'SSML';
                 $data['response']['outputSpeech']['ssml'] = $this->getTextSsml();
+
+                $isAutoDisplay = isset($this->_serviceAmazonConfig['auto_display']) ? $this->_serviceAmazonConfig['auto_display'] : false;
+
+                if ($this->_isDisplaySupported && $isAutoDisplay) {
+                    $data['response']['card'] = [
+                        'type' => 'Simple',
+                        'title' => isset($this->_serviceAmazonConfig['invocation']) ? ucwords($this->_serviceAmazonConfig['invocation']) : '',
+                        'content' => $this->getText()
+                    ];
+                }
             }
 
             $data['response']['directives'] = [];
