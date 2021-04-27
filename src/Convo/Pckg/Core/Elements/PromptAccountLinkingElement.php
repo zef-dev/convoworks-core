@@ -28,7 +28,6 @@ class PromptAccountLinkingElement extends \Convo\Core\Workflow\AbstractWorkflowC
                 \Convo\Core\Adapters\Google\Common\IResponseType::SIGN_IN_RESPONSE,
                 null
             );
-            $response->setShouldEndSession(true);
 
             throw new \Convo\Core\SessionEndedException();
         }
