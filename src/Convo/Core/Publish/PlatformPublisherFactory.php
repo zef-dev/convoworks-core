@@ -72,6 +72,11 @@ class PlatformPublisherFactory
 	 */
 	private $_serviceReleaseManager;
 
+    /**
+     * @var PlatformPublishingHistory
+     */
+    private $_platformPublishingHistory;
+
 	public function __construct(
         $publicRestBaseUrl,
         $logger,
@@ -85,7 +90,8 @@ class PlatformPublisherFactory
         $viberApi,
         $packageProviderFactory,
         $adminUserDataProvider,
-        $serviceReleaseManager
+        $serviceReleaseManager,
+        $platformPublishingHistory
 	)
 	{
 		$this->_publicRestBaseUrl			=	$publicRestBaseUrl;
@@ -101,6 +107,7 @@ class PlatformPublisherFactory
 		$this->_packageProviderFactory		=	$packageProviderFactory;
 		$this->_adminUserDataProvider		=	$adminUserDataProvider;
 		$this->_serviceReleaseManager       =	$serviceReleaseManager;
+        $this->_platformPublishingHistory   =	$platformPublishingHistory;
 	}
 
 	/**
@@ -128,7 +135,8 @@ class PlatformPublisherFactory
 				$this->_packageProviderFactory,
 				$this->_adminUserDataProvider,
 			    $this->_serviceReleaseManager,
-                $this->_mediaService
+                $this->_mediaService,
+                $this->_platformPublishingHistory
 			);
 		}
 
@@ -143,7 +151,8 @@ class PlatformPublisherFactory
 				$this->_packageProviderFactory,
 				$this->_dialogflowApiFactory,
 				$this->_mediaService,
-			    $this->_serviceReleaseManager
+			    $this->_serviceReleaseManager,
+			    $this->_platformPublishingHistory
 			);
 		}
 
@@ -154,12 +163,12 @@ class PlatformPublisherFactory
 
         if ( $platformId === \Convo\Core\Adapters\Fbm\FacebookMessengerCommandRequest::PLATFORM_ID) {
           return new \Convo\Core\Adapters\Fbm\FacebookMessengerServicePublisher(
-            $this->_logger, $owner, $serviceId, $this->_facebookMessengerApiFactory, $this->_convoServiceDataProvider, $this->_serviceReleaseManager);
+            $this->_logger, $owner, $serviceId, $this->_facebookMessengerApiFactory, $this->_convoServiceDataProvider, $this->_serviceReleaseManager, $this->_platformPublishingHistory);
         }
 
         if ( $platformId === \Convo\Core\Adapters\Viber\ViberCommandRequest::PLATFORM_ID) {
             return new \Convo\Core\Adapters\Viber\ViberServicePublisher(
-                $this->_logger, $owner, $serviceId, $this->_viberApi, $this->_convoServiceDataProvider, $this->_serviceReleaseManager);
+                $this->_logger, $owner, $serviceId, $this->_viberApi, $this->_convoServiceDataProvider, $this->_serviceReleaseManager, $this->_platformPublishingHistory);
         }
 
 		if ( $platformId === \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest::PLATFORM_ID) {

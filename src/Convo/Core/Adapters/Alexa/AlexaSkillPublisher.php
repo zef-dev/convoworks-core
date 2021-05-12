@@ -5,6 +5,7 @@ namespace Convo\Core\Adapters\Alexa;
 use Convo\Core\Intent\EntityModel;
 use Convo\Core\Intent\IntentModel;
 use Convo\Core\ComponentNotFoundException;
+use Convo\Core\Publish\PlatformPublishingHistory;
 use Convo\Core\Rest\InvalidRequestException;
 use Convo\Core\Rest\ServiceBuildingException;
 use Convo\Core\Util\StrUtil;
@@ -52,6 +53,10 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
      */
     private $_mediaService;
 
+    /**
+     * @var PlatformPublishingHistory
+     */
+    private $_platformPublishingHistory;
 
 	public function __construct(
 		$publicRestBaseUrl,
@@ -65,7 +70,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 		\Convo\Core\Factory\PackageProviderFactory $packageProviderFactory,
 		$adminUserDataProvider,
 	    $serviceReleaseManager,
-        $mediaService
+        $mediaService,
+        $platformPublishingHistory
 		)
 	{
 	    parent::__construct($logger, $user, $serviceId, $serviceDataProvider, $serviceReleaseManager);
@@ -77,6 +83,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 		$this->_packageProviderFactory      =	$packageProviderFactory;
 		$this->_adminUserDataProvider		=	$adminUserDataProvider;
         $this->_mediaService                =   $mediaService;
+        $this->_platformPublishingHistory   =   $platformPublishingHistory;
 	}
 
 	public function getPlatformId()
@@ -148,6 +155,11 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 }
             }
             $config[$this->getPlatformId()]['time_updated'] = time();
+            $this->_platformPublishingHistory->storePropagationData(
+                $this->_serviceId,
+                $this->getPlatformId(),
+                $this->_preparePropagateData($manifestData)
+            );
             $this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
             return;
         }
@@ -161,9 +173,6 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 		$this->_logger->debug('Going to go through enable procedure for ['.$this->_serviceId.']');
 
-		$manifest = new AmazonSkillManifest();
-		$manifest->setLogger($this->_logger);
-
 		$invocation = strtolower($config[$this->getPlatformId()]['invocation']);
 
 		if (empty($invocation)) {
@@ -171,63 +180,12 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
 
 		$locales = $meta['supported_locales'];
-		$defaultLocale = $meta['default_locale'];
-		$optInAutomaticDistribution = isset($config[$this->getPlatformId()]['availability']['automatic_distribution']) ?
-            $config[$this->getPlatformId()]['availability']['automatic_distribution'] : true;
-
-        $interfaces = isset($config[$this->getPlatformId()]['interfaces']) ? $config[$this->getPlatformId()]['interfaces'] : [];
-
-        if (count($interfaces) > 0) {
-            $manifest->setInterfaces($interfaces);
-        }
-
         $owner = $this->_adminUserDataProvider->findUser($meta['owner']);
 
-        $smallSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon']) ?
-            $this->_getDownloadLink(
-                $this->_serviceId,
-                $config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon'],
-                $owner,
-                self::TYPE_SMALL_SKILL_URL
-            ) : '';
-
-        $largeSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon']) ?
-            $this->_getDownloadLink(
-                $this->_serviceId,
-                $config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon'],
-                $owner,
-                self::TYPE_LARGE_SKILL_URL
-            ) : '';
-
-        $endpointCertificate = isset($config[$this->getPlatformId()]['endpoint_ssl_certificate_type']) ? $config[$this->getPlatformId()]['endpoint_ssl_certificate_type'] :
-            AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD;
-		$manifest
-			->setName($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['public_name'])
-			->setSummary($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['one_sentence_description'])
-			->setDescription($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['detailed_description'])
-			->setExamplePhrases($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['example_phrases'])
-			->setKeywords($locales, preg_replace('/\s+/', ',', $config[$this->getPlatformId()]['skill_preview_in_store']['keywords']))
-			->setSmallIconUri($locales, $smallSkillIcon)
-			->setLargeIconUri($locales, $largeSkillIcon)
-			->setCategory($config[$this->getPlatformId()]['skill_preview_in_store']['category'])
-            ->setTermsOfUseUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['terms_of_use_url'])
-            ->setPrivacyPolicyUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['privacy_policy_url'])
-			->allowsPurchases($config[$this->getPlatformId()]['privacy_and_compliance']['allows_purchases'])
-			->usesPersonalInfo($config[$this->getPlatformId()]['privacy_and_compliance']['uses_personal_info'])
-			->isChildDirected($config[$this->getPlatformId()]['privacy_and_compliance']['is_child_directed'])
-			->containsAds($config[$this->getPlatformId()]['privacy_and_compliance']['contains_ads'])
-			->isExportCompliant($config[$this->getPlatformId()]['privacy_and_compliance']['is_export_compliant'])
-			->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
-			->setIsAvailableWorldwide(true)
-			->setDistributionMode(AmazonSkillManifest::DISTRIBUTION_MODE_PUBLIC)
-            ->setOptInToAutomaticLocaleDistribution($optInAutomaticDistribution, $defaultLocale)
-			->setGlobalEndpoint( $this->_serviceReleaseManager->getWebhookUrl( $this->_user, $this->_serviceId, $this->getPlatformId()))
-			->setGlobalCertificateType($endpointCertificate);
-
 		$vendorId = $sys_config['vendor_id'];
-		$this->_logger->info("Going to print manifest [" . $manifest->getManifest(true) . "]");
+		$this->_logger->info("Going to print manifest [" . $this->_prepareManifestData([], true) . "]");
 
-		$manifestToCreate = $manifest->getManifest();
+		$manifestToCreate = $this->_prepareManifestData();
         if (!in_array('en-US', $locales)) {
             unset($manifestToCreate['publishingInformation']['locales']['en-US']);
         }
@@ -263,6 +221,11 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $res['skillId']);
         $this->_manageAccountLinking($owner, $res['skillId'], 'development', $config[$this->getPlatformId()]);
+        $this->_platformPublishingHistory->storePropagationData(
+            $this->_serviceId,
+            $this->getPlatformId(),
+            $this->_preparePropagateData()
+        );
 	}
 
 	public function propagate()
@@ -294,67 +257,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 		$skillId = $config[$this->getPlatformId()]['app_id'];
 
         $locales = $meta['supported_locales'];
-        $defaultLocale = $meta['default_locale'];
-        $optInAutomaticDistribution = isset($config[$this->getPlatformId()]['availability']['automatic_distribution']) ?
-            $config[$this->getPlatformId()]['availability']['automatic_distribution'] : true;;
 
-		$manifest = new AmazonSkillManifest();
-		$manifest->setLogger($this->_logger);
-        $interfaces = isset($config[$this->getPlatformId()]['interfaces']) ? $config[$this->getPlatformId()]['interfaces'] : [];
-
-        if (count($interfaces) > 0) {
-            $manifest->setInterfaces($interfaces);
-        } else if (empty($interfaces)) {
-            $manifest->clearInterfaces();
-        }
-
-        $endpointCertificate = isset($config[$this->getPlatformId()]['endpoint_ssl_certificate_type']) ? $config[$this->getPlatformId()]['endpoint_ssl_certificate_type'] :
-            AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD;
-
-        $smallSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon']) ?
-            $this->_getDownloadLink(
-                $this->_serviceId,
-                $config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon'],
-                $owner,
-                self::TYPE_SMALL_SKILL_URL
-            ) : '';
-
-        $largeSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon']) ?
-            $this->_getDownloadLink(
-                $this->_serviceId,
-                $config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon'],
-                $owner,
-                self::TYPE_LARGE_SKILL_URL
-            ) : '';
-
-        $manifest->setGlobalEndpoint(
-            $this->_serviceReleaseManager->getWebhookUrl(
-                $this->_user, $this->_serviceId, $this->getPlatformId()
-            )
-        )->setName($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['public_name'])
-            ->setSummary($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['one_sentence_description'])
-            ->setDescription($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['detailed_description'])
-            ->setWhatsNew($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['whats_new'])
-            ->setSmallIconUri($locales, $smallSkillIcon)
-            ->setLargeIconUri($locales, $largeSkillIcon)
-            ->setKeywords($locales, explode(",", preg_replace('/\s+/', ',', $config[$this->getPlatformId()]['skill_preview_in_store']['keywords'])))
-            ->setExamplePhrases($locales, explode(";", $config[$this->getPlatformId()]['skill_preview_in_store']['example_phrases']))
-            ->setCategory($config[$this->getPlatformId()]['skill_preview_in_store']['category'])
-            ->setTermsOfUseUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['terms_of_use_url'])
-            ->setPrivacyPolicyUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['privacy_policy_url'])
-            ->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
-            ->setDistributionMode(AmazonSkillManifest::DISTRIBUTION_MODE_PUBLIC)
-            ->allowsPurchases($config[$this->getPlatformId()]['privacy_and_compliance']['allows_purchases'])
-            ->usesPersonalInfo($config[$this->getPlatformId()]['privacy_and_compliance']['uses_personal_info'])
-            ->isChildDirected($config[$this->getPlatformId()]['privacy_and_compliance']['is_child_directed'])
-            ->containsAds($config[$this->getPlatformId()]['privacy_and_compliance']['contains_ads'])
-            ->isExportCompliant($config[$this->getPlatformId()]['privacy_and_compliance']['is_export_compliant'])
-            ->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
-            ->setOptInToAutomaticLocaleDistribution($optInAutomaticDistribution, $defaultLocale)
-            ->setGlobalCertificateType($endpointCertificate)
-            ->setIsAvailableWorldwide(true);
-
-        $manifestToPropagate = $manifest->getManifest();
+        $manifestToPropagate = $this->_prepareManifestData();
         if (!in_array('en-US', $locales)) {
             unset($manifestToPropagate['publishingInformation']['locales']['en-US']);
         }
@@ -374,6 +278,11 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $this->_manageAccountLinking($owner, $skillId, 'development', $config[$this->getPlatformId()]);
         // TODO pool as loong as skill status gets other then IN_PROGRESS
 
+        $this->_platformPublishingHistory->storePropagationData(
+            $this->_serviceId,
+            $this->getPlatformId(),
+            $this->_preparePropagateData()
+        );
 		$this->_recordPropagation();
 	}
 
@@ -399,6 +308,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	        $meta      =   $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 	        $alias     =   $this->_serviceReleaseManager->getDevelopmentAlias( $this->_user, $this->_serviceId, $this->getPlatformId());
 	        $mapping   =   $meta['release_mapping'][$this->getPlatformId()][$alias];
+	        $manifest  =   $this->_prepareManifestData();
+	        $model     =   json_decode($this->export()->getContent(), true);
+	        $changesCount = 0;
 
 	        if ( !isset( $mapping['time_propagated']) || empty( $mapping['time_propagated'])) {
 	            $this->_logger->debug( 'Never propagated ');
@@ -406,29 +318,54 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	        } else {
 	            if ( $mapping['time_propagated'] < $platform_config['time_updated']) {
 	                $this->_logger->debug( 'Config changed');
-	                // 1589547443
-	                // 1589547443
-	                // TODO: check if propagatable properties are changed
-	                $data['available'] = true;
+
+                    $accountLinkingData = array_merge(
+                        ['enable_account_linking' => $platform_config['enable_account_linking']],
+                        $platform_config['account_linking_config']
+                    );
+	                $configChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+	                    $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_ACCOUNT_LINKING_INFORMATION, $accountLinkingData
+                    ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                            $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_SELF_SIGNED_CERTIFICATE, $platform_config['self_signed_certificate']
+                    ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                            $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_ENDPOINT_SSL_CERTIFICATE_TYPE, $platform_config['endpoint_ssl_certificate_type']
+                    ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                            $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_MANIFEST, $manifest
+                    );
+	                if ($configChanged) {
+	                    $changesCount++;
+                    }
 	            }
 
 	            if ( isset( $mapping['time_updated']) && ($mapping['time_propagated'] < $mapping['time_updated'])) {
 	                $this->_logger->debug( 'Mapping changed');
-	                $data['available'] = true;
-	            }
-
-	            if ( $mapping['time_propagated'] < $workflow['intents_time_updated']) {
-	                $this->_logger->debug( 'Intents model changed');
-	                $data['available'] = true;
+	                $mappingChanged = true;
+                    if ($mappingChanged) {
+                        $changesCount++;
+                    }
 	            }
 
 	            if ($mapping['time_propagated'] < $workflow['time_updated']) {
                     $this->_logger->debug( 'Workflow changed');
-                    $data['available'] = true;
+                    $workflowChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                        $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_INTERACTION_MODEL, $model
+                    );
+                    if ($workflowChanged) {
+                        $changesCount++;
+                    }
                 }
 
                 if ($mapping['time_propagated'] < $meta['time_updated']) {
                     $this->_logger->debug( 'Meta changed');
+                    $metaChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                        $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_MANIFEST, $manifest
+                    );
+                    if ($metaChanged) {
+                        $changesCount++;
+                    }
+                }
+
+                if ($changesCount > 0) {
                     $data['available'] = true;
                 }
 	        }
@@ -956,7 +893,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             try {
                 $delete_res = $this->_amazonPublishingService->deleteSkill($this->_user, $skill_id);
                 $this->_logger->info('Amazon skill ['.$skill_id.'] deleted successfully, response ['.print_r($delete_res, true).']');
-
+                $this->_platformPublishingHistory->removeSoredPropagationData($this->_serviceId, $this->getPlatformId());
                 $report['successes'][$this->getPlatformId()]['service'] = "Amazon skill $skill_id successfully deleted.";
             } catch (\Exception $e) {
                 $this->_logger->error($e);
@@ -1133,5 +1070,106 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
     private function _sanitizeText($text) {
         return preg_replace('/[^a-zA-Z ]/', '', $text);
+    }
+
+    private function _prepareManifestData($existingManifest = [], $asJson = false) {
+
+        if ($existingManifest !== []) {
+            return $existingManifest;
+        }
+
+        $config = $this->_convoServiceDataProvider->getServicePlatformConfig(
+            $this->_user,
+            $this->_serviceId,
+            IPlatformPublisher::MAPPING_TYPE_DEVELOP
+        );
+
+        $meta = $this->_convoServiceDataProvider->getServiceMeta(
+            $this->_user, $this->_serviceId
+        );
+
+        $owner = $this->_adminUserDataProvider->findUser($meta['owner']);
+
+        $locales = $meta['supported_locales'];
+        $defaultLocale = $meta['default_locale'];
+        $optInAutomaticDistribution = isset($config[$this->getPlatformId()]['availability']['automatic_distribution']) ?
+            $config[$this->getPlatformId()]['availability']['automatic_distribution'] : true;
+
+        $manifest = new AmazonSkillManifest();
+        $manifest->setLogger($this->_logger);
+        $interfaces = isset($config[$this->getPlatformId()]['interfaces']) ? $config[$this->getPlatformId()]['interfaces'] : [];
+
+        if (count($interfaces) > 0) {
+            $manifest->setInterfaces($interfaces);
+        } else if (empty($interfaces)) {
+            $manifest->clearInterfaces();
+        }
+
+        $endpointCertificate = isset($config[$this->getPlatformId()]['endpoint_ssl_certificate_type']) ? $config[$this->getPlatformId()]['endpoint_ssl_certificate_type'] :
+            AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD;
+
+        $smallSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon']) ?
+            $this->_getDownloadLink(
+                $this->_serviceId,
+                $config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon'],
+                $owner,
+                self::TYPE_SMALL_SKILL_URL
+            ) : '';
+
+        $largeSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon']) ?
+            $this->_getDownloadLink(
+                $this->_serviceId,
+                $config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon'],
+                $owner,
+                self::TYPE_LARGE_SKILL_URL
+            ) : '';
+
+        $manifest->setGlobalEndpoint(
+            $this->_serviceReleaseManager->getWebhookUrl(
+                $this->_user, $this->_serviceId, $this->getPlatformId()
+            )
+        )->setName($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['public_name'])
+            ->setSummary($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['one_sentence_description'])
+            ->setDescription($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['detailed_description'])
+            ->setWhatsNew($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['whats_new'])
+            ->setSmallIconUri($locales, $smallSkillIcon)
+            ->setLargeIconUri($locales, $largeSkillIcon)
+            ->setKeywords($locales, explode(",", preg_replace('/\s+/', ',', $config[$this->getPlatformId()]['skill_preview_in_store']['keywords'])))
+            ->setExamplePhrases($locales, explode(";", $config[$this->getPlatformId()]['skill_preview_in_store']['example_phrases']))
+            ->setCategory($config[$this->getPlatformId()]['skill_preview_in_store']['category'])
+            ->setTermsOfUseUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['terms_of_use_url'])
+            ->setPrivacyPolicyUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['privacy_policy_url'])
+            ->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
+            ->setDistributionMode(AmazonSkillManifest::DISTRIBUTION_MODE_PUBLIC)
+            ->allowsPurchases($config[$this->getPlatformId()]['privacy_and_compliance']['allows_purchases'])
+            ->usesPersonalInfo($config[$this->getPlatformId()]['privacy_and_compliance']['uses_personal_info'])
+            ->isChildDirected($config[$this->getPlatformId()]['privacy_and_compliance']['is_child_directed'])
+            ->containsAds($config[$this->getPlatformId()]['privacy_and_compliance']['contains_ads'])
+            ->isExportCompliant($config[$this->getPlatformId()]['privacy_and_compliance']['is_export_compliant'])
+            ->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
+            ->setOptInToAutomaticLocaleDistribution($optInAutomaticDistribution, $defaultLocale)
+            ->setGlobalCertificateType($endpointCertificate)
+            ->setIsAvailableWorldwide(true);
+
+        return $manifest->getManifest($asJson);
+    }
+
+    private function _preparePropagateData($existingManifest = []) {
+        $config            =   $this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+        $platform_config   =   $config[$this->getPlatformId()];
+
+        $accountLinkingData = array_merge(
+            ['enable_account_linking' => $platform_config['enable_account_linking']],
+            $platform_config['account_linking_config']
+        );
+
+        $model = json_decode($this->export()->getContent(), true);
+        return [
+            PlatformPublishingHistory::AMAZON_ACCOUNT_LINKING_INFORMATION => $accountLinkingData,
+            PlatformPublishingHistory::AMAZON_SELF_SIGNED_CERTIFICATE => $platform_config['self_signed_certificate'],
+            PlatformPublishingHistory::AMAZON_ENDPOINT_SSL_CERTIFICATE_TYPE => $platform_config['endpoint_ssl_certificate_type'],
+            PlatformPublishingHistory::AMAZON_MANIFEST => $this->_prepareManifestData($existingManifest),
+            PlatformPublishingHistory::AMAZON_INTERACTION_MODEL => $model
+        ];
     }
 }

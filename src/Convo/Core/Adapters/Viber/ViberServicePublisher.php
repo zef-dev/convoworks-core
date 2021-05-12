@@ -5,6 +5,7 @@ namespace Convo\Core\Adapters\Viber;
 
 
 use Convo\Core\Publish\IPlatformPublisher;
+use Convo\Core\Publish\PlatformPublishingHistory;
 use Psr\Http\Client\ClientExceptionInterface;
 
 class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
@@ -13,10 +14,17 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
      * @var ViberApi
      */
     private $_viberApi;
-    public function __construct($logger, \Convo\Core\IAdminUser $user, $serviceId, $viberApi, $serviceDataProvider, $serviceReleaseManager)
+
+    /**
+     * @var PlatformPublishingHistory
+     */
+    private $_platformPublishingHistory;
+
+    public function __construct($logger, \Convo\Core\IAdminUser $user, $serviceId, $viberApi, $serviceDataProvider, $serviceReleaseManager, $platformPublishingHistory)
     {
         parent::__construct($logger, $user, $serviceId, $serviceDataProvider, $serviceReleaseManager);
-        $this->_viberApi = $viberApi;
+        $this->_viberApi                  = $viberApi;
+        $this->_platformPublishingHistory = $platformPublishingHistory;
     }
 
     /**
@@ -41,6 +49,7 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $config = $this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
         if (isset( $config[$this->getPlatformId()])) {
             $this->_updateViberChatBot();
+            $this->_platformPublishingHistory->storePropagationData($this->_serviceId, $this->getPlatformId(), $this->_preparePropagateData());
         } else {
             throw new \Exception("Missing platform config [" . $this->getPlatformId());
         }
@@ -51,6 +60,7 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $config = $this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
         if (isset( $config[$this->getPlatformId()])) {
             $this->_updateViberChatBot();
+            $this->_platformPublishingHistory->storePropagationData($this->_serviceId, $this->getPlatformId(), $this->_preparePropagateData());
             $this->_recordPropagation();
         } else {
             throw new \Exception("Missing platform config [" . $this->getPlatformId());
@@ -75,9 +85,8 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
         if ( isset( $platform_config['auth_token']) && !empty( $platform_config['auth_token'])) {
             $data['allowed'] = true;
         }
-
-        $workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
         $meta      =   $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+        $changesCount = 0;
 
         if (isset($meta['release_mapping'][$this->getPlatformId()])) {
             $alias     =   $this->_serviceReleaseManager->getDevelopmentAlias( $this->_user, $this->_serviceId, $this->getPlatformId());
@@ -89,26 +98,31 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
             } else {
                 if ( $mapping['time_propagated'] < $platform_config['time_updated']) {
                     $this->_logger->debug( 'Config changed');
-                    $data['available'] = true;
+                    $configChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                        $this->_serviceId,
+                        $this->getPlatformId(),
+                        PlatformPublishingHistory::VIBER_EVENT_TYPES,
+                        $platform_config['event_types']
+                    ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                            $this->_serviceId,
+                            $this->getPlatformId(),
+                            PlatformPublishingHistory::VIBER_AUTH_TOKEN,
+                            $platform_config['auth_token']
+                        );
+                    if ($configChanged) {
+                        $changesCount++;
+                    }
                 }
 
                 if ( isset( $mapping['time_updated']) && ($mapping['time_propagated'] < $mapping['time_updated'])) {
                     $this->_logger->debug( 'Mapping changed');
-                    $data['available'] = true;
+                    $mappingChanged = true;
+                    if ($mappingChanged) {
+                        $changesCount++;
+                    }
                 }
 
-                if ( $mapping['time_propagated'] < $workflow['intents_time_updated']) {
-                    $this->_logger->debug( 'Intents model changed');
-                    $data['available'] = true;
-                }
-
-                if ($mapping['time_propagated'] < $workflow['time_updated']) {
-                    $this->_logger->debug( 'Workflow changed');
-                    $data['available'] = true;
-                }
-
-                if ($mapping['time_propagated'] < $meta['time_updated']) {
-                    $this->_logger->debug( 'Meta changed');
+                if ($changesCount > 0) {
                     $data['available'] = true;
                 }
             }
@@ -133,6 +147,7 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $config            =   $this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
             $this->_viberApi->setupViberApi($this->_user, $this->_serviceId, $config);
             $this->_viberApi->removeWebhook();
+            $this->_platformPublishingHistory->removeSoredPropagationData($this->_serviceId, $this->getPlatformId());
             $report['success'][$this->getPlatformId()]['viber_bot'] = "Viber bot has successfully removed the webhook.";
         } catch (ClientExceptionInterface $e) {
             $this->_logger->warning($e);
@@ -151,5 +166,14 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $status['status'] = $config[$this->getPlatformId()]['webhook_build_status'];
         }
         return $status;
+    }
+
+    private function _preparePropagateData() {
+        $config = $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+
+        return [
+            PlatformPublishingHistory::VIBER_AUTH_TOKEN => $config[$this->getPlatformId()]['auth_token'],
+            PlatformPublishingHistory::VIBER_EVENT_TYPES => $config[$this->getPlatformId()]['event_types']
+        ];
     }
 }
