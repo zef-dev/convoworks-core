@@ -3,6 +3,7 @@
 namespace Convo\Core\Adapters\Fbm;
 
 use Convo\Core\Publish\IPlatformPublisher;
+use Convo\Core\Publish\PlatformPublishingHistory;
 use Psr\Http\Client\ClientExceptionInterface;
 
 class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
@@ -12,10 +13,16 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
      */
     private $_facebookMessengerApiFactory;
 
-    public function __construct( $logger, \Convo\Core\IAdminUser $user, $serviceId, $facebookMessengerApiFactory, $serviceDataProvider, $serviceReleaseManager)
+    /**
+     * @var PlatformPublishingHistory
+     */
+    private $_platformPublishingHistory;
+
+    public function __construct( $logger, \Convo\Core\IAdminUser $user, $serviceId, $facebookMessengerApiFactory, $serviceDataProvider, $serviceReleaseManager, $platformPublishingHistory)
 	{
 	    parent::__construct( $logger, $user, $serviceId, $serviceDataProvider, $serviceReleaseManager);
 	    $this->_facebookMessengerApiFactory = $facebookMessengerApiFactory;
+	    $this->_platformPublishingHistory   = $platformPublishingHistory;
 	}
 
 	public function getPlatformId()
@@ -34,6 +41,7 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
 	    $config            =   $this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
         if (isset( $config[$this->getPlatformId()])) {
             $this->_updateFacebookMessengerBot();
+            $this->_platformPublishingHistory->storePropagationData($this->_serviceId, $this->getPlatformId(), $this->_preparePropagateData());
         } else {
             throw new \Exception("Missing platform config [" . $this->getPlatformId());
         }
@@ -44,6 +52,7 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
         $config            =   $this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
         if (isset( $config[$this->getPlatformId()])) {
             $this->_updateFacebookMessengerBot();
+            $this->_platformPublishingHistory->storePropagationData($this->_serviceId, $this->getPlatformId(), $this->_preparePropagateData());
             $this->_recordPropagation();
         } else {
             throw new \Exception("Missing platform config [" . $this->getPlatformId());
@@ -68,8 +77,6 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
         if ( isset( $platform_config['page_access_token']) && !empty( $platform_config['page_access_token'])) {
             $data['allowed'] = true;
         }
-
-        $workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
         $meta      =   $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 
         if (isset($meta['release_mapping'][$this->getPlatformId()])) {
@@ -82,28 +89,18 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
           } else {
             if ( $mapping['time_propagated'] < $platform_config['time_updated']) {
               $this->_logger->debug( 'Config changed');
-              $data['available'] = true;
+              $data['available'] = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                  $this->_serviceId,
+                  $this->getPlatformId(),
+                  PlatformPublishingHistory::FACEBOOK_MESSENGER_WEBHOOK_EVENTS,
+                  $platform_config['webhook_events']
+              );
             }
 
             if ( isset( $mapping['time_updated']) && ($mapping['time_propagated'] < $mapping['time_updated'])) {
               $this->_logger->debug( 'Mapping changed');
               $data['available'] = true;
             }
-
-            if ( $mapping['time_propagated'] < $workflow['intents_time_updated']) {
-              $this->_logger->debug( 'Intents model changed');
-              $data['available'] = true;
-            }
-
-              if ($mapping['time_propagated'] < $workflow['time_updated']) {
-                  $this->_logger->debug( 'Workflow changed');
-                  $data['available'] = true;
-              }
-
-              if ($mapping['time_propagated'] < $meta['time_updated']) {
-                  $this->_logger->debug( 'Meta changed');
-                  $data['available'] = true;
-              }
           }
         }
 
@@ -147,5 +144,14 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
             $status['status'] = $config[$this->getPlatformId()]['webhook_build_status'];
         }
         return $status;
+    }
+
+
+    private function _preparePropagateData() {
+        $config = $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+
+        return [
+            PlatformPublishingHistory::FACEBOOK_MESSENGER_WEBHOOK_EVENTS => $config[$this->getPlatformId()]['webhook_events']
+        ];
     }
 }
