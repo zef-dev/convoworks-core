@@ -161,9 +161,7 @@ class FacebookMessengerApi
 
     private function _provideWebhookEvents() {
         $webhookEvents = $this->_serviceConfig['facebook_messenger']['webhook_events'];
-        if (count($webhookEvents) > 0) {
-            $this->_serviceConfig['facebook_messenger']['webhook_events'];
-        } else {
+        if (count($webhookEvents) === 0) {
             $webhookEvents = '';
         }
 
