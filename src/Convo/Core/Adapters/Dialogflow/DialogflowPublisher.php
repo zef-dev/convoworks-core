@@ -232,8 +232,6 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
     {
         $meta = $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId);
 
-    	$existing_model = $this->_getDialogflowExportFiles();
-
     	$service = $this->_convoServiceFactory->getService(
             $this->_user,
             $this->_serviceId,
@@ -289,8 +287,6 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 continue;
             }
 
-			$existing_entity = $this->_findExistingEntity($entity, $existing_model);
-
 			try
 			{
 				$catalog_name = $entity->getName().'Catalog';
@@ -298,11 +294,11 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 				/** @var \Convo\Core\Workflow\ICatalogSource $catalog */
 				$catalog = $service->findContext($catalog_name)->getComponent();
-				$built = $this->_buildCatalogEntity($entity->getName(), $existing_entity, $catalog);
+				$built = $this->_buildCatalogEntity($entity->getName(), $catalog);
 			}
             catch (\Convo\Core\ComponentNotFoundException $cnfe)
 			{
-				$built = $this->_buildEntity($entity, $existing_entity);
+				$built = $this->_buildEntity($entity);
 			}
 
             $entity_name = $built['definition']['name'];
@@ -330,9 +326,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         foreach ($intents as $intent) {
             $userSaysByLanguage = $meta['default_language'];
-        	$existing_intent = $this->_findExistingIntent($intent, $existing_model);
-        	$existing_utterances = $this->_findExistingUtterances($intent, $existing_model, $userSaysByLanguage);
-            $built = $this->_buildIntents($intent, $existing_intent, $existing_utterances);
+            $built = $this->_buildIntents($intent);
 
             $this->_logger->debug('Final built intent ['.print_r($built, true).']');
 
@@ -361,121 +355,23 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         return $export;
     }
 
-    private function _findExistingEntity($entity, $existingModel)
-	{
-		$ent = [];
-
-		$target = $entity->getName();
-
-		foreach ($existingModel['entities'] as $name => $definition)
-		{
-			if ($name === $target) {
-				$this->_logger->debug('Target entity ['.$target.'] found');
-				$ent = $definition;
-			}
-		}
-
-		return $ent;
-	}
-
-	private function _getDialogflowExportFiles()
-	{
-		$api = $this->_dialogflowApiFactory->getApi($this->_user, $this->_serviceId);
-		$contents = $api->export($this->_serviceId);
-
-		$path = sys_get_temp_dir().'/'.$contents->getFilename();
-
-		if (file_put_contents($path, $contents->getContent()) === false) {
-			throw new \Exception('Could not store zip file in temporary path ['.$path.']');
-		}
-
-		$zip = new \ZipArchive();
-		$zip->open($path);
-
-		$temp_unzip_path = sys_get_temp_dir().'/'.$this->_serviceId;
-		$this->_logger->debug('Will try making a directory at ['.$temp_unzip_path.']');
-		if (file_exists($temp_unzip_path)) {
-			$this->_rmdir_recursive($temp_unzip_path);
-		}
-		if (mkdir($temp_unzip_path) === false) {
-			throw new \Exception('Could not unzip to temp directory ['.$temp_unzip_path.']');
-		}
-		$zip->extractTo($temp_unzip_path);
-		$zip->close();
-
-		$ret = [
-			'.' => [],
-			'intents' => [],
-			'entities' => []
-		];
-
-		$intents_path = $temp_unzip_path.'/intents';
-		$entities_path = $temp_unzip_path.'/entities';
-
-		// ROOT
-		foreach (scandir($temp_unzip_path) as $pathname) {
-			if (is_dir($temp_unzip_path.'/'.$pathname)) {
-				continue;
-			}
-			$filename = $this->_filenameOnly($pathname);
-
-			$ret['.'][$filename] = json_decode(file_get_contents($temp_unzip_path.'/'.$pathname), true);
-		}
-
-		// INTENTS
-		if (file_exists($intents_path))
-		{
-			foreach (scandir($intents_path) as $pathname) {
-				if (is_dir($intents_path.'/'.$pathname)) {
-					continue;
-				}
-				$filename = $this->_filenameOnly($pathname);
-
-				$ret['intents'][$filename] = json_decode(file_get_contents($intents_path.'/'.$pathname), true);
-			}
-		}
-
-		// ENTITIES
-		if (file_exists($entities_path))
-		{
-			foreach (scandir($entities_path) as $pathname) {
-				if (is_dir($entities_path.'/'.$pathname)) {
-					continue;
-				}
-				$filename = $this->_filenameOnly($pathname);
-
-				$ret['entities'][$filename] = json_decode(file_get_contents($entities_path.'/'.$pathname), true);
-			}
-		}
-
-//		$this->_logger->debug('Final structure of exported zip ['.print_r($ret, true).']');
-		return $ret;
-	}
-
     /**
      * Build DF intent from Convo model
      * @param \Convo\Core\Intent\IntentModel $intent
      * @return array
      */
-    private function _buildIntents( $intent, $existingIntent, $existingUtterances)
+    private function _buildIntents( $intent)
     {
         $utterances = [];
 
         foreach ( $intent->getUtterances() as $utterance) {
             $utterances[] = $this->_buildUtterance($utterance);
         }
-
-        array_walk($existingUtterances, function ($eu) {
-			if (!isset($eu['id'])) {
-				$eu['id'] = StrUtil::uuidV4();
-			}
-		});
         // When we build utterances, we generate them without the ID field
 		// recursive merge should keep only existing IDs, everything else
 		// needs to be overwritten
-        $utterances = array_replace_recursive($existingUtterances, $utterances);
 
-        $intent_data = $this->_buildIntent( $intent->getName(), $intent->getEvents(), $intent->isFallback(), $utterances, $existingIntent);
+        $intent_data = $this->_buildIntent( $intent->getName(), $intent->getEvents(), $intent->isFallback(), $utterances);
 
         $final = [
             'intent' => $intent_data,
@@ -485,15 +381,8 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         return $final;
     }
 
-    private function _findExistingUtterances($intentName, $existingModel, $defaultLanguage)
-	{
-		$this->_logger->debug('Looking for existing utterances in ['.$intentName.']['.print_r($existingModel, true).']');
-		return $existingModel[$intentName.'_usersays_'.$defaultLanguage] ?? [];
-	}
-
-    private function _buildIntent($name, $events, $isFallback, $utterances, $existingIntent)
+    private function _buildIntent($name, $events, $isFallback, $utterances)
     {
-        $this->_logger->debug("Processing intent [$name] with existing [".print_r($existingIntent, true)."]");
         $unique = [];
 
         foreach ($utterances as $utterance) {
@@ -504,22 +393,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 			}
 		}
 
-        $existingIntent['id'] = $existingIntent['id'] ?? StrUtil::uuidV4();
-
-        if (isset($existingIntent['responses']))
-		{
-			foreach ($existingIntent['responses'] as &$response)
-			{
-				foreach ($response['parameters'] as &$parameter)
-				{
-					if (!isset($parameter['id'])) {
-						$parameter['id'] = StrUtil::uuidV4();
-					}
-				}
-			}
-		}
-
-        $intent = array_replace_recursive($existingIntent, [
+        $intent = [
             'name' => $name,
             'auto' => true,
             'contexts' => [],
@@ -533,7 +407,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             'webhookUsed' => true,
             'webhookForSlotFilling' => false,
             'fallbackIntent' => $isFallback
-        ]);
+        ];
 
         if (!empty($events)) {
             $intent['events'] = $events;
@@ -541,11 +415,6 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         return $intent;
     }
-
-    private function _findExistingIntent($intent, $existingModel)
-	{
-		return $existingModel['intents'][$intent->getName()] ?? [];
-	}
 
     private function _buildParamsFromUtterances($utterances)
     {
@@ -661,10 +530,10 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
      * @param \Convo\Core\Intent\EntityModel $convoEntity
      * @return array
      */
-    private function _buildEntity($convoEntity, $existingEntity)
+    private function _buildEntity($convoEntity)
     {
-    	$id = $existingEntity['id'] ?? StrUtil::uuidV4();
-        $definition = array_merge($existingEntity, [
+    	$id =  StrUtil::uuidV4();
+        $definition = [
         	'id' => $id,
             'name' => $convoEntity->getName(),
             'isOverridable' => true,
@@ -672,7 +541,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             'isRegexp' => false,
             'automatedExpansion' => false,
             'allowFuzzyExtraction' => false
-        ]);
+        ];
 
         $entries = [];
 
@@ -693,14 +562,13 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	/**
 	 * Build DF entity out of a catalog entity, filled with all the values
 	 * @param string $convoEntityName
-	 * @param $existingEntity
 	 * @param \Convo\Core\Workflow\ICatalogSource $catalog
 	 * @return array
 	 */
-    private function _buildCatalogEntity($convoEntityName, $existingEntity, $catalog)
+    private function _buildCatalogEntity($convoEntityName, $catalog)
 	{
-		$id = $existingEntity['id'] ?? StrUtil::uuidV4();
-		$definition = array_merge($existingEntity, [
+		$id = StrUtil::uuidV4();
+		$definition = [
 			'id' => $id,
 			'name' => $convoEntityName,
 			'isOverridable' => true,
@@ -708,7 +576,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 			'isRegexp' => false,
 			'automatedExpansion' => false,
 			'allowFuzzyExtraction' => false
-		]);
+		];
 
 		$entries = [];
 
