@@ -7,11 +7,6 @@ Here are few key features:
 * It handles communication layer with connected platforms
 * It highly relies on PSRs and own interface definitions, so it can be used with any PHP application.
 
-## Beta period
-
-Please note that the Convoworks is currently in beta phase and it is planned to be released in March 2021.
-In a meanwhile, we will have several releases and some of them could have breaking changes.
- 
 
 ## Overview
 
