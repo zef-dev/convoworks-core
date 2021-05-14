@@ -6,7 +6,7 @@
 	"keywords" : [
 		"alexa", "dialogflow", "viber", "messenger", "chatbot", "voice enabled", "voice assistant"
 	],
-    "version": "0.21.2",
+    "version": "0.22.0",
 	"license" : "MIT",
 	"require" : {
 		"php" : "^7.2.5",
@@ -23,7 +23,7 @@
         "facebook/graph-sdk": "^5.7",
         "symfony/expression-language" : "^5.2",
         "wapmorgan/mp3info": "^0.0.5",
-        "zef-dev/zef-expression-language": "^1.0"
+        "zef-dev/zef-expression-language": "^1.0.2"
 	},
 	"autoload" : {
 		"psr-4" : {
