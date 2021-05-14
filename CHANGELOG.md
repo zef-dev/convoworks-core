@@ -4,6 +4,13 @@
 
 ## [Releases]
 
+### 0.22.0 - 2021-05-14
+
+* Added Start Video Playback element
+* Use Symfony 5.2
+* `isSessionStart()` added to request interface
+* Smaller fixes and improvements
+
 ### 0.21.2 - 2021-04-01
 
 * default Amazon skill images fix
