@@ -310,6 +310,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	        $mapping   =   $meta['release_mapping'][$this->getPlatformId()][$alias];
 	        $manifest  =   $this->_prepareManifestData();
 	        $model     =   json_decode($this->export()->getContent(), true);
+	        $changesCount = 0;
 
 	        if ( !isset( $mapping['time_propagated']) || empty( $mapping['time_propagated'])) {
 	            $this->_logger->debug( 'Never propagated ');
@@ -322,7 +323,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                         ['enable_account_linking' => $platform_config['enable_account_linking']],
                         $platform_config['account_linking_config']
                     );
-	                $data['available'] = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+	                $configChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
 	                    $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_ACCOUNT_LINKING_INFORMATION, $accountLinkingData
                     ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
                             $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_SELF_SIGNED_CERTIFICATE, $platform_config['self_signed_certificate']
@@ -331,25 +332,41 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                     ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
                             $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_MANIFEST, $manifest
                     );
+	                if ($configChanged) {
+	                    $changesCount++;
+                    }
 	            }
 
 	            if ( isset( $mapping['time_updated']) && ($mapping['time_propagated'] < $mapping['time_updated'])) {
 	                $this->_logger->debug( 'Mapping changed');
-	                $data['available'] = true;
+	                $mappingChanged = true;
+                    if ($mappingChanged) {
+                        $changesCount++;
+                    }
 	            }
 
 	            if ($mapping['time_propagated'] < $workflow['time_updated']) {
                     $this->_logger->debug( 'Workflow changed');
-                    $data['available'] = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                    $workflowChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
                         $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_INTERACTION_MODEL, $model
                     );
+                    if ($workflowChanged) {
+                        $changesCount++;
+                    }
                 }
 
                 if ($mapping['time_propagated'] < $meta['time_updated']) {
                     $this->_logger->debug( 'Meta changed');
-                    $data['available'] = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                    $metaChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
                         $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_MANIFEST, $manifest
                     );
+                    if ($metaChanged) {
+                        $changesCount++;
+                    }
+                }
+
+                if ($changesCount > 0) {
+                    $data['available'] = true;
                 }
 	        }
 	    }

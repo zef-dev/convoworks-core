@@ -86,6 +86,7 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $data['allowed'] = true;
         }
         $meta      =   $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+        $changesCount = 0;
 
         if (isset($meta['release_mapping'][$this->getPlatformId()])) {
             $alias     =   $this->_serviceReleaseManager->getDevelopmentAlias( $this->_user, $this->_serviceId, $this->getPlatformId());
@@ -97,16 +98,31 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
             } else {
                 if ( $mapping['time_propagated'] < $platform_config['time_updated']) {
                     $this->_logger->debug( 'Config changed');
-                    $data['available'] = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                    $configChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
                         $this->_serviceId,
                         $this->getPlatformId(),
                         PlatformPublishingHistory::VIBER_EVENT_TYPES,
                         $platform_config['event_types']
-                    );
+                    ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                            $this->_serviceId,
+                            $this->getPlatformId(),
+                            PlatformPublishingHistory::VIBER_AUTH_TOKEN,
+                            $platform_config['auth_token']
+                        );
+                    if ($configChanged) {
+                        $changesCount++;
+                    }
                 }
 
                 if ( isset( $mapping['time_updated']) && ($mapping['time_propagated'] < $mapping['time_updated'])) {
                     $this->_logger->debug( 'Mapping changed');
+                    $mappingChanged = true;
+                    if ($mappingChanged) {
+                        $changesCount++;
+                    }
+                }
+
+                if ($changesCount > 0) {
                     $data['available'] = true;
                 }
             }
@@ -156,6 +172,7 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $config = $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 
         return [
+            PlatformPublishingHistory::VIBER_AUTH_TOKEN => $config[$this->getPlatformId()]['auth_token'],
             PlatformPublishingHistory::VIBER_EVENT_TYPES => $config[$this->getPlatformId()]['event_types']
         ];
     }

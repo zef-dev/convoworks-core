@@ -78,6 +78,7 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
             $data['allowed'] = true;
         }
         $meta      =   $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+        $changesCount = 0;
 
         if (isset($meta['release_mapping'][$this->getPlatformId()])) {
           $alias     =   $this->_serviceReleaseManager->getDevelopmentAlias( $this->_user, $this->_serviceId, $this->getPlatformId());
@@ -89,18 +90,53 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
           } else {
             if ( $mapping['time_propagated'] < $platform_config['time_updated']) {
               $this->_logger->debug( 'Config changed');
-              $data['available'] = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+              $configChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
                   $this->_serviceId,
                   $this->getPlatformId(),
                   PlatformPublishingHistory::FACEBOOK_MESSENGER_WEBHOOK_EVENTS,
                   $platform_config['webhook_events']
+              ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                  $this->_serviceId,
+                  $this->getPlatformId(),
+                  PlatformPublishingHistory::FACEBOOK_MESSENGER_WEBHOOK_VERIFY_TOKEN,
+                  $platform_config['webhook_verify_token']
+              ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                  $this->_serviceId,
+                  $this->getPlatformId(),
+                  PlatformPublishingHistory::FACEBOOK_MESSENGER_APP_ID,
+                  $platform_config['app_id']
+              ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                  $this->_serviceId,
+                  $this->getPlatformId(),
+                  PlatformPublishingHistory::FACEBOOK_MESSENGER_APP_SECRET,
+                  $platform_config['app_secret']
+              ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                  $this->_serviceId,
+                  $this->getPlatformId(),
+                  PlatformPublishingHistory::FACEBOOK_MESSENGER_PAGE_ID,
+                  $platform_config['page_id']
+              ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                  $this->_serviceId,
+                  $this->getPlatformId(),
+                  PlatformPublishingHistory::FACEBOOK_MESSENGER_PAGE_ACCESS_TOKEN,
+                  $platform_config['page_access_token']
               );
+              if ($configChanged) {
+                  $changesCount++;
+              }
             }
 
             if ( isset( $mapping['time_updated']) && ($mapping['time_propagated'] < $mapping['time_updated'])) {
               $this->_logger->debug( 'Mapping changed');
-              $data['available'] = true;
+              $mappingChanged = true;
+              if ($mappingChanged) {
+                  $changesCount++;
+              }
             }
+
+              if ($changesCount > 0) {
+                  $data['available'] = true;
+              }
           }
         }
 
@@ -152,7 +188,12 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
         $config = $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 
         return [
-            PlatformPublishingHistory::FACEBOOK_MESSENGER_WEBHOOK_EVENTS => $config[$this->getPlatformId()]['webhook_events']
+            PlatformPublishingHistory::FACEBOOK_MESSENGER_WEBHOOK_EVENTS => $config[$this->getPlatformId()]['webhook_events'],
+            PlatformPublishingHistory::FACEBOOK_MESSENGER_WEBHOOK_VERIFY_TOKEN => $config[$this->getPlatformId()]['webhook_verify_token'],
+            PlatformPublishingHistory::FACEBOOK_MESSENGER_APP_ID => $config[$this->getPlatformId()]['app_id'],
+            PlatformPublishingHistory::FACEBOOK_MESSENGER_APP_SECRET => $config[$this->getPlatformId()]['app_secret'],
+            PlatformPublishingHistory::FACEBOOK_MESSENGER_PAGE_ID => $config[$this->getPlatformId()]['page_id'],
+            PlatformPublishingHistory::FACEBOOK_MESSENGER_PAGE_ACCESS_TOKEN => $config[$this->getPlatformId()]['page_access_token']
         ];
     }
 }

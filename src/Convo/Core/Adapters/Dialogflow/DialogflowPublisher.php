@@ -217,27 +217,41 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $alias     =   $this->_serviceReleaseManager->getDevelopmentAlias( $this->_user, $this->_serviceId, $this->getPlatformId());
             $mapping   =   $meta['release_mapping'][$this->getPlatformId()][$alias];
             $modelSize   = strlen($this->export()->getContent());
+            $changesCount = 0;
 
             if ( !isset( $mapping['time_propagated']) || empty( $mapping['time_propagated'])) {
                 $data['available'] = true;
             } else {
                 if ( isset( $mapping['time_updated']) && ($mapping['time_propagated'] < $mapping['time_updated'])) {
                     $this->_logger->debug( 'Mapping changed');
-                    $data['available'] = true;
+                    $mappingChanged = true;
+                    if ($mappingChanged) {
+                        $changesCount++;
+                    }
                 }
 
                 if ($mapping['time_propagated'] < $workflow['time_updated']) {
                     $this->_logger->debug( 'Workflow changed');
-                    $data['available'] = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                    $workflowChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
                         $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::DIALOGFLOW_AGENT_INTENT_MODEL_BYTES_SIZE, $modelSize
                     );
+                    if ($workflowChanged) {
+                        $changesCount++;
+                    }
                 }
 
                 if ($mapping['time_propagated'] < $meta['time_updated']) {
                     $this->_logger->debug( 'Meta changed');
-                    $data['available'] = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                    $metaChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
                         $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::DIALOGFLOW_AGENT_DEFAULT_LANGUAGE, $meta['default_language']
                     );
+                    if ($metaChanged) {
+                        $changesCount++;
+                    }
+                }
+
+                if ($changesCount > 0) {
+                    $data['available'] = true;
                 }
             }
         }
