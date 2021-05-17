@@ -93,7 +93,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $name = $config['dialogflow']['name'] ?? 'DefaultName';
         $name = $this->_camelCaseName($name);
         $desc = $config['dialogflow']['description'] ?? 'Demo agent';
-        $defaultTimezone = $config['dialogflow']['default_timezone'];
+        $defaultTimezone = $config['dialogflow']['default_timezone'] ?? 'Europe/Madrid';
 
         try {
             $avatar = $this->_mediaService->getMediaUrl(
@@ -634,13 +634,13 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $df_config = $platform_config['dialogflow'];
 
         $agent = [
-            'name' => $df_config['name'],
-            'description' => $df_config['description'],
+            'name' => $df_config['name'] ?? 'DefaultName',
+            'description' => $df_config['description'] ?? 'Demo agent',
             'language' => $meta['default_language'],
             'supportedLanguages' => [],
             'disableInteractionLogs' => false,
             'disableStackdriverLogs' => true,
-            'defaultTimezone' => $df_config['default_timezone'],
+            'defaultTimezone' => $df_config['default_timezone'] ?? 'Europe/Madrid',
             'webhook' => [
                 'url' => $this->_serviceReleaseManager->getWebhookUrl( $this->_user, $this->_serviceId, $this->getPlatformId()),
                 'available' => true,
