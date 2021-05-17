@@ -21,9 +21,15 @@ class PlatformPublishingHistory
 
     // FACEBOOK MESSENGER RELATED PROPAGATION PROPERTIES TO CHECK FOR
     public const FACEBOOK_MESSENGER_WEBHOOK_EVENTS = 'webhook_events';
+    public const FACEBOOK_MESSENGER_APP_ID = 'app_id';
+    public const FACEBOOK_MESSENGER_APP_SECRET = 'app_secret';
+    public const FACEBOOK_MESSENGER_PAGE_ID = 'page_id';
+    public const FACEBOOK_MESSENGER_PAGE_ACCESS_TOKEN = 'page_access_token';
+    public const FACEBOOK_MESSENGER_WEBHOOK_VERIFY_TOKEN = 'webhook_verify_token';
 
     // FACEBOOK MESSENGER RELATED PROPAGATION PROPERTIES TO CHECK FOR
     public const VIBER_EVENT_TYPES = 'webhook_events';
+    public const VIBER_AUTH_TOKEN = 'auth_token';
 
 
     /**
