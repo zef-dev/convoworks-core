@@ -102,8 +102,6 @@ class PlatformPublishingHistory
             case self::AMAZON_INTERACTION_MODEL:
                 $previousPropagationDataString = json_encode($previousPropagationData[$property]);
                 $currentPropagationDataString = json_encode($currentPropagationData);
-                $this->_logger->info("Previous data [" . $previousPropagationDataString . "]");
-                $this->_logger->info("Current data [" . $currentPropagationDataString . "]");
                 if ($previousPropagationDataString !== $currentPropagationDataString) {
                     return true;
                 }
