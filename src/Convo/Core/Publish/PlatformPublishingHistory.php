@@ -50,6 +50,12 @@ class PlatformPublishingHistory
         $this->_cache->set($key, $propagationData, $ttl);
     }
 
+    public function removeSoredPropagationData($serviceId, $platformId) {
+        $key = $serviceId . '_' . $platformId . '_previous_propagation_data';
+        $this->_logger->info("Going to delete cache under key [" . $key . "]");
+        $this->_cache->delete($key);
+    }
+
     public function hasPropertyChangedSinceLastPropagation($serviceId, $platformId, $property, $propagationData) {
         $previousPropagationData = $this->_getPreviousPropagationData($serviceId, $platformId);
 
