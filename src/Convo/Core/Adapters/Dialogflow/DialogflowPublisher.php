@@ -6,6 +6,7 @@ namespace Convo\Core\Adapters\Dialogflow;
 
 use Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandRequest;
 use Convo\Core\Intent\IIntentDriven;
+use Convo\Core\Publish\PlatformPublishingHistory;
 use Convo\Core\Util\SimpleFileResource;
 use Convo\Core\Util\StrUtil;
 use Convo\Core\Util\ZipFileResource;
@@ -44,6 +45,11 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
      */
     private $_mediaService;
 
+    /**
+     * @var PlatformPublishingHistory
+     */
+    private $_platformPublishingHistory;
+
     public function __construct(
         $logger,
         \Convo\Core\IAdminUser $user,
@@ -54,7 +60,8 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $packageProviderFactory,
         $dialogflowApiFactory,
         $mediaService,
-        $serviceReleaseManager
+        $serviceReleaseManager,
+        $platformPublishingHistory
     )
     {
         parent::__construct( $logger, $user, $serviceId, $serviceDataProvider, $serviceReleaseManager);
@@ -64,6 +71,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $this->_packageProviderFactory      =   $packageProviderFactory;
         $this->_dialogflowApiFactory        =   $dialogflowApiFactory;
         $this->_mediaService                =   $mediaService;
+        $this->_platformPublishingHistory   =   $platformPublishingHistory;
     }
 
     public function getPlatformId()
@@ -110,6 +118,11 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $config[$this->getPlatformId()]['time_created'] = time();
             $config[$this->getPlatformId()]['time_updated'] = time();
             $this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
+            $this->_platformPublishingHistory->storePropagationData(
+                $this->_serviceId,
+                $this->getPlatformId(),
+                $this->_preparePropagateData()
+            );
         } else {
             $meta      =   $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId);
             $defaultLocale = $meta['default_language'];
@@ -133,6 +146,11 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $export = $this->export();
             $api->restore($export->getContent());
             $api->trainAgent();
+            $this->_platformPublishingHistory->storePropagationData(
+                $this->_serviceId,
+                $this->getPlatformId(),
+                $this->_preparePropagateData()
+            );
         }
     }
 
@@ -171,6 +189,11 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $api->restore($export->getContent());
         $api->trainAgent();
 
+        $this->_platformPublishingHistory->storePropagationData(
+            $this->_serviceId,
+            $this->getPlatformId(),
+            $this->_preparePropagateData()
+        );
         $this->_recordPropagation();
     }
 
@@ -193,33 +216,41 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $meta      =   $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
             $alias     =   $this->_serviceReleaseManager->getDevelopmentAlias( $this->_user, $this->_serviceId, $this->getPlatformId());
             $mapping   =   $meta['release_mapping'][$this->getPlatformId()][$alias];
+            $modelSize   = strlen($this->export()->getContent());
+            $changesCount = 0;
 
             if ( !isset( $mapping['time_propagated']) || empty( $mapping['time_propagated'])) {
                 $data['available'] = true;
             } else {
-                if ( $mapping['time_propagated'] < $platform_config['time_updated']) {
-                    $this->_logger->debug( 'Config changed');
-                    // TODO: check if propagatable properties are changed
-                    $data['available'] = true;
-                }
-
                 if ( isset( $mapping['time_updated']) && ($mapping['time_propagated'] < $mapping['time_updated'])) {
                     $this->_logger->debug( 'Mapping changed');
-                    $data['available'] = true;
-                }
-
-                if ( $mapping['time_propagated'] < $workflow['intents_time_updated']) {
-                    $this->_logger->debug( 'Intents model changed');
-                    $data['available'] = true;
+                    $mappingChanged = true;
+                    if ($mappingChanged) {
+                        $changesCount++;
+                    }
                 }
 
                 if ($mapping['time_propagated'] < $workflow['time_updated']) {
                     $this->_logger->debug( 'Workflow changed');
-                    $data['available'] = true;
+                    $workflowChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                        $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::DIALOGFLOW_AGENT_INTENT_MODEL_BYTES_SIZE, $modelSize
+                    );
+                    if ($workflowChanged) {
+                        $changesCount++;
+                    }
                 }
 
                 if ($mapping['time_propagated'] < $meta['time_updated']) {
                     $this->_logger->debug( 'Meta changed');
+                    $metaChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                        $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::DIALOGFLOW_AGENT_DEFAULT_LANGUAGE, $meta['default_language']
+                    );
+                    if ($metaChanged) {
+                        $changesCount++;
+                    }
+                }
+
+                if ($changesCount > 0) {
                     $data['available'] = true;
                 }
             }
@@ -368,8 +399,6 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $utterances[] = $this->_buildUtterance($utterance);
         }
         // When we build utterances, we generate them without the ID field
-		// recursive merge should keep only existing IDs, everything else
-		// needs to be overwritten
 
         $intent_data = $this->_buildIntent( $intent->getName(), $intent->getEvents(), $intent->isFallback(), $utterances);
 
@@ -532,7 +561,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
      */
     private function _buildEntity($convoEntity)
     {
-    	$id =  StrUtil::uuidV4();
+    	$id = StrUtil::uuidV4();
         $definition = [
         	'id' => $id,
             'name' => $convoEntity->getName(),
@@ -671,6 +700,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 );
 
                 $api->deleteAgent();
+                $this->_platformPublishingHistory->removeSoredPropagationData($this->_serviceId, $this->getPlatformId());
                 $report['successes'][$this->getPlatformId()]['service'] = 'Dialogflow agent successfully deleted.';
             } catch (\Exception $e) {
                 $this->_logger->error($e);
@@ -706,5 +736,16 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
 
         return $status;
+    }
+
+    private function _preparePropagateData() {
+        $meta      =   $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId);
+        $defaultLocale = $meta['default_language'];
+        $dialogflowAgentIntentModelSize = strlen($this->export()->getContent());
+
+        return [
+            PlatformPublishingHistory::DIALOGFLOW_AGENT_DEFAULT_LANGUAGE => $defaultLocale,
+            PlatformPublishingHistory::DIALOGFLOW_AGENT_INTENT_MODEL_BYTES_SIZE => $dialogflowAgentIntentModelSize
+        ];
     }
 }
