@@ -160,7 +160,17 @@ class PlatformPublishingHistory
 
     private function _compareViber($property, $previousPropagationData, $propagationData) {
         if ($property === self::VIBER_EVENT_TYPES) {
-            if (array_diff($previousPropagationData[$property], $propagationData)) {
+            $previousPropagationDataString = json_encode($previousPropagationData[$property]);
+            $currentPropagationDataString = json_encode($propagationData);
+            if ($previousPropagationDataString !== $currentPropagationDataString) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if ($property === self::VIBER_AUTH_TOKEN) {
+            $previousPropagationAuthToken = $previousPropagationData[$property];
+            $currentPropagationAuthToken = $propagationData;
+            if ($previousPropagationAuthToken !== $currentPropagationAuthToken) {
                 return true;
             } else {
                 return false;
