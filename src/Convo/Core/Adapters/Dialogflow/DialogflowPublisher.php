@@ -240,6 +240,16 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                     }
                 }
 
+                if ( $mapping['time_propagated'] < $workflow['intents_time_updated']) {
+                    $this->_logger->debug( 'Intents model changed');
+                    $intentsModelChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                        $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::DIALOGFLOW_AGENT_INTENT_MODEL_BYTES_SIZE, $modelSize
+                    );
+                    if ($intentsModelChanged) {
+                        $changesCount++;
+                    }
+                }
+
                 if ($mapping['time_propagated'] < $meta['time_updated']) {
                     $this->_logger->debug( 'Meta changed');
                     $metaChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(

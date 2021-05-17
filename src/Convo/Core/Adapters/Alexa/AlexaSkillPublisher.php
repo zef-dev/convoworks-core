@@ -355,6 +355,16 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                     }
                 }
 
+                if ( $mapping['time_propagated'] < $workflow['intents_time_updated']) {
+                    $this->_logger->debug( 'Intents model changed');
+                    $intentsModelChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                        $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_INTERACTION_MODEL, $model
+                    );
+                    if ($intentsModelChanged) {
+                        $changesCount++;
+                    }
+                }
+
                 if ($mapping['time_propagated'] < $meta['time_updated']) {
                     $this->_logger->debug( 'Meta changed');
                     $metaChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
