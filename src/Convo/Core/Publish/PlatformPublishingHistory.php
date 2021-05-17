@@ -132,14 +132,29 @@ class PlatformPublishingHistory
     }
 
     private function _compareFacebookMessenger($property, $previousPropagationData, $propagationData) {
-        if ($property === self::FACEBOOK_MESSENGER_WEBHOOK_EVENTS) {
-            if (array_diff($previousPropagationData[$property], $propagationData)) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            throw new \Exception("Can't compare property [" . $property . "]");
+        switch ($property) {
+            case self::FACEBOOK_MESSENGER_APP_ID:
+            case self::FACEBOOK_MESSENGER_APP_SECRET:
+            case self::FACEBOOK_MESSENGER_PAGE_ID:
+            case self::FACEBOOK_MESSENGER_PAGE_ACCESS_TOKEN:
+            case self::FACEBOOK_MESSENGER_WEBHOOK_VERIFY_TOKEN:
+                $previousPropagationDataString = $previousPropagationData[$property];
+                $currentPropagationDataString = $propagationData;
+                if ($previousPropagationDataString !== $currentPropagationDataString) {
+                    return true;
+                } else {
+                    return false;
+                }
+            case self::FACEBOOK_MESSENGER_WEBHOOK_EVENTS:
+                $previousPropagationDataString = json_encode($previousPropagationData[$property]);
+                $currentPropagationDataString = json_encode($propagationData);
+                if ($previousPropagationDataString !== $currentPropagationDataString) {
+                    return true;
+                } else {
+                    return false;
+                }
+            default:
+                throw new \Exception("Can't compare property [" . $property . "]");
         }
     }
 
