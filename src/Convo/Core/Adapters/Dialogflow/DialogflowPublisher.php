@@ -686,6 +686,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 );
 
                 $api->deleteAgent();
+                $this->_platformPublishingHistory->removeSoredPropagationData($this->_serviceId, $this->getPlatformId());
                 $report['successes'][$this->getPlatformId()]['service'] = 'Dialogflow agent successfully deleted.';
             } catch (\Exception $e) {
                 $this->_logger->error($e);

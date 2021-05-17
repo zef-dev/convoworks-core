@@ -876,7 +876,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             try {
                 $delete_res = $this->_amazonPublishingService->deleteSkill($this->_user, $skill_id);
                 $this->_logger->info('Amazon skill ['.$skill_id.'] deleted successfully, response ['.print_r($delete_res, true).']');
-
+                $this->_platformPublishingHistory->removeSoredPropagationData($this->_serviceId, $this->getPlatformId());
                 $report['successes'][$this->getPlatformId()]['service'] = "Amazon skill $skill_id successfully deleted.";
             } catch (\Exception $e) {
                 $this->_logger->error($e);

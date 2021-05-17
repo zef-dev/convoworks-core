@@ -131,6 +131,7 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $config            =   $this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
             $this->_viberApi->setupViberApi($this->_user, $this->_serviceId, $config);
             $this->_viberApi->removeWebhook();
+            $this->_platformPublishingHistory->removeSoredPropagationData($this->_serviceId, $this->getPlatformId());
             $report['success'][$this->getPlatformId()]['viber_bot'] = "Viber bot has successfully removed the webhook.";
         } catch (ClientExceptionInterface $e) {
             $this->_logger->warning($e);

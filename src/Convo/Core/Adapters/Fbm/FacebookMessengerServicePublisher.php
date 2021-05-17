@@ -126,6 +126,7 @@ class FacebookMessengerServicePublisher extends \Convo\Core\Publish\AbstractServ
             $facebookMessengerApi->unsubscribeApp();
             $facebookMessengerApi->callSubscriptionsApiToUnsubscribe();
             $facebookMessengerApi->callMessengerProfileApiToDelete();
+            $this->_platformPublishingHistory->removeSoredPropagationData($this->_serviceId, $this->getPlatformId());
             $report['success'][$this->getPlatformId()]['messenger_bot'] = "Messenger bot was successfully unsubscribed from you facebook page.";
         } catch (ClientExceptionInterface $e) {
             $this->_logger->warning($e->getMessage());
