@@ -1176,8 +1176,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $model = json_decode($this->export()->getContent(), true);
         return [
             PlatformPublishingHistory::AMAZON_ACCOUNT_LINKING_INFORMATION => $accountLinkingData,
-            PlatformPublishingHistory::AMAZON_SELF_SIGNED_CERTIFICATE => $platform_config['self_signed_certificate'],
-            PlatformPublishingHistory::AMAZON_ENDPOINT_SSL_CERTIFICATE_TYPE => $platform_config['endpoint_ssl_certificate_type'],
+            PlatformPublishingHistory::AMAZON_SELF_SIGNED_CERTIFICATE => $platform_config['self_signed_certificate'] ?? null,
+            PlatformPublishingHistory::AMAZON_ENDPOINT_SSL_CERTIFICATE_TYPE => $platform_config['endpoint_ssl_certificate_type'] ?? 'Wildcard',
             PlatformPublishingHistory::AMAZON_MANIFEST => $this->_prepareManifestData($existingManifest),
             PlatformPublishingHistory::AMAZON_INTERACTION_MODEL => $model
         ];
