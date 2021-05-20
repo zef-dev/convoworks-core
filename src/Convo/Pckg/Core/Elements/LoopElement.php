@@ -69,7 +69,7 @@ class LoopElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 				'index' => $i,
 				'natural' => $i + 1,
 				'first' => $i === $start,
-				'last' => $i === $end
+				'last' => $i === ($end - 1)
 			]);
 
 			foreach ($this->_elements as $element) {
