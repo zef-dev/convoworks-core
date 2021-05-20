@@ -48,16 +48,20 @@ class LoopElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 		$start = 0;
 		$end = count($items);
 
-		if ($this->_offset !== null) {
-			if ($this->_offset > $end || $this->_offset < 0) {
-				$this->_logger->warning('Offset ['.$this->_offset.'] falls outside the range ['.$start.', '.$end.']. Starting from 0.');
+		$offset = $this->evaluateString($this->_offset);
+		$limit = $this->evaluateString($this->_limit);
+
+		if ($offset !== null) {
+			if ($offset > $end || $offset < 0) {
+				$this->_logger->warning('Offset ['.$offset.'] falls outside the range ['.$start.', '.$end.']. Starting from 0.');
 			} else {
-				$start = $this->_offset;
+				$start = $offset;
 			}
 		}
 
-		if ($this->_limit !== null) {
-			$limit = abs($this->_limit);
+		if ($limit !== null) {
+			/** @var int $limit */
+			$limit = abs($limit);
 			$end = min(($start + $limit), count($items));
 		}
 
