@@ -155,6 +155,25 @@ class CorePackageDefinition extends AbstractPackageDefinition
 
         // CUSTOM
         $functions[] = new ExpressionFunction(
+            'keys',
+            function ($array) {
+                return sprintf('keys(%1$a)', $array);
+            },
+            function ($args, $array) {
+                $keys = [];
+                if (!is_array($array)) {
+                    return $keys;
+                }
+
+                foreach ($array as $key => $_) {
+                    $keys[] = $key;
+                }
+
+                return $keys;
+            }
+        );
+        
+        $functions[] = new ExpressionFunction(
             'array_shuffle',
             function ($array) {
                 return sprintf('(is_array(%1$a) ? array_shuffle(%1$a) : %1$a', $array);
