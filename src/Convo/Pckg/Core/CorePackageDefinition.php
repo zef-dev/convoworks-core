@@ -153,26 +153,6 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('strtotime');
         $functions[] = ExpressionFunction::fromPhp('time');
 
-        // CUSTOM
-        $functions[] = new ExpressionFunction(
-            'keys',
-            function ($array) {
-                return sprintf('keys(%1$a)', $array);
-            },
-            function ($args, $array) {
-                $keys = [];
-                if (!is_array($array)) {
-                    return $keys;
-                }
-
-                foreach ($array as $key => $_) {
-                    $keys[] = $key;
-                }
-
-                return $keys;
-            }
-        );
-        
         $functions[] = new ExpressionFunction(
             'array_shuffle',
             function ($array) {
