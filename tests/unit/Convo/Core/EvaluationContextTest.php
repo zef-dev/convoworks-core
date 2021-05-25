@@ -259,6 +259,55 @@ class EvaluationContextTest extends TestCase
                     'result' => [ 'value' => 3],
                     'nullValue' => null
                 ]
+            ],
+            [
+                [
+                    'message' => 'A'
+                ],
+                [
+                    'message' => '${questions[item.index]["answers"][0]["letter"]}'
+                ],
+                [
+                    "questions" => [
+                        [
+                            "answers" => [
+                                [
+                                    'letter' => 'A'
+                                ]
+                            ]
+                        ]
+
+                    ],
+                    'item' => [
+                        'index' => 0
+                    ]
+                ]
+            ],
+            [
+                [
+                    'message' => 'DOOM'
+                ],
+                [
+                    'message' => '${games[items.position.indexed.value]["fist_person_shooters"][0]["name"]}'
+                ],
+                [
+                    "games" => [
+                        [
+                            "fist_person_shooters" => [
+                                [
+                                    'name' => 'DOOM'
+                                ]
+                            ]
+                        ]
+                    ],
+                    'items' => [
+                        "position" => [
+                            'indexed' =>  [
+                                "value" => 0
+                            ]
+                        ]
+                    ]
+                ]
             ]
         ];
     }
@@ -342,7 +391,30 @@ class EvaluationContextTest extends TestCase
 						1 => [ 'name' => 'Milorad' ]
 					]
 				]
-			]
+			],
+            'URL string sample 1' => [
+                'https://opentdb.com/api.php?amount=6&category=11&type=multiple',
+                'https://opentdb.com/api.php?amount=${numberOfQuestions}&category=${categoryID}&type=multiple',
+                [
+                    'numberOfQuestions' => 6,
+                    'categoryID' => 11
+                ]
+            ],
+            'URL string sample 2' => [
+                'https://www.example1.com/search?q=open+gz+string&sclient=gws-wiz',
+                'https://www.example1.com/search?q=${search}&sclient=${sclient}',
+                [
+                    'search' => 'open+gz+string',
+                    'sclient' => 'gws-wiz'
+                ]
+            ],
+            'URL string sample 3' => [
+                'https://www.example2.com/search?items=1,2,3,4,5',
+                'https://www.example2.com/search?items=${items}',
+                [
+                    'items' => '1,2,3,4,5'
+                ]
+            ]
         ];
     }
 
