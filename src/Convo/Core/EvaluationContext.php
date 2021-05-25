@@ -114,7 +114,7 @@ class EvaluationContext
 		$matches = [];
 		$expressions = [];
 
-		preg_match_all('/"?\${(.*?)}(?=[\s\w\-_\/\\:;,.?!()|"]|$)/', $string, $matches);
+		preg_match_all('/"?\${(.*?)}(?=[\s\w\-_\/\\:;,.?!()|"\]&]|$)/', $string, $matches);
 
 		if (isset($matches[1])) {
 			foreach ($matches[1] as $match) {
