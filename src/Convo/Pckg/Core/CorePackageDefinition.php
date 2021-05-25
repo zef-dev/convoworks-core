@@ -1236,6 +1236,11 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'filename' => 'card-element.html'
                     ),
                     '_workflow' => 'read',
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                        )
+                    )
                 )
             ),
             new \Convo\Core\Factory\ComponentDefinition(
@@ -1346,6 +1351,11 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'filename' => 'list-element.html'
                     ),
                     '_workflow' => 'read',
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                        )
+                    )
                 )
             ),
             new \Convo\Core\Factory\ComponentDefinition(
@@ -1816,7 +1826,12 @@ In default phase you can inform users about problem you have interpreting comman
                         {
                             return new \Convo\Pckg\Core\Elements\MediaBlock( $properties, $service, $this->_packageProviderFactory);
                         }
-                    }
+                    },
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                        )
+                    )
                 )
             ),
             new \Convo\Core\Factory\ComponentDefinition(
@@ -1933,6 +1948,11 @@ In default phase you can inform users about problem you have interpreting comman
                         'type' => 'file',
                         'filename' => 'start-audio-playback.html'
                     ),
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('AUDIO_PLAYER')
+                        )
+                    )
                 )
             ),
             new \Convo\Core\Factory\ComponentDefinition(
@@ -1976,6 +1996,11 @@ In default phase you can inform users about problem you have interpreting comman
                         'type' => 'file',
                         'filename' => 'start-video-playback.html'
                     ),
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('VIDEO_APP')
+                        )
+                    )
                 )
             ),
             new \Convo\Core\Factory\ComponentDefinition(

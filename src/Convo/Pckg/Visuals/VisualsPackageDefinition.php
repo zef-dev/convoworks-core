@@ -53,6 +53,11 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                         'filename' => 'list-title-element.html'
                     ),
                     '_workflow' => 'read',
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                        )
+                    )
                 )
             ),
             new \Convo\Core\Factory\ComponentDefinition(
@@ -133,6 +138,11 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                         'filename' => 'list-item-element.html'
                     ),
                     '_workflow' => 'read',
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                        )
+                    )
                 )
             ),
             new \Convo\Core\Factory\ComponentDefinition(
@@ -243,6 +253,11 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                         'filename' => 'list-element.html'
                     ),
                     '_workflow' => 'read',
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                        )
+                    )
                 )
             ),
             new \Convo\Core\Factory\ComponentDefinition(
@@ -333,6 +348,11 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                         'filename' => 'card-element.html'
                     ),
                     '_workflow' => 'read',
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                        )
+                    )
                 )
             )
         ];

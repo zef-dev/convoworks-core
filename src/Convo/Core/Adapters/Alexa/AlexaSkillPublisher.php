@@ -349,6 +349,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                     $this->_logger->debug( 'Workflow changed');
                     $workflowChanged = $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
                         $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_INTERACTION_MODEL, $model
+                    ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+                            $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_MANIFEST, $manifest
                     );
                     if ($workflowChanged) {
                         $changesCount++;
@@ -395,7 +397,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                       $this->_adminUserDataProvider->getPlatformConfig($this->_user->getId())[$this->getPlatformId()] : [];;
                       $config		=   $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 
-        $interfaces = isset($config[$this->getPlatformId()]['interfaces']) ? $config[$this->getPlatformId()]['interfaces'] : [];
+        $interfaces = $this->_prepareInterfacesFromWorkflowComponents();
 
         $meta = $this->_convoServiceDataProvider->getServiceMeta(
             $this->_user, $this->_serviceId
@@ -1107,7 +1109,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $manifest = new AmazonSkillManifest();
         $manifest->setLogger($this->_logger);
-        $interfaces = isset($config[$this->getPlatformId()]['interfaces']) ? $config[$this->getPlatformId()]['interfaces'] : [];
+        $interfaces = $this->_prepareInterfacesFromWorkflowComponents();
 
         if (count($interfaces) > 0) {
             $manifest->setInterfaces($interfaces);
@@ -1181,5 +1183,37 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             PlatformPublishingHistory::AMAZON_MANIFEST => $this->_prepareManifestData($existingManifest),
             PlatformPublishingHistory::AMAZON_INTERACTION_MODEL => $model
         ];
+    }
+
+    private function _prepareInterfacesFromWorkflowComponents() {
+        $workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+        $interfaces = [];
+
+        foreach ($workflow['packages'] as $packageId) {
+            $provider = $this->_packageProviderFactory->getProviderByNamespace($packageId);
+            if ( !is_a( $provider, '\Convo\Core\Factory\IComponentProvider')) {
+                $this->_logger->warning('Package is not component provider ['.$packageId.']');
+                continue;
+            }
+
+            /** @var \Convo\Core\Factory\IComponentProvider $provider */
+            array_walk_recursive($workflow, function ($value, $key) use ($provider, &$interfaces) {
+                if ($key === 'class') {
+                    try {
+                        $componentProperties = $provider->getComponentDefinition($value)->getRow()['component_properties'];
+                        if (isset($componentProperties['_platform_defaults'])) {
+                            $platformInterfaces = $componentProperties['_platform_defaults'][$this->getPlatformId()]['interfaces'] ?? [];
+                            foreach ($platformInterfaces as $platformInterface) {
+                                array_push($interfaces, $platformInterface);
+                            }
+                        }
+                    } catch (ComponentNotFoundException $cnfe) {
+                        $this->_logger->warning($cnfe->getMessage());
+                    }
+                }
+            });
+        }
+
+        return array_unique($interfaces);
     }
 }

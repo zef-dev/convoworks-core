@@ -235,6 +235,12 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 
 	private function _performConvoProtoExportServicePlatformGet( \Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId, $platformId)
 	{
+	    $serviceMeta   =   $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+
+	    if (!isset($serviceMeta['release_mapping'][$platformId])) {
+	        throw new \Convo\Core\Rest\NotFoundException('Platform ' . $platformId . " has no platform configuration created.");
+        }
+
 	    $publisher     =   $this->_platformPublisherFactory->getPublisher( $user, $serviceId, $platformId);
 	    $export        =   $publisher->export();
 
