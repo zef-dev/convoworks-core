@@ -325,6 +325,13 @@ class EvaluationContextTest extends TestCase
                     ]
                 ]
             ],
+            'Quoted expressions' => [
+                'His name is "Test", and he\'s a "user".',
+                'His name is "${name}", and he\'s a "${thing}".',
+                [
+                    "name" => "Test", "thing" => "user"
+                ]
+            ],
 			'Non-zero starting arrays (object)' => [
 				'Your name is Milorad',
 				'Your name is ${players[1].name}',
