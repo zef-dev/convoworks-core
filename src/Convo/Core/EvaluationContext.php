@@ -114,11 +114,22 @@ class EvaluationContext
 		$matches = [];
 		$expressions = [];
 
-		preg_match_all('/"?\${(.*?)}(?=[\s\w\-_\/\\:;,.?!()|"\]&]|$)/', $string, $matches);
+		preg_match_all('/\$(\{(?:[^{}]+|(?1))+\})/', $string, $matches);
 
 		if (isset($matches[1])) {
 			foreach ($matches[1] as $match) {
 				$expression = trim($match);
+
+				if (strpos($expression, "{") === 0) {
+					$expression = substr_replace($expression, "", 0, 1);
+				}
+
+				$last_char = strlen($expression) - 1;
+
+				if (strpos($expression, "}", $last_char) === $last_char) {
+					$expression = substr_replace($expression, "", $last_char, 1);
+				}
+
 				$this->_logger->debug( 'Found expression ['.$match.']');
 				$expressions[] = $expression;
 			}
