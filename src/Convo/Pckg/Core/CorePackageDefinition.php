@@ -170,6 +170,22 @@ class CorePackageDefinition extends AbstractPackageDefinition
         );
 
         $functions[] = new ExpressionFunction(
+            'array_push',
+            function ($array, $item) {
+                return sprintf('(is_array(%1$a) ? array_push(%1$a, %2$i) : %1$a', $array, $item);
+            },
+            function($args, $array, $item) {
+                if (!is_array($array)) {
+                    return $array;
+                }
+
+                $copy = $array;
+                $copy[] = $item;
+                return $copy;
+            }
+        );
+
+        $functions[] = new ExpressionFunction(
             'decode_special_chars',
             function ($string) {
                 return sprintf('(is_string(%1$a) ? decode_special_chars(%1$a) : %1$a', $string);
