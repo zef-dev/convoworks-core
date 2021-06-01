@@ -331,7 +331,7 @@ class DialogflowPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 			try
 			{
 				$catalog_name = $entity->getName().'Catalog';
-				$this->_logger->debug('Going to try to look for catalog ['.$catalog_name.']');
+				$this->_logger->info('Going to try to look for catalog ['.$catalog_name.']');
 
 				/** @var \Convo\Core\Workflow\ICatalogSource $catalog */
 				$catalog = $service->findContext($catalog_name)->getComponent();
