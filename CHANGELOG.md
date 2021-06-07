@@ -4,6 +4,15 @@
 
 ## [Releases]
 
+### 0.22.1 - 2021-06-07
+
+* Add `array_push` to custom functions
+* Overhaul expression parsing regex
+* Release mapping additional check
+* Fixes for `LoopElement`
+  * Fix `last` param
+  * Evaluate `offset` and `limit`
+* Removed `keys` function 
 ### 0.22.0 - 2021-05-14
 
 * Added Start Video Playback element
