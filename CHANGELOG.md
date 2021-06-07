@@ -12,7 +12,8 @@
 * Fixes for `LoopElement`
   * Fix `last` param
   * Evaluate `offset` and `limit`
-* Removed `keys` function 
+* Removed `keys` function
+ 
 ### 0.22.0 - 2021-05-14
 
 * Added Start Video Playback element
