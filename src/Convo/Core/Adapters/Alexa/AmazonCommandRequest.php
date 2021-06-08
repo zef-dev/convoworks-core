@@ -194,6 +194,11 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	        $isEmpty = false;
 	    }
 
+        if (is_numeric($this->_text)) {
+            $isEmpty = false;
+        }
+
+
 	    return $isEmpty;
 	}
 

@@ -60,7 +60,13 @@ class DefaultTextCommandRequest implements \Convo\Core\Workflow\IConvoRequest
 
 
 	public function isEmpty() {
-		return empty( $this->_text);
+	    $isEmpty = empty($this->_text);
+
+	    if (is_numeric($this->_text)) {
+	        $isEmpty = false;
+        }
+
+		return $isEmpty;
 	}
 
 	public function getText() {

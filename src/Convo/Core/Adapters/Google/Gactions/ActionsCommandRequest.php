@@ -156,7 +156,13 @@ class ActionsCommandRequest implements IConvoRequest, LoggerAwareInterface
 	 */
 	public function isEmpty()
 	{
-		return empty( $this->_text);
+	    $isEmpty = empty( $this->_text);
+
+	    if (is_numeric($this->_text)) {
+	        $isEmpty = false;
+        }
+
+		return $isEmpty;
 	}
 
 	/**
