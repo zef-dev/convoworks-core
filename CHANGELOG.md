@@ -4,6 +4,9 @@
 
 ## [Releases]
 
+### 0.22.2 - 2021-06-23
+* fix is empty method in `AmazonCommandRequest`, `DefaultTextCommandRequest` and `ActionsCommandRequest.php`
+
 ### 0.22.1 - 2021-06-07
 
 * Add `array_push` to custom functions
