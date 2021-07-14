@@ -183,6 +183,55 @@ class ServicesRestHandler implements RequestHandlerInterface
 		return $this->_httpFactory->buildResponse(['service_id' => $service_id]);
 	}
 
+	private function _performConvoServiceImportExistingPost(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user)
+	{
+		$files = $request->getUploadedFiles();
+		$file = $files['service_definition'] ?? null;
+
+		if (empty($file)) {
+			throw new \Exception('No file uploaded.');
+		}
+
+		$this->_logger->info('Got file ['.$file->getClientFilename().']');
+		$content = $file->getStream()->getContents();
+		$service_data = json_decode($content, true);
+
+		if (!$service_data) {
+			throw new \Convo\Core\Rest\InvalidRequestException('Invalid JSON in ['.$file->getClientFilename().']');
+		}
+
+		if (json_last_error() !== 0) {
+			throw new \Convo\Core\Rest\InvalidRequestException('Invalid JSON in ['.$file->getClientFilename().']['.json_last_error_msg().']');
+		}
+
+		$service_name = $service_data['name'];
+
+		$configurations = $service_data['configurations'] ?? null;
+		$release_mappings = $service_data['release_mappings'] ?? null; //todo
+
+		unset($service_data['configurations']);
+        unset($service_data['release_mappings']);
+
+        $this->_convoServiceFactory->fixComponentIds($service_data);
+
+		$service_id = $this->_convoServiceDataProvider->createNewService(
+			$user,
+			$service_name,
+			'en',
+			'en-US',
+			['en-US'],
+			false,
+			[],
+			$service_data
+		);
+
+		if (!empty($configurations)) {
+			$this->_convoServiceDataProvider->updateServicePlatformConfig($user, $service_id, $configurations);
+		}
+
+		return $this->_httpFactory->buildResponse(['service_id' => $service_id]);
+	}
+
 	private function _performConvoPathServiceIdPut(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId)
 	{
 		$service = $request->getParsedBody();
