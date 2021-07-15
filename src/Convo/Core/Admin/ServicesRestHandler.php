@@ -90,8 +90,8 @@ class ServicesRestHandler implements RequestHandlerInterface
 			return $this->_performConvoServiceCreatePost( $request, $user);
 		}
 
-		if ($info->post() && $info->route('service-import')) {
-			return $this->_performConvoServiceImportPost($request, $user);
+		if ($info->post() && $info->route('services/import')) {
+			return $this->_performConvoServicesPathImportPost($request, $user);
 		}
 
 		if ( $info->get() && $route = $info->route( 'services/{serviceId}'))
@@ -187,7 +187,7 @@ class ServicesRestHandler implements RequestHandlerInterface
 		return $this->_httpFactory->buildResponse(['service_id' => $service_id]);
 	}
 
-	private function _performConvoServiceImportPost(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user)
+	private function _performConvoServicesPathImportPost(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user)
 	{
 		$files = $request->getUploadedFiles();
 		$file = $files['service_definition'] ?? null;
