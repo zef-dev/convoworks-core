@@ -18,16 +18,10 @@ class ElseIfElement extends AbstractWorkflowContainerComponent implements IConve
     {
         parent::__construct($config);
         
-        if (!isset($config['test'])) {
-            throw new \Exception('Missing property [then] in ['.$this.']');
-        }
-        $this->_test = $config['test'];
+        $this->_test = $config['test'] ?? null;
 
-        if (!isset($config['then'])) {
-            throw new \Exception('Missing property [then] in ['.$this.']');
-        }
-
-        $this->_then = $config['then'];
+        $this->_then = $config['then'] ?? [];
+        
         foreach ($this->_then as $then) {
             $this->addChild($then);
         }
