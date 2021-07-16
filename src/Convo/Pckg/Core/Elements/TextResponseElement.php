@@ -28,7 +28,7 @@ class TextResponseElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
 	{
 		parent::__construct( $properties);
 
-		$this->_text		            =	$properties['text'];
+		$this->_text		            =	$properties['text'] ?? '';
 		$this->_type		            =	$properties['type'] ?? self::TYPE_DEFAULT;
 		$this->_break		            =	$properties['break'] ?? null;
 		$this->_alexaEmotion            =   $properties['alexa_emotion'] ?? self::ALEXA_EMOTION_TYPE;
