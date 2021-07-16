@@ -2,6 +2,8 @@
 
 namespace Convo\Pckg\Core\Elements;
 
+use Convo\Core\Params\IServiceParamsScope;
+
 class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
 {
     const RANDOM_MODE_WILD  =   'wild';
@@ -13,41 +15,33 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 
 	private $_namespace;
 
-	private $_scopeType		=	\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION;
+	private $_scopeType;
 	
-	public function __construct( $properties)
+	public function __construct($properties)
 	{
-	    parent::__construct( $properties);
-	    
-	    if ( !isset( $properties['mode']) || !$properties['mode']) {
-	        $properties['mode']    =   self::RANDOM_MODE_WILD;
-        }
+	    parent::__construct($properties);
 
-        $this->_mode    =   $properties['mode'];
+        $this->_mode = $properties['mode'] ?? self::RANDOM_MODE_WILD;
 
-	    if ( $this->_mode === self::RANDOM_MODE_SMART && !isset( $properties['namespace'])) {
+	    if ($this->_mode === self::RANDOM_MODE_SMART && !isset($properties['namespace'])) {
             $this->_logger->warning('No namespace provided. Going to use component\'s ID.');
             $this->_namespace = $this->getId();
-        } else if ( $this->_mode == self::RANDOM_MODE_SMART && isset( $properties['namespace'])) {
-            $this->_namespace   =   $properties['namespace'];
+        } else if ($this->_mode === self::RANDOM_MODE_SMART && isset($properties['namespace'])) {
+            $this->_namespace = $properties['namespace'];
         }
 
-		if ( !isset( $properties['elements'])) { 
-		    $properties['elements']   =   [];
-		}
+		$elements = $properties['elements'] ?? [];
 
-		/* @var $element \Convo\Core\Workflow\IConversationElement */
-		foreach ( $properties['elements'] as $element) 
+		/** @var \Convo\Core\Workflow\IConversationElement $element */
+		foreach ($elements as $element) 
 		{
-		    if (!is_a( $element, 'Convo\Pckg\Core\Elements\CommentElement')){
-		        $this->_elements[]  =   $element;
-		        $this->addChild( $element);
+		    if (!is_a($element, 'Convo\Pckg\Core\Elements\CommentElement')){
+		        $this->_elements[] = $element;
+		        $this->addChild($element);
 		    }
         }
         
-        if ( isset( $properties['scope_type'])) {
-        	$this->_scopeType	=	$properties['scope_type'];
-        }
+		$this->_scopeType = $properties['scope_type'] ?? IServiceParamsScope::SCOPE_TYPE_INSTALLATION;
 	}
 	
 	public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
@@ -78,7 +72,7 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
         } else {
 	        $random_idx =   rand( 0, count( $this->_elements) - 1);
 
-	        /* @var $random_el \Convo\Core\Workflow\IConversationElement */
+	        /** @var \Convo\Core\Workflow\IConversationElement $random_el */
 	        $random_el  =   $this->_elements[$random_idx];
 	        $random_el->read( $request, $response);
         }
