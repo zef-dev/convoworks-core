@@ -210,8 +210,8 @@ class ServicesRestHandler implements RequestHandlerInterface
 
 		$service_name = $service_data['name'];
 
-		$configurations = $service_data['configurations'] ?? null;
-		$release_mappings = $service_data['release_mappings'] ?? null; //todo
+		$configurations = $service_data['configurations'] ?? [];
+		$release_mappings = $service_data['release_mappings'] ?? []; //todo
 
 		unset($service_data['configurations']);
         unset($service_data['release_mappings']);
@@ -231,6 +231,12 @@ class ServicesRestHandler implements RequestHandlerInterface
 
 		if (!empty($configurations)) {
 			$this->_convoServiceDataProvider->updateServicePlatformConfig($user, $service_id, $configurations);
+		}
+
+		if (!empty($release_mappings)) {
+			$meta = $this->_convoServiceDataProvider->getServiceMeta($user, $service_id);
+			$meta['release_mapping'] = $release_mappings;
+			$this->_convoServiceDataProvider->saveServiceMeta($user, $service_id, $meta);
 		}
 
 		return $this->_httpFactory->buildResponse(['service_id' => $service_id]);
