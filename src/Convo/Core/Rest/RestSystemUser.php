@@ -31,6 +31,11 @@ class RestSystemUser implements IAdminUser
 		throw new \Exception( 'Not to be used here');
 	}
 
+	public function getWpUserById($id)
+	{
+		return [];
+	}
+
 	public function __toString()
 	{
 		return get_class( $this).'[]';
