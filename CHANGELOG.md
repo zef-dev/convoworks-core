@@ -6,7 +6,6 @@
 
 ### 0.22.3 - 2021-07-19
 * Add endpoint for Alexa Skill Auto Enablement
-* Add getWpUserById in IAdminUser
 
 ### 0.22.2 - 2021-06-23
 * fix is empty method in `AmazonCommandRequest`, `DefaultTextCommandRequest` and `ActionsCommandRequest.php`

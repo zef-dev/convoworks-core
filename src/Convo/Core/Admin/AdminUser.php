@@ -39,11 +39,6 @@ class AdminUser implements IAdminUser
 		return $this->_name;
 	}
 
-	public function getWpUserById($id)
-	{
-		return [];
-	}
-
 	public function __toString()
 	{
 		return get_class( $this).'['.$this->_id.']['.$this->_email.']['.$this->_name.']';

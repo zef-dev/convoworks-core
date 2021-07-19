@@ -9,5 +9,4 @@ interface IAdminUser
 	public function getUsername();
 	public function getEmail();
 	public function getName();
-	public function getWpUserById($id);
 }
