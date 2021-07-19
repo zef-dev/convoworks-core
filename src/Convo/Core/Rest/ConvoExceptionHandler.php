@@ -51,7 +51,10 @@ class ConvoExceptionHandler implements \Psr\Http\Server\MiddlewareInterface
         } catch (\Convo\Core\Rest\ServiceDeletionException $e) {
             $this->_logger->notice( $e);
             return $this->_httpFactory->buildResponse( [ 'message' => $e->getMessage()], 405, ['Content-Type'=>'application/json']);
-        }
+        } catch (\Convo\Core\Rest\ServiceEnablementException $e) {
+			$this->_logger->notice( $e);
+			return $this->_httpFactory->buildResponse( [ 'message' => $e->getMessage()], 405, ['Content-Type'=>'application/json']);
+		}
 	}
 
 	// UTIL

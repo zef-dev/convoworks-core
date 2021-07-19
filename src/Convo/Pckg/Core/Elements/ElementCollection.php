@@ -15,18 +15,19 @@ class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 	{
 		parent::__construct( $properties);
 		
-		if ( isset( $properties['elements'])) {
-			foreach ( $properties['elements'] as $element) {
-				$this->addElement( $element);
-			}
+		$elements = $properties['elements'] ?? [];
+
+		foreach ($elements as $element) {
+			$this->addElement($element);
 		}
 	}
 	
 	public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
-		$this->_logger->debug( 'Reading ['.count( $this->_elements).']');
-		foreach ( $this->_elements as $element) {
-			/* @var $element \Convo\Core\Workflow\IConversationElement */
+		$this->_logger->debug('Reading ['.count( $this->_elements).']');
+		
+		foreach ($this->_elements as $element) {
+			/** @var $element \Convo\Core\Workflow\IConversationElement */
 			$element->read( $request, $response);
 		}
 	}

@@ -30,14 +30,7 @@ class IfElement extends AbstractWorkflowContainerComponent implements IConversat
         
         $this->_test = $properties['test'] ?? null;
 
-        if (!$this->_test) {
-            throw new \Exception('Missing required property [test] for simple if element');
-        }
-
         $this->_then = $properties['then'] ?? [];
-        if (empty($this->_then)) {
-            throw new \Exception('Missing required property [then] for simple if element');
-        }
         foreach ( $this->_then as $then) {
             $this->addChild( $then);
         }

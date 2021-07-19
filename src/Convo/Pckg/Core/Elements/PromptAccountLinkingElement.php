@@ -21,7 +21,8 @@ class PromptAccountLinkingElement extends \Convo\Core\Workflow\AbstractWorkflowC
             $response->setShouldEndSession(true);
 
             throw new \Convo\Core\SessionEndedException();
-        } else if (is_a($request, '\Convo\Core\Adapters\Gactions\ActionsCommandRequest'))
+        }
+        else if (is_a($request, '\Convo\Core\Adapters\Gactions\ActionsCommandRequest'))
         {
             /** @var \Convo\Core\Adapters\Google\Gactions\ActionsCommandResponse $response */
             $response->prepareResponse(

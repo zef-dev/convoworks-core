@@ -90,6 +90,10 @@ class ServicesRestHandler implements RequestHandlerInterface
 			return $this->_performConvoServiceCreatePost( $request, $user);
 		}
 
+		if ($info->post() && $info->route('services/import')) {
+			return $this->_performConvoServicesPathImportPost($request, $user);
+		}
+
 		if ( $info->get() && $route = $info->route( 'services/{serviceId}'))
 		{
 			return $this->_performConvoPathServiceIdGet( $request, $user, $route->get( 'serviceId'));
@@ -179,6 +183,61 @@ class ServicesRestHandler implements RequestHandlerInterface
 		);
 
 		$this->_logger->info('Created new service ['.$service_name.']['.$service_id.'] from template ['.$template_id.']');
+
+		return $this->_httpFactory->buildResponse(['service_id' => $service_id]);
+	}
+
+	private function _performConvoServicesPathImportPost(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user)
+	{
+		$files = $request->getUploadedFiles();
+		$file = $files['service_definition'] ?? null;
+
+		if (empty($file)) {
+			throw new \Exception('No file uploaded.');
+		}
+
+		$this->_logger->info('Got file ['.$file->getClientFilename().']');
+		$content = $file->getStream()->getContents();
+		$service_data = json_decode($content, true);
+
+		if (!$service_data) {
+			throw new \Convo\Core\Rest\InvalidRequestException('Invalid JSON in ['.$file->getClientFilename().']');
+		}
+
+		if (json_last_error() !== 0) {
+			throw new \Convo\Core\Rest\InvalidRequestException('Invalid JSON in ['.$file->getClientFilename().']['.json_last_error_msg().']');
+		}
+
+		$service_name = $service_data['name'];
+
+		$configurations = $service_data['configurations'] ?? [];
+		$release_mappings = $service_data['release_mappings'] ?? []; //todo
+
+		unset($service_data['configurations']);
+        unset($service_data['release_mappings']);
+
+        $this->_convoServiceFactory->fixComponentIds($service_data);
+
+		$service_id = $this->_convoServiceDataProvider->createNewService(
+			$user,
+			$service_name,
+			'en',
+			'en-US',
+			['en-US'],
+			false,
+			[],
+			$service_data
+		);
+
+		if (!empty($configurations)) {
+			$this->_convoServiceDataProvider->updateServicePlatformConfig($user, $service_id, $configurations);
+		}
+
+		if (!empty($release_mappings)) {
+			$meta = $this->_convoServiceDataProvider->getServiceMeta($user, $service_id);
+			$meta['release_mapping'] = $release_mappings;
+			$this->_convoServiceDataProvider->saveServiceMeta($user, $service_id, $meta);
+		}
 
 		return $this->_httpFactory->buildResponse(['service_id' => $service_id]);
 	}
