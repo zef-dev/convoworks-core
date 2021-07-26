@@ -189,6 +189,8 @@ class ServicesRestHandler implements RequestHandlerInterface
 
 	private function _performConvoServicesPathImportPost(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user)
 	{
+		$json = $request->getParsedBody();
+
 		$files = $request->getUploadedFiles();
 		$file = $files['service_definition'] ?? null;
 
@@ -208,7 +210,8 @@ class ServicesRestHandler implements RequestHandlerInterface
 			throw new \Convo\Core\Rest\InvalidRequestException('Invalid JSON in ['.$file->getClientFilename().']['.json_last_error_msg().']');
 		}
 
-		$service_name = $service_data['name'];
+		$service_name = $json['name'];
+		$service_data['name'] = $service_name;
 
 		$configurations = $service_data['configurations'] ?? [];
 		$release_mappings = $service_data['release_mappings'] ?? []; //todo
