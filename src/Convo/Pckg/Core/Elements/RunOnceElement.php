@@ -40,7 +40,8 @@ class RunOnceElement extends AbstractWorkflowContainerComponent implements IConv
 
     public function read(\Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
     {
-        $params = $this->getService()->getComponentParams($this->_scopeType, $this);
+        $scope_type = $this->evaluateString($this->_scopeType);
+        $params = $this->getService()->getComponentParams($scope_type, $this);
 
         $this->_logger->debug('Got component params ['.$this->_scopeType.']['.print_r($params->getData(), true).']');
 
