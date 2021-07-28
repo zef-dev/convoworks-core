@@ -25,7 +25,8 @@ class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
 	public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
 		$service	=	$this->getService();
-		$params		=	$service->getServiceParams( $this->_scopeType);
+		$scope_type =	$this->evaluateString($this->_scopeType);
+		$params		=	$service->getServiceParams($scope_type);
 
 		foreach ( $this->_params as $key => $val) {
 			$key	=	$this->evaluateString( $key);
