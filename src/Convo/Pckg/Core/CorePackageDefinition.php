@@ -2094,7 +2094,8 @@ In default phase you can inform users about problem you have interpreting comman
                         'defaultValue' => array(),
                         'name' => 'Read phase',
                         'description' => 'Elements to be executed in read phase',
-                        'valueType' => 'class'
+                        'valueType' => 'class',
+                        '_separate' => true
                     ),
                     'main_processors' => array(
                         'editor_type' => 'service_components',
@@ -2116,7 +2117,8 @@ In default phase you can inform users about problem you have interpreting comman
                         'defaultValue' => array(),
                         'name' => 'Process phase',
                         'description' => 'Other processors to be executed in process phase. E.g. help, repeat ... This procoessors will not trigger loop iteration.',
-                        'valueType' => 'class'
+                        'valueType' => 'class',
+                        '_separate' => true
                     ),
                     'fallback' => array(
                         'editor_type' => 'service_components',
@@ -2141,8 +2143,7 @@ In default phase you can inform users about problem you have interpreting comman
                         'valueType' => 'class'
                     ),
                     '_workflow' => 'read',
-                    '_system' => true,
-                    '_separate' => true
+                    '_system' => true
                 )
                 ),
             new \Convo\Core\Factory\ComponentDefinition(
