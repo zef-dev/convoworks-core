@@ -33,11 +33,9 @@ class NopRequestFilter implements \Convo\Core\Workflow\IRequestFilter
 	
 	private function _isMatch()
 	{
-	    if ( $this->_empty === 'match') {
-	        return true;
-	    }
+		$empty = $this->getService()->evaluateString($this->_empty);
 	    
-	    return false;
+		return $empty === 'match';
 	}
 	
 	/**
@@ -58,7 +56,10 @@ class NopRequestFilter implements \Convo\Core\Workflow\IRequestFilter
 	    
 	    foreach ( $this->_values as $key => $value)
 	    {
-	        $result->setSlotValue( $key, $value);
+			$k = $this->getService()->evaluateString($key);
+			$v = $this->getService()->evaluateString($value);
+
+	        $result->setSlotValue($k, $v);
 	    }
 	    
 	    return $result;
@@ -66,7 +67,7 @@ class NopRequestFilter implements \Convo\Core\Workflow\IRequestFilter
 
 	public function setService( \Convo\Core\ConvoServiceInstance $service)
 	{
-		$this->_service     =   $service;
+		$this->_service = $service;
 	}
 
 	public function getService()
@@ -77,6 +78,6 @@ class NopRequestFilter implements \Convo\Core\Workflow\IRequestFilter
 	// UTIL
 	public function __toString()
 	{
-		return get_class( $this).'[]';
+		return get_class($this).'[]';
 	}
 }
