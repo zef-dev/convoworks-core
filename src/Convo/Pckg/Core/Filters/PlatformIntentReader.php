@@ -31,7 +31,8 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
 
     public function getPlatformIntentName( $platformId)
     {
-        return $this->evaluateString($this->_intent);
+        return $this->_intent;
+        // return $this->evaluateString($this->_intent); throws error on preview, cannot get component params outside of request scope
     }
 
     public function read( \Convo\Core\Workflow\IIntentAwareRequest $request)
