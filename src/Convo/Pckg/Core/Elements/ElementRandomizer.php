@@ -47,34 +47,41 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 	public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
 		$service	=	$this->getService();
+
+		$mode = $this->evaluateString($this->_mode);
+		$scope_type = $this->evaluateString($this->_scopeType);
+		$namespace = $this->evaluateString($this->_namespace);
 		
-	    if ( $this->_mode === self::RANDOM_MODE_SMART) {
-	    	$params =   $service->getComponentParams( $this->_scopeType, $this)->getServiceParam( $this->_namespace);
+	    if ($mode === self::RANDOM_MODE_SMART) {
+	    	$params = $service->getComponentParams($scope_type, $this)->getServiceParam($namespace);
 
-            if ( $params !== null && !empty( $params)) {
+            if ($params !== null && !empty($params))
+			{
                 $randomized =   $params;
-            } else {
-                $this->_logger->notice( 'Empty or missing param ['.$this->_namespace.']. Shuffling and storing new');
+            }
+			else
+			{
+                $this->_logger->info( 'Empty or missing param ['.$namespace.']. Shuffling and storing new');
 
-                $shuffled   =   $this->_shuffleArray( range( 0, count( $this->_elements) - 1));
+                $shuffled = $this->_shuffleArray( range( 0, count( $this->_elements) - 1));
 
-                $service->getComponentParams( $this->_scopeType, $this)->setServiceParam( $this->_namespace, $shuffled);
+                $service->getComponentParams($scope_type, $this)->setServiceParam($namespace, $shuffled);
 
-                $randomized =   $shuffled;
+                $randomized = $shuffled;
             }
 
-            $next   =   array_shift( $randomized);
+            $next = array_shift($randomized);
 
-            $service->getComponentParams( $this->_scopeType, $this)->setServiceParam( $this->_namespace, array_values( $randomized));
+            $service->getComponentParams($scope_type, $this)->setServiceParam($namespace, array_values( $randomized));
 
-            $random_element =   $this->_elements[$next];
+            $random_element = $this->_elements[$next];
             $random_element->read( $request, $response);
         } else {
 	        $random_idx =   rand( 0, count( $this->_elements) - 1);
 
 	        /** @var \Convo\Core\Workflow\IConversationElement $random_el */
-	        $random_el  =   $this->_elements[$random_idx];
-	        $random_el->read( $request, $response);
+	        $random_el = $this->_elements[$random_idx];
+	        $random_el->read($request, $response);
         }
 	}
 
