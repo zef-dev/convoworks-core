@@ -2141,7 +2141,8 @@ In default phase you can inform users about problem you have interpreting comman
                         'valueType' => 'class'
                     ),
                     '_workflow' => 'read',
-                    '_system' => true
+                    '_system' => true,
+                    '_separate' => true
                 )
                 ),
             new \Convo\Core\Factory\ComponentDefinition(
