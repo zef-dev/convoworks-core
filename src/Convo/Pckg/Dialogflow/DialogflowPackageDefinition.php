@@ -24,14 +24,14 @@ class DialogflowPackageDefinition extends AbstractPackageDefinition
                 $this->getNamespace(),
                 '\Convo\Pckg\Dialogflow\Elements\SetSuggestionsElement',
                 'Set suggestions',
-                'Sets suggestions which should be displayed by an response. (Works with devices that have the screen output capability.)',
+                'Sets suggestions which should be displayed by a response. Works with devices that have the screen output capability.',
                 array(
                     'value' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
                         'defaultValue' => null,
                         'name' => 'Suggestions',
-                        'description' => 'Suggestions to be shown. Use ";" as delimiter to display more suggestion. Example usage (suggestion 1;suggestion 2;suggestion 3 ect.)',
+                        'description' => 'Suggestions to be shown. Use ";" as delimiter to display more suggestion. Example usage: "suggestion 1;suggestion 2;suggestion 3" etc.',
                         'valueType' => 'string'
                     ),
                     '_preview_angular' => array(
