@@ -31,14 +31,15 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
 
     public function getPlatformIntentName( $platformId)
     {
-        return $this->_intent;
+        return $this->evaluateString($this->_intent);
     }
 
     public function read( \Convo\Core\Workflow\IIntentAwareRequest $request)
     {
-        $result =   new \Convo\Core\Workflow\DefaultFilterResult();
+        $result = new \Convo\Core\Workflow\DefaultFilterResult();
+        $intent = $this->evaluateString($this->_intent);
         
-        $result->setSlotValue( 'intentName', $this->_intent); // quickfix??
+        $result->setSlotValue('intentName', $intent); // quickfix??
         
         $slots  =   $request->getSlotValues();
 
