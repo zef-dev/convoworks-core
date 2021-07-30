@@ -27,7 +27,7 @@ class BodyParserMiddleware implements \Psr\Http\Server\MiddlewareInterface
 		}
 		
 		if ( strstr( $contentType, 'application/x-www-form-urlencoded') || strstr( $contentType, 'multipart/form-data')) {
-			$request->withParsedBody( $_POST);
+			$request = $request->withParsedBody( $_POST);
 		}
 		
 		return $handler->handle( $request);
