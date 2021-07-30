@@ -17,7 +17,14 @@ class BodyParserMiddleware implements \Psr\Http\Server\MiddlewareInterface
 	
 	public function process( ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
 	{
-		$contentType = $request->getHeaderLine('Content-Type');
+		// It seems like sometimes the headers received in the request have all been lowercased
+		// with dashes - replaced with underscores _
+		// which results in Content-Type becoming content_type
+		// check for either just to be safe
+		$contentType = 
+			$request->getHeaderLine('Content-Type') !== "" ? 
+			$request->getHeaderLine('Content-Type') :
+			$request->getHeaderLine('content-type');
 		
 		if ( strstr( $contentType, 'application/json')) {
 			$contents = json_decode( file_get_contents('php://input'), true);
