@@ -29,7 +29,7 @@ class GetAmazonUserElement extends AbstractWorkflowComponent implements IConvers
     {
         parent::__construct($properties);
 
-        $this->_name = $properties['name'] ?? 'user';
+        $this->_name = $properties['initialized_user_var'] ?? 'user';
         $this->_promptForLinking = $properties['prompt_for_linking'] ?? false;
 
         $this->_httpFactory              = $httpFactory;

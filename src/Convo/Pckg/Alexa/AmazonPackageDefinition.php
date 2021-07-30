@@ -40,7 +40,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                 'Init Amazon user',
                 'Initialize an Amazon user.',
                 [
-                    'name' => [
+                    'initialized_user_var' => [
                         'editor_type' => 'text',
                         'editor_properties' => [],
                         'defaultValue' => 'user',
