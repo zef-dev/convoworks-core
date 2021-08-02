@@ -36,7 +36,7 @@ class GoToElement extends \Convo\Core\Workflow\AbstractWorkflowComponent impleme
             $parsed = $params->getServiceParam(ConvoServiceInstance::SERVICE_STATE_PREV_NAME);
         }
 
-		$next = strpos($this->_next, '${') !== false ? $this->evaluateString($this->_next) : $this->_next;
+		$next = $this->evaluateString($this->_next);
 
 		if ($next) {
 			$this->_logger->debug( 'Setting state next at ['.$parsed.'] got from ['.$this->_value.']');
