@@ -4,8 +4,13 @@
 
 ## [Releases]
 
+### 0.22.4.1 - 2021-08-02
+* Add param evaluation to components to support raw input
+* Fix content type evaluation in `BodyParserMiddleware`
+
 ### 0.22.4 - 2021-07-28
 * Slight tweak to create service from existing method
+
 ### 0.22.3 - 2021-07-19
 * Add endpoint for Alexa Skill Auto Enablement
 * Add ability to create service from existing export
