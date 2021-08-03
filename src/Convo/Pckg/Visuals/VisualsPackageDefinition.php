@@ -55,7 +55,7 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     '_workflow' => 'read',
                     '_platform_defaults' => array(
                         'amazon' => array(
-                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                            'interfaces' => array('ALEXA_PRESENTATION_APL')
                         )
                     )
                 )
@@ -140,7 +140,7 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     '_workflow' => 'read',
                     '_platform_defaults' => array(
                         'amazon' => array(
-                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                            'interfaces' => array('ALEXA_PRESENTATION_APL')
                         )
                     )
                 )
@@ -255,7 +255,7 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     '_workflow' => 'read',
                     '_platform_defaults' => array(
                         'amazon' => array(
-                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                            'interfaces' => array('ALEXA_PRESENTATION_APL')
                         )
                     )
                 )
@@ -350,7 +350,7 @@ class VisualsPackageDefinition extends AbstractPackageDefinition
                     '_workflow' => 'read',
                     '_platform_defaults' => array(
                         'amazon' => array(
-                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                            'interfaces' => array('ALEXA_PRESENTATION_APL')
                         )
                     )
                 )

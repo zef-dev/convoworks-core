@@ -18,6 +18,7 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	private $_requestId = '';
 
 	private $_accessToken;
+	private $_aplToken;
 
 	private $_text;
 	private $_offsetMilliseconds;
@@ -33,13 +34,17 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 
     private $_selectedOption;
     private $_isDisplaySupported = false;
-    private $_isDisplayInterfaceEnabled = false;
+    private $_isAplSupported = false;
+    private $_isAplEnabled = false;
     private $_locale = '';
 
     private $_isNewSession = true;
 
     private $_playerRunning =   false;
-    
+
+	private $_isAplUserEvent = false;
+	private $_aplArguments;
+
 	/**
 	 * @var \Psr\Log\LoggerInterface
 	 */
@@ -88,15 +93,32 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 		    $this->_isDisplaySupported = true;
 		}
 
+		// backwards compatibility check to ignore list and card responses if skill has Display interface enabled
+		// todo remove later
 		if (array_key_exists('Display', $this->_data['context']['System']['device']['supportedInterfaces'])) {
-		    $this->_isDisplayInterfaceEnabled = true;
-        }
+			$this->_isDisplaySupported = false;
+		}
+
+		if (array_key_exists('ALEXA_PRESENTATION_APL', $this->_data['context']['System']['device']['supportedInterfaces'])) {
+			$this->_isAplEnabled = true;
+		}
         
         $player =   $this->_data['context']['AudioPlayer']['playerActivity'] ?? null;
         if ( $player && in_array( $player, ['IDLE', 'PAUSED', 'PLAYING', 'STOPPED'])) {
             $this->_logger->info( 'Seems that the player is running ['.$player.']');
             $this->_playerRunning   =   true;
         }
+
+		$viewports = $this->_data['context']['Viewports'];
+		foreach ($viewports as $viewport) {
+			if ($viewport['type'] === 'APL') {
+				$this->_isAplSupported = true;
+			}
+		}
+
+		if (isset($this->_data['context']['Alexa.Presentation.APL'])) {
+			$this->_aplToken = $this->_data['context']['Alexa.Presentation.APL']['token'];
+		}
 
 		switch( $this->_intentType ) {
 			case 'LaunchRequest':
@@ -105,11 +127,6 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 				break;
             case 'System.ExceptionEncountered':
                 throw new \Exception( 'Exception type ['.$this->_data['request']['error']['type'].']\n Exception message ['.$this->_data['request']['error']['message'].']');
-
-            case 'Display.ElementSelected':
-                $this->_selectedOption = $this->_data['request']['token'] ?? null;
-                $this->_intentName = $this->_intentType;
-                break;
             case 'PlaybackController.NextCommandIssued':
             case 'PlaybackController.PauseCommandIssued':
             case 'PlaybackController.PlayCommandIssued':
@@ -133,7 +150,15 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 					throw new \Exception( 'Not expected session end reason ['.$this->_data['request']['reason'].']');
 				}
 				break;
-
+			case 'Alexa.Presentation.APL.UserEvent':
+				$this->_isAplUserEvent = true;
+				$this->_intentName = $this->_intentType;
+				$this->_aplArguments = $this->_data['request']['arguments'];
+				$this->_selectedOption = null;
+				if (isset($this->_data['request']['arguments'][0]['selected_list_item_key'])) {
+					$this->_selectedOption = $this->_data['request']['arguments'][0]['selected_list_item_key'];
+				}
+				break;
 			default:
 				throw new \Exception( 'Not expected request type ['.$this->_intentType.']');
 		}
@@ -221,9 +246,9 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	    return $this->_isDisplaySupported;
 	}
 
-    public  function getIsDisplayInterfaceEnabled()
+    public  function getIsAplSupported()
     {
-        return $this->_isDisplayInterfaceEnabled;
+        return $this->_isAplSupported;
     }
 
 	public function getAccessToken() {
@@ -268,6 +293,14 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	{
 		return get_class( $this).'['.self::PLATFORM_ID.']['.$this->_serviceId.']['.$this->_intentType.']['.$this->_intentName.']['.$this->_text.']['.json_encode( $this->_slots).']'.
 		  		'['.$this->_deviceId.']['.$this->_installationId.']['.$this->_sessionId.']['.$this->_requestId.']';
+	}
+
+	public function getAplToken() {
+		return $this->_aplToken;
+	}
+
+	public function isAplEnabled() {
+		return $this->_isAplEnabled;
 	}
 
 
@@ -333,6 +366,15 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 		}
 
 		return true;
+	}
+
+	public function getAplArguments()
+	{
+		return $this->_aplArguments;
+	}
+
+	public function isAplUserEvent() {
+		return $this->_isAplUserEvent;
 	}
 
     /**

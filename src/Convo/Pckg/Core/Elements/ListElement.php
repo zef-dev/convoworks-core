@@ -121,7 +121,7 @@ class ListElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 
             $response->setDataList( $data);
 
-            if ($request->getIsDisplaySupported() && $request->getIsDisplayInterfaceEnabled())
+            if ($request->getIsDisplaySupported()  && $request->getIsAplSupported())
             {
                 /* @var \Convo\Core\Adapters\Alexa\AmazonCommandResponse  $response*/
                 $response->prepareResponse(IAlexaResponseType::LIST_RESPONSE);
