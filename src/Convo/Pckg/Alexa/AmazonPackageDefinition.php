@@ -51,7 +51,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => [
                         'type' => 'html',
                         'template' => '<div class="code">' .
-                            'Load Amazon User and set it as <span class="statement"><b>{{ component.properties.name }}</b></span>' .
+                            'Load Amazon User and set it as <span class="statement"><b>{{ component.properties.initialized_user_var }}</b></span>' .
                             '</div>'
                     ],
                     '_workflow' => 'read',
