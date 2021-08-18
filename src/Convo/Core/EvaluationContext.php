@@ -22,12 +22,15 @@ class EvaluationContext
 	 */
 	private $_logger;
 
-	public function __construct( $logger, ExpressionFunctionProviderInterface $functionProvider)
+	public function __construct( $logger, ExpressionFunctionProviderInterface ...$functionProviders)
 	{
 		$this->_logger	=	$logger;
 
 		$this->_expLang	=	new ExpressionLanguage();
-		$this->_expLang->registerProvider( $functionProvider);
+
+		foreach ($functionProviders as $functionProvider) {
+			$this->_expLang->registerProvider( $functionProvider);
+		}
 	}
 
 	public function evalArray( $array, $context=[])
