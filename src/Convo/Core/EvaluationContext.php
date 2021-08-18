@@ -41,25 +41,24 @@ class EvaluationContext
 
 	public function evalParam( $string, $context=[])
 	{
-		try {
-			$this->_logger->debug( 'Currently evaluating param ['.$string.']');
-			$expressions	=	$this->_extractExpressions( $string);
-			if ( empty( $expressions)) {
-				return $string;
-			}
-			$value	= $this->_expLang->evaluate( $expressions[0], $context);
-// 			$this->_logger->debug( 'Got value ['.print_r( $value, true).']');
-			if ( is_a( $value, 'Convo\Core\Evaluation\IValueAdapter')) {
-			    $this->_logger->debug( 'Got IValueAdapter value');
-				return $value->get();
-			}
-
-			$this->_logger->debug( 'Got value of type ['.gettype($value).']');
-
-			return $value;
-		} catch ( \Symfony\Component\ExpressionLanguage\SyntaxError $e) {
-			throw $e;
+		$this->_logger->debug( 'Currently evaluating param ['.$string.']');
+	
+		$expressions = $this->_extractExpressions( $string);
+	
+		if (empty($expressions)) {
+			return $string;
 		}
+	
+		$value	= $this->_expLang->evaluate( $expressions[0], $context);
+// 			$this->_logger->debug( 'Got value ['.print_r( $value, true).']');
+		if ( is_a( $value, 'Zef\Zel\IValueAdapter')) {
+			$this->_logger->debug( 'Got IValueAdapter value');
+			return $value->get();
+		}
+
+		$this->_logger->debug( 'Got value of type ['.gettype($value).']');
+
+		return $value;
 	}
 
 	public function evalString( $string, $context=[], $skipEmpty=false)
@@ -96,7 +95,7 @@ class EvaluationContext
 				}
 			} else {
 				// not parsing, single value get
-				if ( is_a( $value, 'Convo\Core\Evaluation\IValueAdapter')) {
+				if ( is_a( $value, 'Zef\Zel\IValueAdapter')) {
 					return $value->get();
 				}
 
