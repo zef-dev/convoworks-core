@@ -102,7 +102,7 @@ class EvaluationContextTest extends TestCase
             'request' => new ObjectResolver($context)
         ]);
 
-        $actual = $this->_evalContext->evalString($string, $ctx->getValues());
+        $actual = $this->_evalContext->evalString($string, $ctx->get());
 
         $this->assertEquals($expected, $actual);
     }
@@ -115,10 +115,10 @@ class EvaluationContextTest extends TestCase
      */
     public function testArrayParsingWorks($expected, $array, $context)
     {
-        $this->_logger->debug( '-------------');
+        $this->_logger->debug('-------------');
         $context = new ArrayResolver($context);
 
-        $actual = $this->_evalContext->evalArray($array, $context->getValues());
+        $actual = $this->_evalContext->evalArray($array, $context->get());
 
         $this->assertEquals($expected, $actual);
     }
@@ -308,7 +308,68 @@ class EvaluationContextTest extends TestCase
                         ]
                     ]
                 ]
-            ]
+            ],
+            [
+				[
+					'message' => ['DOOM ETERNAL', 'CALL OF DUTY: VANGUARD']
+				],
+				[
+					'message' => '${games}'
+				],
+				[
+					"games" => ['DOOM ETERNAL', 'CALL OF DUTY: VANGUARD']
+				]
+			],
+			[
+				[
+					'message' => [
+                        [
+							"fist_person_shooters" => [
+								[
+									'name' => 'DOOM'
+								]
+							]
+						]
+					]
+				],
+				[
+					'message' => '${games}'
+				],
+				[
+					"games" => [
+					    [
+							"fist_person_shooters" => [
+								[
+									'name' => 'DOOM'
+								]
+							]
+						]
+					]
+				]
+			],
+			[
+				[
+					'message' => [
+						"fist_person_shooters" => [
+							[
+								'name' => 'DOOM'
+							]
+						]
+					]
+				],
+				[
+					'message' => '${game.get()}'
+				],
+				[
+					"game" => [
+						"fist_person_shooters" => [
+							[
+								'name' => 'DOOM'
+							]
+						]
+					]
+				]
+			]
         ];
     }
 
