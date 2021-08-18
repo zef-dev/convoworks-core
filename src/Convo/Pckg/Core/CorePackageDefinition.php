@@ -156,6 +156,33 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('strtotime');
         $functions[] = ExpressionFunction::fromPhp('time');
 
+        $unwrap_cw_resolvers = function ($args, $data) use (&$unwrap_cw_resolvers) {
+            if (is_array($data)) {
+                $clean = [];
+
+                foreach ($data as $key => $val) {
+                    $clean[$key] = $unwrap_cw_resolvers($args, $val);
+                }
+
+                return $clean;
+            }
+
+            if (is_a($data, '\Zef\Zel\IValueAdapter')) {
+                /** @var \Zef\Zel\IValueAdapter $data */
+                return $data->get();
+            }
+
+            return $data;
+        };
+
+        $functions[] = new ExpressionFunction(
+            'unwrap_cw_resolvers',
+            function ($data) {
+                return sprintf('unwrap_cw_resolvers(%1$data)', $data);
+            },
+            $unwrap_cw_resolvers
+        );
+
         $functions[] = new ExpressionFunction(
             'array_shuffle',
             function ($array) {
