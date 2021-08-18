@@ -118,7 +118,7 @@ class EvaluationContextTest extends TestCase
         $this->_logger->debug('-------------');
         $context = new ArrayResolver($context);
 
-        $actual = $this->_evalContext->evalArray($array, $context->get());
+        $actual = $this->_evalContext->evalArray($array, $context->getValues());
 
         $this->assertEquals($expected, $actual);
     }
