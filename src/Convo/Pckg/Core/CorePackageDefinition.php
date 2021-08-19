@@ -291,6 +291,31 @@ class CorePackageDefinition extends AbstractPackageDefinition
             }
         );
 
+		$functions[] = new ExpressionFunction(
+			'json_encode',
+			function ($value, $flags, $depth) {
+				return sprintf('(is_array(%1$a) ? json_encode(%1$v, %2$f, %3$d) : %1$a', $value, $flags, $depth);
+			},
+
+			function($args, $value, $flags = 'JSON_ERROR_NONE', $depth = 512 ) {
+				return json_encode($value, constant($flags), $depth);
+			}
+		);
+
+		$functions[] = new ExpressionFunction(
+			'json_decode',
+			function ($string, $associative, $depth, $flags = 'JSON_ERROR_NONE') {
+				return sprintf('(is_array(%1$a) ? json_decode(%1$s, %2$a, %3$d, %4$f) : %1$a', $string, $associative, $depth, $flags);
+			},
+			function($args, $string, $associative = false, $depth = 512, $flags = 'JSON_ERROR_NONE' ) {
+				if (!is_string($string)) {
+					return strval($string);
+				}
+
+				return json_decode($string, $associative, $depth, constant($flags));
+			}
+		);
+
         return $functions;
     }
 
@@ -1284,7 +1309,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_workflow' => 'read',
                     '_platform_defaults' => array(
                         'amazon' => array(
-                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                            'interfaces' => array('ALEXA_PRESENTATION_APL')
                         )
                     )
                 )
@@ -1399,7 +1424,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_workflow' => 'read',
                     '_platform_defaults' => array(
                         'amazon' => array(
-                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                            'interfaces' => array('ALEXA_PRESENTATION_APL')
                         )
                     )
                 )
@@ -1875,7 +1900,7 @@ In default phase you can inform users about problem you have interpreting comman
                     },
                     '_platform_defaults' => array(
                         'amazon' => array(
-                            'interfaces' => array('RENDER_TEMPLATE', 'ALEXA_PRESENTATION_APL')
+                            'interfaces' => array('ALEXA_PRESENTATION_APL')
                         )
                     )
                 )

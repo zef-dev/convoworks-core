@@ -44,7 +44,7 @@ class ListTitleElement extends \Convo\Core\Workflow\AbstractWorkflowComponent im
         {
             /* @var \Convo\Core\Adapters\Alexa\AmazonCommandRequest  $request */
             /* @var \Convo\Core\Adapters\Alexa\AmazonCommandResponse  $response */
-            if ( $request->getIsDisplaySupported() && $request->getIsDisplayInterfaceEnabled()) {
+            if ( $request->getIsDisplaySupported() && $request->getIsAplSupported()) {
                 $response->setDataList( $data);
                 $response->prepareResponse( IAlexaResponseType::LIST_RESPONSE);
             }

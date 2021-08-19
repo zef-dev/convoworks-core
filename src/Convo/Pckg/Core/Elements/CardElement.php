@@ -80,12 +80,12 @@ class CardElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 
             $this->_logger->debug('Amazon command invoked ['.$response->getText().']');
 
-            if ($request->getIntentType() == 'Display.ElementSelected') {
+            if ($request->getIntentType() == 'Alexa.Presentation.APL.UserEvent') {
                 $params->setServiceParam('selected_option', $request->getSelectedOption());
                 $response->setSelectedOption($params->getServiceParam('selected_option'));
             }
 
-            if ($request->getIsDisplaySupported() && $request->getIsDisplayInterfaceEnabled())
+            if ($request->getIsDisplaySupported() && $request->getIsAplSupported())
             {
                 /* @var \Convo\Core\Adapters\Alexa\AmazonCommandResponse  $response*/
                 $response->prepareResponse(IAlexaResponseType::CARD_RESPONSE);

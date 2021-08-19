@@ -49,7 +49,7 @@ class ListItemElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
         {
             /* @var \Convo\Core\Adapters\Alexa\AmazonCommandRequest  $request */
             /* @var \Convo\Core\Adapters\Alexa\AmazonCommandResponse  $response */
-            if ( $request->getIsDisplaySupported() && $request->getIsDisplayInterfaceEnabled()) {
+			if ( $request->getIsDisplaySupported() && $request->getIsAplSupported()) {
                 $response->addListItem( $item);
             }
         }

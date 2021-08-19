@@ -25,6 +25,12 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     private $_selectedOption;
     private $_dataCard;
 
+	private $_aplToken;
+	private $_aplDefinition;
+
+	private $_aplCommandToken;
+	private $_aplCommands = [];
+
     private $_backButton;
 
     private $_responseType;
@@ -116,10 +122,51 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     {
         $this->_dataList = $dataList;
     }
+
     public function getDataList()
     {
         return $this->_dataList;
     }
+
+	public function setAplToken($aplToken)
+	{
+		$this->_aplToken = $aplToken;
+	}
+
+	public function getAplToken()
+	{
+		return $this->_aplToken;
+	}
+
+	public function setAplDefinition($aplDefinition)
+	{
+		$this->_aplDefinition = $aplDefinition;
+	}
+
+	public function getAplDefinition()
+	{
+		return $this->_aplDefinition;
+	}
+
+	public function setAplCommandToken($aplCommandToken)
+	{
+		$this->_aplCommandToken = $aplCommandToken;
+	}
+
+	public function setAplCommandComponentId($aplCommandComponentId)
+	{
+		$this->_aplCommandComponentId = $aplCommandComponentId;
+	}
+
+	public function setAplCommandProperty($aplCommandProperty)
+	{
+		$this->_aplCommandProperty = $aplCommandProperty;
+	}
+
+	public function setAplCommandValue($aplCommandValue)
+	{
+		$this->_aplCommandValue = $aplCommandValue;
+	}
 
     public function addListItem( $item)
     {
@@ -193,6 +240,10 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
             case IAlexaResponseType::VIDEO_RESPONSE:
                 $this->_platformResponse = $this->_prepareVideoResponse();
                 break;
+			case IAlexaResponseType::APL_RESPONSE:
+				$this->_platformResponse = $this->_prepareAplResponse();
+				break;
+				break;
             default:
                 $this->_platformResponse = $this->_prepareSimpleResponse();
                 break;
@@ -201,38 +252,43 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 
     public function prepareItems() {
         $listItems = array();
+		if (strtolower($this->_dataList['list_template']) == 'list') {
+			$imageSourceProperty = 'imageThumbnailSource';
+		}
+		else if (strtolower($this->_dataList['list_template']) == 'carousel') {
+			$imageSourceProperty = 'imageSource';
+		}
+		else {
+			$imageSourceProperty = 'imageThumbnailSource';
+		}
         foreach ($this->_dataList['list_items'] as $listItem) {
-            $obj = array(
-                'token' => $listItem['list_item_key'],
-                'image' => [
-                    'sources' => [
-                        [
-                            'url' => $listItem['list_item_image_url'],
-                        ]
-                    ],
-                    'contentDescription' => $listItem['list_item_image_text']
-                ],
-                'textContent' => [
-                    'primaryText' => [
-                        'type' => 'RichText',
-                        'text' => $listItem['list_item_title']
-                    ],
-                    'secondaryText' => [
-                        'type' => 'PlainText',
-                        'text' => $listItem['list_item_description_1']
-                    ],
-                    'tertiaryText' => [
-                        'type' => 'PlainText',
-                        'text' => $listItem['list_item_description_2']
-                    ]
-                ]
+            $listItemObject = array(
+				'primaryText' => $listItem['list_item_title'],
+				$imageSourceProperty => $listItem['list_item_image_url'],
+                'primaryAction' => [
+                	[
+						"type" => "SendEvent",
+						"arguments" => [
+							[
+								'selected_list_item_key' =>  $listItem['list_item_key']
+							]
+						]
+					]
+				]
             );
 
-            array_push($listItems, $obj);
+            array_push($listItems, $listItemObject);
         }
 
         return $listItems;
     }
+
+	public function addAplCommand($aplCommand) {
+		if ( empty( $this->_aplCommands)) {
+			$this->_aplCommands = [];
+		}
+		$this->_aplCommands[] = $aplCommand;
+	}
 
     private function _prepareListResponse() {
 
@@ -244,28 +300,70 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         $this->_logger->debug('List template ['.print_r($this->_dataList['list_template'], true).']');
 
         if (strtolower($this->_dataList['list_template']) == 'list') {
-            $listType = 'ListTemplate1';
+            $listType = 'AlexaTextList';
         }
         else if (strtolower($this->_dataList['list_template']) == 'carousel') {
-            $listType = 'ListTemplate2';
+            $listType = 'AlexaImageList';
         }
         else {
-            $listType = 'ListTemplate1';
+            $listType = 'AlexaTextList';
         }
+
+		$data['response']['shouldEndSession'] = $this->shouldEndSession();
 
         if ((!empty($this->_dataList)) && $this->_selectedOption == null) {
             $data['response']['outputSpeech']['type'] = 'SSML';
             $data['response']['outputSpeech']['ssml'] = $this->getTextSsml();
             $data['response']['directives'] = [];
             $data['response']['directives'][] = [
-                'type' => 'Display.RenderTemplate',
-                'template' => [
-                    'type' => $listType,
-                    'title' => $this->_dataList['list_title'],
-                    'backButton' => 'HIDDEN',
-                    'token' => 0,
-                    'listItems' => $this->prepareItems()
-                ]
+                'type' => 'Alexa.Presentation.APL.RenderDocument',
+				'token' => 'itemsListToken',
+				'document' => [
+					'type' => 'APL',
+					'version' => '1.6',
+					'theme' => 'dark',
+					'extensions' => [
+						[
+							'name' => 'Back',
+							'uri' => 'aplext:backstack:10'
+						]
+					],
+					'settings' => [
+						'Back' => [
+							'backstackId' => 'itemsList'
+						]
+					],
+					'import' => [
+						[
+							'name' => 'alexa-layouts',
+							'version' => '1.3.0'
+						]
+					],
+					'mainTemplate' => [
+						'parameters' => [
+							'payload'
+						],
+						'items' => [
+							[
+								'type' => $listType,
+								'headerTitle' => '${payload.textListData.title}',
+								'headerBackButton'=> false,
+								'listItems' => '${payload.textListData.listItems}',
+								'touchForward' => true,
+								'id'=> "itemsList"
+							]
+						]
+					],
+				],
+				'datasources' => [
+					'textListData' => [
+						'type' => 'object',
+						'objectId' => 'textListSource',
+						'title' => $this->_dataList['list_title'],
+						'logoUrl' => 'https://d2o906d8ln7ui1.cloudfront.net/images/templates_v3/logo/logo-modern-botanical-white.png',
+						'listItems' => $this->prepareItems()
+					]
+				]
             ];
         }
 
@@ -281,9 +379,11 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         $this->_logger->debug('Card ['.print_r($this->_dataCard, true).']');
         $this->_logger->debug('Item selected, selected Option= ' . '['.$this->_selectedOption.']');
         $this->_logger->debug('Back Button value ' . '['.$this->_backButton.']');
+		$data['response']['shouldEndSession'] = $this->shouldEndSession();
         if (!empty($this->_dataCard)) {
 
             $title = $this->_dataCard['data_item_title'];
+            $subtitle = $this->_dataCard['data_item_subtitle'];
             $image = $this->_dataCard['data_item_image_url'];
             $contentDescription = $this->_dataCard['data_item_image_text'];
             $primaryText = $this->_dataCard['data_item_description_1'];
@@ -293,31 +393,72 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
             $data['response']['outputSpeech']['ssml'] = $this->getTextSsml();
             $data['response']['directives'] = [];
             $data['response']['directives'][] = [
-                'type' => 'Display.RenderTemplate',
-                'template' => [
-                    'type' => 'BodyTemplate2',
-                    'title' => $title,
-                    'token' => $this->_selectedOption !== null ? $this->_selectedOption : 0,
-                    'backButton' => $this->_backButton,
-                    'image' => [
-                        'contentDescription' => $contentDescription,
-                        'sources' => [
-                            [
-                                'url' => $image
-                            ]
-                        ]
-                    ],
-                    'textContent' => [
-                        'primaryText' => [
-                            'text' => $primaryText,
-                            'type' => 'RichText'
-                        ],
-                        'secondaryText' => [
-                            'text' => $secondaryText,
-                            'type' => 'PlainText'
-                        ]
-                    ]
-                ]
+                'type' => 'Alexa.Presentation.APL.RenderDocument',
+                'token' => $this->getSelectedOption(),
+                'document' => [
+                    'type' => 'APL',
+                    'version' => '1.6',
+					'import' => [
+						[
+							'name' => 'alexa-layouts',
+							'version' => '1.3.0'
+						]
+					],
+					'mainTemplate' => [
+						'parameters' => [
+							'payload'
+						],
+						'items' => [
+							[
+								'type' => "AlexaDetail",
+								'id' => "itemDetails",
+								'detailType' => 'generic',
+								'detailImageAlignment' => 'right',
+								'headerTitle' => '${payload.detailImageRightData.title}',
+								'headerSubtitle' => '${payload.detailImageRightData.subtitle}',
+								'headerBackButton' => false,
+								'imageBlurredBackground' => false,
+								'imageScale' => 'best-fill',
+								'imageAspectRatio' => 'square',
+								'imageAlignment' => 'right',
+								'imageSource' => '${payload.detailImageRightData.image.sources[0].url}',
+								'imageCaption' => '${payload.detailImageRightData.image.contentDescription}',
+								'primaryText' => '${payload.detailImageRightData.textContent.primaryText.text}',
+								'secondaryText' => '${payload.detailImageRightData.textContent.secondaryText.text}',
+								'theme' => 'dark'
+							]
+						]
+					],
+                ],
+				'datasources' => [
+					'detailImageRightData' => [
+						'type' => 'object',
+						'objectId' => 'detailImageRightSample',
+						'title' => $title,
+						'subtitle' => $subtitle,
+						'image' => [
+							'contentDescription' => $contentDescription,
+							'smallSourceUrl' => null,
+							'largeSourceUrl' => null,
+							'sources' => [
+								[
+									'url' => $image,
+									'size' => 'large'
+								]
+							]
+						],
+						'textContent' => [
+							'primaryText' => [
+								'type' => 'PlainText',
+								'text' => $primaryText
+							],
+							'secondaryText' => [
+								'type' => 'PlainText',
+								'text' => $secondaryText
+							]
+						]
+					]
+				]
             ];
         }
 
@@ -463,6 +604,52 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         return $data;
     }
 
+	private function _prepareAplResponse() {
+		$this->_logger->info("Printing APL definition in AmazonCommandResponse [" . json_encode($this->_aplDefinition, JSON_PRETTY_PRINT) . "]" );
+
+		$data = array(
+			'version' => '1.0',
+			'response' => array(),
+		);
+
+		$data['response']['shouldEndSession'] = $this->shouldEndSession();
+
+		$data['response']['outputSpeech']['type'] = 'SSML';
+		$data['response']['outputSpeech']['ssml'] = $this->getTextSsml();
+		$data['response']['directives'] = [];
+
+		if (!empty($this->_aplDefinition)) {
+			$data['response']['directives'][] = $this->_prepareAplRenderDocumentDirective();
+		}
+
+		if (!empty($this->_aplCommands)) {
+			$data['response']['directives'][] = $this->_prepareAplExecuteCommandsDirective();
+		}
+
+		$this->_logger->info("Printing APL response in AmazonCommandResponse [" . json_encode($data, JSON_PRETTY_PRINT) . "]" );
+
+    	return $data;
+	}
+
+	private function _prepareAplRenderDocumentDirective() {
+    	return [
+			'type' => 'Alexa.Presentation.APL.RenderDocument',
+			'token' => $this->_aplToken,
+			'document' => $this->_aplDefinition['document'],
+			'datasources' => $this->_aplDefinition['datasources'],
+			'sources' => !empty($this->_aplDefinition['sources']) ? $this->_aplDefinition['sources'] : (object)$this->_aplDefinition['sources'],
+		];
+	}
+
+	private function _prepareAplExecuteCommandsDirective() {
+		$this->_amazonCommandRequest->init();
+		return [
+			'type' => 'Alexa.Presentation.APL.ExecuteCommands',
+			'token' => empty($this->_aplToken) ? $this->_amazonCommandRequest->getAplToken() : $this->_aplToken,
+			'commands' => $this->_aplCommands
+		];
+	}
+
     private function _prepareSimpleResponse() {
         $data = array(
             'version' => '1.0',
@@ -474,6 +661,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                 'shouldEndSession' => $this->shouldEndSession(),
             ),
         );
+        $this->_amazonCommandRequest->init();
         if ($this->getText() != null) {
             $data['response']['outputSpeech']['type'] = 'SSML';
             $data['response']['outputSpeech']['ssml'] = $this->getTextSsml();
@@ -487,6 +675,10 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
             }
 
             $isAutoDisplay = isset($this->_serviceAmazonConfig['auto_display']) ? $this->_serviceAmazonConfig['auto_display'] : false;
+
+            if ($this->_amazonCommandRequest->isAplEnabled()) {
+            	$isAutoDisplay = false;
+			}
 
             if ($this->_isDisplaySupported && $isAutoDisplay) {
                 $data['response']['card'] = [

@@ -10,4 +10,5 @@ interface IAlexaResponseType
     public const CARD_RESPONSE = 'CARD_RESPONSE';
     public const EMPTY_RESPONSE = 'EMPTY_RESPONSE';
     public const VIDEO_RESPONSE = 'VIDEO_RESPONSE';
+	public const APL_RESPONSE = 'APL_RESPONSE';
 }
