@@ -241,6 +241,33 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 					'_descend' => true,
 				)
 			),
+
+			new \Convo\Core\Factory\ComponentDefinition(
+				$this->getNamespace(),
+				'\Convo\Pckg\Alexa\Elements\AplOpenUrlCommandElement',
+				'APL Open URL Command',
+				'Open a URL.',
+				array(
+					'command_source_url' => array(
+						'editor_type' => 'text',
+						'editor_properties' => array(),
+						'defaultValue' => '',
+						'name' => 'Source',
+						'description' => 'The URL to open.',
+						'valueType' => 'string'
+					),
+					'_workflow' => 'read',
+					'_preview_angular' => array(
+						'type' => 'html',
+						'template' => '<div class="code">Will Open URL <b>{{component.properties.command_source}}</b></div>'
+					),
+					'_help' =>  array(
+						'type' => 'file',
+						'filename' => 'apl-open-url-command-element.html'
+					),
+					'_descend' => true,
+				)
+			),
 			new \Convo\Core\Factory\ComponentDefinition(
 				$this->getNamespace(),
 				'\Convo\Pckg\Alexa\Elements\AplIdleCommandElement',
@@ -262,7 +289,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 					),
 					'_help' =>  array(
 						'type' => 'file',
-						'filename' => 'apl-execute-commands-element.html'
+						'filename' => 'apl-idle-command-element.html'
 					),
 					'_descend' => true,
 				)
