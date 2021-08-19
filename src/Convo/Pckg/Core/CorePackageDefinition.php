@@ -156,12 +156,12 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('strtotime');
         $functions[] = ExpressionFunction::fromPhp('time');
 
-        $unwrap_cw_resolvers = function ($args, $data) use (&$unwrap_cw_resolvers) {
+        $convo_val = function ($args, $data) use (&$convo_val) {
             if (is_array($data)) {
                 $clean = [];
 
                 foreach ($data as $key => $val) {
-                    $clean[$key] = $unwrap_cw_resolvers($args, $val);
+                    $clean[$key] = $convo_val($args, $val);
                 }
 
                 return $clean;
@@ -176,11 +176,11 @@ class CorePackageDefinition extends AbstractPackageDefinition
         };
 
         $functions[] = new ExpressionFunction(
-            'unwrap_cw_resolvers',
+            'convo_val',
             function ($data) {
-                return sprintf('unwrap_cw_resolvers(%1$data)', $data);
+                return sprintf('convo_val(%1$data)', $data);
             },
-            $unwrap_cw_resolvers
+            $convo_val
         );
 
         $functions[] = new ExpressionFunction(
