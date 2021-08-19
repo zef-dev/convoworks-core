@@ -259,7 +259,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 					'_workflow' => 'read',
 					'_preview_angular' => array(
 						'type' => 'html',
-						'template' => '<div class="code">Will Open URL <b>{{component.properties.command_source}}</b></div>'
+						'template' => '<div class="code">Will Open URL <b>{{component.properties.command_source_url}}</b></div>'
 					),
 					'_help' =>  array(
 						'type' => 'file',
