@@ -1,0 +1,496 @@
+<div class="for-help">
+    <h3>APL Commands Element</h3>
+
+    <p>Prepares an APL Command.</p>
+
+    <p>Currently Supported Commands are:</p>
+    <ul>
+        <li><b>Auto Page</b></li>
+        <li><b>Backstack Clear</b></li>
+        <li><b>Backstack Go Back</b></li>
+        <li><b>Clear Focus</b></li>
+        <li><b>Finish</b></li>
+        <li><b>Idle</b></li>
+        <li><b>Open URL</b></li>
+        <li><b>Reinflate</b></li>
+        <li><b>Scroll</b></li>
+        <li><b>Scroll to Component</b></li>
+        <li><b>Scroll to Index</b></li>
+        <li><b>Send Event</b></li>
+        <li><b>Set Focus</b></li>
+        <li><b>Set Value</b></li>
+        <li><b>Speak Item</b></li>
+        <li><b>Speak List</b></li>
+    </ul>
+
+    <h3>When to use?</h3>
+
+    <p>When you add some APL Commands.</p>
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>
+            <span>Place the element in the APL Commands Element and configure it.</span>
+        </li>
+        <li>
+            <span>Select an APL Command form <b>APL Command Type</b> field.</span>
+        </li>
+        <li>
+            <span>Fill out the <b>Description</b> field.</span>
+        </li>
+        <li>
+            <span>Fill out the <b>Delay</b> field.</span>
+        </li>
+        <li>
+            <span>Fill out the <b>Screen Lock</b> field.</span>
+        </li>
+        <li>
+            <span>Fill out the <b>When</b> field.</span>
+        </li>
+        <li>
+            <span>And fill out the rest of the fields for an selected command.</span>
+        </li>
+    </ol>
+
+    <hr>
+
+    <div>
+        <h3>APL Auto Page Command</h3>
+
+        <p>Adds the AutoPage Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an AutoPage APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>The AutoPage command automatically progresses through a series of pages displayed in a Pager component. The AutoPage command finishes after the last page has been displayed for the requested time period.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#autopage-command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Component ID</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Count</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Duration</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Delay</b> field.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Backstack Clear Command Element</h3>
+
+        <p>Adds the Backstack Clear Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an Backstack:Clear APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>Use the Clear command to explicitly clear the backstack. The backstack is filled when you navigate between different APL Documents, so at some point you want to clear the backstack.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-ext-backstack.html#clear-the-backstack" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Backstack Go Back Command Element</h3>
+
+        <p>Adds the Backstack:GoBack Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an Backstack:GoBack APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>The GoBack command returns to a previous document in the backstack.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-ext-backstack.html#goback" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+            <li>
+                <span>If you want you can toggle <b>Use APL Back Type ID </b> the checkbox and fill out the fields below. If the checkbox isn't toggled, the the APL Command will navigate to the previously rendered document.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Back Type</b> field. The field will appear if the <b>Use APL Back Type ID </b> is checked.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Back Type</b> field. The field will appear if the <b>Use APL Back Type ID </b> is checked.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Set Focus Command Element</h3>
+
+        <p>Adds the ClearFocus Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an ClearFocus APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>Removes focus from the actionable component that is currently in focus.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#clear_focus_command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Finish Command Element</h3>
+
+        <p>Adds the Finish Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an ClearFocus APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>Closes the current APL document and exits. </p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#finish_command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Idle Command Element</h3>
+
+        <p>Adds the Idle Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an Idle APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>The Idle command does nothing.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#idle-command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Duration</b> field.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Open URL Command Element</h3>
+
+        <p>Adds the OpenURL Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an OpenURL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>Open a URL. The OpenURL command, if successful, opens the specified URL in a web browser or other application on the device. You must provide a suitable URL that works on the current device.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#open_url_command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Source</b> field.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Reinflate Command Element</h3>
+
+        <p>Adds the Reinflate Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an Reinflate APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>Reinflates the current document with updated configuration properties.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#reinflate-command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Scroll Command Element</h3>
+
+        <p>Adds the Scroll Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an Scroll APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>The Scroll command scrolls a ScrollView or Sequence forward or backward by a set number of pages.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#scroll-command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Fill out the <b>Component ID</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Distance</b> field.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Scroll To Component Command Element</h3>
+
+        <p>Adds the ScrollToComponent Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an ScrollToComponent APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>Scroll forward or backward through a ScrollView or Sequence to ensure that a particular component is in view.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#scroll_to_component_command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Component ID</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Align</b> field.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Scroll To Index Command Element</h3>
+
+        <p>Adds the ScrollToIndex Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an ScrollToIndex APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>Scroll forward or backward through a ScrollView or Sequence to ensure that a particular child component is in view.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#scrolltoindex-command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Component ID</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Align</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Index</b> field.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Send Event Command Element</h3>
+
+        <p>Adds the SendEvent Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an SendEvent APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>Use the SendEvent command to generate and send an event to Alexa.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#sendevent-command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place APL Commands and configure them</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Arguments</b> field like <code>${['textWasPressed','Send this data to the skill']}</code>.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Components</b> field like <code>${['idForTheTextComponent']}</code>.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Set Focus Command Element</h3>
+
+        <p>Adds the SetFocus Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an SetFocus APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>Changes the actionable component that is in focus. See Focused for the actionable components that can receive and lose focus.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#set_focus_command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Component ID</b> field.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Set Value Command Element</h3>
+
+        <p>Adds the SetValue Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an SetValue APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>Changes a property or binding of a component. </p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#setvalue-command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Template Component ID</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Property</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Value</b> field.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Speak Item Command Element</h3>
+
+        <p>Adds the SpeakItem Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an SpeakItem APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>The SpeakItem command reads the contents of a single component on the screen. The component scrolls or pages into view if it isn't already visible.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#speakitem-command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Component ID</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Align</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Highlight Mode</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Minimum Dwell Time</b> field.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr>
+
+    <div>
+        <h3>APL Speak List Command Element</h3>
+
+        <p>Adds the SpeakList Command to an APL Command Execute Directive when placed in APL Execute Commands Element.</p>
+
+        <h3>When to use?</h3>
+        <p>When you want to send an SpeakList APL Command.</p>
+
+        <h3>What does this Command do?</h3>
+        <p>Read the contents of a range of items inside a common container. Each item will scroll into view before speech. Each item should have a speech property, but it is not required.</p>
+        <p>For more info please check out the <a href="https://developer.amazon.com/en-US/docs/alexa/alexa-presentation-language/apl-standard-commands.html#speaklist-command" target="_blank">Alexa Documentation</a>.</p>
+
+        <h3>How to use: </h3>
+        <ol>
+            <li>
+                <span>Place the element in the APL Commands Element and configure it.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Component ID</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Align</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Count</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Start</b> field.</span>
+            </li>
+            <li>
+                <span>Fill out the <b>Minimum Dwell Time</b> field.</span>
+            </li>
+        </ol>
+    </div>
+</div>
