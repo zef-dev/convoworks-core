@@ -24,7 +24,7 @@ class BodyParserMiddleware implements \Psr\Http\Server\MiddlewareInterface
 		$contentType = 
 			$request->getHeaderLine('Content-Type') !== "" ? 
 			$request->getHeaderLine('Content-Type') :
-			$request->getHeaderLine('content-type');
+			$request->getHeaderLine('content_type');
 		
 		if ( strstr( $contentType, 'application/json')) {
 			$contents = json_decode( file_get_contents('php://input'), true);
