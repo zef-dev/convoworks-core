@@ -109,10 +109,12 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
             $this->_playerRunning   =   true;
         }
 
-		$viewports = $this->_data['context']['Viewports'];
-		foreach ($viewports as $viewport) {
-			if ($viewport['type'] === 'APL') {
-				$this->_isAplSupported = true;
+        if (isset($this->_data['context']['Viewports'])) {
+			$viewports = $this->_data['context']['Viewports'];
+			foreach ($viewports as $viewport) {
+				if ($viewport['type'] === 'APL') {
+					$this->_isAplSupported = true;
+				}
 			}
 		}
 
