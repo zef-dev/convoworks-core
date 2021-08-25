@@ -10,6 +10,7 @@ class DefaultTextCommandRequest implements \Convo\Core\Workflow\IConvoRequest
 
 	private $_platformId;
 	private $_deviceId;
+	private $_applicationId;
 	private $_installationId;
 	private $_sessionId;
 	private $_requestId;
@@ -25,6 +26,7 @@ class DefaultTextCommandRequest implements \Convo\Core\Workflow\IConvoRequest
 
 		$this->_platformId		=	$platformId;
 		$this->_deviceId		=	'UNKNOWN';
+		$this->_applicationId	=	'UNKNOWN';
 		$this->_installationId	=	$installationId;
 		$this->_sessionId		=	$sessionId;
 		$this->_requestId		=	$requestId;
@@ -80,6 +82,11 @@ class DefaultTextCommandRequest implements \Convo\Core\Workflow\IConvoRequest
 
 	public function getDeviceId() {
 		return $this->_deviceId;
+	}
+
+	public function getApplicationId()
+	{
+		return $this->_applicationId;
 	}
 
 	public function getInstallationId() {

@@ -257,7 +257,7 @@ abstract class AbstractMediaSourceContext extends AbstractBasicComponent impleme
     // PERSISTANT MODEL NAVI
     protected function _getQueryModel()
     {
-        $params =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION, $this);
+        $params =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_USER, $this);
         $model  =   $params->getServiceParam( self::PARAM_NAME_QUERY_MODEL);
         
         if ( empty( $model)) {
@@ -280,7 +280,7 @@ abstract class AbstractMediaSourceContext extends AbstractBasicComponent impleme
     protected function _saveQueryModel( $model)
     {
         $this->_logger->debug( 'Saving query model ['.print_r( $model, true).']['.$this.']');
-        $params =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION, $this);
+        $params =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_USER, $this);
         $params->setServiceParam( self::PARAM_NAME_QUERY_MODEL, $model);
     }
     

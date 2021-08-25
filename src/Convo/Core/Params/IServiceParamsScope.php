@@ -13,7 +13,8 @@ interface IServiceParamsScope
 	const SCOPE_TYPE_SESSION		=	'session';
 	const SCOPE_TYPE_INSTALLATION	=	'installation';
 	const SCOPE_TYPE_REQUEST		=	'request';
-	
+	const SCOPE_TYPE_USER			=	'user';
+
 	const LEVEL_TYPE_SERVICE		=	'service';
 // 	const LEVEL_TYPE_BLOCK			=	'block';
 	const LEVEL_TYPE_COMPONENT		=	'component';

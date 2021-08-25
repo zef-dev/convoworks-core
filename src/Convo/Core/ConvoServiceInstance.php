@@ -586,7 +586,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $installation		=	$this->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION, $component);
         $session			=	$this->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION, $component);
         $runtime			=	$this->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $component);
-        return array_merge( $installation->getData(), $session->getData(), $runtime->getData());
+		$user				=	$this->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_USER);
+        return array_merge( $installation->getData(), $session->getData(), $runtime->getData(), $user->getData());
     }
 
     /**
@@ -598,7 +599,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $installation		=	$this->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION);
         $session			=	$this->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION);
         $runtime			=	$this->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST);
-        return array_merge( $installation->getData(), $session->getData(), $runtime->getData());
+        $user				=	$this->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_USER);
+        return array_merge( $installation->getData(), $session->getData(), $runtime->getData(), $user->getData());
     }
 
     // BLOCKS

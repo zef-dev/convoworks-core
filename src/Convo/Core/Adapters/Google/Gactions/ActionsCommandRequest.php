@@ -189,6 +189,11 @@ class ActionsCommandRequest implements IConvoRequest, LoggerAwareInterface
 		return $this->_deviceId;
 	}
 
+	public function getApplicationId()
+	{
+		return 'UNKNOWN';
+	}
+
 	/**
 	 * @return string
 	 */

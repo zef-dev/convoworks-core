@@ -141,6 +141,11 @@ class ViberCommandRequest implements \Convo\Core\Workflow\IConvoRequest
         return "UNKNOWN";
     }
 
+    public function getApplicationId()
+	{
+		return "UNKNOWN";
+	}
+
     /**
      * @inheritDoc
      */

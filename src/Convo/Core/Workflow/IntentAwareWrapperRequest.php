@@ -91,11 +91,16 @@ class IntentAwareWrapperRequest implements IIntentAwareRequest
 	{
 	    return $this->_parent->getAccessToken();
 	}
-	
+
 	public function getDeviceId() {
 	    return $this->_parent->getDeviceId();
 	}
-	
+
+	public function getApplicationId()
+	{
+		return $this->_parent->getApplicationId();
+	}
+
 	public function getInstallationId() {
 	    return $this->_parent->getInstallationId();
 	}

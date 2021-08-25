@@ -52,6 +52,12 @@ interface IConvoRequest
 	 * @return string
 	 */
 	public function getDeviceId();
+
+	/**
+	 * Unique application id
+	 * @return string
+	 */
+	public function getApplicationId();
 	
 	/**
 	 * On amazon, each installation (installation == enable skill) has unique id
@@ -97,5 +103,5 @@ interface IConvoRequest
      * @return boolean
      */
     public function isHealthCheck();
-	
+
 }

@@ -152,6 +152,11 @@ class FacebookMessengerCommandRequest implements IConvoRequest
         return 'UNKNOWN';
     }
 
+    public function getApplicationId()
+	{
+		return 'UNKNOWN';
+	}
+
     /**
      * @inheritDoc
      */

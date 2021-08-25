@@ -65,18 +65,18 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 // 		if ( $this->_data['session']['application']['applicationId'] != $this->_config->getAppId()) {
 // 			throw new \Exception( 'Not matching application ids ['.$this->_data['session']['application']['applicationId'].']['.$this->_applicationId.']');
 // 		}
-                if ( isset($this->_data['session']))
-                {
-                    $this->_isNewSession    =   $this->_data['session']['new'];
-                    $this->_sessionId		=   $this->_data['session']['sessionId'];
-                    $this->_applicationId	=   $this->_data['session']['application']['applicationId'];
-                    $this->_installationId	=   $this->_data['session']['user']['userId'];
-                }
+		if ( isset($this->_data['session'])) {
+			$this->_isNewSession    =   $this->_data['session']['new'];
+			$this->_sessionId		=   $this->_data['session']['sessionId'];
+			$this->_applicationId	=   $this->_data['session']['application']['applicationId'];
+			$this->_installationId	=   $this->_data['session']['user']['userId'];
+		} else {
+			$this->_applicationId	=   $this->_data['context']['System']['application']['applicationId'];
+			$this->_installationId	=   $this->_data['context']['System']['user']['userId'];
+		}
 
-		$this->_applicationId	=   $this->_data['context']['System']['application']['applicationId'];
 		$this->_deviceId		=   isset( $this->_data['context']['System']['device']['deviceId']) ?
 					$this->_data['context']['System']['device']['deviceId'] : 'UNKONWN';
-		$this->_installationId	=   $this->_data['context']['System']['user']['userId'];
 		$this->_requestId		=   $this->_data['request']['requestId'];
 		$this->_locale		    =   $this->_data['request']['locale'];
 
@@ -259,6 +259,11 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 
 	public function getDeviceId() {
 		return $this->_deviceId;
+	}
+
+	public function getApplicationId()
+	{
+		return $this->_applicationId;
 	}
 
 	public function getInstallationId() {

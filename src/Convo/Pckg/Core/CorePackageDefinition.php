@@ -512,7 +512,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'scope_type' => [
                         'editor_type' => 'select',
                         'editor_properties' => [
-                            'options' => ['session' => 'Session', 'installation' => 'Installation']
+                            'options' => ['session' => 'Session', 'installation' => 'Installation', 'user' => 'User']
                         ],
                         'defaultValue' => 'session',
                         'name' => 'Run once per',
@@ -568,7 +568,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'scope_type' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
-                            'options' => array('session' => 'Session', 'installation' => 'Installation', 'request' => 'Request'),
+                            'options' => array('session' => 'Session', 'installation' => 'Installation', 'request' => 'Request', 'user' => 'User'),
                         ),
                         'defaultValue' => 'request',
                         'name' => 'Scope type',
@@ -1191,7 +1191,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'scope_type' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
-                            'options' => array('session' => 'Session', 'installation' => 'Installation'),
+                            'options' => array('session' => 'Session', 'installation' => 'Installation', 'user' => 'User'),
                             'dependency' => "component.properties.mode === 'smart'"
                         ),
                         'defaultValue' => 'installation',
@@ -1438,7 +1438,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'scope_type' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
-                            'options' => array('session' => 'Session', 'installation' => 'Installation', 'request' => 'Request'),
+                            'options' => array('session' => 'Session', 'installation' => 'Installation', 'request' => 'Request', 'user' => 'User'),
                         ),
                         'defaultValue' => 'session',
                         'name' => 'Scope type',

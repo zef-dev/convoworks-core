@@ -44,6 +44,10 @@ class RequestParamsScope implements IServiceParamsScope
 		} else if ( $this->_scopeType === \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST){
 			$key	.=	'_';
 			$key	.=	$this->_sanitizeIdForDao($this->_request->getRequestId());
+		} else if ( $this->_scopeType === \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_USER) {
+			$key	=   $this->_sanitizeIdForDao($this->_request->getApplicationId());
+			$key	.=  '_';
+			$key 	.=  $this->_sanitizeIdForDao($this->_request->getInstallationId());
 		} else {
 			throw new \Exception( 'Scope type ['.$this->_scopeType.'] not supported');
 		}

@@ -300,6 +300,11 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
         return $this->_deviceId;
     }
 
+    public function getApplicationId()
+	{
+		return 'UNKNOWN';
+	}
+
     /**
      * @inheritDoc
      */
