@@ -4,6 +4,11 @@
 
 ## [Releases]
 
+## 0.22.5 - 2021-08-26
+* Added User Scope to Request Scope
+* Added support for Alexa APL
+* Add `convo_val` function to core
+
 ### 0.22.4.1 - 2021-08-02
 * Add param evaluation to components to support raw input
 * Fix content type evaluation in `BodyParserMiddleware`

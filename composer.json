@@ -6,7 +6,7 @@
 	"keywords" : [
 		"alexa", "dialogflow", "viber", "messenger", "chatbot", "voice enabled", "voice assistant"
 	],
-    "version": "0.22.4.1",
+    "version": "0.22.5",
 	"license" : "MIT",
 	"require" : {
 		"php" : "^7.2.5",
