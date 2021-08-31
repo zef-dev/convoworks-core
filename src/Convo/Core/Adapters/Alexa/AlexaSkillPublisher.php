@@ -221,6 +221,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $res['skillId']);
         $this->_manageAccountLinking($owner, $res['skillId'], 'development', $config[$this->getPlatformId()]);
+		$this->_recordPropagation();
         $this->_platformPublishingHistory->storePropagationData(
             $this->_serviceId,
             $this->getPlatformId(),
