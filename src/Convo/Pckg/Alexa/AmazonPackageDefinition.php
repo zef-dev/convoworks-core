@@ -85,6 +85,14 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 				'Generic APL Element',
 				'Prepares an APL response from an APL definition.',
 				array(
+					'use_hashtag_sign' => array(
+						'editor_type' => 'boolean',
+						'editor_properties' => array(),
+						'defaultValue' => false,
+						'name' => 'Use #{} for evaluation?',
+						'description' => 'Since Alexa APL uses ${} as their data-binding syntax, it clashes with our data binding syntax. To avoid that just enable the option and start evaluating via #{}.',
+						'valueType' => 'boolean'
+					),
 					'name' => array(
 						'editor_type' => 'text',
 						'editor_properties' => array(),

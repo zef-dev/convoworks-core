@@ -11,6 +11,7 @@ use Convo\Core\Workflow\IConvoResponse;
 class GenericAplElement extends \Convo\Core\Workflow\AbstractWorkflowComponent implements \Convo\Core\Workflow\IConversationElement
 {
     
+	private $_useHashtagSign;
 	private $_templateToken;
 	private $_aplDefinition;
 
@@ -18,14 +19,21 @@ class GenericAplElement extends \Convo\Core\Workflow\AbstractWorkflowComponent i
     {
         parent::__construct( $properties);
 
-        $this->_templateToken = $properties['name'];
-        $this->_aplDefinition = $properties['apl_definition'];
+        $this->_useHashtagSign = $properties['use_hashtag_sign'] ?? false;
+        $this->_templateToken  = $properties['name'];
+        $this->_aplDefinition  = $properties['apl_definition'];
     }
 
     public function read( IConvoRequest $request, IConvoResponse $response)
     {
+		$useHashtagSign = $this->evaluateString($this->_useHashtagSign);
+
+		if (!is_bool($useHashtagSign)) {
+			$useHashtagSign = false;
+		}
+
 		$aplToken = $this->evaluateString($this->_templateToken);
-        $aplDefinition = $this->evaluateString($this->_aplDefinition);
+        $aplDefinition = $this->evaluateString($this->_aplDefinition, [], $useHashtagSign);
         $aplDefinition = json_decode($aplDefinition, true);
 
 		$this->_logger->info("Printing APL definition [" . json_encode($aplDefinition) . "]" );

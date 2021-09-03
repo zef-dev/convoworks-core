@@ -172,10 +172,10 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 	}
 
 
-	public function evaluateString( $string, $context=[])
+	public function evaluateString( $string, $context=[], $useHashtagSign = false)
 	{
 		$own_params		=	$this->getService()->getAllComponentParams( $this);
-		return parent::evaluateString( $string, array_merge( $own_params, $context));
+		return parent::evaluateString( $string, array_merge( $own_params, $context), $useHashtagSign);
 	}
 
 	/**
