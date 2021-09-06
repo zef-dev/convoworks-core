@@ -42,7 +42,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                 'Init Amazon user',
                 'Initialize an Amazon user.',
                 [
-                    'initialized_user_var' => [
+                    'name' => [
                         'editor_type' => 'text',
                         'editor_properties' => [],
                         'defaultValue' => 'user',
@@ -53,7 +53,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => [
                         'type' => 'html',
                         'template' => '<div class="code">' .
-                            'Load Amazon User and set it as <span class="statement"><b>{{ component.properties.initialized_user_var }}</b></span>' .
+                            'Load Amazon User and set it as <span class="statement"><b>{{ component.properties.name }}</b></span>' .
                             '</div>'
                     ],
                     '_workflow' => 'read',
