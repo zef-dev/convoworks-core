@@ -52,8 +52,6 @@ class GzipEncoderMiddleware implements MiddlewareInterface
              */
             private $_resource;
 
-            private $_filename;
-
             private $_size;
 
             public function __destruct()
@@ -65,13 +63,7 @@ class GzipEncoderMiddleware implements MiddlewareInterface
             {
                 $this->_logger = $logger;
 
-                if (($this->_filename = tempnam(sys_get_temp_dir(), 'gz')) === false) {
-                    throw new \Exception('Could not create temporary file to write gz string to');
-                }
-
-                $this->_logger->info("Created tmp file at [$this->_filename]");
-
-                if (($this->_resource = fopen($this->_filename, 'a+')) === false) {
+                if (($this->_resource = fopen('php://memory', 'a+')) === false) {
                     throw new \Exception('Could not open resource');
                 }
 
@@ -79,7 +71,7 @@ class GzipEncoderMiddleware implements MiddlewareInterface
                     throw new \Exception('Could not write gz encoded string to resource');
                 };
 
-                $this->_logger->info('Wrote ['.$string.'] to ['.$this->_filename.']');
+                $this->_logger->info('Wrote ['.$string.'] to memory');
 
                 rewind($this->_resource);
 
@@ -89,7 +81,6 @@ class GzipEncoderMiddleware implements MiddlewareInterface
             public function close()
             {
                 fclose($this->_resource);
-                unlink($this->_filename);
             }
 
             public function detach()
