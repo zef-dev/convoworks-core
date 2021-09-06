@@ -24,9 +24,9 @@ class GzipEncoderMiddleware implements MiddlewareInterface
     {
         $response = $handler->handle($request);
 
-        $body = trim($response->getBody()->__toString());
+        if ($response->getHeaderLine('Content-Type'))
 
-        $this->_logger->info('Original body ['.$body.']');
+        $body = trim($response->getBody()->__toString());
 
         $body = $this->_toStream((string) gzencode($body, -1, FORCE_GZIP));
 
@@ -70,8 +70,6 @@ class GzipEncoderMiddleware implements MiddlewareInterface
                 if (fwrite($this->_resource, $string) === false) {
                     throw new \Exception('Could not write gz encoded string to resource');
                 };
-
-                $this->_logger->info('Wrote ['.$string.'] to memory');
 
                 rewind($this->_resource);
 
