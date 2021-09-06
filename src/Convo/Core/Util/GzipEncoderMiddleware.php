@@ -24,7 +24,10 @@ class GzipEncoderMiddleware implements MiddlewareInterface
     {
         $response = $handler->handle($request);
 
-        if ($response->getHeaderLine('Content-Type'))
+        if (strpos($response->getHeaderLine('Content-Type'), 'image') !== false) {
+            $this->_logger->info('Will not gzencode an image');
+            return $response;
+        }
 
         $body = trim($response->getBody()->__toString());
 
