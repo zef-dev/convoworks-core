@@ -140,8 +140,7 @@ class GzipEncoderMiddleware implements MiddlewareInterface
 
             public function getContents()
             {
-                $str = stream_get_contents($this->_resource);
-                return $str;
+                return stream_get_contents($this->_resource);
             }
 
             public function getMetadata($key = null)
