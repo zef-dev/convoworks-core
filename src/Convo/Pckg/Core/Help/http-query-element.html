@@ -39,9 +39,9 @@
         <li>
             The element contains two flows to be executed, depending on the request success: OK and NOK
             <ul>
-                <li>To access the body of the response, use the <code>body</code> property on your result variable. For example, if for <b>Result name</b> you chose <code>row</code>, then you could access the body with <code>${row.body}</code></li>
-                <li>To access the HTTP status of the request, use the <code>status</code> attribute on your response, e.g. <code>${row.status}</code>.</li>
-                <li>For errors, you can access the message with the <code>error</code> parameter, e.g. <code>${row.error}</code>.</li>
+                <li>To access the body of the response, use the <code>body</code> property on your result variable. For example, if for <b>Result name</b> you chose <code>response</code>, then you could access the body with <code>${response.body}</code></li>
+                <li>To access the HTTP status of the request, use the <code>status</code> attribute on your response, e.g. <code>${response.status}</code>.</li>
+                <li>For errors, you can access the message with the <code>error</code> parameter, e.g. <code>${response.error}</code>.</li>
             </ul>
         </li>
     </ol>
@@ -53,7 +53,7 @@
         <ul>
             <li><b>Scope type:</b> <i>Installation</i></li>
             <li><b>Parameters:</b> <i>Block Params</i></li>
-            <li><b>Result name:</b> <code>row</code></li>
+            <li><b>Result name:</b> <code>response</code></li>
             <li>
                 <b>Endpoint URL:</b> <code>http://ohmanda.com/api/horoscope/${sign}/</code>
                 <ul>
@@ -65,7 +65,7 @@
             <li><b>Timeout:</b> <i>10</i></li>
             <li>
                 For output, place a <code>Text Response</code> element in the OK flow. In the <b>Text</b> field of the <code>Text Response</code> element, write the following (without the quotation marks)
-                <q>The current horoscope for <code>${sign}</code> is: <code>${row.body.horoscope}</code></q>
+                <q>The current horoscope for <code>${sign}</code> is: <code>${response.body.horoscope}</code></q>
             </li>
         </ul>
     </div>
