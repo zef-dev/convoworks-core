@@ -350,7 +350,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 								'headerBackButton'=> false,
 								'listItems' => '${payload.textListData.listItems}',
 								'touchForward' => true,
-								'id'=> "itemsList"
+								'listId'=> "selectionItemsList"
 							]
 						]
 					],
