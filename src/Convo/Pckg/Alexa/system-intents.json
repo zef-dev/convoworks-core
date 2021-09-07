@@ -1,0 +1,10 @@
+{
+    "SelectIntent" : [
+        {
+            "platforms" : ["amazon"],
+            "definition" : {
+                "name" : "AMAZON.SelectIntent"
+            }
+        }
+    ]
+}

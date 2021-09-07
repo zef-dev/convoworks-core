@@ -33,6 +33,11 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 		parent::__construct( $logger, self::NAMESPACE, __DIR__);
 	}
 
+	protected function _initIntents()
+	{
+		return $this->_loadIntents( __DIR__ .'/system-intents.json');
+	}
+
 	protected function _initDefintions()
     {
         return [
