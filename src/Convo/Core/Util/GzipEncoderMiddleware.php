@@ -34,7 +34,7 @@ class GzipEncoderMiddleware implements MiddlewareInterface
         $response = $handler->handle($request);
 
         if (!in_array($response->getHeaderLine('Content-Type'), self::ALLOWED_MIME_TYPES)) {
-            $this->_logger->info('Will not encode non supported mime types');
+            $this->_logger->info('Will not encode non supported mime type ['.$response->getHeaderLine('Content-Type').']');
             return $response;
         }
 
