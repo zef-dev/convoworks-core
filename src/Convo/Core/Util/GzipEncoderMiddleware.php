@@ -15,6 +15,15 @@ class GzipEncoderMiddleware implements MiddlewareInterface
      */
     private $_logger;
 
+    const ALLOWED_MIME_TYPES = [
+        "application/json",
+        "application/json+ld",
+        "application/xhtml+xml",
+        "text/javascript",
+        "text/plain",
+        "text/html"
+    ];
+
     public function __construct($logger)
     {
         $this->_logger = $logger;
@@ -24,8 +33,8 @@ class GzipEncoderMiddleware implements MiddlewareInterface
     {
         $response = $handler->handle($request);
 
-        if (strpos($response->getHeaderLine('Content-Type'), 'image') !== false) {
-            $this->_logger->info('Will not gzencode an image');
+        if (!in_array($response->getHeaderLine('Content-Type'), self::ALLOWED_MIME_TYPES)) {
+            $this->_logger->info('Will not encode non supported mime types');
             return $response;
         }
 
