@@ -645,7 +645,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 		$this->_amazonCommandRequest->init();
 		return [
 			'type' => 'Alexa.Presentation.APL.ExecuteCommands',
-			'token' => empty($this->_aplToken) ? $this->_amazonCommandRequest->getAplToken() : $this->_aplToken,
+			'token' => empty($this->_aplCommandToken) ? $this->_amazonCommandRequest->getAplToken() : $this->_aplCommandToken,
 			'commands' => $this->_aplCommands
 		];
 	}
