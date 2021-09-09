@@ -251,7 +251,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'defaultValue' => '',
 						'name' => 'Count',
 						'description' => 'The number of pages to display.',
-						'valueType' => 'int'
+						'valueType' => 'string'
 					),
 					'command_auto_page_duration' => array(
 						'editor_type' => 'text',
@@ -261,7 +261,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'defaultValue' => '',
 						'name' => 'Duration',
 						'description' => 'The amount of time (in milliseconds) to wait after advancing to the next page.',
-						'valueType' => 'int'
+						'valueType' => 'string'
 					),
 					'command_auto_page_delay' => array(
 						'editor_type' => 'text',
@@ -271,7 +271,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'defaultValue' => 1000,
 						'name' => 'Delay',
 						'description' => 'Displays page 1 for value in ms while waiting to start.',
-						'valueType' => 'int'
+						'valueType' => 'string'
 					),
 					'command_back_go_back_use_back_type' => array(
 						'editor_type' => 'boolean',
@@ -312,7 +312,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'defaultValue' => 3000,
 						'name' => 'Delay',
 						'description' => 'Numeric value of the delay to set in milliseconds.',
-						'valueType' => 'int'
+						'valueType' => 'string'
 					),
 					'command_open_url_source' => array(
 						'editor_type' => 'text',
@@ -342,7 +342,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'defaultValue' => '',
 						'name' => 'Distance',
 						'description' => 'The number of pages to scroll. Defaults to 1.',
-						'valueType' => 'int'
+						'valueType' => 'string'
 					),
 					'command_scroll_to_component_component_id' => array(
 						'editor_type' => 'text',
@@ -394,7 +394,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'defaultValue' => 0,
 						'name' => 'Index',
 						'description' => 'The 0-based index of the child to display.',
-						'valueType' => 'int'
+						'valueType' => 'string'
 					),
 					'command_send_event_arguments' => array(
 						'editor_type' => 'text',
@@ -496,7 +496,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'defaultValue' => '',
 						'name' => 'Minimum Dwell Time',
 						'description' => 'The minimum number of milliseconds that an item will be highlighted.',
-						'valueType' => 'int'
+						'valueType' => 'string'
 					),
 					'command_speak_list_component_id' => array(
 						'editor_type' => 'text',
@@ -527,7 +527,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'defaultValue' => 1,
 						'name' => 'Count',
 						'description' => 'The number of children to read.',
-						'valueType' => 'int'
+						'valueType' => 'string'
 					),
 					'command_speak_list_start' => array(
 						'editor_type' => 'text',
@@ -537,7 +537,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'defaultValue' => 0,
 						'name' => 'Start',
 						'description' => 'The index of the item to start reading.',
-						'valueType' => 'int'
+						'valueType' => 'string'
 					),
 					'command_speak_list_minimum_dwell_time' => array(
 						'editor_type' => 'text',
@@ -547,7 +547,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'defaultValue' => '',
 						'name' => 'Minimum Dwell Time',
 						'description' => 'The minimum number of milliseconds that an item will be highlighted for. Defaults to 0.',
-						'valueType' => 'int'
+						'valueType' => 'string'
 					),
 					'command_description' => array(
 						'editor_type' => 'desc',
@@ -563,7 +563,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'defaultValue' => '',
 						'name' => 'Delay',
 						'description' => 'Delay time in milliseconds before this command runs. Must be non-negative. Defaults to 0.',
-						'valueType' => 'int'
+						'valueType' => 'string'
 					),
 					'command_screen_lock' => array(
 						'editor_type' => 'boolean',
