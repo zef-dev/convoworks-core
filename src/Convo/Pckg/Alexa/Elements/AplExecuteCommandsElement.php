@@ -30,7 +30,7 @@ class AplExecuteCommandsElement extends \Convo\Core\Workflow\AbstractWorkflowCon
 
 	public function read(IConvoRequest $request, IConvoResponse $response)
 	{
-		$aplToken = $this->evaluateString($this->_templateToken);
+		$aplCommandToken = $this->evaluateString($this->_templateToken);
 		if ( is_a( $response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse'))
 		{
 			/* @var \Convo\Core\Adapters\Alexa\AmazonCommandRequest  $request */
@@ -38,7 +38,7 @@ class AplExecuteCommandsElement extends \Convo\Core\Workflow\AbstractWorkflowCon
 			if ($request->getIsAplSupported()) {
 				$response->prepareResponse(IAlexaResponseType::APL_RESPONSE);
 
-				$response->setAplToken($aplToken);
+				$response->setAplCommandToken($aplCommandToken);
 				foreach ($this->_aplCommands as $aplCommand) {
 					$aplCommand->read($request, $response);
 				}

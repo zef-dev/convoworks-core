@@ -82,7 +82,10 @@ class AmazonPublishingService
         {
             $maxResults = max(0, min($maxResults, 50));
 
-            $url .= "&maxResults=$maxResults&nextToken=$nextToken";
+            $url .= "&maxResults=$maxResults";
+            if (!empty($nextToken)) {
+				$url .= "&nextToken=$nextToken";
+			}
         }
 
         $response = $this->_executeRequest(

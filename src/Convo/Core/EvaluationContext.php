@@ -30,20 +30,20 @@ class EvaluationContext
 		$this->_expLang->registerProvider( $functionProvider);
 	}
 
-	public function evalArray( $array, $context=[])
+	public function evalArray( $array, $context=[], $useHashtagSign=false)
 	{
 		foreach ( $array as $key=>$val) {
-			$array[$key] = $this->evalParam( $val, $context);
+			$array[$key] = $this->evalParam( $val, $context, $useHashtagSign);
 		}
 
 		return $array;
 	}
 
-	public function evalParam( $string, $context=[])
+	public function evalParam( $string, $context=[], $useHashtagSign=false)
 	{
 		$this->_logger->debug( 'Currently evaluating param ['.$string.']');
 	
-		$expressions = $this->_extractExpressions( $string);
+		$expressions = $this->_extractExpressions( $string, $useHashtagSign);
 	
 		if (empty($expressions)) {
 			return $string;
@@ -61,9 +61,9 @@ class EvaluationContext
 		return $value;
 	}
 
-	public function evalString( $string, $context=[], $skipEmpty=false)
+	public function evalString( $string, $context=[], $skipEmpty=false, $useHashtagSign=false)
 	{
-		$expressions	=	$this->_extractExpressions( $string);
+		$expressions	=	$this->_extractExpressions( $string, $useHashtagSign);
 
 		foreach ( $expressions as $expression)
 		{
@@ -84,7 +84,11 @@ class EvaluationContext
 
 					$this->_logger->debug('preg_quoted expression ['.$quot_expr.']');
 
-			        $pattern = '/\${\s*'.$quot_expr.'\s*}/';
+					$pattern = '/\${\s*'.$quot_expr.'\s*}/';
+			        if ($useHashtagSign === true) {
+						$pattern = '/\#{\s*'.$quot_expr.'\s*}/';
+					}
+
 			        $string = preg_replace($pattern, strval($value), $string);
 			    }
 
@@ -106,14 +110,18 @@ class EvaluationContext
 		return $string;
 	}
 
-	private function _extractExpressions( $string)
+	private function _extractExpressions( $string, $useHashtagSign=false)
 	{
 		$string = (string) $string;
 
 		$matches = [];
 		$expressions = [];
 
-		preg_match_all('/\$(\{(?:[^{}]+|(?1))+\})/', $string, $matches);
+		if ($useHashtagSign === true) {
+			preg_match_all('/\#(\{(?:[^{}]+|(?1))+\})/', $string, $matches);
+		} else {
+			preg_match_all('/\$(\{(?:[^{}]+|(?1))+\})/', $string, $matches);
+		}
 
 		if (isset($matches[1])) {
 			foreach ($matches[1] as $match) {

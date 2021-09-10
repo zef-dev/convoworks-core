@@ -19,7 +19,14 @@
             <span>Paste your recently created APL JSON definition and your APL response is ready.</span>
         </li>
         <li>
-            <span>Replace APL evaluation <code>"${alexaDetailData.backgroundImage}"</code> with <code>"${"${alexaDetailData.backgroundImage}"}"</code>. Otherwise you'll lose access to APL string evaluation.</span>
+            <ol>
+                <li>
+                    <span>In case the property <b>"Use #{} for evaluation?"</b> is <b>not checked</b>, replace Alexa APL data binding <code>"${alexaDetailData.backgroundImage}"</code> with <code>"${"${alexaDetailData.backgroundImage}"}"</code>. Otherwise you'll lose access to APL string evaluation.</span>
+                </li>
+                <li>
+                    <span>In case the property <b>"Use #{} for evaluation?"</b> is <b>checked</b>, replace Convoworks evaluation <code>"${selectedOption.name}"</code> with <code>"#{selectedOption.name}"</code>. This enables you to use Convoworks evaluation without clashing with the Alexa APL data-binding.</span>
+                </li>
+            </ol>
         </li>
     </ol>
 </div>

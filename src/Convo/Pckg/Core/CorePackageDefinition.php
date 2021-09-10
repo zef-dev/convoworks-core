@@ -797,7 +797,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'status_var' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'status',
                         'name' => 'Status variable',
                         'description' => 'Variable name for accessing loop iteration information, such as the current index',
                         'valueType' => 'string'
@@ -1458,7 +1458,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'name' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'response',
                         'name' => 'Result name',
                         'description' => 'Name under which to save the result in parameters',
                         'valueType' => 'string'
@@ -1570,10 +1570,6 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'template' => '<div class="code">' .
                             '<span class="statement">{{ component.properties.method }}</span> {{ component.properties.method === \'GET\' ? \'from\' : \'to\' }} <b>{{ component.properties.url }}</b>' .
                             '</div>'
-                    ),
-                    '_help' => array(
-                        'type' => 'file',
-                        'filename' => 'http-client-element.html'
                     ),
                     '_help' =>  array(
                         'type' => 'file',
