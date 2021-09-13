@@ -9,6 +9,7 @@ use Convo\Core\Publish\PlatformPublishingHistory;
 use Convo\Core\Rest\InvalidRequestException;
 use Convo\Core\Rest\ServiceBuildingException;
 use Convo\Core\Util\StrUtil;
+use Convo\Core\Workflow\IBasicServiceComponent;
 use Convo\Core\Workflow\ICatalogSource;
 use Convo\Core\Publish\IPlatformPublisher;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -398,7 +399,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                       $this->_adminUserDataProvider->getPlatformConfig($this->_user->getId())[$this->getPlatformId()] : [];;
                       $config		=   $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 
-        $interfaces = $this->_prepareInterfacesFromWorkflowComponents();
+		$workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+        $interfaces = $this->_prepareInterfacesFromWorkflowComponents($workflow);
 
         $meta = $this->_convoServiceDataProvider->getServiceMeta(
             $this->_user, $this->_serviceId
@@ -1110,7 +1112,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $manifest = new AmazonSkillManifest();
         $manifest->setLogger($this->_logger);
-        $interfaces = $this->_prepareInterfacesFromWorkflowComponents();
+		$workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+        $interfaces = $this->_prepareInterfacesFromWorkflowComponents($workflow);
 
         if (count($interfaces) > 0) {
             $manifest->setInterfaces($interfaces);
@@ -1190,30 +1193,26 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
         $interfaces = [];
 
-        foreach ($workflow['packages'] as $packageId) {
-            $provider = $this->_packageProviderFactory->getProviderByNamespace($packageId);
-            if ( !is_a( $provider, '\Convo\Core\Factory\IComponentProvider')) {
-                $this->_logger->warning('Package is not component provider ['.$packageId.']');
-                continue;
-            }
+		$class = '';
+		/** @var \Convo\Core\Factory\IComponentProvider $provider */
+		array_walk_recursive($workflow, function ($value, $key) use (&$class, &$interfaces) {
+			if ($key === 'class') {
+				$class = $value;
+			}
 
-            /** @var \Convo\Core\Factory\IComponentProvider $provider */
-            array_walk_recursive($workflow, function ($value, $key) use ($provider, &$interfaces) {
-                if ($key === 'class') {
-                    try {
-                        $componentProperties = $provider->getComponentDefinition($value)->getRow()['component_properties'];
-                        if (isset($componentProperties['_platform_defaults'])) {
-                            $platformInterfaces = $componentProperties['_platform_defaults'][$this->getPlatformId()]['interfaces'] ?? [];
-                            foreach ($platformInterfaces as $platformInterface) {
-                                array_push($interfaces, $platformInterface);
-                            }
-                        }
-                    } catch (ComponentNotFoundException $cnfe) {
-                        $this->_logger->warning($cnfe->getMessage());
-                    }
-                }
-            });
-        }
+			if ($key === 'namespace' && $class !== '') {
+				$provider = $this->_packageProviderFactory->getProviderByNamespace($value);
+				if ( is_a( $provider, '\Convo\Core\Factory\IComponentProvider')) {
+					$componentProperties = $provider->getComponentDefinition($class)->getRow()['component_properties'];
+					if (isset($componentProperties['_platform_defaults'])) {
+						$platformInterfaces = $componentProperties['_platform_defaults'][$this->getPlatformId()]['interfaces'] ?? [];
+						foreach ($platformInterfaces as $platformInterface) {
+							array_push($interfaces, $platformInterface);
+						}
+					}
+				}
+			}
+		});
 
         return array_unique($interfaces);
     }
