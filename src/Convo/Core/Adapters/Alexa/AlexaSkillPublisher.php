@@ -1201,13 +1201,15 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 			}
 
 			if ($key === 'namespace' && $class !== '') {
-				$provider = $this->_packageProviderFactory->getProviderByNamespace($value);
-				if ( is_a( $provider, '\Convo\Core\Factory\IComponentProvider')) {
-					$componentProperties = $provider->getComponentDefinition($class)->getRow()['component_properties'];
-					if (isset($componentProperties['_platform_defaults'])) {
-						$platformInterfaces = $componentProperties['_platform_defaults'][$this->getPlatformId()]['interfaces'] ?? [];
-						foreach ($platformInterfaces as $platformInterface) {
-							array_push($interfaces, $platformInterface);
+				if (!empty($value)) {
+					$provider = $this->_packageProviderFactory->getProviderByNamespace($value);
+					if ( is_a( $provider, '\Convo\Core\Factory\IComponentProvider')) {
+						$componentProperties = $provider->getComponentDefinition($class)->getRow()['component_properties'];
+						if (isset($componentProperties['_platform_defaults'])) {
+							$platformInterfaces = $componentProperties['_platform_defaults'][$this->getPlatformId()]['interfaces'] ?? [];
+							foreach ($platformInterfaces as $platformInterface) {
+								array_push($interfaces, $platformInterface);
+							}
 						}
 					}
 				}
