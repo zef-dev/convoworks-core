@@ -155,6 +155,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('stripos');
         $functions[] = ExpressionFunction::fromPhp('strtotime');
         $functions[] = ExpressionFunction::fromPhp('time');
+        $functions[] = ExpressionFunction::fromPhp('explode');
 
         $convo_val = function ($args, $data) use (&$convo_val) {
             if (is_array($data)) {
