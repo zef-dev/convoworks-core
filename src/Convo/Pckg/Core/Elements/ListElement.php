@@ -133,9 +133,9 @@ class ListElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
         }
     }
 
-    public function evaluateString( $string, $context=[], $useHashtagSign = false) {
+    public function evaluateString( $string, $context=[]) {
         $own_params	= $this->getService()->getAllComponentParams( $this);
-        return parent::evaluateString( $string, array_merge( $own_params, $context), $useHashtagSign);
+        return parent::evaluateString( $string, array_merge( $own_params, $context));
     }
 
     // UTIL

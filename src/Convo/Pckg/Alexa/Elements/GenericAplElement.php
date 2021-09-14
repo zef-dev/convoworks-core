@@ -33,7 +33,13 @@ class GenericAplElement extends \Convo\Core\Workflow\AbstractWorkflowComponent i
 		}
 
 		$aplToken = $this->evaluateString($this->_templateToken);
-        $aplDefinition = $this->evaluateString($this->_aplDefinition, [], $useHashtagSign);
+		if ($useHashtagSign) {
+			$stringToEvaluate = $this->_prepareStringToEvaluateWithHashTag($this->_aplDefinition);
+			$aplDefinition = $this->evaluateString($stringToEvaluate);
+		} else {
+			$aplDefinition = $this->evaluateString($this->_aplDefinition);
+		}
+
         $aplDefinition = json_decode($aplDefinition, true);
 
 		$this->_logger->info("Printing APL definition [" . json_encode($aplDefinition) . "]" );
@@ -54,6 +60,31 @@ class GenericAplElement extends \Convo\Core\Workflow\AbstractWorkflowComponent i
             }
         }
     }
+
+	private function _prepareStringToEvaluateWithHashTag($string) {
+		$matches = [];
+		$expressions = [];
+
+		preg_match_all('/\$(\{(?:[^{}]+|(?1))+\})|#(\{(?:[^{}]+|(?1))+\})/', $string, $matches);
+
+		if (isset($matches[0])) {
+			foreach (array_unique($matches[0]) as $match) {
+				$expression = trim($match);
+
+				if (strpos($expression, '#{') !== false) {
+					$expression = str_replace('#{', '${', $expression);
+					$string = str_replace(trim($match), $expression, $string);
+				} else if (strpos($expression, '${') !== false) {
+					$expression = '${"' . $expression . '"}';
+					$string = str_replace(trim($match), $expression, $string);
+				}
+			}
+		}
+
+		// $this->_logger->debug("Prepared output for string evaluation [" . ($string) . "]");
+
+		return $string;
+	}
 
 	private function _isAplDefinitionValid($aplDefinition) {
     	$isValid = false;

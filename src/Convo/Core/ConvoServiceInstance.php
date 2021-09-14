@@ -525,13 +525,10 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         return $this->_eval->evalString( $string, $arrResolver->getValues(), true);
     }
 
-    public function evaluateString( $string, $context=[], $useHashtagSign = false)
+    public function evaluateString( $string, $context=[])
     {
-    	$sign = '$';
-    	if ($useHashtagSign === true) {
-			$sign = '#';
-		}
-        if ( !is_string( $string) || empty( $string) || strpos( $string, $sign . '{') === false) {
+        if ( !is_string( $string) || empty( $string) || strpos( $string, '${') === false) {
+            $this->_logger->debug( 'Nothing to evaluate. Returning raw ...');
             return $string;
         }
         
@@ -561,9 +558,9 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
         if ( is_array( $string)) {
             $this->_logger->debug( 'Evaluating array ...');
-            return $this->_trimValueResolvers( $this->_eval->evalArray( $string, $resolver->getValues(), $useHashtagSign));
+            return $this->_trimValueResolvers( $this->_eval->evalArray( $string, $resolver->getValues()));
         }
-        return $this->_trimValueResolvers( $this->_eval->evalString( $string, $resolver->getValues(), false, $useHashtagSign));
+        return $this->_trimValueResolvers( $this->_eval->evalString( $string, $resolver->getValues()));
     }
 
     private function _trimValueResolvers( $data)

@@ -44,9 +44,9 @@ abstract class AbstractWorkflowComponent extends AbstractBasicComponent implemen
 	 * {@inheritDoc}
 	 * @see \Convo\Core\Workflow\IServiceWorkflowComponent::evaluateString()
 	 */
-	public function evaluateString( $string, $context = [], $useHashtagSign = false)
+	public function evaluateString( $string, $context=[])
 	{
-		return $this->getParent()->evaluateString( $string, $context, $useHashtagSign);
+		return $this->getParent()->evaluateString( $string, $context);
 	}
 	
 	/**

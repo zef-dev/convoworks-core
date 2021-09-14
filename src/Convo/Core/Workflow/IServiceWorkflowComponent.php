@@ -29,10 +29,9 @@ interface IServiceWorkflowComponent extends IBasicServiceComponent
 	 * Parse string and evaluates all found expressions in it. Expressions are evaulated in all available scopes and levels, from service up to this component.
 	 * @param string $string
 	 * @param array $context
-	 * @param bool $useHashtagSign
 	 * @return string
 	 */
-	public function evaluateString($string, $context=[], $useHashtagSign = false);
+	public function evaluateString( $string, $context=[]);
 	
 	
 	/**
