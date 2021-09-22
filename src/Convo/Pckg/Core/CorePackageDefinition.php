@@ -2193,6 +2193,9 @@ In default phase you can inform users about problem you have interpreting comman
                         'description' => 'Elements to be read after loop is done. Use it for cleanup and moving the conversation focus to some other block.',
                         'valueType' => 'class'
                     ),
+                    '_help' => [
+                        'type' => 'file'
+                    ],
                     '_workflow' => 'read',
                     '_system' => true
                 )
