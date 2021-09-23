@@ -4,6 +4,12 @@
 
 ## [Releases]
 
+## 0.22.5.1 - 2021-09-23
+* Add `explode` function
+* Add the ability to use `#{}` syntax for evaluation in Generic APL Element
+* Loop Block now properly shows help
+* New custom gzip encoding middleware
+
 ## 0.22.5 - 2021-08-26
 * Added User Scope to Request Scope
 * Added support for Alexa APL
