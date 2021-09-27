@@ -5,6 +5,7 @@ namespace Convo\Pckg\Alexa;
 use Convo\Core\Factory\AbstractPackageDefinition;
 use Convo\Core\Factory\ComponentDefinition;
 use Convo\Core\Factory\IComponentFactory;
+use Convo\Core\Workflow\IRunnableBlock;
 use Convo\Pckg\Alexa\Elements\AplCommandElement;
 use Convo\Pckg\Alexa\Workflow\IAplCommandElement;
 
@@ -643,6 +644,265 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'filename' => 'apl-commands-element.html'
 					),
 					'_descend' => true,
+				)
+			),
+			new ComponentDefinition(
+				$this->getNamespace(),
+				'\Convo\Pckg\Alexa\Elements\GetInSkillProductsElement',
+				'Get In-Skill Products Element',
+				'Get In-Skill Products.',
+				[
+					'name' => [
+						'editor_type' => 'text',
+						'editor_properties' => [],
+						'defaultValue' => 'status',
+						'name' => 'Name',
+						'description' => 'Name under which to store the loaded user object in the context',
+						'valueType' => 'string'
+					],
+					'should_get_product_by_id' => array (
+						'editor_type' => 'boolean',
+						'editor_properties' => array(),
+						'defaultValue' => false,
+						'name' => 'Get single product by ID?',
+						'description' => 'Get only one product by productId.',
+						'valueType' => 'boolean'
+					),
+					'product_id' => array(
+						'editor_type' => 'text',
+						'editor_properties' => array(
+							'dependency' => "component.properties.should_get_product_by_id === true",
+						),
+						'defaultValue' => '',
+						'name' => 'Product ID',
+						'description' => 'A valid product ID.',
+						'valueType' => 'string'
+					),
+					'filter_by_entitlement' => array(
+						'editor_type' => 'select',
+						'editor_properties' => [
+							'dependency' => "component.properties.should_get_product_by_id === false",
+							'options' => ['all' => 'All', 'entitled' => 'Purchased', 'not_entitled' => 'Not Purchased']
+						],
+						'defaultValue' => 'all',
+						'name' => 'Filter by Entitlement',
+						'description' => 'Filter products based on whether the user is entitled to the product.',
+						'valueType' => 'string'
+					),
+					'filter_by_product_type' => array(
+						'editor_type' => 'select',
+						'editor_properties' => [
+							'dependency' => "component.properties.should_get_product_by_id === false",
+							'options' => ['all' => 'All', 'consumable' => 'Consumable', 'subscription' => 'Subscription', 'entitlement' => 'Entitlement']
+						],
+						'defaultValue' => 'all',
+						'name' => 'Filter by product type',
+						'description' => 'Filter products based on the product type which can be: consumable, subscription or entitlement.',
+						'valueType' => 'string'
+					),
+					'_preview_angular' => [
+						'type' => 'html',
+						'template' => '<div class="code">' .
+							'<span ng-if="component.properties.should_get_product_by_id === false">Load <span class="statement"><b>{{ component.properties.filter_by_entitlement }}</b></span> In Skill Products types <span class="statement"><b>{{ component.properties.filter_by_product_type }}</b></span> and set them as <span class="statement"><b>{{ component.properties.name }}</b></span></span>' .
+							'<span ng-if="component.properties.should_get_product_by_id === true">Load In Skill Product by id <span class="statement"><b>{{ component.properties.product_id }}</b></span></span>' .
+							'</div>'
+					],
+					'_workflow' => 'read',
+					'_help' =>  array(
+						'type' => 'file',
+						'filename' => 'get-in-skill-products-element.html'
+					),
+					'_factory' => new class ($this->_httpFactory) implements IComponentFactory
+					{
+						private $_httpFactory;
+
+						public function __construct($httpFactory)
+						{
+							$this->_httpFactory = $httpFactory;
+						}
+
+						public function createComponent($properties, $service)
+						{
+							return new \Convo\Pckg\Alexa\Elements\GetInSkillProductsElement($properties, $this->_httpFactory);
+						}
+					}
+				]
+			),
+			new ComponentDefinition(
+				$this->getNamespace(),
+				'\Convo\Pckg\Alexa\Elements\SalesDirectiveElement',
+				'Sales Directive Element',
+				'Sales Directive Element sends a Buy, Upsell or Refund/Cancel request.',
+				[
+					'name' => [
+						'editor_type' => 'text',
+						'editor_properties' => [],
+						'defaultValue' => 'status',
+						'name' => 'Token',
+						'description' => 'A token to identify this message exchange and store skill information. The token is not used by Alexa, but is returned in the resulting Connections.Response. You provide this token in a format that makes sense for the skill.',
+						'valueType' => 'string'
+					],
+					'sales_directive' => array(
+						'editor_type' => 'select',
+						'editor_properties' => [
+							'options' => ['buy' => 'Buy', 'upsell' => 'Upsell', 'cancel' => 'Refund/Cancel']
+						],
+						'defaultValue' => 'buy',
+						'name' => 'Sales Directive',
+						'description' => 'Initiates the Buy, Upsell or Refund/Cancel request type.',
+						'valueType' => 'string'
+					),
+					'product_filter_value' => [
+						'editor_type' => 'text',
+						'editor_properties' => [],
+						'defaultValue' => '',
+						'name' => 'Product Filter Value',
+						'description' => 'Match of product name.',
+						'valueType' => 'string'
+					],
+					'product_upsell_var' => array(
+						'editor_type' => 'text',
+						'editor_properties' => array(
+							'dependency' => "component.properties.sales_directive === 'upsell'",
+						),
+						'defaultValue' => 'product_upsell_var',
+						'name' => 'Product Upsell Var',
+						'description' => 'Where to store the product to use in the "product_upsell_message" property.',
+						'valueType' => 'string'
+					),
+					'product_upsell_message' => array(
+						'editor_type' => 'ssml',
+						'editor_properties' => array(
+							'dependency' => "component.properties.sales_directive === 'upsell'",
+						),
+						'defaultValue' => '',
+						'name' => 'Upsell Message',
+						'description' => 'A product suggestion that fits the current user context. Should always end with an explicit confirmation question.',
+						'valueType' => 'string'
+					),
+					'on_product_not_found' => [
+						'editor_type' => 'service_components',
+						'editor_properties' => [
+							'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+							'multiple' => true
+						],
+						'defaultValue' => [],
+						'name' => 'Product Not Found',
+						'description' => 'Executed if the product was not found.',
+						'valueType' => 'class'
+					],
+					'_preview_angular' => [
+						'type' => 'html',
+						'template' => '<div class="code">' .
+								'<div>Execute <span class="statement"><b>{{ component.properties.sales_directive }}</b></span> for <span class="statement"><b>{{ component.properties.product_filter_value }}</b></span></div>' .
+								'<hr ng-if="component.properties.sales_directive === \'upsell\'"/>' .
+								'<div ng-if="component.properties.sales_directive === \'upsell\'">Upsell Message: <b>{{ component.properties.product_upsell_message }}</b></div>' .
+							'</div>'
+					],
+					'_workflow' => 'read',
+					'_help' =>  array(
+						'type' => 'file',
+						'filename' => 'sales-directive-element.html'
+					),
+					'_factory' => new class ($this->_httpFactory) implements IComponentFactory
+					{
+						private $_httpFactory;
+
+						public function __construct($httpFactory)
+						{
+							$this->_httpFactory = $httpFactory;
+						}
+
+						public function createComponent($properties, $service)
+						{
+							return new \Convo\Pckg\Alexa\Elements\SalesDirectiveElement($properties, $this->_httpFactory);
+						}
+					}
+				]
+			),
+			new \Convo\Core\Factory\ComponentDefinition(
+				$this->getNamespace(),
+				'\Convo\Pckg\Alexa\Elements\SalesBlock',
+				'Sales Block',
+				'A special role "sales_block" block, that handles Buy,Upsell and Refund/Cancel requests (not in standard service session).',
+				array(
+					'role' => array(
+						'defaultValue' => IRunnableBlock::ROLE_SALES_BLOCK
+					),
+					'block_id' => array(
+						'editor_type' => 'block_id',
+						'editor_properties' => array(),
+						'defaultValue' => 'new-block-id',
+						'name' => 'Block ID',
+						'description' => 'Unique string identificator',
+						'valueType' => 'string'
+					),
+					'sales_status_var' => array(
+						'editor_type' => 'text',
+						'editor_properties' => array(),
+						'defaultValue' => 'sales_status',
+						'name' => 'Sales Status',
+						'description' => 'Variable name for the sales status array',
+						'valueType' => 'string'
+					),
+					'no_buy' => array(
+						'editor_type' => 'service_components',
+						'editor_properties' => array(
+							'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+							'multiple' => true
+						),
+						'defaultValue' => array(),
+						'name' => 'Buy',
+						'description' => 'Elements to be read if next song is requested but not available',
+						'valueType' => 'class'
+					),
+					'no_upsell' => array(
+						'editor_type' => 'service_components',
+						'editor_properties' => array(
+							'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+							'multiple' => true
+						),
+						'defaultValue' => array(),
+						'name' => 'Upsell',
+						'description' => 'Elements to be read if previous song is requested but not available',
+						'valueType' => 'class'
+					),
+					'no_refund_cancel' => array(
+						'editor_type' => 'service_components',
+						'editor_properties' => array(
+							'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+							'multiple' => true
+						),
+						'defaultValue' => array(),
+						'name' => 'Refund/Cancel',
+						'description' => 'Elements to be read if previous song is requested but not available',
+						'valueType' => 'class'
+					),
+					'fallback' => array(
+						'editor_type' => 'service_components',
+						'editor_properties' => array(
+							'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+							'multiple' => true
+						),
+						'defaultValue' => array(),
+						'name' => 'Fallback',
+						'description' => 'Elements to be read if none of the processors match',
+						'valueType' => 'class'
+					),
+					'_help' =>  array(
+						'type' => 'file',
+						'filename' => 'sales-block.html'
+					),
+					'_interface' => '\Convo\Core\Workflow\IConversationElement',
+					'_workflow' => 'read',
+					'_system' => true,
+					'_factory' => new class () implements \Convo\Core\Factory\IComponentFactory
+					{
+						public function createComponent( $properties, $service)
+						{
+							return new \Convo\Pckg\Alexa\Elements\SalesBlock( $properties, $service);
+						}
+					}
 				)
 			),
         ];

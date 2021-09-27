@@ -226,6 +226,10 @@ class ActionsCommandRequest implements IConvoRequest, LoggerAwareInterface
         return $this->_isMediaRequest;
     }
 
+	public function isSalesRequest() {
+		return false;
+	}
+
 	// UTIL
 	public function __toString()
 	{

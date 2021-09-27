@@ -120,6 +120,10 @@ class IntentAwareWrapperRequest implements IIntentAwareRequest
     public function isMediaRequest() {
         return $this->_parent->isMediaRequest();
     }
+
+	public function isSalesRequest() {
+		return $this->_parent->isSalesRequest();
+	}
 	
 	// UTIL
 	public function __toString()

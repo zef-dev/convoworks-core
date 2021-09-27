@@ -361,6 +361,10 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
         return $this->_isMediaRequest;
     }
 
+	public function isSalesRequest() {
+		return false;
+	}
+
     private function _getDialogflowAudioPlayerIntents() {
         return [
             "MediaStatus",

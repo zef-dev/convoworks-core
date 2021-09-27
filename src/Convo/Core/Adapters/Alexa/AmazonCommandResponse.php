@@ -28,6 +28,8 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 	private $_aplToken;
 	private $_aplDefinition;
 
+	private $_salesDirective;
+
 	private $_aplCommandToken;
 	private $_aplCommands = [];
 
@@ -143,6 +145,11 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 		$this->_aplDefinition = $aplDefinition;
 	}
 
+	public function setSalesDirective($salesDirective)
+	{
+		$this->_salesDirective = $salesDirective;
+	}
+
 	public function getAplDefinition()
 	{
 		return $this->_aplDefinition;
@@ -243,6 +250,8 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 			case IAlexaResponseType::APL_RESPONSE:
 				$this->_platformResponse = $this->_prepareAplResponse();
 				break;
+			case IAlexaResponseType::SALES_DIRECTIVE:
+				$this->_platformResponse = $this->_prepareSalesDirectiveResponse();
 				break;
             default:
                 $this->_platformResponse = $this->_prepareSimpleResponse();
@@ -629,6 +638,25 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 		$this->_logger->info("Printing APL response in AmazonCommandResponse [" . json_encode($data, JSON_PRETTY_PRINT) . "]" );
 
     	return $data;
+	}
+
+	private function _prepareSalesDirectiveResponse() {
+		$data = array(
+			'version' => '1.0',
+			'response' => array(),
+		);
+
+		$data['response']['shouldEndSession'] = true;
+
+		$data['response']['directives'] = [];
+
+		if (!empty($this->_salesDirective)) {
+			$data['response']['directives'][] = $this->_salesDirective;
+		}
+
+		$this->_logger->info("Printing Sales Directive Request in AmazonCommandResponse [" . json_encode($data, JSON_PRETTY_PRINT) . "]" );
+
+		return $data;
 	}
 
 	private function _prepareAplRenderDocumentDirective() {

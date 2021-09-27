@@ -31,6 +31,7 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	private $_slots;
 
 	private $_isMediaRequest = false;
+	private $_isSalesRequest = false;
 
     private $_selectedOption;
     private $_isDisplaySupported = false;
@@ -159,6 +160,14 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 				$this->_selectedOption = null;
 				if (isset($this->_data['request']['arguments'][0]['selected_list_item_key'])) {
 					$this->_selectedOption = $this->_data['request']['arguments'][0]['selected_list_item_key'];
+				}
+				break;
+			case 'Connections.Response':
+				if (isset($this->_data['request']['name']) &&
+					($this->_data['request']['name'] === 'Buy' || $this->_data['request']['name'] === 'Upsell'
+						|| $this->_data['request']['name'] === 'Cancel')) {
+					$this->_isSalesRequest = true;
+					$this->_intentName = $this->_data['request']['name'];
 				}
 				break;
 			default:
@@ -391,6 +400,11 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
     {
         return $this->_isMediaRequest;
     }
+
+	public function isSalesRequest()
+	{
+		return $this->_isSalesRequest;
+	}
 
     private function _getAlexaAudioPlayerIntents() {
         return [
