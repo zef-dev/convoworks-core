@@ -1,0 +1,27 @@
+<div class="for-help">
+    <h3>Sales Directive Element</h3>
+
+    <p>Sends a Connections.SendRequest response which triggers a buy, upsell or cancel request.</p>
+
+    <h3>When to use?</h3>
+
+    <p>When you want to initiate a buy, upsell or cancel flow in your skill.</p>
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>
+            <span>Fill out the <b>Token</b> property.</span>
+        </li>
+        <li>
+            <span>Select a directive in the <b>Sales Directive</b> property:</span>
+            <ul>
+                <li><b>Buy</b> will prepare a Connections.SendRequest response with name Buy</li>
+                <li><b>Upsell</b> will prepare a Connections.SendRequest response with name Upsell and requires the <b>Upsell Message</b> property to be filled and the <b>Product Upsell Var</b> can be used in <b>Upsell Message</b> like <code>${product_upsell_var.name}</code> </li>
+                <li><b>Cancel</b> will prepare a Connections.SendRequest response with name Cancel</li>
+            </ul>
+        </li>
+        <li>
+            <span>Fill out the <b>Product Filter Value</b> which is the target name of available In-Skill Products. The name can come as a slot value like <code>${result.ProductName}</code></span>
+        </li>
+    </ol>
+</div>

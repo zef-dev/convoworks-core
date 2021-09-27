@@ -11,4 +11,5 @@ interface IAlexaResponseType
     public const EMPTY_RESPONSE = 'EMPTY_RESPONSE';
     public const VIDEO_RESPONSE = 'VIDEO_RESPONSE';
 	public const APL_RESPONSE = 'APL_RESPONSE';
+	public const SALES_DIRECTIVE = 'SALES_DIRECTIVE';
 }

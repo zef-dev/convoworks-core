@@ -94,6 +94,11 @@ interface IConvoRequest
      */
     public function isMediaRequest();
 
+	/**
+     * @return boolean
+     */
+    public function isSalesRequest();
+
     /**
      * @return boolean
      */

@@ -344,6 +344,19 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
             return;
         }
 
+		// SALES
+		if ($request->isSalesRequest()) {
+			$this->_logger->info( 'Sales request.');
+			$block  =   $this->getBlockByRole( IRunnableBlock::ROLE_SALES_BLOCK);
+			try {
+				$block->run($request, $response);
+			} catch (StateChangedException $e) {
+				$this->_logger->info( $e->getMessage());
+				$this->_readState( $e->getState(), $request, $response);
+			}
+			$this->_logger->info( 'Exiting ...');
+			return;
+		}
 
         // SESSION START
         if ( $request->isSessionStart())

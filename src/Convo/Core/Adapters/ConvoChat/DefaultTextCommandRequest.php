@@ -109,6 +109,10 @@ class DefaultTextCommandRequest implements \Convo\Core\Workflow\IConvoRequest
         return false;
     }
 
+	public function isSalesRequest() {
+		return false;
+	}
+
 	// UTIL
 	public function __toString()
 	{

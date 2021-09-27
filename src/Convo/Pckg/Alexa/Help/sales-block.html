@@ -1,0 +1,27 @@
+<div class="media-block-help">
+    <h3>Sales Block</h3>
+
+    <p>Serves for handling In Skill Products sales requests (Connections.Response requests).</p>
+
+    <h4>Overview</h4>
+    <div>
+        <p>While purchasing an In Skill Product on Alexa, this block receives a Connections.Response requests.</p>
+        <p>
+            More info about this request is available <a href="https://developer.amazon.com/en-US/docs/alexa/in-skill-purchase/add-isps-to-a-skill.html#handle-results" target="_blank">here</a>.
+        </p>
+    </div>
+    <h4>How to use?</h4>
+    <div>
+        <p>General Usage</p>
+        <ol>
+            <li>Get the payload or status of the Connection.Response Request which is stored in the <b>Sales Status</b> variable <code>sales_status</code>.</li>
+            <li>Based on the purchaseResult (<code>${sales_status.payload.purchaseResult}</code>) or status message (<code>${sales_status.status.message}</code>), do what you want.</li>
+        </ol>
+        <p>Access important request fields.</p>
+        <ul>
+            <li>To get purchaseResult of payload, do it like <code>${sales_status.payload.purchaseResult}</code>.</li>
+            <li>To get the status, do it like <code>${sales_status.status}</code>.</li>
+            <li>For other fields, take a look <a href="https://developer.amazon.com/en-US/docs/alexa/in-skill-purchase/add-isps-to-a-skill.html#handle-results" target="_blank">here</a>.</li>
+        </ul>
+    </div>
+</div>

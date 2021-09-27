@@ -1,0 +1,48 @@
+<div class="for-help">
+    <h3>Get In-Skill Products Element</h3>
+
+    <p>Retrieves the list of available In-Skill Products or a single In-Skill Product by productId.</p>
+
+    <h3>When to use?</h3>
+    <ul>
+        <li>When you want to show to the user what he can buy in your skill.</li>
+        <li>When you want to know which In-Skill Products are bought by the user in your skill.</li>
+        <li>When you want to identify a skill by a productId when a Connection.Response Request is sent to the Sales Block.</li>
+    </ul>
+
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>
+            <span>Fill out the <b>Name</b> or leave it as it is. Default is status.</span>
+        </li>
+        <li>
+            <span>In case you want a single In-Skill Product check the <b>Get single product by ID? </b> and fill out the <b>Product ID</b> like <code>${salesStatusVar.payload.productId}</code> when using in the <b>Sales Block</b>.</span>
+        </li>
+        <li>
+            <span>Select something in the <b>Filter by Entitlement</b>:</span>
+            <ul>
+                <li><b>All</b> includes purchased and not purchased products.</li>
+                <li><b>Purchased</b> includes only purchased products by the user. Comes in handy if you want to know which features or content of the skill can be unlocked.</li>
+                <li><b>Not Purchased</b> includes products that are purchasable and not purchased by the user. Comes in handy when you want to display what the user can buy in your skill.</li>
+            </ul>
+        </li>
+        <li>
+            <span>Select something in the <b>Filter by product type</b>:</span>
+            <ul>
+                <li><b>All</b> includes all three In-Skill Product Types: <b>Consumable</b>, <b>Subscription</b> and <b>Entitlement</b>.</li>
+                <li><b>Consumable</b> includes only In-Skill Products of type <b>Consumable</b>.</li>
+                <li><b>Subscription</b> includes only In-Skill Products of type <b>Subscription</b>.</li>
+                <li><b>Entitlement</b> includes only In-Skill Products of type <b>Entitlement</b>.</li>
+            </ul>
+        </li>
+        <li>
+            <span>Use the variable which was filled in the <b>Name</b> property like:</span>
+            <ul>
+                <li><code>${status.inSkillProducts}</code></li>
+                <li>If the <b>Get single product by ID? </b> property was checked <code>${status.name}</code> </li>
+            </ul>
+        </li>
+    </ol>
+    <p>To find out more about the structure of In-Skill Products, please visit the <a href="https://developer.amazon.com/en-US/docs/alexa/in-skill-purchase/in-skill-product-service.html#inskillproduct" target="_blank">official documentation</a>.</p>
+</div>

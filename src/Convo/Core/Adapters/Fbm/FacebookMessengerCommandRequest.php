@@ -205,6 +205,10 @@ class FacebookMessengerCommandRequest implements IConvoRequest
         return false;
     }
 
+	public function isSalesRequest() {
+		return false;
+	}
+
     /**
      * @inheritDoc
      */
