@@ -272,8 +272,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
 
         $functions[] = new ExpressionFunction(
             'human_concat',
-            function ($array,  $conjunction) {
-                return sprintf('(is_array(%1$a) ? human_concat(%1$a, %2$a) : %1$a', $array);
+            function ($array,  $conjunction = null) {
+                return sprintf('(is_array(%1$a) ? human_concat(%1$a, %2$a) : %1$a', $array, $conjunction);
             },
 
             function($args, $array, $conjunction = null) {
