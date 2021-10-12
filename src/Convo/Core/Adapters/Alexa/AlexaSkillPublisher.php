@@ -333,7 +333,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                             $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_ENDPOINT_SSL_CERTIFICATE_TYPE, $platform_config['endpoint_ssl_certificate_type']
                     ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
                             $this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_MANIFEST, $manifest
-                    );
+                    ) || $this->_platformPublishingHistory->hasPropertyChangedSinceLastPropagation(
+							$this->_serviceId, $this->getPlatformId(), PlatformPublishingHistory::AMAZON_INTERACTION_MODEL, $model
+						);
 	                if ($configChanged) {
 	                    $changesCount++;
                     }
