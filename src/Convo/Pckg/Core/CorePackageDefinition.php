@@ -1829,11 +1829,11 @@ In default phase you can inform users about problem you have interpreting comman
                         'valueType' => 'string'
                     ),
                     'context_id' => array(
-                        'editor_type' => 'text',
+                        'editor_type' => 'context_id',
                         'editor_properties' => array(),
                         'defaultValue' => 'search_media',
                         'name' => 'Source',
-                        'description' => 'Source Media Context id',
+                        'description' => 'Source Media Context ID',
                         'valueType' => 'string'
                     ),
                     'media_info_var' => array(
