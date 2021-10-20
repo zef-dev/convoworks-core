@@ -4,6 +4,11 @@
 
 ## [Releases]
 
+## 0.22.6.0 - 2021-10-20
+* Add support for Alexa In-Skill Purchases
+* Add support for new property editor type
+* Fix Amazon propagation
+
 ## 0.22.5.1 - 2021-09-23
 * Add `explode` function
 * Add the ability to use `#{}` syntax for evaluation in Generic APL Element
