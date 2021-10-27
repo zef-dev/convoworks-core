@@ -7,6 +7,7 @@ namespace Convo\Pckg\Alexa\Filters;
 use Convo\Core\Adapters\Alexa\AmazonCommandRequest;
 use Convo\Core\ComponentNotFoundException;
 use Convo\Core\Intent\IntentModel;
+use Convo\Core\Workflow\IIntentAwareRequest;
 use Convo\Pckg\Core\Filters\PlatformIntentReader;
 
 class AplUserEventReader extends \Convo\Core\Workflow\AbstractWorkflowComponent implements \Convo\Core\Intent\IIntentAdapter
@@ -38,6 +39,11 @@ class AplUserEventReader extends \Convo\Core\Workflow\AbstractWorkflowComponent 
 		}
 		return $intent;
 	}
+
+    public function accepts(IIntentAwareRequest $request)
+    {
+        return $request->getIntentName() === $this->getPlatformIntentName($request->getIntentPlatformId());
+    }
 
 	public function read( \Convo\Core\Workflow\IIntentAwareRequest $request)
 	{

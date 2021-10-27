@@ -3,6 +3,7 @@
 namespace Convo\Pckg\Core\Filters;
 
 use Convo\Core\Preview\PreviewSpeechPart;
+use Convo\Core\Workflow\IIntentAwareRequest;
 
 class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Intent\IIntentDriven, \Convo\Core\Preview\IUserSpeechResource
 {
@@ -34,6 +35,28 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
                 $parts
             );
         }
+    }
+
+    public function accepts(IIntentAwareRequest $request)
+    {
+        if ($request->getIntentName() === $this->getPlatformIntentName($request->getIntentPlatformId())) {
+            if (!empty($this->_requiredSlots)) {
+                $request_slot_values = $request->getSlotValues();
+
+                foreach ($this->_requiredSlots as $slot) {
+                    if (!isset($request_slot_values[$slot])) {
+                        $this->_logger->warning('Missing slot ['.$slot.'] in incoming request in ['.$this.']');
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     public function read( \Convo\Core\Workflow\IIntentAwareRequest $request)

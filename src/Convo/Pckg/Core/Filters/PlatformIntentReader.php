@@ -2,6 +2,7 @@
 
 namespace Convo\Pckg\Core\Filters;
 
+use Convo\Core\Workflow\IIntentAwareRequest;
 
 class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponent implements \Convo\Core\Intent\IIntentAdapter
 {
@@ -10,13 +11,13 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
     private $_rename;
 
     private $_intent;
-    
+
     private $_id;
-    
+
     public function __construct( $config)
     {
         parent::__construct( $config);
-        
+
         $this->_intent = $config['intent'];
 
         $this->_values = $config['values'] ?? [];
@@ -35,13 +36,18 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
         // return $this->evaluateString($this->_intent); throws error on preview, cannot get component params outside of request scope
     }
 
+    public function accepts(IIntentAwareRequest $request)
+    {
+        return $request->getIntentName() === $this->getPlatformIntentName($request->getIntentPlatformId());
+    }
+
     public function read( \Convo\Core\Workflow\IIntentAwareRequest $request)
     {
         $result = new \Convo\Core\Workflow\DefaultFilterResult();
         $intent = $this->evaluateString($this->_intent);
-        
+
         $result->setSlotValue('intentName', $intent); // quickfix??
-        
+
         $slots  =   $request->getSlotValues();
 
         foreach ( $slots as $key => $value)
@@ -61,11 +67,10 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
 
         return $result;
     }
-    
+
     // UTIL
     public function __toString()
     {
         return get_class( $this).'['.$this->_intent.']['.$this->_id.']';
     }
-
 }
