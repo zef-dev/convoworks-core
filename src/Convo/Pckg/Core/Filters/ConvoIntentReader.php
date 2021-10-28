@@ -39,7 +39,7 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
 
     public function accepts(IIntentAwareRequest $request)
     {
-        if (parent::accepts($request))
+        if ($request->getIntentName() === $this->getPlatformIntentName($request->getIntentPlatformId()))
         {
             $this->_logger->info('Parent accepts request in ['.$this.']');
 
