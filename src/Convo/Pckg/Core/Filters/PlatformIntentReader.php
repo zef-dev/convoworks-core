@@ -38,7 +38,7 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
 
     public function accepts(IIntentAwareRequest $request)
     {
-        return $request->getIntentName() === $this->getPlatformIntentName($request->getIntentPlatformId());
+        return $request->getIntentName() === $this->_intent;
     }
 
     public function read( \Convo\Core\Workflow\IIntentAwareRequest $request)

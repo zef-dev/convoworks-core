@@ -39,18 +39,21 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
 
     public function accepts(IIntentAwareRequest $request)
     {
-        if ($request->getIntentName() === $this->getPlatformIntentName($request->getIntentPlatformId())) {
-            if (!empty($this->_requiredSlots)) {
-                $request_slot_values = $request->getSlotValues();
+        if (parent::accepts($request))
+        {
+            $this->_logger->info('Parent accepts request in ['.$this.']');
+
+            if (!empty($this->_requiredSlots))
+            {
+                $this->_logger->info('Required slots are present ['.print_r($this->_requiredSlots, true).']');
+                $request_slots = $request->getSlotValues();
 
                 foreach ($this->_requiredSlots as $slot) {
-                    if (!isset($request_slot_values[$slot])) {
-                        $this->_logger->warning('Missing slot ['.$slot.'] in incoming request in ['.$this.']');
+                    if (!isset($request_slots[$slot]) || $request_slots[$slot] === null) {
+                        $this->_logger->warning('Slot ['.$slot.'] is required but empty.');
                         return false;
                     }
                 }
-
-                return true;
             }
 
             return true;
