@@ -28,7 +28,15 @@ class DefaultFilterResult implements \Convo\Core\Workflow\IRequestFilterResult, 
 	}
 	
 	public function isSlotEmpty( $name) {
-	    return !isset( $this->_data[$name]) || trim( strval( $this->_data[$name])) === '';
+		if (!isset($this->_data[$name])) {
+			return true;
+		}
+
+		if (!is_array($this->_data[$name])) {
+			return trim( strval( $this->_data[$name])) === '';
+		}
+	    
+		return false;
 	}
 	
 	public function getSlotValue( $name) {
