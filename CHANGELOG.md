@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## [Current development]
+* apply service migration for default alexa skill icons feature
 
 ## [Releases]
 

@@ -67,6 +67,7 @@ interface IServiceDataProvider
         'mode' => 'manual',
         'invocation' => 'Default Name',
         'app_id' => null,
+		'upload_own_skill_icons' => false,
         'interaction_model_sensitivity' => 'LOW',
         'endpoint_ssl_certificate_type' => 'Wildcard',
         'self_signed_certificate' => null,
