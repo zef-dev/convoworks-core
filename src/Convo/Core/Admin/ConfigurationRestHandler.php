@@ -67,6 +67,11 @@ class ConfigurationRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
                 ['value' => 'MEDIUM', 'name' => 'Medium'],
                 ['value' => 'HIGH', 'name' => 'High']
             ],
+			'CONVO_AMAZON_SKILL_ACCOUNT_LINKING_SCOPES' => [
+				['name' => 'profile', 'checked' => false],
+				['name' => 'profile:user_id', 'checked' => false],
+				['name' => 'postal_code', 'checked' => false]
+			],
             'CONVO_AMAZON_SKILL_ENDPOINT_SSL_CERTIFICATE' => [
                 ['value' => AmazonSkillManifest::CERTIFICATE_TYPE_TRUSTED, 'description' => 'My Development endpoint has a certificate from a trusted certificate authority'],
                 ['value' => AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD, 'description' => 'My Development endpoint is a sub-domain of a domain that has a wildcard certificate from a certificate authority'],
