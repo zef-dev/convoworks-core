@@ -2,7 +2,7 @@
 
 ## [Current development]
 * apply service migration for default alexa skill icons feature
-
+* update documentation of IURLSupplier
 ## [Releases]
 
 ## 0.22.6.0 - 2021-10-20

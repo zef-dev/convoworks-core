@@ -16,6 +16,7 @@ interface IURLSupplier
      * Generates URLs based on serviceId.
      * Also includes the generation of account linking urls.
      * @param $serviceId
+	 * @throws \Convo\Core\DataItemNotFoundException
      * @return array
      */
     public function getServiceUrls($serviceId);
