@@ -221,7 +221,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
 
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $res['skillId']);
-        $this->_manageAccountLinking($owner, $res['skillId'], 'development', $config[$this->getPlatformId()]);
+        $this->_manageAccountLinking($owner, $res['skillId'], 'development', $config);
 		$this->_recordPropagation();
         $this->_platformPublishingHistory->storePropagationData(
             $this->_serviceId,
@@ -277,7 +277,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
 
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $skillId);
-        $this->_manageAccountLinking($owner, $skillId, 'development', $config[$this->getPlatformId()]);
+        $this->_manageAccountLinking($owner, $skillId, 'development', $config);
 
         $this->_platformPublishingHistory->storePropagationData(
             $this->_serviceId,
@@ -1004,7 +1004,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
     }
 
-    private function _manageAccountLinking($owner, $skillId, $stage, $amazonConfiguration) {
+    private function _manageAccountLinking($owner, $skillId, $stage, $config) {
+		$amazonConfiguration = $config[$this->getPlatformId()];
+
         if (isset($amazonConfiguration['enable_account_linking']) && isset($amazonConfiguration['account_linking_config'])) {
 			$accountLinkingMode = $amazonConfiguration['account_linking_mode'] ?? '';
 			$clientId = $amazonConfiguration['account_linking_config']["client_id"] ?? "";
@@ -1013,6 +1015,10 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 			if ($accountLinkingMode === 'installation') {
 				$clientId = $this->_serviceId;
 				$clientSecret = md5($clientId);
+				$config[$this->getPlatformId()]['account_linking_config']['client_id'] = $clientId;
+				$config[$this->getPlatformId()]['account_linking_config']['client_secret'] = $clientSecret;
+				$config[$this->getPlatformId()]['account_linking_config']['scopes'] = '';
+				$this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
 			}
 
             if ($amazonConfiguration['enable_account_linking']) {
