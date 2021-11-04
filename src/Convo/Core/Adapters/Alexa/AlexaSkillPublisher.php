@@ -278,7 +278,6 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $skillId);
         $this->_manageAccountLinking($owner, $skillId, 'development', $config[$this->getPlatformId()]);
-        // TODO pool as loong as skill status gets other then IN_PROGRESS
 
         $this->_platformPublishingHistory->storePropagationData(
             $this->_serviceId,
@@ -1007,6 +1006,15 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
     private function _manageAccountLinking($owner, $skillId, $stage, $amazonConfiguration) {
         if (isset($amazonConfiguration['enable_account_linking']) && isset($amazonConfiguration['account_linking_config'])) {
+			$accountLinkingMode = $amazonConfiguration['account_linking_mode'] ?? '';
+			$clientId = $amazonConfiguration['account_linking_config']["client_id"] ?? "";
+			$clientSecret = $amazonConfiguration['account_linking_config']["client_secret"] ?? "";
+
+			if ($accountLinkingMode === 'installation') {
+				$clientId = $this->_serviceId;
+				$clientSecret = md5($clientId);
+			}
+
             if ($amazonConfiguration['enable_account_linking']) {
                 $body = [
                     "accountLinkingRequest" => [
@@ -1016,8 +1024,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                         "domains" => isset($amazonConfiguration['account_linking_config']["domains"]) ? explode(";", $amazonConfiguration['account_linking_config']["domains"]) : [],
                         "scopes" => isset($amazonConfiguration['account_linking_config']["scopes"]) ? explode(";", $amazonConfiguration['account_linking_config']["scopes"]) : [],
                         "accessTokenUrl" => $amazonConfiguration['account_linking_config']["access_token_url"] ?? "",
-                        "clientId" => $amazonConfiguration['account_linking_config']["client_id"] ?? "",
-                        "clientSecret" => $amazonConfiguration['account_linking_config']["client_secret"] ?? "",
+                        "clientId" => $clientId,
+                        "clientSecret" => $clientSecret,
                         "accessTokenScheme" => "HTTP_BASIC"
                     ]
                 ];
