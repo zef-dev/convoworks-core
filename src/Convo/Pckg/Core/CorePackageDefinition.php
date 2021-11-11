@@ -318,6 +318,62 @@ class CorePackageDefinition extends AbstractPackageDefinition
 			}
 		);
 
+		$functions[] = new ExpressionFunction(
+			'relative_date',
+			function ($date, $startDayOfWeek = 'monday') {
+				return sprintf('relative_date(%1$d, %2$s)', $date, $startDayOfWeek);
+			},
+			function($args, $date, $startDayOfWeek = 'monday') {
+				$relativesArray = [
+					'today' => false,
+					'tomorrow' => false,
+					'this_week' => false,
+					'next_week' => false,
+				];
+
+				$inputTime = strtotime($date);
+				$startDayOfWeek = strtolower($startDayOfWeek);
+				if (!$inputTime) {
+					return $relativesArray;
+				}
+
+				$currentTime = time();
+
+				$inputTimeFormatted = date("Y-m-d H:i:s", $inputTime);
+
+				$todayFormatted = date("Y-m-d H:i:s", strtotime('today', $currentTime));
+				$tomorrowFormatted = date("Y-m-d H:i:s", strtotime('tomorrow', $currentTime));
+
+				$dayToStartWeek = 'monday';
+				if ($startDayOfWeek === 'sunday') {
+					$dayToStartWeek = 'sunday';
+				}
+
+				$dayToEndWeek = 'sunday';
+				if ($startDayOfWeek === 'sunday') {
+					$dayToEndWeek = 'saturday';
+				}
+
+				$thisWeekStartFormatted = date("Y-m-d H:i:s", strtotime('last ' . $dayToStartWeek . ' midnight', $currentTime));
+				$thisWeekEndFormatted = date("Y-m-d H:i:s", strtotime('this ' . $dayToEndWeek . ' 23:59:59', $currentTime));
+
+				$nextWeekStartFormatted = date("Y-m-d H:i:s", strtotime('last ' . $dayToStartWeek . ' midnight', $currentTime));
+				$nextWeekEndFormatted = date("Y-m-d H:i:s", strtotime('this ' . $dayToEndWeek . ' 23:59:59 + 1 week', $currentTime));
+
+				if ($inputTimeFormatted === $todayFormatted) {
+					$relativesArray['today'] = true;
+				} else if ($inputTimeFormatted === $tomorrowFormatted) {
+					$relativesArray['tomorrow'] = true;
+				} else if ($inputTime >= strtotime($thisWeekStartFormatted) && $inputTime <= strtotime($thisWeekEndFormatted)) {
+					$relativesArray['this_week'] = true;
+				} else if ($inputTime >= strtotime($nextWeekStartFormatted) && $inputTime <= strtotime($nextWeekEndFormatted)) {
+					$relativesArray['next_week'] = true;
+				}
+
+				return $relativesArray;
+			}
+		);
+
         return $functions;
     }
 
