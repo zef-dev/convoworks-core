@@ -325,6 +325,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
 			},
 			function($args, $date, $startDayOfWeek = 'monday') {
 				$relativesArray = [
+					'relative_available' => false,
 					'today' => false,
 					'tomorrow' => false,
 					'this_week' => false,
@@ -361,12 +362,16 @@ class CorePackageDefinition extends AbstractPackageDefinition
 				$nextWeekEndFormatted = date("Y-m-d H:i:s", strtotime('this ' . $dayToEndWeek . ' 23:59:59 + 1 week', $currentTime));
 
 				if ($inputTimeFormatted === $todayFormatted) {
+					$relativesArray['relative_available'] = true;
 					$relativesArray['today'] = true;
 				} else if ($inputTimeFormatted === $tomorrowFormatted) {
+					$relativesArray['relative_available'] = true;
 					$relativesArray['tomorrow'] = true;
 				} else if ($inputTime >= strtotime($thisWeekStartFormatted) && $inputTime <= strtotime($thisWeekEndFormatted)) {
+					$relativesArray['relative_available'] = true;
 					$relativesArray['this_week'] = true;
 				} else if ($inputTime >= strtotime($nextWeekStartFormatted) && $inputTime <= strtotime($nextWeekEndFormatted)) {
+					$relativesArray['relative_available'] = true;
 					$relativesArray['next_week'] = true;
 				}
 
