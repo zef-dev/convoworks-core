@@ -18,6 +18,11 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
      */
     private $_httpFactory;
 
+	/**
+	 * @var \Convo\Core\Util\WebApiCaller
+	 */
+	private $_webApiCaller;
+
     /**
      * @var \Convo\Core\IServiceDataProvider
      */
@@ -26,10 +31,12 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 	public function __construct(
 	    \Psr\Log\LoggerInterface $logger,
         \Convo\Core\Util\IHttpFactory $httpFactory,
-        \Convo\Core\IServiceDataProvider $convoServiceDataProvider
+        \Convo\Core\IServiceDataProvider $convoServiceDataProvider,
+		\Convo\Core\Util\WebApiCaller $webApiCaller
     ) {
         $this->_httpFactory = $httpFactory;
         $this->_convoServiceDataProvider = $convoServiceDataProvider;
+		$this->_webApiCaller = $webApiCaller;
 
 		parent::__construct( $logger, self::NAMESPACE, __DIR__);
 	}
@@ -67,20 +74,20 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         'type' => 'file',
                         'filename' => 'get-amazon-user-element.html'
                     ),
-                    '_factory' => new class ($this->_httpFactory, $this->_convoServiceDataProvider) implements IComponentFactory
+                    '_factory' => new class ($this->_webApiCaller, $this->_convoServiceDataProvider) implements IComponentFactory
                     {
-                        private $_httpFactory;
+                        private $_webApiCaller;
                         private $_convoServiceDataProvider;
 
-                        public function __construct($httpFactory, $convoServiceDataProvider)
+                        public function __construct($webApiCaller, $convoServiceDataProvider)
                         {
-                            $this->_httpFactory = $httpFactory;
+                            $this->_webApiCaller = $webApiCaller;
                             $this->_convoServiceDataProvider = $convoServiceDataProvider;
                         }
 
                         public function createComponent($properties, $service)
                         {
-                            return new \Convo\Pckg\Alexa\Elements\GetAmazonUserElement($properties, $this->_httpFactory, $this->_convoServiceDataProvider);
+                            return new \Convo\Pckg\Alexa\Elements\GetAmazonUserElement($properties, $this->_webApiCaller, $this->_convoServiceDataProvider);
                         }
                     }
                 ]

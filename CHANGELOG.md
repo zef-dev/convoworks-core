@@ -4,6 +4,7 @@
 * apply service migration for default alexa skill icons feature
 * update documentation of IURLSupplier
 * add new function relative_date
+* refactor Get Amazon User Element to make api calls in api class
 ## [Releases]
 
 ## 0.22.6.0 - 2021-10-20

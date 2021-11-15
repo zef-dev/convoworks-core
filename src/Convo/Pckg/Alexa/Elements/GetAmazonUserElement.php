@@ -11,28 +11,23 @@ use Convo\Core\Workflow\IConversationElement;
 
 class GetAmazonUserElement extends AbstractWorkflowComponent implements IConversationElement
 {
-    const AMAZON_USER_PROFILE_API = 'https://api.amazon.com/user/profile';
     private $_name;
-    private $_promptForLinking;
 
-    /**
-     * @var \Convo\Core\Util\IHttpFactory
-     */
-    private $_httpFactory;
-
+	/**
+	 * @var \Convo\Core\Util\WebApiCaller
+	 */
+	private $_webApiCaller;
     /**
      * @var \Convo\Core\IServiceDataProvider
      */
     private $_convoServiceDataProvider;
 
-    public function __construct($properties, $httpFactory, $convoServiceDataProvider)
+    public function __construct($properties, $webApiCaller, $convoServiceDataProvider)
     {
         parent::__construct($properties);
 
         $this->_name = $properties['name'] ?? 'user';
-        $this->_promptForLinking = $properties['prompt_for_linking'] ?? false;
-
-        $this->_httpFactory              = $httpFactory;
+        $this->_webApiCaller = $webApiCaller;
         $this->_convoServiceDataProvider = $convoServiceDataProvider;
     }
 
@@ -60,6 +55,7 @@ class GetAmazonUserElement extends AbstractWorkflowComponent implements IConvers
                     }
 
                     $user = $this->_getAmazonProfile($token);
+					$this->_logger->debug('Got Amazon User with token [' . $token .'][' . json_encode($user) . ']');
                     $params->setServiceParam($this->_name, $user);
                 }
                 catch (DataItemNotFoundException $e)
@@ -78,12 +74,11 @@ class GetAmazonUserElement extends AbstractWorkflowComponent implements IConvers
         }
     }
 
-    private function _getAmazonProfile($accessToken) {
-        $client = $this->_httpFactory->getHttpClient();
-        $profileUri = $this->_httpFactory->buildUri(self::AMAZON_USER_PROFILE_API, ['access_token' => $accessToken]);
-        $userRequest = $this->_httpFactory->buildRequest(IHttpFactory::METHOD_GET, $profileUri->__toString());
-        $res = $client->sendRequest($userRequest);
-
-        return json_decode($res->getBody()->__toString(), true);
-    }
+	private function _getAmazonProfile($accessToken) {
+		return $this->_webApiCaller->makeApiRequest(
+			IHttpFactory::METHOD_GET,
+			'https://api.amazon.com/user/profile',
+			['access_token' => $accessToken]
+		);
+	}
 }
