@@ -481,12 +481,12 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	        try
 			{
 			    $catalog_name = $entity->getName().'Catalog';
+				/** @var \Convo\Core\Workflow\ICatalogSource $context */
 			    $context = $service->findContext($catalog_name);
 
 			    $this->_logger->debug('Got context ['.$context.']');
 
-				$catalog = $context->getComponent();
-				$data['interactionModel']['languageModel']['types'][] = $this->_buildCatalogEntity($entity->getName(), $catalog_name, $catalog, $vendorId);
+				$data['interactionModel']['languageModel']['types'][] = $this->_buildCatalogEntity($entity->getName(), $catalog_name, $context, $vendorId);
 			}
 	        catch (\Convo\Core\ComponentNotFoundException $cnfe)
 			{
@@ -752,12 +752,12 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	/**
 	 * @param string $entityName
      * @param string $catalogName
-	 * @param ICatalogSource $catalog
+	 * @param ICatalogSource $context
 	 * @param string $vendorId
 	 * @return array
 	 * @throws \Exception
 	 */
-	private function _buildCatalogEntity($entityName, $catalogName, $catalog, $vendorId)
+	private function _buildCatalogEntity($entityName, $catalogName, $context, $vendorId)
 	{
 	// {
 	//     "name": "string",
@@ -834,9 +834,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 			$existing = $config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version];
 			$v = $existing['version'];
 
-			$this->_logger->debug('Catalog already exists ['.print_r($existing, true).']['.$catalog->getCatalogVersion().']');
+			$this->_logger->debug('Catalog already exists ['.print_r($existing, true).']['.$context->getCatalogVersion().']');
 
-			if ($v !== $catalog->getCatalogVersion())
+			if ($v !== $context->getCatalogVersion())
 			{
 				$this->_logger->debug('Stored catalog version does not match actual. Going to update new version');
 

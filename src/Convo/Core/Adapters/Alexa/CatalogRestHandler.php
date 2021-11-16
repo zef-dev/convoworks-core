@@ -88,7 +88,7 @@ class CatalogRestHandler implements \Psr\Http\Server\RequestHandlerInterface
 
 		$this->_logger->info('Looking for catalog ['.$catalogId.'] data in service ['.$serviceId.']');
 
-		/* @var \Convo\Core\Workflow\ICatalogSource $catalog */
+		/** @var \Convo\Core\Workflow\IServiceCatalog $catalog */
 		$catalog = $instance->findContext($catalogId)->getComponent();
 
 		return $this->_httpFactory->buildResponse($catalog->getCatalogValues($platform));
