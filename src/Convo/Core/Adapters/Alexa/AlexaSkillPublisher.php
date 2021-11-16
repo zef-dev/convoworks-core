@@ -1210,7 +1210,6 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $interfaces = [];
 
 		$class = '';
-		/** @var \Convo\Core\Factory\IComponentProvider $provider */
 		array_walk_recursive($workflow, function ($value, $key) use (&$class, &$interfaces) {
 			if ($key === 'class') {
 				$class = $value;
@@ -1219,7 +1218,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 			if ($key === 'namespace' && $class !== '') {
 				if (!empty($value)) {
 					$provider = $this->_packageProviderFactory->getProviderByNamespace($value);
-					if ( is_a( $provider, '\Convo\Core\Factory\IComponentProvider')) {
+					if ( is_a( $provider, '\Convo\Core\Factory\IComponentProvider'))
+					{
+						/** @var  \Convo\Core\Factory\IComponentProvider $provider*/
 						$componentProperties = $provider->getComponentDefinition($class)->getRow()['component_properties'];
 						if (isset($componentProperties['_platform_defaults'])) {
 							$platformInterfaces = $componentProperties['_platform_defaults'][$this->getPlatformId()]['interfaces'] ?? [];
