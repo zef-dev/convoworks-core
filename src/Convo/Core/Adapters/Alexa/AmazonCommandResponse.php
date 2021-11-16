@@ -42,6 +42,8 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     private $_isDisplaySupported = false;
 
     private $_sendAccountLinkingCard = false;
+    private $_sendPermissionsConsentCard = false;
+    private $_permissionsToAskFor = [];
 
     /**
      * @var AmazonCommandRequest
@@ -220,10 +222,19 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         $this->_isDisplaySupported = $isDisplaySupported;
     }
 
+	public function setPermissionsToAskFor($permissionsToAskFor) {
+		$this->_permissionsToAskFor = $permissionsToAskFor;
+	}
+
     public function promptAccountLinking()
     {
         $this->_sendAccountLinkingCard = true;
     }
+
+	public function promptPermissionsConsent()
+	{
+		$this->_sendPermissionsConsentCard = true;
+	}
 
     public function prepareResponse($responseType)
     {
@@ -701,6 +712,13 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
             if ($this->_sendAccountLinkingCard) {
                 $data['response']['card'] = ['type' => 'LinkAccount'];
             }
+
+			if ($this->_sendPermissionsConsentCard) {
+				$data['response']['card'] = [
+					'type' => 'AskForPermissionsConsent',
+					'permissions' => $this->_permissionsToAskFor
+				];
+			}
 
             $isAutoDisplay = isset($this->_serviceAmazonConfig['auto_display']) ? $this->_serviceAmazonConfig['auto_display'] : false;
 

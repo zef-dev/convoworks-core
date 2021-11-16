@@ -1,0 +1,38 @@
+<div class="for-help">
+    <h3>Get Amazon Customer Profile Element</h3>
+
+    <p>Retrieves data from default active account that is on Alexa Device with granted user permissions.</p>
+
+    <h3>When to use?</h3>
+
+    <p>When you want to retrieve customer information from the Amazon User Account and use it in your Alexa Skill.</p>
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>
+            <span>Make sure you already have configured and propagated your service to Amazon Alexa with checked permissions for your needs in <b>Amazon Alexa Skill Permissions</b>:</span>
+            <ul>
+                <li><b>Full Name or Given Name</b></li>
+                <li><b>Customer Email Address</b></li>
+                <li><b>Customer Phone Number</b></li>
+            </ul>
+        </li>
+
+        <li>
+            <span>In case the customer profile could be fetched successfully, <b>OK</b> flow will be executed.</span>
+            <br>
+            <br>
+            <p>After the user has enabled the skill and granted permissions, you'll be able to access the customer profile data like in the following examples:</p>
+            <ul>
+                <li><code>${customer_profile_status.fullName}</code> when <b>Full Name</b> permission was granted by the user</li>
+                <li><code>${customer_profile_status.givenName}</code> when <b>Given Name</b> permission was granted by the user</li>
+                <li><code>${customer_profile_status.emailAddress}</code> when <b>Given Name</b> permission was granted by the user</li>
+                <li><code>${customer_profile_status.phoneNumber.countryCode}</code> when <b>Phone Number</b> permission was granted by the user</li>
+                <li><code>${customer_profile_status.phoneNumber.phoneNumber}</code> when <b>Phone Number</b> permission was granted by the user</li>
+            </ul>
+            <br>
+            <p>In case the customer profile could not be fetched successfully, <b>On Permission Not Granted</b> or <b>NOK</b> flow will be executed</p>
+            <p>You can access the error message like this <code>${customer_profile_status.error}</code>.</p>
+        </li>
+    </ol>
+</div>

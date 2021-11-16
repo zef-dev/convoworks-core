@@ -2,6 +2,7 @@
 
 namespace Convo\Pckg\Alexa;
 
+use Convo\Core\Adapters\Alexa\Api\AlexaCustomerProfileApi;
 use Convo\Core\Factory\AbstractPackageDefinition;
 use Convo\Core\Factory\ComponentDefinition;
 use Convo\Core\Factory\IComponentFactory;
@@ -23,6 +24,11 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 	 */
 	private $_webApiCaller;
 
+	/**
+	 * @var AlexaCustomerProfileApi
+	 */
+	private $_alexaCustomerProfileApi;
+
     /**
      * @var \Convo\Core\IServiceDataProvider
      */
@@ -32,11 +38,13 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 	    \Psr\Log\LoggerInterface $logger,
         \Convo\Core\Util\IHttpFactory $httpFactory,
         \Convo\Core\IServiceDataProvider $convoServiceDataProvider,
-		\Convo\Core\Util\WebApiCaller $webApiCaller
+		\Convo\Core\Util\WebApiCaller $webApiCaller,
+		AlexaCustomerProfileApi $alexaCustomerProfileApi
     ) {
         $this->_httpFactory = $httpFactory;
         $this->_convoServiceDataProvider = $convoServiceDataProvider;
 		$this->_webApiCaller = $webApiCaller;
+		$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
 
 		parent::__construct( $logger, self::NAMESPACE, __DIR__);
 	}
@@ -92,6 +100,146 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     }
                 ]
             ),
+			new ComponentDefinition(
+				$this->getNamespace(),
+				'\Convo\Pckg\Alexa\Elements\GetAmazonCustomerProfileElement',
+				'Get Amazon Customer Profile Element',
+				'Initialize an Amazon user.',
+				[
+					'name' => [
+						'editor_type' => 'text',
+						'editor_properties' => [],
+						'defaultValue' => 'customer_profile_status',
+						'name' => 'Name',
+						'description' => 'Name under which to store the loaded user object in the context',
+						'valueType' => 'string'
+					],
+					'should_get_full_name' => array(
+						'editor_type' => 'boolean',
+						'editor_properties' => array(
+							'dependency' => "component.properties.should_get_given_name === false"
+						),
+						'defaultValue' => false,
+						'name' => 'Should get Full Name?',
+						'description' => 'In case the skill user has accepted the permission to use Full Name, Full Name will be available in the status variable',
+						'valueType' => 'boolean'
+					),
+					'should_get_given_name' => array(
+						'editor_type' => 'boolean',
+						'editor_properties' => array(
+							'dependency' => "component.properties.should_get_full_name === false"
+						),
+						'defaultValue' => false,
+						'name' => 'Should get Given Name?',
+						'description' => 'In case the skill user has accepted the permission to use Given Name, Given Name will be available in the status variable',
+						'valueType' => 'boolean'
+					),
+					'should_get_email_address' => array(
+						'editor_type' => 'boolean',
+						'editor_properties' => array(),
+						'defaultValue' => false,
+						'name' => 'Should get Email Address?',
+						'description' => 'In case the skill user has accepted the permission to use Email Address, Email Address will be available in the status variable',
+						'valueType' => 'boolean'
+					),
+					'should_get_phone_number' => array(
+						'editor_type' => 'boolean',
+						'editor_properties' => array(),
+						'defaultValue' => false,
+						'name' => 'Should get Phone Number?',
+						'description' => 'In case the skill user has accepted the permission to use Phone Number, Phone Number will be available in the status variable',
+						'valueType' => 'boolean'
+					),
+					'ok' => [
+						'editor_type' => 'service_components',
+						'editor_properties' => [
+							'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+							'multiple' => true
+						],
+						'defaultValue' => [],
+						'name' => 'OK',
+						'description' => 'Executed if the Amazon Customer Profile could be fetched successfully.',
+						'valueType' => 'class'
+					],
+					'on_permission_not_granted' => [
+						'editor_type' => 'service_components',
+						'editor_properties' => [
+							'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+							'multiple' => true
+						],
+						'defaultValue' => [],
+						'name' => 'On Permission Not Granted',
+						'description' => 'Executed if one of the requested permissions are missing.',
+						'valueType' => 'class'
+					],
+					'nok' => [
+						'editor_type' => 'service_components',
+						'editor_properties' => [
+							'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+							'multiple' => true
+						],
+						'defaultValue' => [],
+						'name' => 'NOK',
+						'description' => 'Executed if the Alexa Customer Profile API could not fetched the customer profile.',
+						'valueType' => 'class'
+					],
+					'_preview_angular' => [
+						'type' => 'html',
+						'template' => '<div class="code">' .
+							'Load Amazon User and set it as <span class="statement"><b>{{ component.properties.name }}</b></span>' .
+							'</div>'
+					],
+					'_workflow' => 'read',
+					'_help' =>  array(
+						'type' => 'file',
+						'filename' => 'get-amazon-customer-profile-element.html'
+					),
+					'_factory' => new class ($this->_alexaCustomerProfileApi) implements IComponentFactory
+					{
+						private $_alexaCustomerProfileApi;
+
+						public function __construct($alexaCustomerProfileApi)
+						{
+							$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
+						}
+
+						public function createComponent($properties, $service)
+						{
+							return new \Convo\Pckg\Alexa\Elements\GetAmazonCustomerProfileElement($properties, $this->_alexaCustomerProfileApi);
+						}
+					}
+				]
+			),
+			new \Convo\Core\Factory\ComponentDefinition(
+				$this->getNamespace(),
+				'\Convo\Pckg\Alexa\Elements\PromptPermissionsConsentElement',
+				'Prompt Permissions Consent Element',
+				'Prompts the user to accept permissions used by your Alexa Skill',
+				[
+					'_preview_angular' => [
+						'type' => 'html',
+						'template' => '<div class="code">' .
+							'<span class="statement">PROMPT</span> ' .
+							'<span>Permissions Consent</span>' .
+							'</div>'
+					],
+					'_factory' => new class ($this->_convoServiceDataProvider) implements IComponentFactory
+					{
+						private $_convoServiceDataProvider;
+
+						public function __construct($convoServiceDataProvider)
+						{
+							$this->_convoServiceDataProvider = $convoServiceDataProvider;
+						}
+
+						public function createComponent($properties, $service)
+						{
+							return new \Convo\Pckg\Alexa\Elements\PromptPermissionsConsentElement($properties, $this->_convoServiceDataProvider);
+						}
+					},
+					'_workflow' => 'read'
+				]
+			),
 			new \Convo\Core\Factory\ComponentDefinition(
 				$this->getNamespace(),
 				'\Convo\Pckg\Alexa\Elements\GenericAplElement',
