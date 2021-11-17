@@ -849,7 +849,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 				$current_ver = $version['lastUpdateRequest']['version'];
 
-				$this->_logger->debug('Catalog version ['.$current_ver.'] created successfully');
+				$this->_logger->info('Amazon catalog version ['.$current_ver.'] created successfully');
 
 				$config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version]['time_updated'] = time();
 				$config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version]['version'] = $current_ver;
