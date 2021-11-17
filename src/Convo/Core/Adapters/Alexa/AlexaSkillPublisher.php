@@ -769,6 +769,11 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	//         }
 	//     }
 	// }
+		
+		// @TODO: The handling of "our" catalog versions vs Amazon's catalog versions
+		// isn't very robust. Currently we only check to see that the versions are different
+		// during propagation. Maybe we need to enforce strict increments?
+		
 		$this->_logger->debug('Going to check if catalog ['.$catalogName.'] exists.');
 
 		$config = $this->_convoServiceDataProvider->getServicePlatformConfig(
@@ -852,7 +857,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 				$this->_logger->info('Amazon catalog version ['.$current_ver.'] created successfully');
 
 				$config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version]['time_updated'] = time();
-				$config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version]['version'] = $current_ver;
+				$config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version]['version'] = $context->getCatalogVersion();
 				$this->_convoServiceDataProvider->updateServicePlatformConfig(
 					$this->_user, $this->_serviceId, $config
 				);
