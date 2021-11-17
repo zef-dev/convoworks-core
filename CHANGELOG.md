@@ -1,11 +1,16 @@
 # CHANGELOG
 
 ## [Current development]
-* apply service migration for default alexa skill icons feature
-* update documentation of IURLSupplier
-* add new function relative_date
-* refactor Get Amazon User Element to make api calls in api class
+
 ## [Releases]
+
+## 0.22.7.0 - 2021-11-17
+* Apply service migration for default alexa skill icons feature
+* Update documentation of `IURLSupplier`
+* Add new function relative_date
+* Refactor `GetAmazonUserElement` to make api calls in api class
+* Catalogs now split into two interfaces
+* Rework how catalog versions are stored
 
 ## 0.22.6.0 - 2021-10-20
 * Add support for Alexa In-Skill Purchases
