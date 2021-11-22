@@ -1,0 +1,28 @@
+<div class="conversation-block-help">
+    <h3>Conversation block</h3>
+
+    <p>The foundational building block of any conversation skill. Each block is a contextual unit that you can think of as a "topic" of a conversation, or, if you come from a web development background, imagine it as a page in your sitemap.</p>
+
+    <h3>When to use?</h3>
+
+    <p>Basically, all the time. This is your bread and butter block for the vast majority of use case scenarios.</p>
+
+    <h3>How to use?</h3>
+
+    <p>After you add a conversation block, fill out the <b>Elements</b> and <b>Processors</b> that will be used to handle a section of a given conversation.</p>
+
+    <h3>Special role conversation blocks</h3>
+
+    <p>
+        There are several special types of conversation blocks that differ from the standard one.
+
+        <ul>
+            <li><b>Session started</b>: A block with this role, if present, is always executed first when a new session starts.</li>
+            <li><b>Session ended</b>: Like the above, if this block is present, it is called right before a session ends.</li>
+            <li><b>Service processors</b>: This block only has a processors slot which is active throughout the entire service. Useful for things like users asking for help.</li>
+            <hr>
+            <li><b>Media block</b>: Handles media (audio) requests, such as starting playback, shuffling, rewinding, etc. Refer to the Media block specific help file for more details.</li>
+            <li><b>Loop block</b>: Given a collection of items, runs once for each item in the collection. Refer to the Loop block specific help file for more details.</li>
+        </ul>
+    </p>
+</div>
