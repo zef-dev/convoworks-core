@@ -1214,34 +1214,40 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         ];
     }
 
-    private function _prepareInterfacesFromWorkflowComponents() {
-        $workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
-        $interfaces = [];
+	private function _prepareInterfacesFromWorkflowComponents() {
+		$workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+		$interfaces = [];
 
-		$class = '';
-		array_walk_recursive($workflow, function ($value, $key) use (&$class, &$interfaces) {
-			if ($key === 'class') {
-				$class = $value;
+		// get enabled packages in services
+		$provider = $this->_packageProviderFactory->getProviderByServiceId($this->_user, $this->_serviceId);
+		$servicePackages = $provider->getRow();
+		$serviceComponentsWithInterfaces = [];
+
+		// get service components that contain interfaces
+		foreach ($servicePackages as $servicePackage) {
+			if (isset($servicePackage['components'])) {
+				foreach ($servicePackage['components'] as $serviceComponent) {
+					if (isset($serviceComponent['component_properties']['_platform_defaults'][$this->getPlatformId()]['interfaces'])) {
+						$serviceComponentsWithInterfaces[$serviceComponent['type']] =
+							$serviceComponent['component_properties']['_platform_defaults'][$this->getPlatformId()]['interfaces'];
+					}
+				}
 			}
+		}
 
-			if ($key === 'namespace' && $class !== '') {
-				if (!empty($value)) {
-					$provider = $this->_packageProviderFactory->getProviderByNamespace($value);
-					if ( is_a( $provider, '\Convo\Core\Factory\IComponentProvider'))
-					{
-						/** @var  \Convo\Core\Factory\IComponentProvider $provider*/
-						$componentProperties = $provider->getComponentDefinition($class)->getRow()['component_properties'];
-						if (isset($componentProperties['_platform_defaults'])) {
-							$platformInterfaces = $componentProperties['_platform_defaults'][$this->getPlatformId()]['interfaces'] ?? [];
-							foreach ($platformInterfaces as $platformInterface) {
-								array_push($interfaces, $platformInterface);
-							}
-						}
+		$this->_logger->debug('Service components with interfaces [' . json_encode($serviceComponentsWithInterfaces, JSON_PRETTY_PRINT) . ']');
+
+		array_walk_recursive($workflow, function ($value, $key) use ($serviceComponentsWithInterfaces, &$interfaces) {
+			if ($key === 'class') {
+				$this->_logger->debug('Checking class [' . $value . ']');
+				if (isset($serviceComponentsWithInterfaces[$value])) {
+					foreach ($serviceComponentsWithInterfaces[$value] as $componentInterface) {
+						array_push($interfaces, $componentInterface);
 					}
 				}
 			}
 		});
 
-        return array_unique($interfaces);
-    }
+		return array_unique($interfaces);
+	}
 }
