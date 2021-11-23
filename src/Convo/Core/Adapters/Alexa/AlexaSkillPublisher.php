@@ -265,6 +265,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             unset($manifestToPropagate['publishingInformation']['locales']['en-US']);
         }
 
+		$this->_logger->info('Updating skill manifest [' . json_encode($manifestToPropagate) . ']');
+
 		$this->_amazonPublishingService->updateSkill(
 			$owner, $skillId, 'development', ['manifest' => $manifestToPropagate ]
 		);
@@ -401,7 +403,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                       $config		=   $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 
 		$workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
-        $interfaces = $this->_prepareInterfacesFromWorkflowComponents($workflow);
+        $interfaces = $this->_prepareInterfacesFromWorkflowComponents();
 
         $meta = $this->_convoServiceDataProvider->getServiceMeta(
             $this->_user, $this->_serviceId
@@ -1133,8 +1135,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $manifest = new AmazonSkillManifest();
         $manifest->setLogger($this->_logger);
-		$workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
-        $interfaces = $this->_prepareInterfacesFromWorkflowComponents($workflow);
+        $interfaces = $this->_prepareInterfacesFromWorkflowComponents();
 
         if (count($interfaces) > 0) {
             $manifest->setInterfaces($interfaces);
@@ -1161,6 +1162,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 self::TYPE_LARGE_SKILL_URL
             ) : '';
 
+		$permissions = $config[$this->getPlatformId()]['permissions'] ?? [];
+
         $manifest->setGlobalEndpoint(
             $this->_serviceReleaseManager->getWebhookUrl(
                 $this->_user, $this->_serviceId, $this->getPlatformId()
@@ -1185,6 +1188,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             ->isExportCompliant($config[$this->getPlatformId()]['privacy_and_compliance']['is_export_compliant'])
             ->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
             ->setOptInToAutomaticLocaleDistribution($optInAutomaticDistribution, $defaultLocale)
+			->setPermissions($permissions)
             ->setGlobalCertificateType($endpointCertificate)
             ->setIsAvailableWorldwide(true);
 
