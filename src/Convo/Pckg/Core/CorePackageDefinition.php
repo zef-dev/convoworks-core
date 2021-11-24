@@ -615,6 +615,10 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Children to be run if the run once flow has already been triggered',
                         'valueType' => 'class'
                     ],
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        'template' => '<div class="code">Run elements once per <span class="statement">{{ component.properties.scope_type }}</span></div>'
+                    ],
                     '_help' =>  array(
                         'type' => 'file',
                         'filename' => 'run-once-element.html'
@@ -825,6 +829,10 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'name' => 'Limit',
                         'description' => 'Limit execution to this many elements of the collection.',
                         'valueType' => 'string'
+                    ],
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        'template' => '<div class="code">For each item in <b>{{ component.properties.data_collection || "data collection" }}</b> as <b>{{ component.properties.item || "item" }}</b></div>'
                     ],
                     '_help' =>  array(
                         'type' => 'file',
