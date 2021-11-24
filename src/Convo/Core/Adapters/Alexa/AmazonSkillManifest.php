@@ -629,7 +629,7 @@ class AmazonSkillManifest implements LoggerAwareInterface
 		$this->_useEvents = $bool;
 	}
 
-    // UTIL
+	// PRIVACY SETTINGS
     private function _setPrivacySetting($setting, $bool)
     {
         $this->_manifest['privacyAndCompliance'][$setting] = $bool;
@@ -637,7 +637,24 @@ class AmazonSkillManifest implements LoggerAwareInterface
         return $this;
     }
 
-    private function _checkRegionIsValid($region)
+	/**
+	 * Sets permissions for the skill.
+	 * @param array $permissions Permissions of the Skill
+	 * @return self
+	 */
+	public function setPermissions($permissions)
+	{
+		$permissionsReadyToSet = [];
+		foreach ($permissions as $permission) {
+			array_push($permissionsReadyToSet, ['name' => $permission]);
+		}
+		$this->_manifest['permissions'] = $permissionsReadyToSet;
+
+		return $this;
+	}
+
+	// UTIL
+	private function _checkRegionIsValid($region)
     {
         if (!in_array($region, self::ALLOWED_REGIONS)) {
             throw new \Exception("Invalid region [$region]");

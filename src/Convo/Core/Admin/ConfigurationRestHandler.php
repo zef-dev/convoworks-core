@@ -72,6 +72,12 @@ class ConfigurationRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
 				['name' => 'profile:user_id', 'checked' => false],
 				['name' => 'postal_code', 'checked' => false]
 			],
+			'CONVO_AMAZON_SKILL_PERMISSIONS' => [
+				['value' => 'alexa::profile:name:read', 'name' => 'Full Name', 'checked' => false],
+				['value' => 'alexa::profile:given_name:read', 'name' => 'Given Name', 'checked' => false],
+				['value' => 'alexa::profile:email:read', 'name' => 'Customer Email Address', 'checked' => false],
+				['value' => 'alexa::profile:mobile_number:read', 'name' => 'Customer Phone Number', 'checked' => false]
+			],
             'CONVO_AMAZON_SKILL_ENDPOINT_SSL_CERTIFICATE' => [
                 ['value' => AmazonSkillManifest::CERTIFICATE_TYPE_TRUSTED, 'description' => 'My Development endpoint has a certificate from a trusted certificate authority'],
                 ['value' => AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD, 'description' => 'My Development endpoint is a sub-domain of a domain that has a wildcard certificate from a certificate authority'],

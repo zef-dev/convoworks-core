@@ -13,7 +13,9 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 
 	private $_elements;
 
-	private $_namespace;
+	private $_loop;
+
+	private $_isRepeat;
 
 	private $_scopeType;
 	
@@ -23,12 +25,9 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 
         $this->_mode = $properties['mode'] ?? self::RANDOM_MODE_WILD;
 
-	    if ($this->_mode === self::RANDOM_MODE_SMART && !isset($properties['namespace'])) {
-            $this->_logger->warning('No namespace provided. Going to use component\'s ID.');
-            $this->_namespace = $this->getId();
-        } else if ($this->_mode === self::RANDOM_MODE_SMART && isset($properties['namespace'])) {
-            $this->_namespace = $properties['namespace'];
-        }
+		$this->_loop = $properties['loop'] ?? false;
+
+		$this->_isRepeat = $properties['is_repeat'] ?? false;
 
 		$elements = $properties['elements'] ?? [];
 
@@ -50,31 +49,52 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 
 		$mode = $this->evaluateString($this->_mode);
 		$scope_type = $this->evaluateString($this->_scopeType);
-		$namespace = $this->evaluateString($this->_namespace);
+		$loop = $this->evaluateString($this->_loop);
+		$isRepeat = $this->evaluateString($this->_isRepeat);
+		$componentId = $this->getId();
 		
 	    if ($mode === self::RANDOM_MODE_SMART) {
-	    	$params = $service->getComponentParams($scope_type, $this)->getServiceParam($namespace);
+	    	$params = $service->getComponentParams($scope_type, $this)->getServiceParam($componentId);
 
-            if ($params !== null && !empty($params))
+            if (!empty($params) && isset($params['elements']) && isset($params['current_index']))
 			{
-                $randomized =   $params;
+                $randomized =   $params['elements'];
+                $next =   $params['current_index'];
+
+				if (!$isRepeat) {
+					$next++;
+				}
             }
 			else
 			{
-                $this->_logger->info( 'Empty or missing param ['.$namespace.']. Shuffling and storing new');
+                $this->_logger->info( 'Shuffling and storing new');
 
                 $shuffled = $this->_shuffleArray( range( 0, count( $this->_elements) - 1));
 
-                $service->getComponentParams($scope_type, $this)->setServiceParam($namespace, $shuffled);
+                $service->getComponentParams($scope_type, $this)->setServiceParam($componentId, [
+						'elements' => $shuffled,
+						'current_index' => 0
+					]
+				);
 
                 $randomized = $shuffled;
+				$next = 0;
             }
 
-            $next = array_shift($randomized);
+			if ($next >= count($this->_elements)) {
+				$next = 0;
+				if (!$loop) {
+					$randomized = $this->_shuffleArray( range( 0, count( $this->_elements) - 1));
+				}
+			}
 
-            $service->getComponentParams($scope_type, $this)->setServiceParam($namespace, array_values( $randomized));
+            $service->getComponentParams($scope_type, $this)->setServiceParam($componentId, [
+					'elements' => array_values( $randomized),
+					'current_index' => $next
+				]
+			);
 
-            $random_element = $this->_elements[$next];
+            $random_element = $this->_elements[$randomized[$next]];
             $random_element->read( $request, $response);
         } else {
 	        $random_idx =   rand( 0, count( $this->_elements) - 1);

@@ -265,6 +265,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             unset($manifestToPropagate['publishingInformation']['locales']['en-US']);
         }
 
+		$this->_logger->info('Updating skill manifest [' . json_encode($manifestToPropagate) . ']');
+
 		$this->_amazonPublishingService->updateSkill(
 			$owner, $skillId, 'development', ['manifest' => $manifestToPropagate ]
 		);
@@ -401,7 +403,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                       $config		=   $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 
 		$workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
-        $interfaces = $this->_prepareInterfacesFromWorkflowComponents($workflow);
+        $interfaces = $this->_prepareInterfacesFromWorkflowComponents();
 
         $meta = $this->_convoServiceDataProvider->getServiceMeta(
             $this->_user, $this->_serviceId
@@ -1133,8 +1135,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $manifest = new AmazonSkillManifest();
         $manifest->setLogger($this->_logger);
-		$workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
-        $interfaces = $this->_prepareInterfacesFromWorkflowComponents($workflow);
+        $interfaces = $this->_prepareInterfacesFromWorkflowComponents();
 
         if (count($interfaces) > 0) {
             $manifest->setInterfaces($interfaces);
@@ -1161,6 +1162,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 self::TYPE_LARGE_SKILL_URL
             ) : '';
 
+		$permissions = $config[$this->getPlatformId()]['permissions'] ?? [];
+
         $manifest->setGlobalEndpoint(
             $this->_serviceReleaseManager->getWebhookUrl(
                 $this->_user, $this->_serviceId, $this->getPlatformId()
@@ -1185,6 +1188,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             ->isExportCompliant($config[$this->getPlatformId()]['privacy_and_compliance']['is_export_compliant'])
             ->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
             ->setOptInToAutomaticLocaleDistribution($optInAutomaticDistribution, $defaultLocale)
+			->setPermissions($permissions)
             ->setGlobalCertificateType($endpointCertificate)
             ->setIsAvailableWorldwide(true);
 
@@ -1210,34 +1214,40 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         ];
     }
 
-    private function _prepareInterfacesFromWorkflowComponents() {
-        $workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
-        $interfaces = [];
+	private function _prepareInterfacesFromWorkflowComponents() {
+		$workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+		$interfaces = [];
 
-		$class = '';
-		array_walk_recursive($workflow, function ($value, $key) use (&$class, &$interfaces) {
-			if ($key === 'class') {
-				$class = $value;
+		// get enabled packages in services
+		$provider = $this->_packageProviderFactory->getProviderByServiceId($this->_user, $this->_serviceId);
+		$servicePackages = $provider->getRow();
+		$serviceComponentsWithInterfaces = [];
+
+		// get service components that contain interfaces
+		foreach ($servicePackages as $servicePackage) {
+			if (isset($servicePackage['components'])) {
+				foreach ($servicePackage['components'] as $serviceComponent) {
+					if (isset($serviceComponent['component_properties']['_platform_defaults'][$this->getPlatformId()]['interfaces'])) {
+						$serviceComponentsWithInterfaces[$serviceComponent['type']] =
+							$serviceComponent['component_properties']['_platform_defaults'][$this->getPlatformId()]['interfaces'];
+					}
+				}
 			}
+		}
 
-			if ($key === 'namespace' && $class !== '') {
-				if (!empty($value)) {
-					$provider = $this->_packageProviderFactory->getProviderByNamespace($value);
-					if ( is_a( $provider, '\Convo\Core\Factory\IComponentProvider'))
-					{
-						/** @var  \Convo\Core\Factory\IComponentProvider $provider*/
-						$componentProperties = $provider->getComponentDefinition($class)->getRow()['component_properties'];
-						if (isset($componentProperties['_platform_defaults'])) {
-							$platformInterfaces = $componentProperties['_platform_defaults'][$this->getPlatformId()]['interfaces'] ?? [];
-							foreach ($platformInterfaces as $platformInterface) {
-								array_push($interfaces, $platformInterface);
-							}
-						}
+		$this->_logger->debug('Service components with interfaces [' . json_encode($serviceComponentsWithInterfaces, JSON_PRETTY_PRINT) . ']');
+
+		array_walk_recursive($workflow, function ($value, $key) use ($serviceComponentsWithInterfaces, &$interfaces) {
+			if ($key === 'class') {
+				$this->_logger->debug('Checking class [' . $value . ']');
+				if (isset($serviceComponentsWithInterfaces[$value])) {
+					foreach ($serviceComponentsWithInterfaces[$value] as $componentInterface) {
+						array_push($interfaces, $componentInterface);
 					}
 				}
 			}
 		});
 
-        return array_unique($interfaces);
-    }
+		return array_unique($interfaces);
+	}
 }

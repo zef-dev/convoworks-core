@@ -1249,16 +1249,26 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Elements to be executed at random',
                         'valueType' => 'class'
                     ),
-                    'namespace' => array(
-                        'editor_type' => 'text',
-                        'editor_properties' => array(
-                            'dependency' => "component.properties.mode === 'smart'"
-                        ),
-                        'defaultValue' => null,
-                        'name' => 'Namespace',
-                        'description' => 'A string of your choosing that will be used as a "pool" for Smart mode',
-                        'valueType' => 'string'
-                    ),
+					'loop' => array(
+						'editor_type' => 'boolean',
+						'editor_properties' => array(
+							'dependency' => "component.properties.mode === 'smart'"
+						),
+						'defaultValue' => false,
+						'name' => 'Loop',
+						'description' => 'Should use loop?',
+						'valueType' => 'boolean'
+					),
+					'is_repeat' => array(
+						'editor_type' => 'text',
+						'editor_properties' => array(
+							'dependency' => "component.properties.mode === 'smart'"
+						),
+						'defaultValue' => '',
+						'name' => 'Is Repeat',
+						'description' => 'Expression to evaluate if you want the Element Randomizer Element to repeat the same element.',
+						'valueType' => 'string'
+					),
                     'scope_type' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
