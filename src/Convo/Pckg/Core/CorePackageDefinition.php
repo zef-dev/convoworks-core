@@ -1254,7 +1254,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
 					'is_repeat' => array(
 						'editor_type' => 'text',
 						'editor_properties' => array(
-							'multiple' => false
+							'dependency' => "component.properties.mode === 'smart'"
 						),
 						'defaultValue' => '',
 						'name' => 'Is Repeat',
