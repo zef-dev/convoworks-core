@@ -720,7 +720,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => [
                         'type' => 'html',
                         'template' => '<div class="code">' .
-                            '<span class="statement">IF</span> <b>{{ component.properties.test }}</b>' .
+                            '<span class="statement">If</span> <b>{{ component.properties.test }}</b> is <span class="statement">true</span>' .
                             '</div>'
                     ],
                     '_help' =>  array(
@@ -759,7 +759,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => [
                         'type' => 'html',
                         'template' => '<div class="code">' .
-                            '<span class="statement">ELSE IF</span> <b>{{ component.properties.test }}</b>' .
+                            '<span class="statement">Else If</span> <b>{{ component.properties.test }}</b> is <span class="statement">true</span>' .
                             '</div>'
                     ],
                     '_help' =>  array(
@@ -885,6 +885,12 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Elements to be executed',
                         'valueType' => 'class'
                     ),
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        'template' => '<div class="statement">' .
+                                'Loop <b>{{ !component.properties.count || component.properties.count === "0" ? "x" : component.properties.count }} {{ !component.properties.count || (component.properties.count * 1) > 1 ? "times" : "time" }}</b>'.
+                            '</div>'
+                    ],
                     '_help' =>  array(
                         'type' => 'file',
                         'filename' => 'for-element.html'
