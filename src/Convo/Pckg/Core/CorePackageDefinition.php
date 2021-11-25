@@ -720,7 +720,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => [
                         'type' => 'html',
                         'template' => '<div class="code">' .
-                            '<span class="statement">If</span> <b>{{ component.properties.test }}</b> is <span class="statement">true</span>' .
+                            '<span class="statement">If</span> <b>{{ component.properties.test }}</b>' .
                             '</div>'
                     ],
                     '_help' =>  array(
@@ -759,7 +759,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => [
                         'type' => 'html',
                         'template' => '<div class="code">' .
-                            '<span class="statement">Else If</span> <b>{{ component.properties.test }}</b> is <span class="statement">true</span>' .
+                            '<span class="statement">Else If</span> <b>{{ component.properties.test }}</b>' .
                             '</div>'
                     ],
                     '_help' =>  array(
