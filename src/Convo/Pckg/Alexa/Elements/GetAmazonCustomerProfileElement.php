@@ -2,6 +2,7 @@
 
 namespace Convo\Pckg\Alexa\Elements;
 
+use Convo\Core\Adapters\Alexa\Api\AlexaApiException;
 use Convo\Core\Adapters\Alexa\Api\AlexaCustomerProfileApi;
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
@@ -106,7 +107,7 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 						$element->read( $request, $response);
 					}
 				}
-			} catch (\Exception $e) {
+			} catch (AlexaApiException $e) {
 				$params->setServiceParam($name, ['error' => $e->getMessage()]);
 
 				if ($e->getCode() === 403) {
