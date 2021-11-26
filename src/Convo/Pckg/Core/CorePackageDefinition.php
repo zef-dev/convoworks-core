@@ -361,10 +361,15 @@ class CorePackageDefinition extends AbstractPackageDefinition
 				$nextWeekStartFormatted = date("Y-m-d H:i:s", strtotime('last ' . $dayToStartWeek . ' midnight', $currentTime));
 				$nextWeekEndFormatted = date("Y-m-d H:i:s", strtotime('this ' . $dayToEndWeek . ' 23:59:59 + 1 week', $currentTime));
 
-				if ($inputTimeFormatted === $todayFormatted) {
+				$inputTimeFormattedDateOnly = trim(explode(' ', $inputTimeFormatted)[0]);
+				$todayFormattedDateOnly = trim(explode(' ', $todayFormatted)[0]);
+				$tomorrowFormattedDateOnly = trim(explode(' ', $tomorrowFormatted)[0]);
+
+				if ($inputTimeFormattedDateOnly === $todayFormattedDateOnly) {
 					$relativesArray['relative_available'] = true;
 					$relativesArray['today'] = true;
-				} else if ($inputTimeFormatted === $tomorrowFormatted) {
+					$relativesArray['this_week'] = true;
+				} else if ($inputTimeFormattedDateOnly === $tomorrowFormattedDateOnly) {
 					$relativesArray['relative_available'] = true;
 					$relativesArray['tomorrow'] = true;
 				} else if ($inputTime >= strtotime($thisWeekStartFormatted) && $inputTime <= strtotime($thisWeekEndFormatted)) {
