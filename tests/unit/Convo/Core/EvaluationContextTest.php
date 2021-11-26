@@ -581,6 +581,12 @@ class EvaluationContextTest extends TestCase
                     'card' => '${{"name": "Pack Rat", "mana_cost": "{1}{B}", "cmc": 2}}'
                 ],
                 '${card.name} (${card.mana_cost}) ${card.cmc}', 'Pack Rat ({1}{B}) 2'
+            ],
+            [
+                [
+                    'number' => '${0}'
+                ],
+                'The number is ${number === 0 ? "zero" : "not zero"}', 'The number is zero'
             ]
         ];
     }

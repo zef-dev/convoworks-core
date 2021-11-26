@@ -85,7 +85,7 @@ class EvaluationContext
 					$this->_logger->debug('preg_quoted expression ['.$quot_expr.']');
 
 			        $pattern = '/\${\s*'.$quot_expr.'\s*}/';
-			        $string = preg_replace($pattern, strval($value), $string);
+			        $string = $this->_castToAppropriateValueType(preg_replace($pattern, strval($value), $string));
 			    }
 
 				if ( $string === '') {
@@ -135,6 +135,33 @@ class EvaluationContext
 		}
 
 		return $expressions;
+	}
+
+	private function _castToAppropriateValueType($value)
+	{
+		$this->_logger->info('Got value to cast ['.$value.']');
+
+		if (is_null($value)) {
+			$this->_logger->info('Value ['.$value.'] is null.');
+			return '';
+		}
+
+		if (is_numeric($value)) {
+			$value += 0;
+
+			if (is_float($value)) {
+				$this->_logger->info('Value ['.$value.'] is a float.');
+				return floatval($value);
+			}
+	
+			if (is_int($value)) {
+				$this->_logger->info('Value ['.$value.'] is an int.');
+				return intval($value);
+			}
+		}
+
+		$this->_logger->info('Returning default string value for ['.$value.']');
+		return strval($value);
 	}
 
 	// UTIL
