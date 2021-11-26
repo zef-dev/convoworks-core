@@ -673,8 +673,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\IfElement',
-                'If Junction',
-                'Test against an expression and execute various flows depending on the result',
+                'If Element',
+                'Test against a condition and execute various flows depending on the result',
                 [
                     'test' => [
                         'editor_type' => 'text',
