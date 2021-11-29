@@ -26,6 +26,7 @@ class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
     private $_offset;
     private $_limit;
     private $_skipReset;
+    private $_resetLoop;
 
 
     public function __construct( $properties)
@@ -38,6 +39,7 @@ class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
         $this->_offset      =   $properties['offset'];
         $this->_limit       =   $properties['limit'];
         $this->_skipReset   =   $properties['skip_reset'];
+        $this->_resetLoop   =   $properties['reset_loop'] ?? false;
 
 
         foreach ( $properties['main_processors'] as $processor) {
@@ -133,11 +135,15 @@ class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
         $block_params->setServiceParam( $slot_name, array_merge( $status, ['value' => $items[$status['index']]]));
     }
 
-    private function _getStatus( $items)
+    private function _getStatus($items = [])
     {
-        $items         =   $this->getItems();
+		if (empty($items)) {
+			$items = $this->getItems();
+		}
+
         $slot_name     =   $this->evaluateString( $this->_item);
         $skip_reset    =   $this->evaluateString( $this->_skipReset);
+		$reset_loop    =   $this->evaluateString( $this->_resetLoop);
 
         $block_params  =   $this->getBlockParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION);
         $req_params    =   $this->getService()->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST);
@@ -145,11 +151,23 @@ class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
 
         $this->_logger->debug( 'Got returning ['.$returning.']');
         $this->_logger->debug( 'Got skip reset ['.$skip_reset.']');
+        $this->_logger->debug( 'Got reset loop ['.$reset_loop.']');
 
         if ( !$returning && !$skip_reset) {
             $this->_logger->debug( 'Reset array iterration status when coming first time');
             $block_params->setServiceParam( $slot_name, $this->_getDefaultStatus( $items));
         }
+
+		if ($reset_loop) {
+			$start = $this->getOffset();
+			$block_params->setServiceParam($slot_name, [
+				'value' => $items[$start],
+				'index' => $start,
+				'neutral' => $start + 1,
+				'first' => true,
+				'last' => false
+			]);
+		}
 
         $status        =   $block_params->getServiceParam( $slot_name);
         $this->_logger->debug( 'Got loop status ['.print_r( $status, true).']');

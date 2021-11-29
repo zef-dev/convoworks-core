@@ -2230,6 +2230,14 @@ In default phase you can inform users about problem you have interpreting comman
                         'description' => 'Remember block param values when outside of trivia block. Enter a value that evaluates to true or false.',
                         'valueType' => 'string'
                     ),
+					'reset_loop' => array(
+						'editor_type' => 'text',
+						'editor_properties' => array(),
+						'defaultValue' => '',
+						'name' => 'Reset loop',
+						'description' => 'Resets the loop and starts over. Enter a value that evaluates to true or false.',
+						'valueType' => 'string'
+					),
                     'elements' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
