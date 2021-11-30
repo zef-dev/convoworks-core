@@ -123,6 +123,7 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
                 $this->_intentName = $this->_intentType;
                 $this->_selectedOption = $this->_data['originalDetectIntentRequest']['payload']['inputs'][0]['arguments'][0]['textValue'];
                 $this->_logger->debug( 'Got event text ['.$this->_text.']');
+                $this->_logger->debug( 'Got selected option ['.$this->_selectedOption.']');
                 break;
             case IActionsIntent::TEXT:
                 $this->_text = $this->_data['originalDetectIntentRequest']['payload']['inputs'][0]['arguments'][0]['rawText'];
@@ -272,6 +273,10 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
         if (is_numeric($this->_selectedOption)) {
             $isEmpty = false;
         }
+
+		if (is_string($this->_selectedOption)) {
+			$isEmpty = false;
+		}
 
         return $isEmpty;
     }

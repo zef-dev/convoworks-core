@@ -107,10 +107,10 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
             case IResponseType::LIST:
             case IResponseType::CAROUSEL:
                 $this->_isSystemIntentInvolved = true;
-                $this->_value = [
-                    "ssml" => $this->getTextSsml(),
-                    "displayText" => $this->getText(),
-                ];
+                $this->_value = array_merge($this->_value, [
+					"ssml" => $this->getTextSsml(),
+					"displayText" => $this->getText()
+				]);
                 return $this->_prepareSimpleResponse();
             case IResponseType::BASIC_CARD:
                 return $this->_prepareBasicCardResponse();
@@ -124,11 +124,10 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
                     $displayText = $this->getText();
                 }
 
-                $speechText = [
-                    "ssml" => $ssmlText,
-                    "displayText" => $displayText,
-                ];
-                $this->_value = $speechText;
+                $this->_value = [
+					"ssml" => $ssmlText,
+					"displayText" => $displayText,
+				];
                 return $this->_prepareSimpleResponse();
         }
     }
@@ -272,11 +271,7 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
     }
 
     private function _emptyResponse($ssmlText, $text) {
-        $speechText = [
-            "ssml" => $ssmlText,
-            "displayText" => $text,
-        ];
-        $this->prepareResponse(IResponseType::SIMPLE_RESPONSE, $speechText);
+        $this->prepareResponse(IResponseType::SIMPLE_RESPONSE, ["ssml" => $ssmlText, "displayText" => $text,]);
         return json_decode($this->getPlatformResponse(), true);
     }
 }
