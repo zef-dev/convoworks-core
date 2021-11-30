@@ -1265,7 +1265,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
 						'editor_properties' => array(
 							'dependency' => "component.properties.mode === 'smart'"
 						),
-						'defaultValue' => false,
+						'defaultValue' => true,
 						'name' => 'Loop',
 						'description' => 'Should use loop?',
 						'valueType' => 'boolean'
