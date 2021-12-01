@@ -54,7 +54,14 @@ class RunOnceElement extends AbstractWorkflowContainerComponent implements IConv
                 $this->_logger->debug('Reading children');
                 
                 foreach ($this->_children as $child) {
-                    $child->read($request, $response);
+                    try {
+                        $child->read($request, $response);
+                    }
+                    catch (StateChangedException $e) {
+                        $this->_logger->info('State changed while reading children. Setting triggered to true before transition.');
+                        $params->setServiceParam('triggered', true);
+                        throw $e;
+                    }
                 }
             }
 
