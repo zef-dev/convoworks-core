@@ -107,27 +107,12 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
             case IResponseType::LIST:
             case IResponseType::CAROUSEL:
                 $this->_isSystemIntentInvolved = true;
-                $this->_value = array_merge($this->_value, [
-					"ssml" => $this->getTextSsml(),
-					"displayText" => $this->getText()
-				]);
                 return $this->_prepareSimpleResponse();
             case IResponseType::BASIC_CARD:
                 return $this->_prepareBasicCardResponse();
             case IResponseType::CAROUSEL_BROWSE:
                 return $this->_prepareCarouselBrowseResponse();
             default:
-                $displayText = " ";
-                $ssmlText = "<speak><p>$displayText</p></speak>";
-                if (!empty($this->getText())) {
-                    $ssmlText = $this->getTextSsml();
-                    $displayText = $this->getText();
-                }
-
-                $this->_value = [
-					"ssml" => $ssmlText,
-					"displayText" => $displayText,
-				];
                 return $this->_prepareSimpleResponse();
         }
     }
@@ -173,27 +158,48 @@ class DialogflowCommandResponse extends DefaultTextCommandResponse implements IC
     }
 
     private function _prepareBasicCardResponse() {
+		$displayText = " ";
+		$ssmlText = "<speak><p>$displayText</p></speak>";
+		if (is_numeric($this->getText()) || !empty($this->getText())) {
+			$ssmlText = $this->getTextSsml();
+			$displayText = $this->getText();
+		}
+
         return array (
             "items" => array(
-                $this->_responseElement->getSimpleResponseElement("Conversation Response", $this->getTextSsml(),$this->getText()),
+                $this->_responseElement->getSimpleResponseElement("Conversation Response", $ssmlText, $displayText),
                 $this->_responseElement->getBasicCardResponseElement($this->_value)
             )
         );
     }
 
     private function _prepareCarouselBrowseResponse() {
+		$displayText = " ";
+		$ssmlText = "<speak><p>$displayText</p></speak>";
+		if (is_numeric($this->getText()) || !empty($this->getText())) {
+			$ssmlText = $this->getTextSsml();
+			$displayText = $this->getText();
+		}
+
         return array (
             "items" => array(
-                $this->_responseElement->getSimpleResponseElement("Conversation Response", $this->getTextSsml(),$this->getText()),
+                $this->_responseElement->getSimpleResponseElement("Conversation Response", $ssmlText, $displayText),
                 $this->_responseElement->getCarouselBrowseResponseElement($this->_value)
             )
         );
     }
 
     private function _prepareSimpleResponse() {
+		$displayText = " ";
+		$ssmlText = "<speak><p>$displayText</p></speak>";
+		if (is_numeric($this->getText()) || !empty($this->getText())) {
+			$ssmlText = $this->getTextSsml();
+			$displayText = $this->getText();
+		}
+
         return array (
             "items" => array(
-                $this->_responseElement->getSimpleResponseElement("Conversation Response", $this->_value['ssml'], $this->_value['displayText'])
+                $this->_responseElement->getSimpleResponseElement("Conversation Response", $ssmlText, $displayText)
             )
         );
     }
