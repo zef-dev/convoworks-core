@@ -8,6 +8,7 @@ use Convo\Core\Preview\PreviewSection;
 use Convo\Core\Preview\PreviewUtterance;
 use Convo\Core\Workflow\IRunnableBlock;
 use Convo\Core\ConvoServiceInstance;
+use Convo\Core\StateChangedException;
 
 class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements \Convo\Core\Workflow\IRunnableBlock
 {
@@ -115,10 +116,15 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 		// $default_result		=	null;
 		foreach ( $processors as $processor)
 		{
-			if ( $this->_processProcessor( $request, $response, $processor)) {
-			    $session_params->setServiceParam( 'failure_count', 0);
-			    return ;
-			}
+		    try {
+		        if ( $this->_processProcessor( $request, $response, $processor)) {
+		            $session_params->setServiceParam( 'failure_count', 0);
+		            return ;
+		        }
+		    } catch ( StateChangedException $e) {
+		        $session_params->setServiceParam( 'failure_count', 0);
+		        throw $e;
+		    }
 		}
 
 		$session_params->setServiceParam( 'failure_count', intval( $session_params->getServiceParam( 'failure_count')) + 1);
