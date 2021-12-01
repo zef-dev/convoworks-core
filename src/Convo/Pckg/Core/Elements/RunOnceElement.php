@@ -2,6 +2,7 @@
 
 namespace Convo\Pckg\Core\Elements;
 
+use Convo\Core\StateChangedException;
 use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
 use Convo\Core\Workflow\IConversationElement;
 
@@ -43,12 +44,12 @@ class RunOnceElement extends AbstractWorkflowContainerComponent implements IConv
         $scope_type = $this->evaluateString($this->_scopeType);
         $params = $this->getService()->getComponentParams($scope_type, $this);
 
-        $this->_logger->debug('Got component params ['.$this->_scopeType.']['.print_r($params->getData(), true).']');
+        $this->_logger->info('Got component params ['.$this->_scopeType.']['.print_r($params->getData(), true).']');
 
-        $triggered = $params->getServiceParam('triggered') ?? false;
+        $triggered = $params->getServiceParam('triggered');
 
         if (!$triggered) {
-            $this->_logger->debug('One-off element hasn\'t fired yet in scope ['.$this->_scopeType.']');
+            $this->_logger->info('One-off element hasn\'t fired yet in scope ['.$this->_scopeType.']');
 
             if ($this->_children) {
                 $this->_logger->debug('Reading children');
@@ -69,7 +70,8 @@ class RunOnceElement extends AbstractWorkflowContainerComponent implements IConv
         }
         
         if ($triggered) {
-            
+            $this->_logger->info('One-off element already fired in ['.$this->_scopeType.'] scope. Checking for else elements');
+
             if ($this->_else) {
                 $this->_logger->debug('Reading else flow');
                 
