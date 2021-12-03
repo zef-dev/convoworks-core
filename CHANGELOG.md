@@ -4,6 +4,22 @@
 
 ## [Releases]
 
+## 0.22.8.0 - 2021-12-03
+* Fixed how intent readers accept incoming intent requests
+* Fixed `AplUserEventReader`
+* Added new core functions, including `relative_date`
+* Added Amazon account linking scopes
+* Reworked Amazon value catalogs
+* Added some missing preview templates
+* Fixed everything resolving to strings in expression evaluation
+* Fixed `RunOnce` element not setting its `triggered` state properly
+* Fixed `ConversationBlock` not resetting its `failure_count` properly
+* Fixed Dialogflow response for lists
+* Fixed get option in Dialogflow request
+* Added reset loop parameter in LoopBlock
+* Added loop property to element randomizer
+* Added support for Alexa Permissions
+
 ## 0.22.7.0 - 2021-11-17
 * Apply service migration for default alexa skill icons feature
 * Update documentation of `IURLSupplier`
