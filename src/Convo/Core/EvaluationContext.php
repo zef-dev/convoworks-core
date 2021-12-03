@@ -139,7 +139,7 @@ class EvaluationContext
 
 	private function _castToAppropriateValueType($value)
 	{
-		$this->_logger->info('Got value to cast ['.$value.']');
+		$this->_logger->debug('Got value to cast ['.$value.']');
 
 		if (is_null($value)) {
 			$this->_logger->info('Value ['.$value.'] is null.');
