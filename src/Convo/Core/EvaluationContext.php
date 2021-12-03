@@ -142,7 +142,7 @@ class EvaluationContext
 		$this->_logger->debug('Got value to cast ['.$value.']');
 
 		if (is_null($value)) {
-			$this->_logger->info('Value ['.$value.'] is null.');
+			$this->_logger->debug('Value ['.$value.'] is null.');
 			return '';
 		}
 
@@ -150,17 +150,17 @@ class EvaluationContext
 			$value += 0;
 
 			if (is_float($value)) {
-				$this->_logger->info('Value ['.$value.'] is a float.');
+				$this->_logger->debug('Value ['.$value.'] is a float.');
 				return floatval($value);
 			}
 	
 			if (is_int($value)) {
-				$this->_logger->info('Value ['.$value.'] is an int.');
+				$this->_logger->debug('Value ['.$value.'] is an int.');
 				return intval($value);
 			}
 		}
 
-		$this->_logger->info('Returning default string value for ['.$value.']');
+		$this->_logger->debug('Returning default string value for ['.$value.']');
 		return strval($value);
 	}
 
