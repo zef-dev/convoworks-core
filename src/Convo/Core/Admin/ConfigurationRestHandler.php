@@ -62,6 +62,8 @@ class ConfigurationRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
                 ['name' => 'seen', 'checked' => false, 'mandatory' => false],
                 ['name' => 'failed', 'checked' => false, 'mandatory' => false]
             ],
+			'CONVO_AMAZON_FORBIDDEN_ENGLISH_WORDS_IN_INVOCATION' => ['run', 'start', 'play', 'resume', 'use', 'launch', 'ask', 'open', 'tell', 'load', 'begin', 'enable', 'to', 'from', 'in', 'using', 'with', 'about', 'for', 'that', 'by', 'if', 'and', 'whether', 'Alexa', 'Amazon', 'Echo', 'skill', 'app'],
+			'CONVO_AMAZON_FORBIDDEN_ENGLISH_WORDS_IN_TWO_WORD_INVOCATION' => ['the', 'a', 'an', 'for', 'to', 'of', 'about', 'up', 'by', 'at', 'off', 'with'],
             'CONVO_AMAZON_INTERACTION_MODEL_SENSITIVITIES' => [
                 ['value' => 'LOW', 'name' => 'Low'],
                 ['value' => 'MEDIUM', 'name' => 'Medium'],
