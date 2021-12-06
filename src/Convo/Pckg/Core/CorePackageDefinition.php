@@ -802,7 +802,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'item' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'item',
                         'name' => 'Data collection item name',
                         'description' => 'Name under which to provide each item of the collection in parameters.',
                         'valueType' => 'string'
@@ -2201,7 +2201,7 @@ In default phase you can inform users about problem you have interpreting comman
                     'item' => array(
                         'editor_type' => 'text',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => 'item',
                         'name' => 'Data collection item name',
                         'description' => 'Name under which to provide each item of the collection in parameters.',
                         'valueType' => 'string'
