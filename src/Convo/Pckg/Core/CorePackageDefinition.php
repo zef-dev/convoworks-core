@@ -1190,7 +1190,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\ElementCollection',
-                'x!Element collection',
+                'Element collection',
                 'Collection of conversation elements. It will execute sequentially all child elements',
                 array(
                     'name' => array(
