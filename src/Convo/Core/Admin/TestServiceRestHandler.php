@@ -83,18 +83,18 @@ class TestServiceRestHandler implements RequestHandlerInterface
 
 		$service        =   $this->_convoServiceFactory->getService( $user, $service_id, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory);
 		$exception = [
-		    "exceptionMessage" => null,
-		    "exceptionStackTrace" => null,
+		    "message" => null,
+		    "stack_trace" => null,
         ];
 
         try {
 			$this->_logger->info('Running service instance ['.$service->getId().']');
             $service->run($text_request, $text_response);
         } catch (\Exception $e) {
-            $exception["exceptionMessage"] = $e->getMessage();
+            $exception["message"] = $e->getMessage();
             $stack = explode('#', $e->getTraceAsString());
             array_shift($stack);
-            $exception["exceptionStackTrace"] = $stack;
+            $exception["stack_trace"] = $stack;
             $this->_logger->error($e);
         }
 
@@ -125,6 +125,15 @@ class TestServiceRestHandler implements RequestHandlerInterface
             ],
             'exception' => $exception
 		];
+
+		if (is_a($text_request, '\Convo\Core\Workflow\IIntentAwareRequest')) {
+			$this->_logger->info('Going to extract intent and slot data from intent aware request');
+
+			$data['intent'] = [
+				'name' => $text_request->getIntentName(),
+				'slots' => $text_request->getSlotValues()
+			];
+		}
 
 		$data = ArrayUtil::arrayFilterRecursive($data, function ($value) { return !empty($value); });
 		$data = array_merge($data, $text_response->getPlatformResponse());
