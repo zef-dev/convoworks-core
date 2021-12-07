@@ -647,6 +647,16 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Scope under which to store parameters',
                         'valueType' => 'string'
                     ),
+					'parameters' => array(
+						'editor_type' => 'select',
+						'editor_properties' => array(
+							'options' => array('parent' => 'Parent Params', 'block' => 'Block Params', 'service' => 'Service Params'),
+						),
+						'defaultValue' => 'service',
+						'name' => 'Parameters',
+						'description' => 'Store in Block Params or in Service Params',
+						'valueType' => 'string'
+					),
                     'properties' => array(
                         'editor_type' => 'params',
                         'editor_properties' => array(
@@ -659,7 +669,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code">Set parameters in <span class="statement">{{ component.properties.scope_type.toUpperCase() }}</span><br>' .
+                        'template' => '<div class="code">Set parameters in <span class="statement">{{ component.properties.scope_type.toUpperCase() }}</span> at <span class="statement">{{ component.properties.parameters.toUpperCase() }}</span> level<br>' .
                             ' <span ng-repeat="(key, val) in component.properties.properties track by key"><span class="statement">LET</span> <b>{{ key}}</b> = <b>{{ val}};</b><br></span>' .
                             '</div>'
                     ),

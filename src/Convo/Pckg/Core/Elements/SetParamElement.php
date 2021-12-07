@@ -9,6 +9,8 @@ class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
 
 	private $_scopeType		=	\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION;
 
+	private $_parameters;
+
 	private $_params		=	[];
 
 	public function __construct( $properties)
@@ -19,6 +21,8 @@ class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
 			$this->_scopeType	=	$properties['scope_type'];
 		}
 
+		$this->_parameters = $properties['parameters'];
+
 		$this->_params	=	$properties['properties'];
 	}
 
@@ -26,7 +30,17 @@ class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
 	{
 		$service	=	$this->getService();
 		$scope_type =	$this->evaluateString($this->_scopeType);
-		$params		=	$service->getServiceParams($scope_type);
+		$parameters     =   $this->evaluateString( $this->_parameters);
+
+		if ($parameters === 'block'){
+			$params = $this->getBlockParams( $scope_type);
+		} else if ($parameters === 'service'){
+			$params = $service->getServiceParams($scope_type);;
+		} else if ($parameters === 'parent') {
+			$params = $service->getComponentParams( $scope_type, $this->getParent());
+		} else {
+			throw new \Exception("Unrecognized parameters type [$parameters]");
+		}
 
 		foreach ( $this->_params as $key => $val) {
 			$key	=	$this->evaluateString( $key);
