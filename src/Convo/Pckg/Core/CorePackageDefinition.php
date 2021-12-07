@@ -403,7 +403,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'type' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
-                            'options' => array('default' => 'Default', 'reprompt' => 'Reprompt'),
+                            'options' => array('default' => 'Default', 'reprompt' => 'Reprompt', 'both' => 'Both'),
                         ),
                         'defaultValue' => 'default',
                         'name' => 'Type',
@@ -459,7 +459,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="we-say">' .
-                            '{{ component.properties.type == \'default\' ? \'Say:\' : \'Repeat:\' }} <span class="we-say-text">{{component.properties.text}}</span>' .
+                            '<div ng-if="component.properties.type != \'both\'"> {{ component.properties.type == \'default\' ? \'Say:\' : \'Repeat:\' }} <span class="we-say-text">{{component.properties.text}}</span> </div>' .
+                            '<div ng-if="component.properties.type == \'both\'"> {{ \'Say and Repeat:\' }} <span class="we-say-text">{{component.properties.text}}</span> </div>' .
                             '</div>'
                     ),
                     '_help' =>  array(
