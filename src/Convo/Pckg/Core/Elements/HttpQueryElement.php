@@ -141,7 +141,7 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
 	{
 		$timeout = $this->evaluateString($this->_timeout);
 		$cacheTimeout = $this->evaluateString($this->_cacheTimeout);
-	    if ( $method === 'GET' && !empty($cacheTimeout)) {
+	    if ( $method === 'GET' && !empty($cacheTimeout) && is_numeric($cacheTimeout)) {
 	        $key  =   StrUtil::slugify(get_class($this).'-'.$method.'-'.strval($uri));
 	        if ( $this->_cache->has( $key)) {
 	            $this->_logger->debug('Getting data from cache ['.$key.']');
@@ -165,8 +165,13 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
 	        $parsed_headers[$this->evaluateString($name)] = $this->evaluateString($value);
         }
 
-	    $config = array( 'timeout' => $timeout);
-	    $http = $this->_httpFactory->getHttpClient( $config);
+		$config = array();
+
+		if (!empty($timeout) && is_numeric($timeout)) {
+			$config = array( 'timeout' => $timeout);
+		}
+
+		$http = $this->_httpFactory->getHttpClient($config);
 
 	    $this->_logger->debug('Current uri ['.$uri.']');
 	    $this->_logger->debug('Configured timeout ['.$timeout.']');
@@ -181,7 +186,7 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
 
 	    $content = $this->provideContent( $contentType, $apiResponse);
 
-	    if ( $method === 'GET' && !empty($cacheTimeout)) {
+	    if ( $method === 'GET' && !empty($cacheTimeout) && is_numeric($cacheTimeout)) {
 	        $this->_logger->debug( 'Storing data to cache ['.$key.']');
 	        $this->_cache->set( $key, $content, $cacheTimeout);
 	    }
