@@ -60,11 +60,11 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
         $this->_url             =   $config['url'];
         $this->_method          =   $config['method'];
         $this->_contentType     =   $config['content_type'];
-        $this->_timeout         =   $config['timeout'];
+        $this->_timeout         =   $config['timeout'] ?? 0;
         $this->_headers         =   $config['headers'];
         $this->_params          =   $config['params'];
         $this->_body            =   $config['body'];
-        $this->_cacheTimeout    =   intval( $config['cache_timeout']) ?? 0;
+        $this->_cacheTimeout    =   $config['cache_timeout'] ?? 0;
 
         $this->_ok = $config['ok'] ?? [];
         foreach ( $this->_ok as $okElement) {
@@ -139,7 +139,9 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
 	 */
 	private function _getContent( $method, UriInterface $uri)
 	{
-	    if ( $method === 'GET' && $this->_cacheTimeout) {
+		$timeout = $this->evaluateString($this->_timeout);
+		$cacheTimeout = $this->evaluateString($this->_cacheTimeout);
+	    if ( $method === 'GET' && !empty($cacheTimeout) && is_numeric($cacheTimeout)) {
 	        $key  =   StrUtil::slugify(get_class($this).'-'.$method.'-'.strval($uri));
 	        if ( $this->_cache->has( $key)) {
 	            $this->_logger->debug('Getting data from cache ['.$key.']');
@@ -163,10 +165,17 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
 	        $parsed_headers[$this->evaluateString($name)] = $this->evaluateString($value);
         }
 
-	    $config = array( 'timeout' => $this->_timeout);
-	    $http = $this->_httpFactory->getHttpClient( $config);
+		$config = array();
+
+		if (!empty($timeout) && is_numeric($timeout)) {
+			$config = array( 'timeout' => $timeout);
+		}
+
+		$http = $this->_httpFactory->getHttpClient($config);
 
 	    $this->_logger->debug('Current uri ['.$uri.']');
+	    $this->_logger->debug('Configured timeout ['.$timeout.']');
+	    $this->_logger->debug('Configured cache timeout ['.$cacheTimeout.']');
 
 	    $httpRequest = $this->_httpFactory->buildRequest( $method, $uri, $parsed_headers, $body);
 
@@ -177,9 +186,9 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
 
 	    $content = $this->provideContent( $contentType, $apiResponse);
 
-	    if ( $method === 'GET' && $this->_cacheTimeout) {
+	    if ( $method === 'GET' && !empty($cacheTimeout) && is_numeric($cacheTimeout)) {
 	        $this->_logger->debug( 'Storing data to cache ['.$key.']');
-	        $this->_cache->set( $key, $content, $this->_cacheTimeout);
+	        $this->_cache->set( $key, $content, $cacheTimeout);
 	    }
 
 	    return $content;

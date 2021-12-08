@@ -1596,7 +1596,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'valueType' => 'string'
                     ),
                     'cache_timeout' => array(
-                        'editor_type' => 'text',
+                        'editor_type' => 'number',
                         'editor_properties' => array(
                             'dependency' => 'component.properties.method === "GET"'
                         ),
@@ -1606,7 +1606,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'valueType' => 'int'
                     ),
                     'timeout' => array(
-                        'editor_type' => 'text',
+                        'editor_type' => 'number',
                         'editor_properties' => array(),
                         'defaultValue' => 3,
                         'name' => 'Timeout',
