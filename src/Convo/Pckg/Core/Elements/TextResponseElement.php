@@ -9,6 +9,7 @@ class TextResponseElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
 {
 	const TYPE_DEFAULT	=	'default';
 	const TYPE_REPROMPT	=	'reprompt';
+	const TYPE_BOTH	=	'both';
 
 
     const ALEXA_EMOTION_TYPE	    =	'neutral';
@@ -78,8 +79,7 @@ class TextResponseElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
         if ($type === self::TYPE_DEFAULT)
         {
             $this->_logger->info( 'Adding text ['.$text.']');
-            if (is_a($response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse'))
-            {
+            if (is_a($response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse')) {
                 $domain = $this->evaluateString($this->_alexaDomain);
                 $emotion = $this->evaluateString($this->_alexaEmotion);
                 $emotion_intensity = $this->evaluateString($this->_alexaEmotionIntensity);
@@ -96,9 +96,7 @@ class TextResponseElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
                 /* @var DefaultTextCommandResponse $response */
                 $response->addText($text, $append);
             }
-        }
-        else if ($type === self::TYPE_REPROMPT)
-        {
+        } else if ($type === self::TYPE_REPROMPT) {
             $this->_logger->info( 'Adding reprompt text ['.$text.']');
             
             if (is_a($response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse'))
@@ -121,7 +119,34 @@ class TextResponseElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
                 /** @var DefaultTextCommandResponse $response */
                 $response->addRepromptText($text, $append);
             }
-        } else {
+        } else if ($type === self::TYPE_BOTH) {
+			$this->_logger->info( 'Adding reprompt text ['.$text.']');
+
+			if (is_a($response, 'Convo\Core\Adapters\Alexa\AmazonCommandResponse'))
+			{
+				$domain = $this->evaluateString($this->_alexaDomain);
+				$emotion = $this->evaluateString($this->_alexaEmotion);
+				$emotion_intensity = $this->evaluateString($this->_alexaEmotionIntensity);
+
+				/** @var AmazonCommandResponse $response */
+				if ($emotion !== self::ALEXA_EMOTION_TYPE) {
+					$response->addEmotionText($emotion, $emotion_intensity, $text, $append);
+					$response->addEmotionRepromptText($emotion, $emotion_intensity, $text, $append);
+				}
+				if ($domain !== self::ALEXA_DOMAIN) {
+					$response->addDomainText($domain, $text, $append);
+					$response->addDomainRepromptText($domain, $text, $append);
+				}
+				if ($emotion === self::ALEXA_EMOTION_TYPE && $domain === self::ALEXA_DOMAIN) {
+					$response->addText($text, $append);
+					$response->addRepromptText($text, $append);
+				}
+			} else {
+				/** @var DefaultTextCommandResponse $response */
+				$response->addText($text, $append);
+				$response->addRepromptText($text, $append);
+			}
+		} else {
             throw new \Exception( 'Unexpected type ['.$type.']');
         }
     }
