@@ -846,6 +846,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Limit execution to this many elements of the collection.',
                         'valueType' => 'string'
                     ],
+					'loop_until' => [
+						'editor_type' => 'text',
+						'editor_properties' => [],
+						'defaultValue' => '',
+						'name' => 'Loop Until',
+						'description' => 'Expression to loop until.',
+						'valueType' => 'string'
+					],
                     '_preview_angular' => [
                         'type' => 'html',
                         'template' => '<div class="code">For each item in <b>{{ component.properties.data_collection || "data collection" }}</b> as <b>{{ component.properties.item || "item" }}</b></div>'
@@ -889,6 +897,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Variable name for accessing loop iteration information, such as the current index',
                         'valueType' => 'string'
                     ),
+					'loop_until' => [
+						'editor_type' => 'text',
+						'editor_properties' => [],
+						'defaultValue' => '',
+						'name' => 'Loop Until',
+						'description' => 'Expression to loop until.',
+						'valueType' => 'string'
+					],
                     'elements' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(

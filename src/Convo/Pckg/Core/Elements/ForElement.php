@@ -10,6 +10,7 @@ class ForElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
     
     /** @var array */
     private $_count;
+	private $_loop_until;
     private $_status_var;
     
     
@@ -18,6 +19,7 @@ class ForElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
         parent::__construct($properties);
         
         $this->_count = $properties['count'];
+        $this->_loop_until = $properties['loop_until'] ?? false;
         $this->_status_var = $properties['status_var'];
         
         
@@ -48,7 +50,12 @@ class ForElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                 'first' => $i === $start,
                 'last' => $i === $end - 1
             ]);
-            
+
+			$loop_until = $this->evaluateString($this->_loop_until);
+			if (is_bool($loop_until) && $loop_until) {
+				$this->_logger->info('Exiting loop.');
+				break;
+			}
             foreach ($this->_elements as $element) {
                 $element->read($request, $response);
             }
