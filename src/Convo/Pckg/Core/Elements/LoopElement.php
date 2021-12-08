@@ -12,6 +12,7 @@ class LoopElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 	private $_dataCollection;
 	private $_item;
 
+	private $_loop_until;
 	private $_offset;
 	private $_limit;
 
@@ -22,6 +23,7 @@ class LoopElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 		$this->_dataCollection = $properties['data_collection'];
 		$this->_item = $properties['item'];
 
+		$this->_loop_until = $properties['loop_until'];
 		$this->_offset = $properties['offset'];
 		$this->_limit = $properties['limit'];
 
@@ -76,6 +78,11 @@ class LoopElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 				'last' => $i === ($end - 1)
 			]);
 
+			$loop_until = $this->evaluateString($this->_loop_until);
+			if (is_bool($loop_until) && $loop_until) {
+				$this->_logger->info('Exiting loop.');
+				break;
+			}
 			foreach ($this->_elements as $element) {
 				$element->read($request, $response);
 			}

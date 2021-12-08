@@ -403,7 +403,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'type' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
-                            'options' => array('default' => 'Default', 'reprompt' => 'Reprompt'),
+                            'options' => array('default' => 'Default', 'reprompt' => 'Reprompt', 'both' => 'Both'),
                         ),
                         'defaultValue' => 'default',
                         'name' => 'Type',
@@ -459,7 +459,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="we-say">' .
-                            '{{ component.properties.type == \'default\' ? \'Say:\' : \'Repeat:\' }} <span class="we-say-text">{{component.properties.text}}</span>' .
+                            '<div ng-if="component.properties.type != \'both\'"> {{ component.properties.type == \'default\' ? \'Say:\' : \'Repeat:\' }} <span class="we-say-text">{{component.properties.text}}</span> </div>' .
+                            '<div ng-if="component.properties.type == \'both\'"> {{ \'Say and Repeat:\' }} <span class="we-say-text">{{component.properties.text}}</span> </div>' .
                             '</div>'
                     ),
                     '_help' =>  array(
@@ -845,6 +846,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Limit execution to this many elements of the collection.',
                         'valueType' => 'string'
                     ],
+					'loop_until' => [
+						'editor_type' => 'text',
+						'editor_properties' => [],
+						'defaultValue' => '',
+						'name' => 'Loop Until',
+						'description' => 'Expression to loop until.',
+						'valueType' => 'string'
+					],
                     '_preview_angular' => [
                         'type' => 'html',
                         'template' => '<div class="code">For each item in <b>{{ component.properties.data_collection || "data collection" }}</b> as <b>{{ component.properties.item || "item" }}</b></div>'
@@ -888,6 +897,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Variable name for accessing loop iteration information, such as the current index',
                         'valueType' => 'string'
                     ),
+					'loop_until' => [
+						'editor_type' => 'text',
+						'editor_properties' => [],
+						'defaultValue' => '',
+						'name' => 'Loop Until',
+						'description' => 'Expression to loop until.',
+						'valueType' => 'string'
+					],
                     'elements' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
