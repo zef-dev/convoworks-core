@@ -19,6 +19,7 @@ interface IRunnableBlock extends IConversationElement, IIdentifiableComponent
 	const ROLE_SESSION_START       =   'session_start';
 	const ROLE_SESSION_ENDED       =   'session_ended';
 	const ROLE_SERVICE_PROCESSORS  =   'service_processors';
+    const ROLE_DEFAULT_FALLBACK    =   'default_fallback';
 
 	/**
      * Executes internal flow with given request and response objects.
