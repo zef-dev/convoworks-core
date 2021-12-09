@@ -125,9 +125,7 @@ class SalesBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
 					}
 					break;
 				default:
-					foreach ( $this->_fallback as $element) {
-						$element->read( $request, $response);
-					}
+					$this->_readFallback($request, $response);
 					break;
 			}
 		}
@@ -163,6 +161,22 @@ class SalesBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
 	public function getName()
 	{
 		return $this->_blockName;
+	}
+
+	private function _readFallback(\Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
+	{
+		if (!empty($this->_fallback)) {
+			foreach ($this->_fallback as $fallback) {
+				$fallback->read($request, $response);
+			}
+		}
+		else {
+			try {
+				$default_fallback = $this->getService()->getBlockByRole(IRunnableBlock::ROLE_DEFAULT_FALLBACK);
+				$default_fallback->read($request, $response);
+			} catch (\Convo\Core\DataItemNotFoundException $e) {
+			}
+		}
 	}
 
 	/**
