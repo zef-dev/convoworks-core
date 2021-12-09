@@ -814,7 +814,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     public function addChild( \Convo\Core\Workflow\IBasicServiceComponent $child) {
         $this->_children[]	=	$child;
         if ( is_a( $child, '\Convo\Core\Workflow\IServiceWorkflowComponent')) {
-            /* @var \Convo\Core\Workflow\IServiceWorkflowComponent $child */
+            /** @var \Convo\Core\Workflow\IServiceWorkflowComponent $child */
             $child->setParent( $this);
         }
 
