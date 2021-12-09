@@ -568,10 +568,19 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
 
     private function _readFallback( $request, $response)
     {
-        foreach ($this->_fallback as $fallback)
-        {
-            /** @var \Convo\Core\Workflow\IConversationElement $fallback */
-            $fallback->read( $request, $response);
+        if (!empty($this->_fallback)) {
+            foreach ($this->_fallback as $fallback)
+            {
+                /** @var \Convo\Core\Workflow\IConversationElement $fallback */
+                $fallback->read( $request, $response);
+            }
+        }
+        else {
+            try {
+                $default_fallback = $this->getService()->getBlockByRole(IRunnableBlock::ROLE_DEFAULT_FALLBACK);
+                $default_fallback->read($request, $response);
+            } catch (\Convo\Core\DataItemNotFoundException $e) {
+            }
         }
     }
 
