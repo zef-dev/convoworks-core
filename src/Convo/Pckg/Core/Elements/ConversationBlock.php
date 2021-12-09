@@ -102,7 +102,7 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 		$processors	=	$this->_collectAllAccountableProcessors();
 		if ( empty( $processors)) {
 			$this->_logger->notice('No processors defined in ['.$this.']');
-			$this->_readFailback( $request, $response);
+			$this->_readFallback( $request, $response);
 			return;
 		}
 
@@ -129,15 +129,7 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 
 		$session_params->setServiceParam( 'failure_count', intval( $session_params->getServiceParam( 'failure_count')) + 1);
 
-		if ( !empty( $this->_fallback))
-		{
-		    $this->_logger->info( 'No valid matches found. Going to run fallback.');
-			$this->_readFailback( $request, $response);
-		}
-		else
-		{
-			$this->_logger->debug( 'No valid matches found, with no fallback exit.');
-		}
+		$this->_readFallback($request, $response);
 	}
 
 	protected function _processProcessor(
@@ -168,13 +160,29 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 	    return true;
 	}
 
-	private function _readFailback( $request, $response)
+	private function _readFallback(\Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
-	    foreach ($this->_fallback as $fallback)
-	    {
-	        /** @var \Convo\Core\Workflow\IConversationElement $fallback */
-	        $fallback->read( $request, $response);
-	    }
+		if (!empty($this->_fallback))
+		{
+		    $this->_logger->info( 'No valid matches found. Going to run fallback.');
+			
+			foreach ($this->_fallback as $fallback)
+			{
+				/** @var \Convo\Core\Workflow\IConversationElement $fallback */
+				$fallback->read($request, $response);
+			}
+		}
+		else
+		{
+			$this->_logger->info( 'No valid matches found, with no fallback exit. Looking for service level fallback');
+
+			try {
+				$default_fallback = $this->getService()->getBlockByRole(IRunnableBlock::ROLE_DEFAULT_FALLBACK);
+				$default_fallback->run($request, $response);
+			} catch (\Convo\Core\DataItemNotFoundException $e) {
+				$this->_logger->info('No valid matches found, with no block level fallback nor service level fallback');
+			}
+		}
 	}
 
 
