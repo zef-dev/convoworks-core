@@ -38,66 +38,66 @@ class LoopElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 	{
         $items = $this->evaluateString($this->_dataCollection);
 
-        if (is_array($items) || $items instanceof \Iterator) {
-			$slot_name = $this->evaluateString($this->_item);
-
-			$scope_type	= \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST;
-			$params = $this->getService()->getComponentParams( $scope_type, $this);
-
-			$start = 0;
-			if ($items instanceof \Iterator) {
-				$end = iterator_count($items);
-			} else {
-				$end = count($items);
-			}
-
-			$offset = $this->evaluateString($this->_offset);
-			$limit = $this->evaluateString($this->_limit);
-
-			if ($offset !== null) {
-				if ($offset > $end || $offset < 0) {
-					$this->_logger->warning('Offset ['.$offset.'] falls outside the range ['.$start.', '.$end.']. Starting from 0.');
-				} else {
-					$start = $offset;
-				}
-			}
-
-			if ($limit !== null) {
-				/** @var int $limit */
-				$limit = abs($limit);
-				$end = min(($start + $limit), $end);
-			}
-
-			$i = 0;
-			foreach ($items as $item) {
-				if ($i < $start) {
-					continue;
-				}
-
-				if ($i >= $end) {
-					break;
-				}
-
-				$params->setServiceParam($slot_name, [
-					'value' => $item,
-					'index' => $i,
-					'natural' => $i + 1,
-					'first' => $i === $start,
-					'last' => $i === ($end - 1)
-				]);
-
-				$loop_until = $this->evaluateString($this->_loop_until);
-				if (is_bool($loop_until) && $loop_until) {
-					$this->_logger->info('Exiting loop.');
-					break;
-				}
-				foreach ($this->_elements as $element) {
-					$element->read($request, $response);
-				}
-				$i++;
-			}
-        } else {
+		if (!is_array($items) && !$items instanceof \Iterator) {
 			throw new \Exception( 'Excepted to find array for ['.$this->_dataCollection.'] got ['.gettype( $items).']');
+		}
+
+		$slot_name = $this->evaluateString($this->_item);
+
+		$scope_type	= \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST;
+		$params = $this->getService()->getComponentParams( $scope_type, $this);
+
+		$start = 0;
+		if ($items instanceof \Iterator) {
+			$end = iterator_count($items);
+		} else {
+			$end = count($items);
+		}
+
+		$offset = $this->evaluateString($this->_offset);
+		$limit = $this->evaluateString($this->_limit);
+
+		if ($offset !== null) {
+			if ($offset > $end || $offset < 0) {
+				$this->_logger->warning('Offset ['.$offset.'] falls outside the range ['.$start.', '.$end.']. Starting from 0.');
+			} else {
+				$start = $offset;
+			}
+		}
+
+		if ($limit !== null) {
+			/** @var int $limit */
+			$limit = abs($limit);
+			$end = min(($start + $limit), $end);
+		}
+
+		$i = 0;
+		foreach ($items as $item) {
+			if ($i < $start) {
+				continue;
+			}
+
+			if ($i >= $end) {
+				break;
+			}
+
+			$params->setServiceParam($slot_name, [
+				'value' => $item,
+				'index' => $i,
+				'natural' => $i + 1,
+				'first' => $i === $start,
+				'last' => $i === ($end - 1)
+			]);
+
+			$loop_until = $this->evaluateString($this->_loop_until);
+			if (is_bool($loop_until) && $loop_until) {
+				$this->_logger->info('Exiting loop.');
+				break;
+			}
+			foreach ($this->_elements as $element) {
+				$element->read($request, $response);
+			}
+			$i++;
 		}
 	}
 	
