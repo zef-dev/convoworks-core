@@ -559,9 +559,11 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $variables          =   $this->_resolveVariables($this->_variables);
         $context			=	array_merge( $variables, $context);
 
-        $objResolver		=	new ObjectResolver( $this->_request);
+        // CONTEXTS
+        $context			=	array_merge( [ 'contexts' => $this->_contexts], $context);
 
         // REQUEST
+        $objResolver		=	new ObjectResolver( $this->_request);
         $context['request']	=	$objResolver;
 
         $arrResolver		=	new ArrayResolver($context);
