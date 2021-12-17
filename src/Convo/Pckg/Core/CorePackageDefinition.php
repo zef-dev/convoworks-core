@@ -2043,7 +2043,7 @@ In default phase you can inform users about problem you have interpreting comman
                 'Provides info about current songs in the connected Media Context component',
                 array(
                     'context_id' => array(
-                        'editor_type' => 'text',
+                        'editor_type' => 'context_id',
                         'editor_properties' => array(),
                         'defaultValue' => 'search_media',
                         'name' => 'Source',
@@ -2102,7 +2102,7 @@ In default phase you can inform users about problem you have interpreting comman
                 'Initiates audio playback and automatically stops the current session.',
                 array(
                     'context_id' => array(
-                        'editor_type' => 'text',
+                        'editor_type' => 'context_id',
                         'editor_properties' => array(),
                         'defaultValue' => 'search_media',
                         'name' => 'Source',
