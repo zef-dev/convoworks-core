@@ -2386,7 +2386,9 @@ In default phase you can inform users about problem you have interpreting comman
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code"><b>{{ component.properties.empty === \'empty\' ? \'Will not activate\' :  \'Always activated\' }}</b>'.
-                        '<span ng-if="component.properties.empty != \'empty\'" ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span>'
+                        '<span ng-if="component.properties.empty != \'empty\' && !component.properties[\'_use_var_values\']" ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span>'.
+                        '<span ng-if="component.properies[\'_use_var_values\']">Use predefined values expression <b>{{ component.properties.values }}</b></span>'.
+                        '</div>'
                     ),
                     '_help' =>  array(
                         'type' => 'file',
