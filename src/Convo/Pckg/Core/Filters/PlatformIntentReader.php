@@ -2,6 +2,7 @@
 
 namespace Convo\Pckg\Core\Filters;
 
+use Convo\Core\Util\StrUtil;
 use Convo\Core\Workflow\IIntentAwareRequest;
 
 class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponent implements \Convo\Core\Intent\IIntentAdapter
@@ -50,9 +51,16 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
 
         $slots  =   $request->getSlotValues();
 
+        if (!is_array($this->_rename) && is_string($this->_rename) && StrUtil::startsWith($this->_rename, '${')) {
+            $rename = $this->evaluateString($this->_rename);
+        }
+        else if (is_array($this->_rename)) {
+            $rename = $this->_rename;
+        }
+
         foreach ( $slots as $key => $value)
         {
-            if ( isset( $this->_rename[$key])) {
+            if (isset($rename[$key])) {
                 $result->setSlotValue( $this->_rename[$key], $value);
                 continue;
             }
@@ -60,9 +68,20 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
             $result->setSlotValue( $key, $value);
         }
 
-        foreach ( $this->_values as $key => $value)
-        {
-            $result->setSlotValue( $key, $this->getService()->evaluateString( $value));
+        if (!is_array($this->_values) && is_string($this->_values) && StrUtil::startsWith($this->_values, '${')) {
+            /** @var array $values */
+            $values = $this->evaluateString($this->_values);
+
+            foreach ($values as $key => $value)
+            {
+                $result->setSlotValue($key, $value);
+            }
+        }
+        else if (is_array($this->_values)) {
+            foreach ($this->_values as $key => $value)
+            {
+                $result->setSlotValue($key, $this->getService()->evaluateString($value));
+            }
         }
 
         return $result;
