@@ -1080,8 +1080,11 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code">Catch platform intent <b>{{ component.properties.intent}}</b>'.
-                            '<span ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span>'.
-                            '<span ng-repeat="(key,val) in component.properties.rename track by key">, rename slot <b>{{ key }} => result.{{ val }}</b></span></div>'
+                            '<span ng-if="!component.properties[\'_use_var_values\']"><span ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span></span>'.
+                            '<span ng-if="component.properties[\'_use_var_values\']">Use predefined value expression <b>{{ component.properties.values }}</b></span>'.
+                            '<span ng-if="!component.properties[\'_use_var_rename\']"><span ng-repeat="(key,val) in component.properties.rename track by key">, rename slot <b>{{ key }} => result.{{ val }}</b></span></span>'.
+                            '<span ng-if="!component.properties[\'_use_var_rename\']">Use rename expression <b>{{ component.properties.rename }}</b></span>'.
+                            '</div>'
                     ),
                     '_help' =>  array(
                         'type' => 'file',
