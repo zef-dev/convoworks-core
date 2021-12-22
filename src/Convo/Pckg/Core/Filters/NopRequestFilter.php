@@ -2,6 +2,8 @@
 
 namespace Convo\Pckg\Core\Filters;
 
+use Convo\Core\Util\StrUtil;
+
 class NopRequestFilter implements \Convo\Core\Workflow\IRequestFilter
 {
 	/**
@@ -53,8 +55,17 @@ class NopRequestFilter implements \Convo\Core\Workflow\IRequestFilter
 	        // DUMMY VALUE
 	        $result->setSlotValue( get_class( $this), true);
 	    }
-	    
-	    foreach ( $this->_values as $key => $value)
+
+		if (!is_array($this->_values) && is_string($this->_values) && StrUtil::startsWith($this->_values, '${'))
+		{
+			$values = $this->getService()->evaluateString($this->_values);
+		}
+		else if (is_array($this->_values))
+		{
+			$values = $this->_values;
+		}
+
+	    foreach ($values as $key => $value)
 	    {
 			$k = $this->getService()->evaluateString($key);
 			$v = $this->getService()->evaluateString($value);
