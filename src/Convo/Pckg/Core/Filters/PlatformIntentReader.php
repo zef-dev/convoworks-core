@@ -53,6 +53,7 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
 
         if (!is_array($this->_rename) && is_string($this->_rename) && StrUtil::startsWith($this->_rename, '${')) {
             $rename = $this->evaluateString($this->_rename);
+            $this->_logger->debug('Rename evaluated to ['.print_r($rename, true).']');
         }
         else if (is_array($this->_rename)) {
             $rename = $this->_rename;
@@ -61,7 +62,8 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
         foreach ( $slots as $key => $value)
         {
             if (isset($rename[$key])) {
-                $result->setSlotValue( $this->_rename[$key], $value);
+                $this->_logger->info('Renaming incoming slot ['.$key.'] to ['.$rename[$key].']');
+                $result->setSlotValue($rename[$key], $value);
                 continue;
             }
 
