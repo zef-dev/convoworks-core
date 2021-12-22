@@ -2,7 +2,9 @@
 
 namespace Convo\Pckg\Core\Elements;
 
+use Convo\Core\Factory\InvalidComponentDataException;
 use Convo\Core\Util\ArrayUtil;
+use Convo\Core\Util\StrUtil;
 
 class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent implements \Convo\Core\Workflow\IConversationElement
 {
@@ -28,9 +30,9 @@ class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
 
 	public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
-		$service	=	$this->getService();
-		$scope_type =	$this->evaluateString($this->_scopeType);
-		$parameters     =   $this->evaluateString( $this->_parameters);
+		$service = $this->getService();
+		$scope_type = $this->evaluateString($this->_scopeType);
+		$parameters = $this->evaluateString( $this->_parameters);
 
 		if ($parameters === 'block'){
 			$params = $this->getBlockParams( $scope_type);
@@ -42,26 +44,58 @@ class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
 			throw new \Exception("Unrecognized parameters type [$parameters]");
 		}
 
-		foreach ( $this->_params as $key => $val) {
-			$key	=	$this->evaluateString( $key);
-			$parsed =   $this->evaluateString( $val);
+		if (!is_array($this->_params) && StrUtil::startsWith($this->_params, '${')) {
+			$this->_logger->info('Params are a string to be evaluated');
 
-			if (!ArrayUtil::isComplexKey($key))
-			{
-				$params->setServiceParam( $key, $parsed);
+			/** @var array $parsed */
+			$parsed = $this->evaluateString($this->_params);
+
+			foreach ($parsed as $key => $value) {
+				// $params->setServiceParam($key, $value);
+
+				if (!ArrayUtil::isComplexKey($key))
+				{
+					$params->setServiceParam($key, $value);
+				}
+				else
+				{
+					$root = ArrayUtil::getRootOfKey($key);
+					$final = ArrayUtil::setDeepObject($key, $value, $params->getServiceParam($root) ?? []);
+					$params->setServiceParam($root, $final);
+				}
 			}
-			else
-            {
-                $root = ArrayUtil::getRootOfKey($key);
-                $final = ArrayUtil::setDeepObject($key, $parsed, $params->getServiceParam($root) ?? []);
-                $params->setServiceParam($root, $final);
+
+			return;
+		}
+		else if (is_array($this->_params))
+		{
+			$this->_logger->info('Params are regular array');
+
+			foreach ( $this->_params as $key => $val) {
+				$key	=	$this->evaluateString( $key);
+				$parsed =   $this->evaluateString( $val);
+	
+				if (!ArrayUtil::isComplexKey($key))
+				{
+					$params->setServiceParam( $key, $parsed);
+				}
+				else
+				{
+					$root = ArrayUtil::getRootOfKey($key);
+					$final = ArrayUtil::setDeepObject($key, $parsed, $params->getServiceParam($root) ?? []);
+					$params->setServiceParam($root, $final);
+				}
 			}
+		}
+		else
+		{
+			throw new InvalidComponentDataException('Properties must be either array or expression language string');
 		}
 	}
 
 	// UTIL
 	public function __toString()
 	{
-		return get_class( $this).'['.json_encode( $this->_params).']';
+		return get_class( $this).'['.json_encode($this->_params).']';
 	}
 }
