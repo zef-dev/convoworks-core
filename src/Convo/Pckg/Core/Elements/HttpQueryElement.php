@@ -87,8 +87,15 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
 
         $query_params = [];
 
-        foreach ($this->_params as $key => $val) {
-            $query_params[$this->evaluateString($key)] = $this->evaluateString($val);
+        if (!is_array($this->_params) && is_string($this->_params) && StrUtil::startsWith($this->_params, '${'))
+        {
+            $query_params = $this->evaluateString($this->_params);
+        }
+        else if (is_array($this->_params))
+        {
+            foreach ($this->_params as $key => $val) {
+                $query_params[$this->evaluateString($key)] = $this->evaluateString($val);
+            }
         }
 
 		$uri = $this->_httpFactory->buildUri($url, $query_params);
@@ -161,8 +168,16 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
         }
 
 	    $parsed_headers = [];
-	    foreach ($this->_headers as $name => $value) {
-	        $parsed_headers[$this->evaluateString($name)] = $this->evaluateString($value);
+
+        if (!is_array($this->_headers) && is_string($this->_headers) && StrUtil::startsWith($this->_headers, '${'))
+        {
+            $parsed_headers = $this->evaluateString($this->_headers);
+        }
+        else if (is_array($this->_headers))
+        {
+            foreach ($this->_headers as $name => $value) {
+                $parsed_headers[$this->evaluateString($name)] = $this->evaluateString($value);
+            }
         }
 
 		$config = array();
