@@ -4,6 +4,14 @@
 
 ## [Releases]
 
+## 0.22.9.0 - 2021-12-23
+* Added a new block role - default fallback
+* Added support for evaluating parameters as string
+* `LoopElement` now uses an iterator
+* Add support to mark output text as both standard text and reprompt
+* Add support for `context_id` editor type
+* Fixed empty text response issue
+
 ## 0.22.8.0 - 2021-12-03
 * Fixed how intent readers accept incoming intent requests
 * Fixed `AplUserEventReader`
