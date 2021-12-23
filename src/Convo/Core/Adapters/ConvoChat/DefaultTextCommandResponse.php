@@ -43,8 +43,12 @@ class DefaultTextCommandResponse implements \Convo\Core\Workflow\IConvoResponse
 	}
 
 	// SPEECH
-	public function addText( $text, $append = false)
+	public function addText($text, $append = false)
 	{
+		if ($text === null) {
+			$text = '';
+		}
+
 	    if ($append && count($this->_texts) > 0) {
             $this->_appendText($text, $this->_texts);
         } else {
