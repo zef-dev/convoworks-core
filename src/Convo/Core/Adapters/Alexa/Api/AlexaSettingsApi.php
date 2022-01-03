@@ -19,6 +19,8 @@ class AlexaSettingsApi extends AlexaApi
 	}
 
 	/**
+	 * @todo Split into separate methods
+	 * @deprecated
 	 * @param AmazonCommandRequest $request request from Alexa
 	 * @param string $setting supported setting values System.timeZone|System.distanceUnits|System.temperatureUnit
 	 * @return mixed
@@ -38,5 +40,24 @@ class AlexaSettingsApi extends AlexaApi
 			default:
 				throw new AlexaApiException('Unsupported Alexa setting [' . $setting . ']');
 		}
+	}
+	
+	/**
+	 * @param AmazonCommandRequest $request
+	 * @throws AlexaApiException
+	 * @return \DateTimeZone
+	 */
+	public function getTimezone( AmazonCommandRequest $request)
+	{
+	    try {
+	        $str_timezone  =   $this->_executeAlexaApiRequest( 
+	            $request, 
+	            IHttpFactory::METHOD_GET, 
+	            '/v2/devices/'.$request->getDeviceId().'/settings/'.self::ALEXA_SYSTEM_TIMEZONE);
+	        $this->_logger->info( 'Got timezone ['.$str_timezone.'] for device ['.$request->getDeviceId().']['.$request->getServiceId().']');
+	        return new \DateTimeZone( $str_timezone);
+	    } catch ( ClientExceptionInterface $e) {
+	        throw new AlexaApiException( 'Failed to get timezone for the request ['.$request.']', null, $e);
+	    }
 	}
 }
