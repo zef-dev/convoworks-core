@@ -10,7 +10,7 @@ abstract class AlexaApi
 	/**
 	 * @var \Psr\Log\LoggerInterface
 	 */
-	private $_logger;
+	protected $_logger;
 
 	/**
 	 * @var WebApiCaller
