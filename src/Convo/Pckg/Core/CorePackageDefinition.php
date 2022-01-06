@@ -334,7 +334,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
 					'next_week' => false,
 				];
 
-				$inputTime = strtotime($date);
+				$inputTime = is_int( $date) ? $date : strtotime($date);
 				$startDayOfWeek = strtolower($startDayOfWeek);
 				if (!$inputTime) {
 					return $relativesArray;
