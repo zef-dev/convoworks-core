@@ -366,14 +366,17 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                 try {
                     $this->_logger->info( 'Trying to read role ['.IRunnableBlock::ROLE_SESSION_START.'] ...');
                     $block  =   $this->getBlockByRole( IRunnableBlock::ROLE_SESSION_START);
-                    $this->_readBlock( $block, $request, $response);
                 } catch ( \Convo\Core\ComponentNotFoundException $e) {
                     $this->_logger->info( $e->getMessage());
                     $state  =   $this->_getDefaultState();
                     $this->_logger->info( 'Going to read an empty launch request wits state ['.$state.'] ...');
                     $this->_readState( $state, $request, $response);
+                    $this->_checkNextState();
+                    $this->_logger->info( 'Exiting ...');
+                    return ;
                 }
-
+                
+                $this->_readBlock( $block, $request, $response);
                 $this->_checkNextState();
                 $this->_logger->info( 'Exiting ...');
                 return ;
