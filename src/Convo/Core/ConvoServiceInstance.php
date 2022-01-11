@@ -321,91 +321,98 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         // RUN ITSELF
         $this->_logger->debug( 'Running ...');
 
-        // SESSION END
-        if ( $request->isSessionEndRequest())
-        {
-            $this->_logger->info( 'Reading session end block');
-            try {
-                $block  =   $this->getBlockByRole( IRunnableBlock::ROLE_SESSION_ENDED);
-                $this->_readBlock( $block, $request, $response);
-            } catch ( \Convo\Core\ComponentNotFoundException $e) {
-                $this->_logger->info( $e->getMessage());
-            }
-            $this->_logger->info( 'Exiting ...');
-            return;
-        }
-
-        // MEDIA
-        if ( $request->isMediaRequest()) {
-            $this->_logger->info( 'Media control request.');
-            $block  =   $this->getBlockByRole( IRunnableBlock::ROLE_MEDIA_PLAYER);
-            $block->run( $request, $response);
-            $this->_logger->info( 'Exiting ...');
-            return;
-        }
-
-		// SALES
-		if ($request->isSalesRequest()) {
-			$this->_logger->info( 'Sales request.');
-			$block  =   $this->getBlockByRole( IRunnableBlock::ROLE_SALES_BLOCK);
-			try {
-				$block->run($request, $response);
-			} catch (StateChangedException $e) {
-				$this->_logger->info( $e->getMessage());
-				$this->_readState( $e->getState(), $request, $response);
-			}
-			$this->_logger->info( 'Exiting ...');
-			return;
-		}
-
-        // SESSION START
-        if ( $request->isSessionStart())
-        {
-            if ( $request->isEmpty())
-            {
+        try {
+            // SESSION END
+            if ($request->isSessionEndRequest()) {
+                $this->_logger->info('Reading session end block');
                 try {
-                    $this->_logger->info( 'Trying to read role ['.IRunnableBlock::ROLE_SESSION_START.'] ...');
-                    $block  =   $this->getBlockByRole( IRunnableBlock::ROLE_SESSION_START);
-                } catch ( \Convo\Core\ComponentNotFoundException $e) {
-                    $this->_logger->info( $e->getMessage());
-                    $state  =   $this->_getDefaultState();
-                    $this->_logger->info( 'Going to read an empty launch request wits state ['.$state.'] ...');
-                    $this->_readState( $state, $request, $response);
-                    $this->_checkNextState();
-                    $this->_logger->info( 'Exiting ...');
-                    return ;
+                    $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_ENDED);
+                    $this->_readBlock($block, $request, $response);
+                } catch (\Convo\Core\ComponentNotFoundException $e) {
+                    $this->_logger->info($e->getMessage());
                 }
-                
-                $this->_readBlock( $block, $request, $response);
-                $this->_checkNextState();
-                $this->_logger->info( 'Exiting ...');
-                return ;
+                $this->_logger->info('Exiting ...');
+                return;
             }
+
+            // MEDIA
+            if ($request->isMediaRequest()) {
+                $this->_logger->info('Media control request.');
+                $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_MEDIA_PLAYER);
+                $block->run($request, $response);
+                $this->_logger->info('Exiting ...');
+                return;
+            }
+
+            // SALES
+            if ($request->isSalesRequest()) {
+                $this->_logger->info('Sales request.');
+                $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SALES_BLOCK);
+                try {
+                    $block->run($request, $response);
+                } catch (StateChangedException $e) {
+                    $this->_logger->info($e->getMessage());
+                    $this->_readState($e->getState(), $request, $response);
+                }
+                $this->_logger->info('Exiting ...');
+                return;
+            }
+
+            // SESSION START
+            if ($request->isSessionStart()) {
+                if ($request->isEmpty()) {
+                    try {
+                        $this->_logger->info('Trying to read role [' . IRunnableBlock::ROLE_SESSION_START . '] ...');
+                        $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_START);
+                    } catch (\Convo\Core\ComponentNotFoundException $e) {
+                        $this->_logger->info($e->getMessage());
+                        $state  =   $this->_getDefaultState();
+                        $this->_logger->info('Going to read an empty launch request wits state [' . $state . '] ...');
+                        $this->_readState($state, $request, $response);
+                        $this->_checkNextState();
+                        $this->_logger->info('Exiting ...');
+                        return;
+                    }
+
+                    $this->_readBlock($block, $request, $response);
+                    $this->_checkNextState();
+                    $this->_logger->info('Exiting ...');
+                    return;
+                }
+
+                try {
+                    $this->_logger->info('Trying to read role [' . IRunnableBlock::ROLE_SESSION_START . '] ...');
+                    $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_START);
+                } catch (\Convo\Core\ComponentNotFoundException $e) {
+                    $this->_logger->info($e->getMessage());
+                    $state  =   $this->_getDefaultState();
+                    $block  =   $this->findBlock($state);
+                }
+
+                // DIRECT INVOCATION
+                $this->_logger->info('We have direct invocation in block [' . $block->getComponentId() . '] ...');
+            } else {
+                // REGULAR CALL
+                $state        =    $this->getServiceState();
+                $block      =   $this->findBlock($state);
+                $this->_logger->info('We have regular state [' . $state . '] request');
+            }
+
+            // PROCESS
+            $this->_processBlock($block, $request, $response);
+            $this->_checkNextState();
+            $this->_logger->info('Exiting ...');
+        } catch (\Exception $e) {
+            $this->_logger->error($e);
 
             try {
-                $this->_logger->info( 'Trying to read role ['.IRunnableBlock::ROLE_SESSION_START.'] ...');
-                $block  =   $this->getBlockByRole( IRunnableBlock::ROLE_SESSION_START);
-            } catch ( \Convo\Core\ComponentNotFoundException $e) {
-                $this->_logger->info( $e->getMessage());
-                $state  =   $this->_getDefaultState();
-                $block  =   $this->findBlock( $state);
+                $this->getBlockByRole(IRunnableBlock::ROLE_ERROR_HANDLER);
+                $block->read($request, $response);
+            } catch (\Convo\Core\ComponentNotFoundException $cnfe) {
+                $this->_logger->error($cnfe);
+                throw $e;
             }
-
-            // DIRECT INVOCATION
-            $this->_logger->info( 'We have direct invocation in block ['.$block->getComponentId().'] ...');
         }
-        else
-        {
-            // REGULAR CALL
-            $state		=	$this->getServiceState();
-            $block      =   $this->findBlock( $state);
-            $this->_logger->info( 'We have regular state ['.$state.'] request');
-        }
-
-        // PROCESS
-        $this->_processBlock( $block, $request, $response);
-        $this->_checkNextState();
-        $this->_logger->info( 'Exiting ...');
     }
 
     protected function _processBlock( IRunnableBlock $block, $request, $response)
