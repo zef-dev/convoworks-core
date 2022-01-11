@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## [Current development]
+* Added new functions date_tz and strtotime_tz
+
 
 ## [Releases]
 
