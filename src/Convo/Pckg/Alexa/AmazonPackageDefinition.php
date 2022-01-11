@@ -114,42 +114,6 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'description' => 'Name under which to store the loaded user object in the context',
 						'valueType' => 'string'
 					],
-					'should_get_full_name' => array(
-						'editor_type' => 'boolean',
-						'editor_properties' => array(
-							'dependency' => "component.properties.should_get_given_name === false"
-						),
-						'defaultValue' => false,
-						'name' => 'Should get Full Name?',
-						'description' => 'In case the skill user has accepted the permission to use Full Name, Full Name will be available in the status variable',
-						'valueType' => 'boolean'
-					),
-					'should_get_given_name' => array(
-						'editor_type' => 'boolean',
-						'editor_properties' => array(
-							'dependency' => "component.properties.should_get_full_name === false"
-						),
-						'defaultValue' => false,
-						'name' => 'Should get Given Name?',
-						'description' => 'In case the skill user has accepted the permission to use Given Name, Given Name will be available in the status variable',
-						'valueType' => 'boolean'
-					),
-					'should_get_email_address' => array(
-						'editor_type' => 'boolean',
-						'editor_properties' => array(),
-						'defaultValue' => false,
-						'name' => 'Should get Email Address?',
-						'description' => 'In case the skill user has accepted the permission to use Email Address, Email Address will be available in the status variable',
-						'valueType' => 'boolean'
-					),
-					'should_get_phone_number' => array(
-						'editor_type' => 'boolean',
-						'editor_properties' => array(),
-						'defaultValue' => false,
-						'name' => 'Should get Phone Number?',
-						'description' => 'In case the skill user has accepted the permission to use Phone Number, Phone Number will be available in the status variable',
-						'valueType' => 'boolean'
-					),
 					'ok' => [
 						'editor_type' => 'service_components',
 						'editor_properties' => [
@@ -172,17 +136,6 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'description' => 'Executed if one of the requested permissions are missing.',
 						'valueType' => 'class'
 					],
-					'nok' => [
-						'editor_type' => 'service_components',
-						'editor_properties' => [
-							'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
-							'multiple' => true
-						],
-						'defaultValue' => [],
-						'name' => 'NOK',
-						'description' => 'Executed if the Alexa Customer Profile API could not fetched the customer profile.',
-						'valueType' => 'class'
-					],
 					'_preview_angular' => [
 						'type' => 'html',
 						'template' => '<div class="code">' .
@@ -194,18 +147,20 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'type' => 'file',
 						'filename' => 'get-amazon-customer-profile-element.html'
 					),
-					'_factory' => new class ($this->_alexaCustomerProfileApi) implements IComponentFactory
+					'_factory' => new class ($this->_alexaCustomerProfileApi, $this->_convoServiceDataProvider) implements IComponentFactory
 					{
 						private $_alexaCustomerProfileApi;
+						private $_convoServiceDataProvider;
 
-						public function __construct($alexaCustomerProfileApi)
+						public function __construct($alexaCustomerProfileApi, $convoServiceDataProvider)
 						{
 							$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
+							$this->_convoServiceDataProvider = $convoServiceDataProvider;
 						}
 
 						public function createComponent($properties, $service)
 						{
-							return new \Convo\Pckg\Alexa\Elements\GetAmazonCustomerProfileElement($properties, $this->_alexaCustomerProfileApi);
+							return new \Convo\Pckg\Alexa\Elements\GetAmazonCustomerProfileElement($properties, $this->_alexaCustomerProfileApi, $this->_convoServiceDataProvider);
 						}
 					}
 				]
