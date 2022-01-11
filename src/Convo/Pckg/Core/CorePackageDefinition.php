@@ -1911,7 +1911,13 @@ In default phase you can inform users about problem you have interpreting comman
                         'editor_properties' => array(
                             'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
                             'multiple' => true,
-                            'roles' => [IRunnableBlock::ROLE_CONVERSATION_BLOCK, IRunnableBlock::ROLE_SESSION_START, IRunnableBlock::ROLE_SESSION_ENDED, IRunnableBlock::ROLE_DEFAULT_FALLBACK]
+                            'roles' => [
+                                IRunnableBlock::ROLE_CONVERSATION_BLOCK,
+                                IRunnableBlock::ROLE_SESSION_START,
+                                IRunnableBlock::ROLE_SESSION_ENDED,
+                                IRunnableBlock::ROLE_DEFAULT_FALLBACK,
+                                IRunnableBlock::ROLE_ERROR_HANDLER
+                            ]
                         ),
                         'defaultValue' => array(),
                         'defaultOpen' => true,

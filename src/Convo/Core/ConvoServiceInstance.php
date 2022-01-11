@@ -402,14 +402,18 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
             $this->_processBlock($block, $request, $response);
             $this->_checkNextState();
             $this->_logger->info('Exiting ...');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->_logger->error($e);
 
             try {
-                $this->getBlockByRole(IRunnableBlock::ROLE_ERROR_HANDLER);
-                $block->read($request, $response);
+                $error_handler = $this->getBlockByRole(IRunnableBlock::ROLE_ERROR_HANDLER);
+
+                $component_params = $this->getComponentParams(\Convo\Core\PArams\IServiceParamsScope::SCOPE_TYPE_REQUEST, $error_handler);
+                $component_params->setServiceParam('error', $e);
+
+                $error_handler->read($request, $response);
             } catch (\Convo\Core\ComponentNotFoundException $cnfe) {
-                $this->_logger->error($cnfe);
+                $this->_logger->info($cnfe->getMessage());
                 throw $e;
             }
         }
