@@ -995,6 +995,35 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         return $status;
     }
 
+	private function _getLatestPublicationStatus()
+	{
+		$config = $this->_convoServiceDataProvider->getServicePlatformConfig(
+			$this->_user,
+			$this->_serviceId,
+			IPlatformPublisher::MAPPING_TYPE_DEVELOP
+		);
+
+		$meta = $this->_convoServiceDataProvider->getServiceMeta(
+			$this->_user, $this->_serviceId
+		);
+
+		$skillId = $config[$this->getPlatformId()]['app_id'];
+		$owner = $this->_adminUserDataProvider->findUser($meta['owner']);
+
+		try {
+			$latestPublicationStatusOfSkill = $this->_amazonPublishingService->getLatestPublicationStatusOfSkill($owner, $skillId)['status'] ?? 'UNDEFINED';
+		} catch (ClientExceptionInterface $e) {
+			if ($e->getCode() === 404) {
+				$this->_logger->info('Skill with ID [' . $skillId . '] has not been published for certification yet.');
+				$latestPublicationStatusOfSkill = 'NOT_PUBLISHED_FOR_CERTIFICATION_YET';
+			} else {
+				throw new \Convo\Core\Util\HttpClientException($e->getMessage(), $e->getCode(), $e);
+			}
+		}
+
+		return $latestPublicationStatusOfSkill;
+	}
+
     /**
      * @param $config
      * @param \Convo\Core\IAdminUser $owner
@@ -1101,9 +1130,13 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
     private function _checkOperationReady() {
         $skillStatus = $this->getStatus()['status'];
+        $latestPublicationStatusOfSKill = $this->_getLatestPublicationStatus();
         if ($skillStatus === IPlatformPublisher::SERVICE_PROPAGATION_STATUS_IN_PROGRESS) {
             throw new ServiceBuildingException('Alexa Skill Interaction model is not finished yet building. Please try again later', 405);
         }
+		if ($latestPublicationStatusOfSKill === 'IN_PROGRESS' || $latestPublicationStatusOfSKill === 'SCHEDULED') {
+			throw new ServiceBuildingException('Alexa Skill is in certification process. To be able to propagate changes, please withdraw from certification.', 405);
+		}
     }
 
     private function _sanitizeText($text) {

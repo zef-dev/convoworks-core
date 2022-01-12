@@ -1,6 +1,10 @@
 # CHANGELOG
 
 ## [Current development]
+* Added new functions date_tz and strtotime_tz
+* Rework GetAmazonCustomerProfileElement to read permissions from Amazon Platform Config
+* Added Alexa Skill Certification status check
+
 
 ## [Releases]
 

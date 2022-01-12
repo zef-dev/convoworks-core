@@ -397,6 +397,50 @@ class CorePackageDefinition extends AbstractPackageDefinition
 			}
 		);
 
+		$functions[] = new ExpressionFunction(
+			'date_tz',
+			function ($format, $timestamp = null, $timezone = null) {
+				return sprintf('date_tz(%1$s, %2$a, %3$d)', $format, $timestamp, $timezone);
+			},
+			function($args, $format, $timestamp = null, $timezone = null ) {
+				if (!is_numeric($timestamp)) {
+					$timestamp = time();
+				}
+
+				$date_tz = \DateTime::createFromFormat($format, date($format, $timestamp));
+
+				if (!is_bool($date_tz) && !empty($timezone)) {
+					$date_tz->setTimezone(new \DateTImeZone($timezone));
+				}
+
+				if (is_bool($date_tz)) {
+					return false;
+				}
+
+				return $date_tz->format($format);
+			}
+		);
+
+		$functions[] = new ExpressionFunction(
+			'strtotime_tz',
+			function ($datetime, $baseTimestamp = null, $timezone = null) {
+				return sprintf('strtotime_tz(%1$s, %2$a, %3$d)', $datetime, $baseTimestamp, $timezone);
+			},
+			function($args, $datetime, $baseTimestamp = null, $timezone = null ) {
+				$datetimeStr = $datetime;
+
+				if (!empty($timezone)) {
+					$datetimeStr .= ' ' . $timezone;
+				}
+
+				if (is_numeric($baseTimestamp)) {
+					return strtotime($datetimeStr, $baseTimestamp);
+				}
+
+				return strtotime($datetimeStr);
+			}
+		);
+
         return $functions;
     }
 

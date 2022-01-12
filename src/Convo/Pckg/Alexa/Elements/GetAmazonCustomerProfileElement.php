@@ -4,17 +4,14 @@ namespace Convo\Pckg\Alexa\Elements;
 
 use Convo\Core\Adapters\Alexa\Api\AlexaApiException;
 use Convo\Core\Adapters\Alexa\Api\AlexaCustomerProfileApi;
+use Convo\Core\Publish\IPlatformPublisher;
+use Convo\Core\Rest\RestSystemUser;
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
 
 class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
 {
 	private $_name;
-
-	private $_shouldGetFullName;
-	private $_shouldGetGivenName;
-	private $_shouldGetEmailAddress;
-	private $_shouldGetPhoneNumber;
 
 	/**
 	 * @var \Convo\Core\Workflow\IConversationElement[]
@@ -27,24 +24,20 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 	private $_onPermissionNotGranted = array();
 
 	/**
-	 * @var \Convo\Core\Workflow\IConversationElement[]
-	 */
-	private $_nok = array();
-
-	/**
 	 * @var AlexaCustomerProfileApi
 	 */
 	private $_alexaCustomerProfileApi;
 
-	public function __construct($properties, $alexaCustomerProfileApi)
+	/**
+	 * @var \Convo\Core\IServiceDataProvider
+	 */
+	private $_convoServiceDataProvider;
+
+	public function __construct($properties, $alexaCustomerProfileApi, $convoServiceDataProvider)
 	{
 		parent::__construct($properties);
 
 		$this->_name = $properties['name'] ?? 'customerProfile';
-		$this->_shouldGetFullName = $properties['should_get_full_name'] ?? false;
-		$this->_shouldGetGivenName = $properties['should_get_given_name'] ?? false;
-		$this->_shouldGetEmailAddress = $properties['should_get_email_address'] ?? false;
-		$this->_shouldGetPhoneNumber = $properties['should_get_phone_number'] ?? false;
 
 		foreach ($properties['ok'] as $element) {
 			$this->_ok[] = $element;
@@ -56,12 +49,8 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 			$this->addChild($element);
 		}
 
-		foreach ($properties['nok'] as $element) {
-			$this->_nok[] = $element;
-			$this->addChild($element);
-		}
-
 		$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
+		$this->_convoServiceDataProvider = $convoServiceDataProvider;
 	}
 
 	/**
@@ -75,14 +64,19 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 
 		$name = $this->evaluateString($this->_name);
 
-		$shouldGetFullName = $this->evaluateString($this->_shouldGetFullName);
-		$shouldGetGivenName = $this->evaluateString($this->_shouldGetGivenName);
-		$shouldGetEmailAddress = $this->evaluateString($this->_shouldGetEmailAddress);
-		$shouldGetPhoneNumber = $this->evaluateString($this->_shouldGetPhoneNumber);
-
 		if (is_a($request, '\Convo\Core\Adapters\Alexa\AmazonCommandRequest')) {
-			$customerProfile = [];
+			$amazon_platform_config = $this->_convoServiceDataProvider->getServicePlatformConfig(
+					new RestSystemUser(), $this->getService()->getId(), IPlatformPublisher::MAPPING_TYPE_DEVELOP
+				)['amazon'] ?? [];
+			$amazon_skill_permissions = $amazon_platform_config['permissions'] ?? [];
 
+			$shouldGetFullName = in_array('alexa::profile:name:read', $amazon_skill_permissions);
+			$shouldGetGivenName = in_array('alexa::profile:given_name:read', $amazon_skill_permissions);
+			$shouldGetEmailAddress = in_array('alexa::profile:email:read', $amazon_skill_permissions);
+			$shouldGetPhoneNumber = in_array('alexa::profile:mobile_number:read', $amazon_skill_permissions);
+
+			$customerProfile = [];
+			$this->_logger->info('Getting Amazon Customer Profile with the following permissions [' . json_encode($amazon_skill_permissions) . ']');
 			try {
 				if ($shouldGetFullName) {
 					$customerProfile['fullName'] = $this->_alexaCustomerProfileApi->getCustomerFullName($request);
@@ -100,6 +94,7 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 					$customerProfile['phoneNumber'] = $this->_alexaCustomerProfileApi->getCustomerPhoneNumber($request);
 				}
 
+				$this->_logger->info('Got Amazon Customer Profile [' . json_encode($customerProfile) . ']');
 				$params->setServiceParam($name, $customerProfile);
 
 				if ( !empty( $this->_ok)) {
@@ -108,6 +103,7 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 					}
 				}
 			} catch (AlexaApiException $e) {
+				$this->_logger->notice($e->getMessage());
 				$params->setServiceParam($name, ['error' => $e->getMessage()]);
 
 				if ($e->getCode() === 403) {
@@ -117,11 +113,7 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 						}
 					}
 				} else {
-					if ( !empty( $this->_nok)) {
-						foreach ( $this->_nok as $element) {
-							$element->read( $request, $response);
-						}
-					}
+					throw new AlexaApiException($e->getMessage(), $e->getCode(), $e);
 				}
 			}
 		}
