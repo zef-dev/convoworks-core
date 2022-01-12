@@ -522,6 +522,22 @@ class AmazonPublishingService
         return $code;
     }
 
+	public function getLatestPublicationStatusOfSkill($owner, $skillId) {
+		$url = self::BASE_SMAPI_URL."/v1/skills/".$skillId."/publications/~latest";
+
+		$this->_logger->debug("Going to check certification status of skill [$skillId]");
+
+		$response = $this->_executeRequest(
+			$owner,
+			IHttpFactory::METHOD_GET,
+			$url,
+			['Accept-Language' => 'en-US']
+		);
+
+		$body = json_decode($response->getBody()->__toString(), true);
+		return $body;
+	}
+
 
     // UTIL
     private function _executeRequest($user, $method, $url, $headers = [], $body = null)
