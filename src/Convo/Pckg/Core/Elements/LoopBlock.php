@@ -6,6 +6,8 @@ namespace Convo\Pckg\Core\Elements;
 use Convo\Core\Preview\PreviewBlock;
 use Convo\Core\Preview\PreviewSection;
 use Convo\Core\Preview\PreviewUtterance;
+use Convo\Core\Workflow\IConvoRequest;
+use Convo\Core\Workflow\IConvoResponse;
 
 class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
 {
@@ -251,6 +253,11 @@ class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
         parent::run( $request, $response);
     }
 
+    protected function _readPreDispatch($type, IConvoRequest $request, IConvoResponse $response)
+    {
+        // @todo: does loop block need pre-dispatch?
+        return;   
+    }
 
     // UTIL
     public function __toString()

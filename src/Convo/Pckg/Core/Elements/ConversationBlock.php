@@ -9,11 +9,19 @@ use Convo\Core\Preview\PreviewUtterance;
 use Convo\Core\Workflow\IRunnableBlock;
 use Convo\Core\ConvoServiceInstance;
 use Convo\Core\StateChangedException;
+use Convo\Core\Workflow\IConvoRequest;
+use Convo\Core\Workflow\IConvoResponse;
 
 class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements \Convo\Core\Workflow\IRunnableBlock
 {
 
 	private $_blockId;
+
+	/**
+	 * An optional collection of pre-dispatch elements to read
+	 * @var \Convo\Core\Workflow\IConversationElement[]
+	 */
+	private $_preDispatch = [];
 
 	/**
 	 * @var \Convo\Core\Workflow\IConversationProcessor[]
@@ -37,6 +45,13 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 		parent::__construct( $properties);
 
 		$this->_blockId		=	$properties['block_id'];
+
+		if (isset($properties['pre_dispatch'])) {
+			foreach ($properties['pre_dispatch'] as $preDispatch) {
+				$this->_preDispatch[] = $preDispatch;
+				$this->addChild($preDispatch);
+			}
+		}
 
 		foreach ( $properties['processors'] as $processor) {
 			/* @var $processor \Convo\Core\Workflow\IConversationProcessor */
@@ -99,6 +114,8 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 	 */
 	public function run( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
+		$this->_readPreDispatch('process', $request, $response);
+		
 		$processors	=	$this->_collectAllAccountableProcessors();
 		if ( empty( $processors)) {
 			$this->_logger->notice('No processors defined in ['.$this.']');
@@ -283,6 +300,37 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 
         return $pblock;
     }
+
+	protected function _readPreDispatch($type, \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
+	{
+		$component_params = $this->getService()->getComponentParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION, $this);
+		$pre_dispatch_params = $component_params->getServiceParam('pre_dispatch') ?? [];
+
+		if (!isset($pre_dispatch_params[$type]) || $pre_dispatch_params[$type] === false) {
+			$this->_logger->info('Will check if there are any pre ['.$type.'] dispatch elements to read.');
+
+			if (!empty($this->_preDispatch)) {
+				$this->_logger->info('Found ['.count($this->_preDispatch).'] pre-dispatch elements to read.');
+				
+				try {
+					foreach ($this->_preDispatch as $preDispatch) {
+						$preDispatch->read($request, $response);
+					}
+				} catch (StateChangedException $e) {
+					$this->_logger->info('Reading pre-dispatch for ['.$type.'] but state changed. Going to consider params read.');
+					$pre_dispatch_params[$type] = true;
+					$component_params->setServiceParam('pre_dispatch', $pre_dispatch_params);
+					throw $e;
+				}
+
+				$pre_dispatch_params[$type] = true;
+				$component_params->setServiceParam('pre_dispatch', $pre_dispatch_params);
+			}
+		} else {
+			$this->_logger->info('Pre ['.$type.'] dispatch already read in session in ['.$this.']');
+			return;
+		}
+	}
 
 	// UTIL
 	public function __toString()

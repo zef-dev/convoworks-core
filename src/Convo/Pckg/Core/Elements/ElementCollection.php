@@ -3,7 +3,7 @@
 namespace Convo\Pckg\Core\Elements;
 
 
-class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
+abstract class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
 {
 	
 	/**
@@ -24,6 +24,8 @@ class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 	
 	public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
+		$this->_readPreDispatch('read', $request, $response);
+
 		$this->_logger->debug('Reading ['.count( $this->_elements).']');
 		
 		foreach ($this->_elements as $element) {
@@ -45,6 +47,7 @@ class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 		return $this->_elements;
 	}
 	
+	protected abstract function _readPreDispatch($type, \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response);
 	
 	// UTIL
 	public function __toString()

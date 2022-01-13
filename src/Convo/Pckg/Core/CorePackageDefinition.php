@@ -1950,6 +1950,22 @@ In default phase you can inform users about problem you have interpreting comman
                         'description' => 'A user friendly name for the block',
                         'valueType' => 'string'
                     ),
+                    'pre_dispatch' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true,
+                            'roles' => [
+                                IRunnableBlock::ROLE_CONVERSATION_BLOCK,
+                            ]
+                        ),
+                        'defaultValue' => array(),
+                        'defaultOpen' => true,
+                        'name' => 'Pre-dispatch flow',
+                        'description' => 'Elements to run before each read and process phase. They will not be re-run if the block is read again.',
+                        'valueType' => 'class',
+                        '_separate' => true
+                    ),
                     'elements' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
