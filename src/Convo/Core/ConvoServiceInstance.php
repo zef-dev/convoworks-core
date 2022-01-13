@@ -788,11 +788,12 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
      * @return string
      */
     private function _getDefaultState() {
-        foreach ( array_keys( $this->_blocks) as $key) {
-            if ( strpos( $key, '__') === 0) {
+        foreach ($this->_blocks as $block) {
+            if ($block->getRole() !== IRunnableBlock::ROLE_CONVERSATION_BLOCK) {
                 continue;
             }
-            return $key;
+
+            return $block->getComponentId();
         }
 
         throw new \Convo\Core\ComponentNotFoundException( 'Could not find default block');
