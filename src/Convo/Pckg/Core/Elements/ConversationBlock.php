@@ -108,6 +108,13 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
         return $this->_blockName;
     }
 
+	public function read(IConvoRequest $request, IConvoResponse $response)
+	{
+		$this->_readPreDispatch('read', $request, $response);
+
+		parent::read($request, $response);
+	}
+
     /**
 	 * {@inheritDoc}
 	 * @see \Convo\Core\Workflow\IRunnableBlock::run()

@@ -59,11 +59,6 @@ class ElementsFragment extends \Convo\Pckg\Core\Elements\ElementCollection imple
         return $pblock;
     }
 
-	protected function _readPreDispatch($type, IConvoRequest $request, IConvoResponse $response)
-	{
-		return;
-	}
-
 	// UTIL
 	public function __toString()
 	{
