@@ -8,6 +8,8 @@ use Convo\Core\Preview\PreviewSection;
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
 use Convo\Core\Workflow\IRunnableBlock;
+use Convo\Core\Workflow\IConversationProcessor;
+use Convo\Core\Workflow\IConversationElement;
 
 class SalesBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IRunnableBlock
 {
