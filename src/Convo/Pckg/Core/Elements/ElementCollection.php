@@ -3,7 +3,7 @@
 namespace Convo\Pckg\Core\Elements;
 
 
-class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
+abstract class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
 {
 	
 	/**
@@ -44,7 +44,6 @@ class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 	public function getElements() {
 		return $this->_elements;
 	}
-	
 	
 	// UTIL
 	public function __toString()

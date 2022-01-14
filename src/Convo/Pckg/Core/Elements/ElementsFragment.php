@@ -5,6 +5,8 @@ namespace Convo\Pckg\Core\Elements;
 use Convo\Core\Preview\PreviewBlock;
 use Convo\Core\Preview\PreviewSection;
 use Convo\Core\Preview\PreviewUtterance;
+use Convo\Core\Workflow\IConvoRequest;
+use Convo\Core\Workflow\IConvoResponse;
 
 class ElementsFragment extends \Convo\Pckg\Core\Elements\ElementCollection implements \Convo\Core\Workflow\IIdentifiableComponent, \Convo\Core\Workflow\IFragmentComponent
 {
