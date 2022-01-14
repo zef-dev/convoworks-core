@@ -5,6 +5,7 @@ namespace Convo\Core\Adapters\Google\Common;
 use Convo\Core\Adapters\Google\Gactions\ActionsCommandRequest;
 use Convo\Core\IAdminUser;
 use Convo\Core\Publish\AbstractServicePublisher;
+use Convo\Core\Publish\IPlatformPublisher;
 use Convo\Core\Util\NotImplementedException;
 
 class GactionsPublisher extends AbstractServicePublisher
@@ -28,5 +29,18 @@ class GactionsPublisher extends AbstractServicePublisher
 	public function delete(array &$report)
     {
         throw new NotImplementedException('Deletion not yet implemented for ['.$this->getPlatformId().'] platform');
+    }
+
+    public function getPropagateInfo()
+    {
+        return parent::getPropagateInfo();
+    }
+
+    /**
+     * @return array
+     */
+    public function getStatus()
+    {
+        return ['status' => IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED];
     }
 }
