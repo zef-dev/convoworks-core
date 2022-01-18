@@ -729,7 +729,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'type' => 'html',
                         'template' => '<div class="code">Set parameters in <span class="statement">{{ component.properties.scope_type.toUpperCase() }}</span> at <span class="statement">{{ component.properties.parameters.toUpperCase() }}</span> level<br>' .
                             ' <span ng-if="!component.properties[\'_use_var_properties\']" ng-repeat="(key, val) in component.properties.properties track by key">' .
-                                ' <span class="statement">LET</span> <b>{{ key}}</b> = <b>{{ val }};</b><br>' . 
+                                ' <span class="statement">LET</span> <b>{{ key}}</b> = <b>{{ val }};</b><br>' .
                             ' </span>' .
                             '<span ng-if="component.properties[\'_use_var_properties\']">{{ component.properties.properties }}</span>' .
                             '</div>'
@@ -1101,6 +1101,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Name of the intent which activates this filter',
                         'valueType' => 'string'
                     ),
+                    'disable' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Disable',
+                        'description' => 'Optional expression to evaluate which wont trigger the intent even if it matches.',
+                        'valueType' => 'string'
+                    ),
                     'values' => array(
                         'editor_type' => 'params',
                         'editor_properties' => array(
@@ -1128,6 +1136,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                             '<span ng-if="component.properties[\'_use_var_values\']">Use predefined value expression <b>{{ component.properties.values }}</b></span>'.
                             '<span ng-if="!component.properties[\'_use_var_rename\']"><span ng-repeat="(key,val) in component.properties.rename track by key">, rename slot <b>{{ key }} => result.{{ val }}</b></span></span>'.
                             '<span ng-if="!component.properties[\'_use_var_rename\']">Use rename expression <b>{{ component.properties.rename }}</b></span>'.
+                            '<span ng-if="component.properties[\'disable\']"><br>Disable when <b>{{ component.properties.disable }}</b></span>'.
                             '</div>'
                     ),
                     '_help' =>  array(
@@ -1152,6 +1161,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'defaultValue' => null,
                         'name' => 'Intent',
                         'description' => 'Name of the intent which activates this filter',
+                        'valueType' => 'string'
+                    ),
+                    'disable' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Disable',
+                        'description' => 'Optional expression to evaluate which wont trigger the intent even if it matches.',
                         'valueType' => 'string'
                     ),
                     'required_slots' => array(
@@ -1193,6 +1210,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                             '<span ng-if="component.properties[\'_use_var_values\']"><br>Use predefined value expression <b>{{ component.properties.values }}</b></span>'.
                             '<span ng-if="!component.properties[\'_use_var_rename\']"><span ng-repeat="(key,val) in component.properties.rename track by key">, rename slot <b>{{ key }} => result.{{ val }}</b></span></span>'.
                             '<span ng-if="component.properties[\'_use_var_rename\']"><br>Use rename expression <b>{{ component.properties.rename }}</b></span>'.
+                            '<span ng-if="component.properties[\'disable\']"><br>Disable when <b>{{ component.properties.disable }}</b></span>'.
                             '</div>'
                     ),
                     '_help' =>  array(

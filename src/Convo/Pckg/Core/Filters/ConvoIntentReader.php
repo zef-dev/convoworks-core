@@ -12,6 +12,8 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
      */
     private $_packageProviderFactory;
 
+    private $_disable;
+
     private $_requiredSlots =   [];
 
     public function __construct($config, $packageProviderFactory)
@@ -19,6 +21,7 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
         parent::__construct( $config);
 
         $this->_packageProviderFactory  =   $packageProviderFactory;
+        $this->_disable = $config['disable'] ?? false;
 
         if (isset($config['required_slots']) && $config['required_slots'] !== '')
         {
@@ -39,6 +42,12 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
 
     public function accepts(IIntentAwareRequest $request)
     {
+        $disable = $this->evaluateString($this->_disable);
+        if (!empty($this->_disable) && $disable) {
+            $this->_logger->info('Ignoring accept in ConvoIntentReader [' . $disable . ']');
+            return false;
+        }
+
         if ($request->getIntentName() === $this->getPlatformIntentName($request->getIntentPlatformId()))
         {
             $this->_logger->info('Parent accepts request in ['.$this.']');
