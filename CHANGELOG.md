@@ -1,12 +1,17 @@
 # CHANGELOG
 
 ## [Current development]
-* Added new functions date_tz and strtotime_tz
-* Rework GetAmazonCustomerProfileElement to read permissions from Amazon Platform Config
-* Added Alexa Skill Certification status check
-
 
 ## [Releases]
+
+## 0.22.10.0 - 2022-01-20
+* Added a new block role - error handler
+* Added a new flow for conversation blocks - pre-dispatch
+* Fixed finding default block in service
+* Added new functions `date_tz` and `strtotime_tz`
+* Rework `GetAmazonCustomerProfileElement` to read permissions from Amazon Platform Config
+* Added Alexa Skill Certification status check
+* Fixed Google Actions publisher
 
 ## 0.22.9.0 - 2021-12-23
 * Added a new block role - default fallback
