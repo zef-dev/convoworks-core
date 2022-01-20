@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Convo\Core;
+namespace Convo\Core\Eval;
 
 use Zef\Zel\Symfony\ExpressionLanguage;
-use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+use Convo\Core\Eval\ExpressionFunctionProviderInterface;
 
 class EvaluationContext
 {
