@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-use Convo\Core\EvaluationContext;
+use Convo\Core\Eval\EvaluationContext;
 use Convo\Core\Params\SimpleParams;
 use Convo\Core\Util\ArrayUtil;
 use PHPUnit\Framework\TestCase;
 use Convo\Core\Util\EchoLogger;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\ExpressionLanguage\ExpressionFunction;
-use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+use Convo\Core\Eval\ExpressionFunction;
+use Convo\Core\Eval\ExpressionFunctionProviderInterface;
 use Zef\Zel\ArrayResolver;
 use Zef\Zel\ObjectResolver;
 

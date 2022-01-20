@@ -3,7 +3,7 @@
 namespace Convo\Core\Factory;
 
 use Convo\Core\Rest\NotFoundException;
-use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
+use Convo\Core\Eval\ExpressionFunctionProviderInterface;
 
 class PackageProvider implements
     \Convo\Core\Intent\ISystemIntentRepository,
