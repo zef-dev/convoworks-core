@@ -8,7 +8,7 @@ use Convo\Core\Intent\ISystemEntityRepository;
 use Convo\Core\Intent\ISystemIntentRepository;
 use Convo\Core\Intent\SystemEntity;
 use Convo\Core\Intent\SystemIntent;
-use Convo\Core\Eval\ExpressionFunctionProviderInterface;
+use Convo\Core\Expression\ExpressionFunctionProviderInterface;
 
 abstract class AbstractPackageDefinition
     implements

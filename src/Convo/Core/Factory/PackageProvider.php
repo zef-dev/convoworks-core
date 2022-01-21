@@ -3,7 +3,7 @@
 namespace Convo\Core\Factory;
 
 use Convo\Core\Rest\NotFoundException;
-use Convo\Core\Eval\ExpressionFunctionProviderInterface;
+use Convo\Core\Expression\ExpressionFunctionProviderInterface;
 
 class PackageProvider implements
     \Convo\Core\Intent\ISystemIntentRepository,
@@ -244,6 +244,7 @@ class PackageProvider implements
                     throw new \Exception('Package ['.$package->getNamespace().'] is not [\Convo\Core\Factory\IComponentProvider]');
                 }
 
+                /** @var Convo\Core\Factory\IComponentProvider $package */
                 $component = $package->createPackageComponent( $service, $this, $componentData);
                 $this->_logger->debug( 'Created component ['.get_class( $component).']');
 // 				$this->_logger->debug( '-----');

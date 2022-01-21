@@ -53,7 +53,7 @@ class ConvoServiceFactory
 		$this->_logger->debug( 'Data loaded');
 
         $provider = $this->_packageProviderFactory->getProviderFromPackageIds($data['packages']);
-        $eval = new \Convo\Core\Eval\EvaluationContext($this->_logger, $provider);
+        $eval = new \Convo\Core\Expression\EvaluationContext($this->_logger, $provider);
 
 		$service	=	new \Convo\Core\ConvoServiceInstance(
 			$this->_logger,

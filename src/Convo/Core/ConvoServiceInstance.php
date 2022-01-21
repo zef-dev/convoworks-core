@@ -129,7 +129,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     public function __construct(
         \Psr\Log\LoggerInterface $logger,
-        \Convo\Core\Eval\EvaluationContext $eval,
+        \Convo\Core\Expression\EvaluationContext $eval,
         \Convo\Core\Params\IServiceParamsFactory $paramsFactory,
         \Convo\Core\IAdminUser $user,
         $serviceId
