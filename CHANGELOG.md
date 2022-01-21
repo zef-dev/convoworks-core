@@ -4,14 +4,11 @@
 
 ## [Releases]
 
-## 0.22.10.1 - 2022-02-01
-* Added pre-dispatch flow to Session Start block
-* Rename `Convo\Core\Eval` namespace to `Convo\Core\Expression`
-
-## 0.22.10.0 - 2022-01-20
+## 0.22.10.0 - 2022-02-01
 * Added a new block role - error handler
 * Added a new flow for conversation blocks - pre-dispatch
 * Fixed finding default block in service
+* Added proxy classes for certain Symfony components
 * Added new functions `date_tz` and `strtotime_tz`
 * Rework `GetAmazonCustomerProfileElement` to read permissions from Amazon Platform Config
 * Added Alexa Skill Certification status check
