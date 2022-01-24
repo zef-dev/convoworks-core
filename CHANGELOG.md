@@ -4,6 +4,9 @@
 
 ## [Releases]
 
+## 0.22.10.2 - 2022-01-24
+* Pre-dispatch flow only in session start block (fix wrong interface allowed)
+
 ## 0.22.10.1 - 2022-01-24
 * Allow pre-dispatch flow only in session start block
 
