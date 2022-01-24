@@ -4,7 +4,10 @@
 
 ## [Releases]
 
-## 0.22.10.0 - 2022-02-01
+## 0.22.10.1 - 2022-01-24
+* Allow pre-dispatch flow only in session start block
+
+## 0.22.10.0 - 2022-01-21
 * Added a new block role - error handler
 * Added a new flow for conversation blocks - pre-dispatch
 * Fixed finding default block in service
