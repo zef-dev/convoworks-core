@@ -1974,8 +1974,7 @@ In default phase you can inform users about problem you have interpreting comman
                             'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
                             'multiple' => true,
                             'roles' => [
-                                IRunnableBlock::ROLE_CONVERSATION_BLOCK,
-                                IRunnableBlock::ROLE_SESSION_START,
+                                IRunnableBlock::ROLE_CONVERSATION_BLOCK
                             ]
                         ),
                         'defaultValue' => array(),
