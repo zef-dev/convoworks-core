@@ -279,7 +279,7 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 			'service' => $service_data
 		];
 
-		return $this->_httpFactory->buildResponse(json_encode($data), 200, [
+		return $this->_httpFactory->buildResponse(json_encode($data, JSON_PRETTY_PRINT), 200, [
 	        'Content-Disposition' => 'attachment; filename="'.$template_id.'.template.json"',
 	        'Content-Type' => 'application/json'
 		]);
