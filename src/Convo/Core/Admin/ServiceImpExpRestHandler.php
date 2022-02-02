@@ -75,6 +75,11 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 		    return $this->_performConvoProtoExportServicePlatformGet( $request, $user, $route->get( 'serviceId'), $route->get( 'platformId'));
 		}
 
+		if ($info->get() && $route = $info->route('service-imp-exp/export-template/{serviceId}'))
+		{
+			return $this->_performConvoProtoExportServiceTemplatePost($request, $user, $route->get('serviceId'));
+		}
+
 		throw new \Convo\Core\Rest\NotFoundException( 'Could not map ['.$info.']');
 	}
 
@@ -249,6 +254,34 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 	    return $this->_httpFactory->buildResponse($export->getContent(), 200, [
 	        'Content-Disposition' => 'attachment; filename="'.$export->getFilename().'"',
 	        'Content-Type' => $export->getContentType()
+		]);
+	}
+
+	private function _performConvoProtoExportServiceTemplatePost(\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId)
+	{
+		$service_data = $this->_convoServiceDataProvider->getServiceData($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+
+		unset($service_data['service_id']);
+		unset($service_data['time_updated']);
+		unset($service_data['intents_time_updated']);
+		unset($service_data['name']);
+
+		$queryParams = $request->getQueryParams();
+
+		$name = urldecode($queryParams['name']);
+		$template_id = StrUtil::slugify($name);
+		$description = urldecode($queryParams['description']);
+
+		$data = [
+			'template_id' => $template_id,
+			'name' => $name,
+			'description' => $description,
+			'service' => $service_data
+		];
+
+		return $this->_httpFactory->buildResponse(json_encode($data, JSON_PRETTY_PRINT), 200, [
+	        'Content-Disposition' => 'attachment; filename="'.$template_id.'.template.json"',
+	        'Content-Type' => 'application/json'
 		]);
 	}
 
