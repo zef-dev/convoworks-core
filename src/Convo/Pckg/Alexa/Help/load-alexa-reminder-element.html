@@ -1,0 +1,47 @@
+<div class="for-help">
+    <h3>Load Alexa Reminder Element</h3>
+    <p>Returns single reminder data by an <var>alert token id</var>.</p>
+
+    <h4>Parameters:</h4>
+    <ul>
+        <li><code>Reminder ID</code> - ID of the existing and <var>ACTIVE</var> reminder of an Alexa Skill</li>
+        <li><code>Return Variable Name</code> - Default <code>status</code>, name of the variable that contains additional information (<code>appointment</code>, <code>timezone</code>)</li>
+    </ul>
+
+    <p>Example of <code>${status.reminder}</code> <var>Return Variable Name</var> value:</p>
+    <pre>
+    <code>{
+            "alertToken": "eb5e1fdf-b7a2-4e8b-a17b-1edd6404c6ad",
+            "createdTime": "2022-01-31T09:10:06.052Z",
+            "updatedTime": "2022-01-31T09:10:37.966Z",
+            "trigger": {
+                "type": "SCHEDULED_RELATIVE",
+                "scheduledTime": "2022-01-31T10:10:21.000",
+                "timeZoneId": "Europe\/Paris",
+                "offsetInSeconds": 15,
+                "recurrence": null
+            },
+            "status": "ON",
+            "alertInfo": {
+                "spokenInfo": {
+                    "content": [
+                        {
+                            "locale": "en-US",
+                            "text": "Feed your kitties.",
+                            "ssml": "<speak>Feed your kitties.</speak>"
+                        }
+                    ]
+                }
+            },
+            "pushNotification": {
+                "status": "ENABLED"
+            },
+            "version": "4"
+    }</code>
+    </pre>
+
+    <h4>Flows:</h4>
+    <ul>
+        <li><code>OK</code> - will be executed if the reminder was found and the reminder's status is <var>ON</var></li>
+    </ul>
+</div>

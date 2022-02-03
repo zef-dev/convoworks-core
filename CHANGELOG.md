@@ -1,6 +1,7 @@
 # CHANGELOG
 
 ## [Current development]
+* Add support for Alexa Reminders API
 
 ## [Releases]
 

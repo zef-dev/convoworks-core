@@ -1,0 +1,80 @@
+<div>
+    <h3>Load Alexa Reminders Element</h3>
+
+    <p>Loads reminders of an Alexa Skill which could be filtered by an <var>status</var> which could be <var>ON</var> or <var>COMPLETED</var>.</p>
+
+    <h4>Parameters:</h4>
+    <ul>
+        <li><var>Reminder Status</var> - Filters reminders retrieved from the Alexa API by of the three options <code>All</code>, <code>Active</code> or <code>Completed</code></li>
+        <li><var>Return Variable Name</var> - Default <code>status</code>, name of the variable that contains information of the Alexa Reminders API response</li>
+    </ul>
+
+    <p>Example of <code>${status.reminders}</code> <var>Return Variable Name</var> value:</p>
+    <pre>
+    <code>[
+        {
+            "alertToken": "eb5e1fdf-b7a2-4e8b-a17b-1edd6404c6ad",
+            "createdTime": "2022-01-31T09:10:06.052Z",
+            "updatedTime": "2022-01-31T09:10:37.966Z",
+            "trigger": {
+                "type": "SCHEDULED_RELATIVE",
+                "scheduledTime": "2022-01-31T10:10:21.000",
+                "timeZoneId": "Europe\/Paris",
+                "offsetInSeconds": 15,
+                "recurrence": null
+            },
+            "status": "COMPLETED",
+            "alertInfo": {
+                "spokenInfo": {
+                    "content": [
+                        {
+                            "locale": "en-US",
+                            "text": "Feed your kitties.",
+                            "ssml": "<speak>Feed your kitties.</speak>"
+                        }
+                    ]
+                }
+            },
+            "pushNotification": {
+                "status": "ENABLED"
+            },
+            "version": "4"
+        },
+        {
+            "alertToken": "118f45ce-ed6f-4e05-af33-067b7360df1b",
+            "createdTime": "2022-01-31T09:19:47.897Z",
+            "updatedTime": "2022-01-31T09:21:06.983Z",
+            "trigger": {
+                "type": "SCHEDULED_ABSOLUTE",
+                "scheduledTime": "2022-01-31T10:21:00.000",
+                "timeZoneId": "Europe\/Paris",
+                "offsetInSeconds": 0,
+                "recurrence": null
+            },
+            "status": "COMPLETED",
+            "alertInfo": {
+                "spokenInfo": {
+                    "content": [
+                        {
+                            "locale": "en-US",
+                            "text": "It's time to feed your kitties.",
+                            "ssml": "<speak>It's time to feed your kitties.</speak>"
+                        }
+                    ]
+                }
+            },
+            "pushNotification": {
+                "status": "ENABLED"
+            },
+            "version": "4"
+        }
+    ]</code>
+    </pre>
+
+    <h4>Flows:</h4>
+    <ul>
+        <li><code>Multiple</code> - if status variable <var>Return Variable Name</var> contains at least two reminders or no elements are present in <code>Single</code> or <code>Empty</code>, <code>Multiple</code> flow will be executed</li>
+        <li><code>Single</code> - if no elements are present in <code>Single</code> flow and status variable <var>Return Variable Name</var> contains only one reminder, <code>Multiple</code> flow will be executed</li>
+        <li><code>Empty</code> - if no elements are present in <code>Empty</code> flow and status variable <var>Return Variable Name</var> has no reminders, <code>Multiple</code> flow will be executed</li>
+    </ul>
+</div>

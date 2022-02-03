@@ -3,6 +3,7 @@
 namespace Convo\Pckg\Alexa;
 
 use Convo\Core\Adapters\Alexa\Api\AlexaCustomerProfileApi;
+use Convo\Core\Adapters\Alexa\Api\AlexaRemindersApi;
 use Convo\Core\Factory\AbstractPackageDefinition;
 use Convo\Core\Factory\ComponentDefinition;
 use Convo\Core\Factory\IComponentFactory;
@@ -30,6 +31,11 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 	private $_alexaCustomerProfileApi;
 
     /**
+     * @var AlexaRemindersApi
+     */
+    private $_alexaRemindersApi;
+
+    /**
      * @var \Convo\Core\IServiceDataProvider
      */
     private $_convoServiceDataProvider;
@@ -39,12 +45,14 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
         \Convo\Core\Util\IHttpFactory $httpFactory,
         \Convo\Core\IServiceDataProvider $convoServiceDataProvider,
 		\Convo\Core\Util\WebApiCaller $webApiCaller,
-		AlexaCustomerProfileApi $alexaCustomerProfileApi
+		AlexaCustomerProfileApi $alexaCustomerProfileApi,
+		AlexaRemindersApi $alexaRemindersApi
     ) {
         $this->_httpFactory = $httpFactory;
         $this->_convoServiceDataProvider = $convoServiceDataProvider;
 		$this->_webApiCaller = $webApiCaller;
 		$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
+		$this->_alexaRemindersApi = $alexaRemindersApi;
 
 		parent::__construct( $logger, self::NAMESPACE, __DIR__);
 	}
@@ -165,6 +173,585 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 					}
 				]
 			),
+            new ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\CreateAlexaReminderElement',
+                'Create Alexa Reminder Element',
+                'Creates an reminder in Alexa skill.',
+                [
+                    'is_recurring' => [
+                        'editor_type' => 'boolean',
+                        'editor_properties' => [],
+                        'defaultValue' => false,
+                        'name' => 'Is recurring?',
+                        'description' => 'The reminder can be recurring.',
+                        'valueType' => 'boolean'
+                    ],
+                    'reminder_recurrence_start_date' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.is_recurring === true",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Recurrence Start Date',
+                        'description' => 'Start date of the reminder recurrence.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_recurrence_start_time' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.is_recurring === true",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Recurrence Start Time',
+                        'description' => 'Start time of the reminder recurrence.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_recurrence_end_date' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.is_recurring === true",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Recurrence End Date',
+                        'description' => 'End date of the reminder recurrence.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_recurrence_end_time' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.is_recurring === true",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Recurrence End Time',
+                        'description' => 'End time of the reminder recurrence.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_recurrence_rules' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.is_recurring === true",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Recurrence Rules',
+                        'description' => 'Expressions which evaluates the recurrence rules of an reminder in RRULES format.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_type' => [
+                        'editor_type' => 'select',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.is_recurring === false",
+                            'options' => ['SCHEDULED_ABSOLUTE' => 'Absolute', 'SCHEDULED_RELATIVE' => 'Relative']
+                        ],
+                        'defaultValue' => 'SCHEDULED_ABSOLUTE',
+                        'name' => 'Reminder Type',
+                        'description' => 'Type of the reminder which can be Absolute or Relative.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_schedule_date' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.reminder_type === 'SCHEDULED_ABSOLUTE' && component.properties.is_recurring === false",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Date',
+                        'description' => 'Date of the reminder.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_schedule_time' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.reminder_type === 'SCHEDULED_ABSOLUTE' && component.properties.is_recurring === false",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Time',
+                        'description' => 'Time of the reminder.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_schedule_offset_in_seconds' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.reminder_type === 'SCHEDULED_RELATIVE' && component.properties.is_recurring === false",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Offset in Seconds',
+                        'description' => 'Offset in seconds for the reminder calculated relatively from the request date and time.',
+                        'valueType' => 'string'
+                    ],
+                    'use_app_timezone' => [
+                        'editor_type' => 'boolean',
+                        'editor_properties' => [],
+                        'defaultValue' => false,
+                        'name' => 'Use App timezone?',
+                        'description' => 'Set an timezone which fits your needs, otherwise it will use the devices timezone.',
+                        'valueType' => 'boolean'
+                    ],
+                    'app_timezone' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.use_app_timezone === true",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'App Timezone',
+                        'description' => 'Enabled only when use app timezone is enabled. Enter explicit timezone value.',
+                        'valueType' => 'string'
+                    ],
+                    'spoken_info_content_text' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => '',
+                        'name' => 'Spoken Info Content Text',
+                        'description' => 'Contents of the reminder.',
+                        'valueType' => 'string'
+                    ],
+                    'send_push_notification' => [
+                        'editor_type' => 'boolean',
+                        'editor_properties' => [],
+                        'defaultValue' => true,
+                        'name' => 'Should send push notification?',
+                        'description' => 'When enabled, the Alexa App will notify the user on the device.',
+                        'valueType' => 'boolean'
+                    ],
+                    'reminder_status_var' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => 'status',
+                        'name' => 'Return Variable Name',
+                        'description' => 'Variable name for the reminder status.',
+                        'valueType' => 'string'
+                    ],
+                    'ok' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true
+                        ],
+                        'defaultValue' => [],
+                        'name' => 'OK',
+                        'description' => 'Executed if the reminder of an Alexa Skill could be created successfully.',
+                        'valueType' => 'class'
+                    ],
+                    '_workflow' => 'read',
+                    '_help' =>  [
+                        'type' => 'file',
+                        'filename' => 'create-alexa-reminder-element.html'
+                    ],
+                    '_factory' => new class ($this->_alexaRemindersApi, $this->_convoServiceDataProvider) implements IComponentFactory
+                    {
+                        private $_alexaRemindersApi;
+                        private $_convoServiceDataProvider;
+
+                        public function __construct($alexaRemindersApi, $convoServiceDataProvider)
+                        {
+                            $this->_alexaRemindersApi = $alexaRemindersApi;
+                            $this->_convoServiceDataProvider = $convoServiceDataProvider;
+                        }
+
+                        public function createComponent($properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Elements\CreateAlexaReminderElement($properties, $this->_alexaRemindersApi, $this->_convoServiceDataProvider);
+                        }
+                    }
+                ]
+            ),
+            new ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\UpdateAlexaReminderElement',
+                'Update Alexa Reminder Element',
+                'Updates an reminder in Alexa skill.',
+                [
+                    'reminder_id' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => '',
+                        'name' => 'Reminder ID',
+                        'description' => 'ID of the reminder to update.',
+                        'valueType' => 'string'
+                    ],
+                    'is_recurring' => [
+                        'editor_type' => 'boolean',
+                        'editor_properties' => [],
+                        'defaultValue' => false,
+                        'name' => 'Is recurring?',
+                        'description' => 'The reminder can be also recurring.',
+                        'valueType' => 'boolean'
+                    ],
+                    'reminder_recurrence_start_date' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.is_recurring === true",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Recurrence Start Date',
+                        'description' => 'Start date of the reminder recurrence.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_recurrence_start_time' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.is_recurring === true",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Recurrence Start Time',
+                        'description' => 'Start time of the reminder recurrence.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_recurrence_end_date' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.is_recurring === true",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Recurrence End Date',
+                        'description' => 'End date of the reminder recurrence.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_recurrence_end_time' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.is_recurring === true",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Recurrence End Time',
+                        'description' => 'End time of the reminder recurrence.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_recurrence_rules' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.is_recurring === true",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Recurrence Rules',
+                        'description' => 'Expressions which evaluates the recurrence rules of an reminder in RRULE format.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_type' => [
+                        'editor_type' => 'select',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.is_recurring === false",
+                            'options' => ['SCHEDULED_ABSOLUTE' => 'Absolute', 'SCHEDULED_RELATIVE' => 'Relative']
+                        ],
+                        'defaultValue' => 'SCHEDULED_ABSOLUTE',
+                        'name' => 'Reminder Type',
+                        'description' => 'Type of the reminder.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_schedule_date' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.reminder_type === 'SCHEDULED_ABSOLUTE' && component.properties.is_recurring === false",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Date',
+                        'description' => 'Date of the reminder.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_schedule_time' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.reminder_type === 'SCHEDULED_ABSOLUTE' && component.properties.is_recurring === false",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Reminder Time',
+                        'description' => 'Time of the reminder.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_schedule_offset_in_seconds' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.reminder_type === 'SCHEDULED_RELATIVE' && component.properties.is_recurring === false",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Offset in Seconds',
+                        'description' => 'Offset in seconds for the reminder calculated relatively from the request date and time.',
+                        'valueType' => 'string'
+                    ],
+                    'use_app_timezone' => [
+                        'editor_type' => 'boolean',
+                        'editor_properties' => [],
+                        'defaultValue' => false,
+                        'name' => 'Use App timezone?',
+                        'description' => 'Set an timezone which fits your needs, otherwise it will use the devices timezone.',
+                        'valueType' => 'boolean'
+                    ],
+                    'app_timezone' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'dependency' => "component.properties.use_app_timezone === true",
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'App Timezone',
+                        'description' => 'Enabled only when use app timezone is enabled. Enter explicit timezone value.',
+                        'valueType' => 'string'
+                    ],
+                    'spoken_info_content_text' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => '',
+                        'name' => 'Spoken Info Content Text',
+                        'description' => 'Contents of the reminder.',
+                        'valueType' => 'string'
+                    ],
+                    'send_push_notification' => [
+                        'editor_type' => 'boolean',
+                        'editor_properties' => [],
+                        'defaultValue' => true,
+                        'name' => 'Should send push notification?',
+                        'description' => 'When enabled, the Alexa App will notify the user on the device.',
+                        'valueType' => 'boolean'
+                    ],
+                    'reminder_status_var' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => 'status',
+                        'name' => 'Return Variable Name',
+                        'description' => 'Variable name for the reminder status.',
+                        'valueType' => 'string'
+                    ],
+                    'ok' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true
+                        ],
+                        'defaultValue' => [],
+                        'name' => 'OK',
+                        'description' => 'Executed if the reminder of an Alexa Skill could be updated successfully.',
+                        'valueType' => 'class'
+                    ],
+                    '_workflow' => 'read',
+                    '_help' =>  [
+                        'type' => 'file',
+                        'filename' => 'update-alexa-reminder-element.html'
+                    ],
+                    '_factory' => new class ($this->_alexaRemindersApi, $this->_convoServiceDataProvider) implements IComponentFactory
+                    {
+                        private $_alexaRemindersApi;
+                        private $_convoServiceDataProvider;
+
+                        public function __construct($alexaRemindersApi, $convoServiceDataProvider)
+                        {
+                            $this->_alexaRemindersApi = $alexaRemindersApi;
+                            $this->_convoServiceDataProvider = $convoServiceDataProvider;
+                        }
+
+                        public function createComponent($properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Elements\UpdateAlexaReminderElement($properties, $this->_alexaRemindersApi, $this->_convoServiceDataProvider);
+                        }
+                    }
+                ]
+            ),
+            new ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\LoadAlexaRemindersElement',
+                'Load Alexa Reminders Element',
+                'Loads reminders of an Alexa skill.',
+                [
+                    'reminder_status' => [
+                        'editor_type' => 'select',
+                        'editor_properties' => [
+                            'options' => ['ALL' => 'All', 'ON' => 'Active', 'COMPLETED' => 'Completed']
+                        ],
+                        'defaultValue' => 'ON',
+                        'name' => 'Reminder Status',
+                        'description' => 'Status of the reminder.',
+                        'valueType' => 'string'
+                    ],
+                    'reminders_status_var' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => 'status',
+                        'name' => 'Return Variable Name',
+                        'description' => 'Variable name for the reminder status.',
+                        'valueType' => 'string'
+                    ],
+                    'multiple' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true
+                        ],
+                        'defaultValue' => [],
+                        'defaultOpen' => false,
+                        'name' => 'Multiple',
+                        'description' => 'Flow to be executed if more than one reminders could be found.',
+                        'valueType' => 'class'
+                    ],
+                    'single' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true,
+                            'hideWhenEmpty' => true
+                        ],
+                        'defaultValue' => [],
+                        'defaultOpen' => false,
+                        'name' => 'Single',
+                        'description' => 'Flow to be executed if one reminder could be found.',
+                        'valueType' => 'class'
+                    ],
+                    'empty' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true,
+                            'hideWhenEmpty' => true
+                        ],
+                        'defaultValue' => [],
+                        'defaultOpen' => false,
+                        'name' => 'Empty',
+                        'description' => 'Flow to be executed if no reminders could be found.',
+                        'valueType' => 'class'
+                    ],
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        'template' => '<div class="code">' .
+                            'Load Alexa Reminders of status <span class="statement"><b>{{ component.properties.reminder_status }}</b></span>' .
+                            '</div>'
+                    ],
+                    '_workflow' => 'read',
+                    '_help' =>  [
+                        'type' => 'file',
+                        'filename' => 'load-alexa-reminders-element.html'
+                    ],
+                    '_factory' => new class ($this->_alexaRemindersApi) implements IComponentFactory
+                    {
+                        private $_alexaRemindersApi;
+
+                        public function __construct($alexaRemindersApi)
+                        {
+                            $this->_alexaRemindersApi = $alexaRemindersApi;
+                        }
+
+                        public function createComponent($properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Elements\LoadAlexaRemindersElement($properties, $this->_alexaRemindersApi);
+                        }
+                    }
+                ]
+            ),
+            new ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\LoadAlexaReminderElement',
+                'Load Alexa Reminder Element',
+                'Loads reminder of an Alexa skill by its ID.',
+                [
+                    'reminder_id' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => '',
+                        'name' => 'Reminder ID',
+                        'description' => 'ID of the reminder.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_status_var' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => 'status',
+                        'name' => 'Return Variable Name',
+                        'description' => 'Variable name for the reminder status.',
+                        'valueType' => 'string'
+                    ],
+                    'ok' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true
+                        ],
+                        'defaultValue' => [],
+                        'name' => 'OK',
+                        'description' => 'Executed if the reminder for the current Alexa Skill could be found.',
+                        'valueType' => 'class'
+                    ],
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        'template' => '<div class="code">' .
+                            'Load Alexa Reminder by id <span class="statement"><b>{{ component.properties.reminder_id }}</b></span>' .
+                            '</div>'
+                    ],
+                    '_workflow' => 'read',
+                    '_help' =>  [
+                        'type' => 'file',
+                        'filename' => 'load-alexa-reminder-element.html'
+                    ],
+                    '_factory' => new class ($this->_alexaRemindersApi) implements IComponentFactory
+                    {
+                        private $_alexaRemindersApi;
+
+                        public function __construct($alexaRemindersApi)
+                        {
+                            $this->_alexaRemindersApi = $alexaRemindersApi;
+                        }
+
+                        public function createComponent($properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Elements\LoadAlexaReminderElement($properties, $this->_alexaRemindersApi);
+                        }
+                    }
+                ]
+            ),
+            new ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\DeleteAlexaReminderElement',
+                'Delete Alexa Reminder Element',
+                'Delete reminder of an Alexa skill.',
+                [
+                    'reminder_id' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => '',
+                        'name' => 'Reminder ID',
+                        'description' => 'ID of the reminder.',
+                        'valueType' => 'string'
+                    ],
+                    'reminder_status_var' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => 'status',
+                        'name' => 'Status',
+                        'description' => 'Variable name for the deleted reminder status.',
+                        'valueType' => 'string'
+                    ],
+                    'ok' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true
+                        ],
+                        'defaultValue' => [],
+                        'name' => 'OK',
+                        'description' => 'Executed if the Alexa Reminder could be deleted successfully.',
+                        'valueType' => 'class'
+                    ],
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        'template' => '<div class="code">' .
+                            'Delete Alexa Reminder with id <span class="statement"><b>{{ component.properties.reminder_id }}</b></span>' .
+                            '</div>'
+                    ],
+                    '_workflow' => 'read',
+                    '_help' =>  [
+                        'type' => 'file',
+                        'filename' => 'delete-alexa-reminder-element.html'
+                    ],
+                    '_factory' => new class ($this->_alexaRemindersApi) implements IComponentFactory
+                    {
+                        private $_alexaRemindersApi;
+
+                        public function __construct($alexaRemindersApi)
+                        {
+                            $this->_alexaRemindersApi = $alexaRemindersApi;
+                        }
+
+                        public function createComponent($properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Elements\DeleteAlexaReminderElement($properties, $this->_alexaRemindersApi);
+                        }
+                    }
+                ]
+            ),
 			new \Convo\Core\Factory\ComponentDefinition(
 				$this->getNamespace(),
 				'\Convo\Pckg\Alexa\Elements\PromptPermissionsConsentElement',

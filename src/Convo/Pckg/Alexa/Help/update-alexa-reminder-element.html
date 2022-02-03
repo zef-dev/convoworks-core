@@ -1,0 +1,41 @@
+<div class="for-help">
+    <h3>Update Alexa Reminder Element</h3>
+
+    <p>This element will try to update the existing reminder which is identified by an <var>alertToken</var> for an Alexa Skill.</p>
+
+    <h4>Parameters:</h4>
+    <ul>
+        <li><code>Reminder ID?</code> - ID of the existing reminder.</li>
+        <li><code>Is recurring?</code> - Reminder is recurring?</li>
+        <li><code>Reminder Recurrence Start Date</code> - If the reminder is recurring this filed will be resent. Requested date in the <code>Y-m-d</code> format (the MySQL DATE format)</li>
+        <li><code>Reminder Recurrence Start Time</code> - If the reminder is recurring this filed will be resent. Requested time in the <code>H:i:s</code> format (the MySQL TIME format)</li>
+        <li><code>Reminder Recurrence End Date</code> - If the reminder is recurring this filed will be resent. Requested date in the <code>Y-m-d</code> format (the MySQL DATE format)</li>
+        <li><code>Reminder Recurrence End Time</code> - If the reminder is recurring this filed will be resent. Requested time in the <code>H:i:s</code> format (the MySQL TIME format)</li>
+        <li><code>Reminder Recurrence Rules</code> - If the reminder is recurring this filed will be resent. String in <a href="https://icalendar.org/iCalendar-RFC-5545/3-8-5-3-recurrence-rule.html" target="_blank">RRULES</a> format which defines the recurrence of the reminder. More info can be also found in the Alexa Developer documentation at <a href="https://developer.amazon.com/en-US/docs/alexa/smapi/alexa-reminders-api-reference.html#request" target="_blank">here</a> under <code>trigger.recurrence.recurrenceRules</code>.</li>
+        <li><code>Reminder Type</code> - If the reminder is not recurring this filed will be resent. Type of the reminder.</li>
+        <li><code>Reminder Date</code> - If the reminder is not recurring this filed will be resent. Requested date in the <code>Y-m-d</code> format (the MySQL DATE format)</li>
+        <li><code>Reminder Time</code> - If the reminder is not recurring this filed will be resent. Requested time in the <code>H:i:s</code> format (the MySQL TIME format)</li>
+        <li><code>Use App Timezone?</code> - <code>DEFAULT</code> will use false, if you wish to use your timezone instead just set <var>Use App Timezone?</var> to <code>true</code> otherwise Alexa will get the timezone of the users device.</li>
+        <li><code>Timezone</code> - only when <code>Use App Timezone?</code> is set to <code>true</code>. PHP timezone name.</li>
+        <li><code>Spoken Info Content Text</code> - Text which will be spoken when the reminder triggers.</li>
+        <li><code>Should send push notification?</code> - Will also send the push notification to your Alexa App on Android or iOS device if set to <code>true</code>.</li>
+        <li><code>Result Variable Name</code> - Default <code>status</code>, name of the variable that contains additional information (<code>alertToken</code>, <code>createdTime</code>, <code>updatedTime</code> <code>status</code>, <code>version</code>, <code>href</code>)</li>
+    </ul>
+
+    <p>Example of <code>${status.reminder}</code> <var>Return Variable Name</var> value:</p>
+    <pre>
+    <code>{
+        "alertToken": "fb6412a3-3616-453f-883d-97cc17d5c2e3",
+        "createdTime": "Wed Feb 02 13:02:56 UTC 2022",
+        "updatedTime": "Wed Feb 02 13:02:57 UTC 2022",
+        "status": "ON",
+        "version": "5",
+        "href": "https://api.amazonalexa.com/v1/alerts/reminders/fb6412a3-3616-453f-883d-97cc17d5c2e3/fb6412a3-3616-453f-883d-97cc17d5c2e3"
+    }</code>
+    </pre>
+
+    <h4>Flows:</h4>
+    <ul>
+        <li><code>OK</code> - executes when the reminder could be created</li>
+    </ul>
+</div>
