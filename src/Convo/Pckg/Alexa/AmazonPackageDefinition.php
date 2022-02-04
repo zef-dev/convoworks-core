@@ -758,6 +758,10 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 				'Prompt Permissions Consent Element',
 				'Prompts the user to accept permissions used by your Alexa Skill',
 				[
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'prompt-permissions-consent-element.html'
+                    ),
 					'_preview_angular' => [
 						'type' => 'html',
 						'template' => '<div class="code">' .
