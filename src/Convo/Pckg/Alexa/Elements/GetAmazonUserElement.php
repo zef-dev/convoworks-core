@@ -2,10 +2,10 @@
 
 namespace Convo\Pckg\Alexa\Elements;
 
+use Convo\Core\Adapters\Alexa\Api\AmazonUserApi;
 use Convo\Core\DataItemNotFoundException;
 use Convo\Core\Publish\IPlatformPublisher;
 use Convo\Core\Rest\RestSystemUser;
-use Convo\Core\Util\IHttpFactory;
 use Convo\Core\Workflow\AbstractWorkflowComponent;
 use Convo\Core\Workflow\IConversationElement;
 
@@ -14,20 +14,20 @@ class GetAmazonUserElement extends AbstractWorkflowComponent implements IConvers
     private $_name;
 
 	/**
-	 * @var \Convo\Core\Util\WebApiCaller
+	 * @var AmazonUserApi
 	 */
-	private $_webApiCaller;
+	private $_amazonUserApi;
     /**
      * @var \Convo\Core\IServiceDataProvider
      */
     private $_convoServiceDataProvider;
 
-    public function __construct($properties, $webApiCaller, $convoServiceDataProvider)
+    public function __construct($properties, $amazonUserApi, $convoServiceDataProvider)
     {
         parent::__construct($properties);
 
         $this->_name = $properties['name'] ?? 'user';
-        $this->_webApiCaller = $webApiCaller;
+        $this->_amazonUserApi = $amazonUserApi;
         $this->_convoServiceDataProvider = $convoServiceDataProvider;
     }
 
@@ -48,37 +48,15 @@ class GetAmazonUserElement extends AbstractWorkflowComponent implements IConvers
             $accountLinkingMode = $amazon_config['account_linking_mode'] ?? '';
 
             if ($accountLinkingMode === 'amazon') {
-                try
-                {
-                    if (!$token) {
-                        throw new DataItemNotFoundException("Missing token from request.");
-                    }
-
-                    $user = $this->_getAmazonProfile($token);
-					$this->_logger->debug('Got Amazon User with token [' . $token .'][' . json_encode($user) . ']');
-                    $params->setServiceParam($this->_name, $user);
+                if (!$token) {
+                    throw new DataItemNotFoundException("Missing token from request.");
                 }
-                catch (DataItemNotFoundException $e)
-                {
-                    $this->_logger->warning('User not authorized.');
-                    $params->setServiceParam($this->_name, null);
-                }
-                catch (\Exception $e)
-                {
-                    $this->_logger->error($e->getMessage());
-                    $params->setServiceParam($this->_name, null);
-                }
+                $user = $this->_amazonUserApi->getAmazonUserFromAlexa($request);
+                $this->_logger->debug('Got Amazon User with token [' . $request->getAccessToken() .'][' . json_encode($user) . ']');
+                $params->setServiceParam($this->_name, $user);
             } else {
                 $this->_logger->error('Account linking with mode ' . $accountLinkingMode . ' is not supported.');
             }
         }
     }
-
-	private function _getAmazonProfile($accessToken) {
-		return $this->_webApiCaller->makeApiRequest(
-			IHttpFactory::METHOD_GET,
-			'https://api.amazon.com/user/profile',
-			['access_token' => $accessToken]
-		);
-	}
 }

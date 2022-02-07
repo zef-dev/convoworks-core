@@ -13,9 +13,9 @@ class AlexaSettingsApi extends AlexaApi
 	const ALEXA_SYSTEM_DISTANCE_UNITS = 'System.distanceUnits';
 	const ALEXA_SYSTEM_TEMPERATURE_UNIT = 'System.temperatureUnit';
 
-	public function __construct($logger, $webApiCaller)
+	public function __construct($logger, $httpFactory)
 	{
-		parent::__construct($logger, $webApiCaller);
+		parent::__construct($logger, $httpFactory);
 	}
 
 	/**
@@ -41,7 +41,7 @@ class AlexaSettingsApi extends AlexaApi
 				throw new AlexaApiException('Unsupported Alexa setting [' . $setting . ']');
 		}
 	}
-	
+
 	/**
 	 * @param AmazonCommandRequest $request
 	 * @throws AlexaApiException
@@ -50,9 +50,9 @@ class AlexaSettingsApi extends AlexaApi
 	public function getTimezone( AmazonCommandRequest $request)
 	{
 	    try {
-	        $str_timezone  =   $this->_executeAlexaApiRequest( 
-	            $request, 
-	            IHttpFactory::METHOD_GET, 
+	        $str_timezone  =   $this->_executeAlexaApiRequest(
+	            $request,
+	            IHttpFactory::METHOD_GET,
 	            '/v2/devices/'.$request->getDeviceId().'/settings/'.self::ALEXA_SYSTEM_TIMEZONE);
 	        $this->_logger->info( 'Got timezone ['.$str_timezone.'] for device ['.$request->getDeviceId().']['.$request->getServiceId().']');
 	        return new \DateTimeZone( $str_timezone);

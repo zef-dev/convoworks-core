@@ -11,9 +11,9 @@ class AlexaPersonProfileApi extends AlexaApi
 	const ALEXA_PERSON_PROFILE_GIVEN_NAME = '/v2/accounts/~current/settings/Profile.givenName';
 	const ALEXA_PERSON_PROFILE_PHONE_NUMBER = '/v2/accounts/~current/settings/Profile.mobileNumber';
 
-	public function __construct($logger, $webApiCaller)
+	public function __construct($logger, $httpFactory)
 	{
-		parent::__construct($logger, $webApiCaller);
+		parent::__construct($logger, $httpFactory);
 	}
 
 	public function getPersonFullName(AmazonCommandRequest $request) {

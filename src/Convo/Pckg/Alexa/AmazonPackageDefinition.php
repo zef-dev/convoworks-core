@@ -8,7 +8,6 @@ use Convo\Core\Factory\AbstractPackageDefinition;
 use Convo\Core\Factory\ComponentDefinition;
 use Convo\Core\Factory\IComponentFactory;
 use Convo\Core\Workflow\IRunnableBlock;
-use Convo\Pckg\Alexa\Elements\AplCommandElement;
 use Convo\Pckg\Alexa\Workflow\IAplCommandElement;
 
 class AmazonPackageDefinition extends AbstractPackageDefinition
@@ -21,9 +20,9 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
     private $_httpFactory;
 
 	/**
-	 * @var \Convo\Core\Util\WebApiCaller
+	 * @var \Convo\Core\Adapters\Alexa\Api\AmazonUserApi
 	 */
-	private $_webApiCaller;
+	private $_amazonUserApi;
 
 	/**
 	 * @var AlexaCustomerProfileApi
@@ -44,13 +43,13 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 	    \Psr\Log\LoggerInterface $logger,
         \Convo\Core\Util\IHttpFactory $httpFactory,
         \Convo\Core\IServiceDataProvider $convoServiceDataProvider,
-		\Convo\Core\Util\WebApiCaller $webApiCaller,
+        \Convo\Core\Adapters\Alexa\Api\AmazonUserApi $amazonUserApi,
 		AlexaCustomerProfileApi $alexaCustomerProfileApi,
 		AlexaRemindersApi $alexaRemindersApi
     ) {
         $this->_httpFactory = $httpFactory;
         $this->_convoServiceDataProvider = $convoServiceDataProvider;
-		$this->_webApiCaller = $webApiCaller;
+		$this->_amazonUserApi = $amazonUserApi;
 		$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
 		$this->_alexaRemindersApi = $alexaRemindersApi;
 
@@ -90,20 +89,20 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         'type' => 'file',
                         'filename' => 'get-amazon-user-element.html'
                     ),
-                    '_factory' => new class ($this->_webApiCaller, $this->_convoServiceDataProvider) implements IComponentFactory
+                    '_factory' => new class ($this->_amazonUserApi, $this->_convoServiceDataProvider) implements IComponentFactory
                     {
-                        private $_webApiCaller;
+                        private $_amazonUserApi;
                         private $_convoServiceDataProvider;
 
-                        public function __construct($webApiCaller, $convoServiceDataProvider)
+                        public function __construct($amazonUserApi, $convoServiceDataProvider)
                         {
-                            $this->_webApiCaller = $webApiCaller;
+                            $this->_amazonUserApi = $amazonUserApi;
                             $this->_convoServiceDataProvider = $convoServiceDataProvider;
                         }
 
                         public function createComponent($properties, $service)
                         {
-                            return new \Convo\Pckg\Alexa\Elements\GetAmazonUserElement($properties, $this->_webApiCaller, $this->_convoServiceDataProvider);
+                            return new \Convo\Pckg\Alexa\Elements\GetAmazonUserElement($properties, $this->_amazonUserApi, $this->_convoServiceDataProvider);
                         }
                     }
                 ]

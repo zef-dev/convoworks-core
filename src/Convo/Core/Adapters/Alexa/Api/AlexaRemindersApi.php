@@ -11,9 +11,9 @@ use Psr\Http\Client\ClientExceptionInterface;
 
 class AlexaRemindersApi extends AlexaApi
 {
-    public function __construct($logger, $webApiCaller)
+    public function __construct($logger, $httpFactory)
     {
-        parent::__construct($logger, $webApiCaller);
+        parent::__construct($logger, $httpFactory);
     }
 
     /**
