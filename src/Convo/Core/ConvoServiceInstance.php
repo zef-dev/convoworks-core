@@ -412,6 +412,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                 $component_params->setServiceParam('error', $e);
 
                 $error_handler->read($request, $response);
+            } catch (\Convo\Core\StateChangedException $e) {
+                $this->_logger->info('State changing is not allowed in error handling, wanted ['.$e->getMessage().']');
             } catch (\Convo\Core\ComponentNotFoundException $cnfe) {
                 $this->_logger->info($cnfe->getMessage());
                 throw $e;
