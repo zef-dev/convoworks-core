@@ -19,30 +19,6 @@ class AlexaSettingsApi extends AlexaApi
 	}
 
 	/**
-	 * @todo Split into separate methods
-	 * @deprecated
-	 * @param AmazonCommandRequest $request request from Alexa
-	 * @param string $setting supported setting values System.timeZone|System.distanceUnits|System.temperatureUnit
-	 * @return mixed
-	 * @throws AlexaApiException
-	 */
-	public function getSetting(AmazonCommandRequest $request, string $setting) {
-		$deviceId = $request->getDeviceId();
-		switch ($setting) {
-			case self::ALEXA_SYSTEM_TIMEZONE:
-			case self::ALEXA_SYSTEM_DISTANCE_UNITS:
-			case self::ALEXA_SYSTEM_TEMPERATURE_UNIT:
-				try {
-					return $this->_executeAlexaApiRequest($request, IHttpFactory::METHOD_GET, `/v2/devices/${deviceId}/settings/${$setting}`);
-				} catch (ClientExceptionInterface $e) {
-					throw new AlexaApiException($e->getMessage(), $e->getCode());
-				}
-			default:
-				throw new AlexaApiException('Unsupported Alexa setting [' . $setting . ']');
-		}
-	}
-
-	/**
 	 * @param AmazonCommandRequest $request
 	 * @throws AlexaApiException
 	 * @return \DateTimeZone
@@ -60,4 +36,42 @@ class AlexaSettingsApi extends AlexaApi
 	        throw new AlexaApiException( 'Failed to get timezone for the request ['.$request.']', null, $e);
 	    }
 	}
+
+    /**
+     * @param AmazonCommandRequest $request
+     * @throws AlexaApiException
+     * @return string
+     */
+    public function getDistanceMeasurementUnit( AmazonCommandRequest $request)
+    {
+        try {
+            $str_distance_measurement_unit  =   $this->_executeAlexaApiRequest(
+                $request,
+                IHttpFactory::METHOD_GET,
+                '/v2/devices/'.$request->getDeviceId().'/settings/'.self::ALEXA_SYSTEM_DISTANCE_UNITS);
+            $this->_logger->info( 'Got distance measurement unit ['.$str_distance_measurement_unit.'] for device ['.$request->getDeviceId().']['.$request->getServiceId().']');
+            return $str_distance_measurement_unit;
+        } catch ( ClientExceptionInterface $e) {
+            throw new AlexaApiException( 'Failed to get distance measurement unit for the request ['.$request.']', null, $e);
+        }
+    }
+
+    /**
+     * @param AmazonCommandRequest $request
+     * @throws AlexaApiException
+     * @return string
+     */
+    public function getTemperatureMeasurementUnit( AmazonCommandRequest $request)
+    {
+        try {
+            $str_temperature_measurement_unit  =   $this->_executeAlexaApiRequest(
+                $request,
+                IHttpFactory::METHOD_GET,
+                '/v2/devices/'.$request->getDeviceId().'/settings/'.self::ALEXA_SYSTEM_TEMPERATURE_UNIT);
+            $this->_logger->info( 'Got temperature measurement unit ['.$str_temperature_measurement_unit.'] for device ['.$request->getDeviceId().']['.$request->getServiceId().']');
+            return $str_temperature_measurement_unit;
+        } catch ( ClientExceptionInterface $e) {
+            throw new AlexaApiException( 'Failed to get temperature measurement unit for the request ['.$request.']', null, $e);
+        }
+    }
 }
