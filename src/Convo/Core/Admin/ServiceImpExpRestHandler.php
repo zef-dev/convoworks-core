@@ -118,6 +118,13 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 			throw new \Convo\Core\Rest\InvalidRequestException('Invalid JSON in ['.$file->getClientFilename().']['.json_last_error_msg().']');
 		}
 
+		if (isset($service_data['template_id'])) {
+            $service_data_from_template = $service_data['service'];
+            $service_data_from_template['service_id'] = $original_meta['service_id'];
+            $service_data_from_template['name'] = $original_meta['name'];
+            $service_data = $service_data_from_template;
+		}
+
 		if ( $keep_vars) {
 			$service_data['variables']		    =	$original_data['variables'];
             $service_data['preview_variables']  =	$original_data['preview_variables'];
@@ -141,16 +148,6 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 
         unset($service_data['configurations']);
         unset($service_data['release_mappings']);
-        
-		if (isset($service_data['service']))
-		{
-            $service_data_from_template = $service_data['service'];
-            $service_data_from_template['template_id'] = $service_data['template_id'];
-            $service_data_from_template['service_id'] = $original_meta['service_id'];
-            $service_data_from_template['description'] = $original_meta['description'];
-            $service_data_from_template['name'] = $original_meta['name'];
-            $service_data = $service_data_from_template;
-        }
 
         $this->_convoServiceFactory->fixComponentIds( $service_data);
 		$this->_convoServiceDataProvider->saveServiceData( $user, $serviceId, $service_data);
