@@ -408,7 +408,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
             try {
                 $error_handler = $this->getBlockByRole(IRunnableBlock::ROLE_ERROR_HANDLER);
 
-                $component_params = $this->getComponentParams(\Convo\Core\PArams\IServiceParamsScope::SCOPE_TYPE_REQUEST, $error_handler);
+                $component_params = $this->getComponentParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $error_handler);
                 $component_params->setServiceParam('error', $e);
 
                 $error_handler->read($request, $response);
