@@ -576,7 +576,12 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $context			=	array_merge( $variables, $context);
 
         // CONTEXTS
-        $context			=	array_merge( [ 'contexts' => $this->_contexts], $context);
+        $context_map        =   [];
+        foreach ($this->_contexts as $ctx) {
+            $context_map[$ctx->getId()] = $ctx;
+        }
+
+        $context			=	array_merge(['contexts' => $context_map], $context);
 
         // REQUEST
         $objResolver		=	new ObjectResolver( $this->_request);
