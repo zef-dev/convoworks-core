@@ -577,8 +577,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
         // CONTEXTS
         $context_map        =   [];
-        foreach ($this->_contexts as $context) {
-            $context_map[$context->getId()] = $context;
+        foreach ($this->_contexts as $ctx) {
+            $context_map[$ctx->getId()] = $ctx;
         }
 
         $context			=	array_merge(['contexts' => $context_map], $context);
