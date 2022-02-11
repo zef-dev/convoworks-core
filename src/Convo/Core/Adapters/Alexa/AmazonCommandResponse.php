@@ -709,6 +709,20 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                 $data['response']['reprompt']['outputSpeech']['ssml'] = $this->getRepromptTextSsml();
             }
 
+            $isAutoDisplay = isset($this->_serviceAmazonConfig['auto_display']) ? $this->_serviceAmazonConfig['auto_display'] : false;
+
+            if ($this->_amazonCommandRequest->isAplEnabled()) {
+                $isAutoDisplay = false;
+            }
+
+            if ($this->_isDisplaySupported && $isAutoDisplay) {
+                $data['response']['card'] = [
+                    'type' => 'Simple',
+                    'title' => isset($this->_serviceAmazonConfig['invocation']) ? ucwords($this->_serviceAmazonConfig['invocation']) : '',
+                    'content' => $this->getText()
+                ];
+            }
+
             if ($this->_sendAccountLinkingCard) {
                 $data['response']['card'] = ['type' => 'LinkAccount'];
             }
@@ -719,20 +733,6 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 					'permissions' => $this->_permissionsToAskFor
 				];
 			}
-
-            $isAutoDisplay = isset($this->_serviceAmazonConfig['auto_display']) ? $this->_serviceAmazonConfig['auto_display'] : false;
-
-            if ($this->_amazonCommandRequest->isAplEnabled()) {
-            	$isAutoDisplay = false;
-			}
-
-            if ($this->_isDisplaySupported && $isAutoDisplay) {
-                $data['response']['card'] = [
-                    'type' => 'Simple',
-                    'title' => isset($this->_serviceAmazonConfig['invocation']) ? ucwords($this->_serviceAmazonConfig['invocation']) : '',
-                    'content' => $this->getText()
-                ];
-            }
         }
 
         return $data;
