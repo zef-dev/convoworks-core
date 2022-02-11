@@ -22,17 +22,13 @@ class AlexaCustomerProfileApi extends AlexaApi
 		try {
 			return $this->_executeAlexaApiRequest($request, IHttpFactory::METHOD_GET, self::ALEXA_CUSTOMER_PROFILE_FULL_NAME);
 		} catch (ClientExceptionInterface $e) {
-			if ($e->getCode() === 401) {
-				throw new AlexaApiException('The authentication token is malformed or invalid.', $e->getCode());
-			} else if ($e->getCode() === 403) {
-				throw new AlexaApiException('The user has not permitted the skill to access the Full Name.', $e->getCode());
-			} else if ($e->getCode() === 429) {
-				throw new AlexaApiException('The skill has been throttled due to an excessive number of requests.', $e->getCode());
-			} else if ($e->getCode() === 500) {
-				throw new AlexaApiException('An unexpected error occurred.', $e->getCode());
-			} else {
-				throw new AlexaApiException($e->getMessage(), $e->getCode());
-			}
+            switch ($e->getCode()) {
+                case 401:
+                case 403:
+                    throw new InsufficientPermissionsGrantedException('Missing [alexa::profile:name:read] permission.', null, $e);
+                default:
+                    throw new \Exception($e->getMessage(), null, $e);
+            }
 		}
 	}
 
@@ -40,17 +36,13 @@ class AlexaCustomerProfileApi extends AlexaApi
 		try {
 			return $this->_executeAlexaApiRequest($request, IHttpFactory::METHOD_GET, self::ALEXA_CUSTOMER_PROFILE_GIVEN_NAME);
 		} catch (ClientExceptionInterface $e) {
-			if ($e->getCode() === 401) {
-				throw new AlexaApiException('The authentication token is malformed or invalid.', $e->getCode());
-			} else if ($e->getCode() === 403) {
-				throw new AlexaApiException('The user has not permitted the skill to access the Given Name.', $e->getCode());
-			} else if ($e->getCode() === 429) {
-				throw new AlexaApiException('The skill has been throttled due to an excessive number of requests.', $e->getCode());
-			} else if ($e->getCode() === 500) {
-				throw new AlexaApiException('An unexpected error occurred.', $e->getCode());
-			} else {
-				throw new AlexaApiException($e->getMessage(), $e->getCode());
-			}
+            switch ($e->getCode()) {
+                case 401:
+                case 403:
+                    throw new InsufficientPermissionsGrantedException('Missing [alexa::profile:given_name:read] permission.', null, $e);
+                default:
+                    throw new \Exception($e->getMessage(), null, $e);
+            }
 		}
 	}
 
@@ -58,17 +50,13 @@ class AlexaCustomerProfileApi extends AlexaApi
 		try {
 			return $this->_executeAlexaApiRequest($request, IHttpFactory::METHOD_GET, self::ALEXA_CUSTOMER_PROFILE_EMAIL_ADDRESS);
 		} catch (ClientExceptionInterface $e) {
-			if ($e->getCode() === 401) {
-				throw new AlexaApiException('The authentication token is malformed or invalid.', $e->getCode());
-			} else if ($e->getCode() === 403) {
-				throw new AlexaApiException('The user has not permitted the skill to access the Email Address.', $e->getCode());
-			} else if ($e->getCode() === 429) {
-				throw new AlexaApiException('The skill has been throttled due to an excessive number of requests.', $e->getCode());
-			} else if ($e->getCode() === 500) {
-				throw new AlexaApiException('An unexpected error occurred.', $e->getCode());
-			} else {
-				throw new AlexaApiException($e->getMessage(), $e->getCode());
-			}
+            switch ($e->getCode()) {
+                case 401:
+                case 403:
+                    throw new InsufficientPermissionsGrantedException('Missing [alexa::profile:email:read] permission.', null, $e);
+                default:
+                    throw new \Exception($e->getMessage(), null, $e);
+            }
 		}
 	}
 
@@ -76,17 +64,13 @@ class AlexaCustomerProfileApi extends AlexaApi
 		try {
 			return $this->_executeAlexaApiRequest($request, IHttpFactory::METHOD_GET, self::ALEXA_CUSTOMER_PROFILE_PHONE_NUMBER);
 		} catch (ClientExceptionInterface $e) {
-			if ($e->getCode() === 401) {
-				throw new AlexaApiException('The authentication token is malformed or invalid.', $e->getCode());
-			} else if ($e->getCode() === 403) {
-				throw new AlexaApiException('The user has not permitted the skill to access the Phone Number.', $e->getCode());
-			} else if ($e->getCode() === 429) {
-				throw new AlexaApiException('The skill has been throttled due to an excessive number of requests.', $e->getCode());
-			} else if ($e->getCode() === 500) {
-				throw new AlexaApiException('An unexpected error occurred.', $e->getCode());
-			} else {
-				throw new AlexaApiException($e->getMessage(), $e->getCode());
-			}
+            switch ($e->getCode()) {
+                case 401:
+                case 403:
+                    throw new InsufficientPermissionsGrantedException('Missing [alexa::profile:mobile_number:read] permission.', null, $e);
+                default:
+                    throw new \Exception($e->getMessage(), null, $e);
+            }
 		}
 	}
 }

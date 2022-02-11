@@ -116,7 +116,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 					'name' => [
 						'editor_type' => 'text',
 						'editor_properties' => [],
-						'defaultValue' => 'customer_profile_status',
+						'defaultValue' => 'status',
 						'name' => 'Name',
 						'description' => 'Name under which to store the loaded user object in the context',
 						'valueType' => 'string'
@@ -154,20 +154,31 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'type' => 'file',
 						'filename' => 'get-amazon-customer-profile-element.html'
 					),
-					'_factory' => new class ($this->_alexaCustomerProfileApi, $this->_convoServiceDataProvider) implements IComponentFactory
+					'_factory' => new class (
+                        $this->_alexaCustomerProfileApi,
+                        $this->_alexaRemindersApi,
+                        $this->_convoServiceDataProvider
+                    ) implements IComponentFactory
 					{
 						private $_alexaCustomerProfileApi;
+						private $_alexaRemindersProfileApi;
 						private $_convoServiceDataProvider;
 
-						public function __construct($alexaCustomerProfileApi, $convoServiceDataProvider)
+						public function __construct($alexaCustomerProfileApi, $alexaRemindersProfileApi, $convoServiceDataProvider)
 						{
 							$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
+							$this->_alexaRemindersProfileApi = $alexaRemindersProfileApi;
 							$this->_convoServiceDataProvider = $convoServiceDataProvider;
 						}
 
 						public function createComponent($properties, $service)
 						{
-							return new \Convo\Pckg\Alexa\Elements\GetAmazonCustomerProfileElement($properties, $this->_alexaCustomerProfileApi, $this->_convoServiceDataProvider);
+							return new \Convo\Pckg\Alexa\Elements\GetAmazonCustomerProfileElement(
+                                $properties,
+                                $this->_alexaCustomerProfileApi,
+                                $this->_alexaRemindersProfileApi,
+                                $this->_convoServiceDataProvider
+                            );
 						}
 					}
 				]

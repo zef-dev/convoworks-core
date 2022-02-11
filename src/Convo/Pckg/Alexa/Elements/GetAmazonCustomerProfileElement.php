@@ -2,8 +2,9 @@
 
 namespace Convo\Pckg\Alexa\Elements;
 
-use Convo\Core\Adapters\Alexa\Api\AlexaApiException;
 use Convo\Core\Adapters\Alexa\Api\AlexaCustomerProfileApi;
+use Convo\Core\Adapters\Alexa\Api\AlexaRemindersApi;
+use Convo\Core\Adapters\Alexa\Api\InsufficientPermissionsGrantedException;
 use Convo\Core\Publish\IPlatformPublisher;
 use Convo\Core\Rest\RestSystemUser;
 use Convo\Core\Workflow\IConvoRequest;
@@ -28,12 +29,18 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 	 */
 	private $_alexaCustomerProfileApi;
 
+
+    /**
+     * @var AlexaRemindersApi
+     */
+    private $_alexaRemindersApi;
+
 	/**
 	 * @var \Convo\Core\IServiceDataProvider
 	 */
 	private $_convoServiceDataProvider;
 
-	public function __construct($properties, $alexaCustomerProfileApi, $convoServiceDataProvider)
+	public function __construct($properties, $alexaCustomerProfileApi, $alexaRemindersApi, $convoServiceDataProvider)
 	{
 		parent::__construct($properties);
 
@@ -50,6 +57,7 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 		}
 
 		$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
+		$this->_alexaRemindersApi = $alexaRemindersApi;
 		$this->_convoServiceDataProvider = $convoServiceDataProvider;
 	}
 
@@ -74,48 +82,71 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 			$shouldGetGivenName = in_array('alexa::profile:given_name:read', $amazon_skill_permissions);
 			$shouldGetEmailAddress = in_array('alexa::profile:email:read', $amazon_skill_permissions);
 			$shouldGetPhoneNumber = in_array('alexa::profile:mobile_number:read', $amazon_skill_permissions);
+			$shouldGetReminders = in_array('alexa::alerts:reminders:skill:readwrite', $amazon_skill_permissions);
 
 			$customerProfile = [];
+            $missingPermissions = [];
+            $configuredPermissions = [];
 			$this->_logger->info('Getting Amazon Customer Profile with the following permissions [' . json_encode($amazon_skill_permissions) . ']');
-			try {
-				if ($shouldGetFullName) {
-					$customerProfile['fullName'] = $this->_alexaCustomerProfileApi->getCustomerFullName($request);
-				}
+            if ($shouldGetFullName) {
+                $configuredPermissions[] = 'fullName';
+                try {
+                    $customerProfile['fullName'] = $this->_alexaCustomerProfileApi->getCustomerFullName($request);
+                } catch (InsufficientPermissionsGrantedException $e) {
+                    $missingPermissions[] = 'fullName';
+                }
+            }
+            if ($shouldGetGivenName) {
+                $configuredPermissions[] = 'givenName';
+                try {
+                    $customerProfile['givenName'] = $this->_alexaCustomerProfileApi->getCustomerGivenName($request);
+                } catch (InsufficientPermissionsGrantedException $e) {
+                    $missingPermissions[] = 'givenName';
+                }
+            }
+            if ($shouldGetEmailAddress) {
+                $configuredPermissions[] = 'emailAddress';
+                try {
+                    $customerProfile['emailAddress'] = $this->_alexaCustomerProfileApi->getCustomerEmailAddress($request);
+                } catch (InsufficientPermissionsGrantedException $e) {
+                    $missingPermissions[] = 'emailAddress';
+                }
+            }
+            if ($shouldGetPhoneNumber) {
+                $configuredPermissions[] = 'phoneNumber';
+                try {
+                    $customerProfile['phoneNumber'] = $this->_alexaCustomerProfileApi->getCustomerPhoneNumber($request);
+                } catch (InsufficientPermissionsGrantedException $e) {
+                    $missingPermissions[] = 'phoneNumber';
+                }
+            }
+            if ($shouldGetReminders) {
+                $configuredPermissions[] = 'reminders';
+                try {
+                    $customerProfile['reminders'] = $this->_alexaRemindersApi->getAllReminders($request);
+                } catch (InsufficientPermissionsGrantedException $e) {
+                    $missingPermissions[] = 'reminders';
+                }
+            }
 
-				if ($shouldGetGivenName) {
-					$customerProfile['givenName'] = $this->_alexaCustomerProfileApi->getCustomerGivenName($request);
-				}
+            if (empty($missingPermissions)) {
+                $selected_flow = $this->_ok;
+                $this->_logger->info('Got all requested data of Amazon Customer Profile [' . json_encode($customerProfile) . ']');
+                $params->setServiceParam($name, ['customer_profile' => $customerProfile]);
+            } else {
+                $selected_flow = $this->_onPermissionNotGranted;
+                $this->_logger->info('Missing permissions ['.json_encode($missingPermissions).'] of configured permissions ['.json_encode($configuredPermissions).']');
+                $this->_logger->info('Could not get all requested data of Amazon Customer Profile [' . json_encode($customerProfile) . ']');
+                $params->setServiceParam($name, [
+                    'configured_permissions' => $configuredPermissions,
+                    'missing_permissions' => $missingPermissions,
+                    'customer_profile' => $customerProfile
+                ]);
+            }
 
-				if ($shouldGetEmailAddress) {
-					$customerProfile['emailAddress'] = $this->_alexaCustomerProfileApi->getCustomerEmailAddress($request);
-				}
-
-				if ($shouldGetPhoneNumber) {
-					$customerProfile['phoneNumber'] = $this->_alexaCustomerProfileApi->getCustomerPhoneNumber($request);
-				}
-
-				$this->_logger->info('Got Amazon Customer Profile [' . json_encode($customerProfile) . ']');
-				$params->setServiceParam($name, $customerProfile);
-
-				if ( !empty( $this->_ok)) {
-					foreach ( $this->_ok as $element) {
-						$element->read( $request, $response);
-					}
-				}
-			} catch (AlexaApiException $e) {
-				$this->_logger->notice($e->getMessage());
-				$params->setServiceParam($name, ['error' => $e->getMessage()]);
-
-				if ($e->getCode() === 403) {
-					if ( !empty( $this->_onPermissionNotGranted)) {
-						foreach ($this->_onPermissionNotGranted as $element) {
-							$element->read( $request, $response);
-						}
-					}
-				} else {
-					throw new AlexaApiException($e->getMessage(), $e->getCode(), $e);
-				}
-			}
+            foreach ($selected_flow as $element) {
+                $element->read( $request, $response);
+            }
 		}
 	}
 }

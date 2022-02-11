@@ -5,7 +5,7 @@
 
     <h3>When to use?</h3>
 
-    <p>When you want to retrieve customer information from the Amazon User Account and use it in your Alexa Skill.</p>
+    <p>When you want to retrieve customer information from the Amazon User Account, see what permissions the customer has granted to the Alexa Skill and use it in your Alexa Skill.</p>
 
     <h3>How to use: </h3>
     <ol>
@@ -15,24 +15,35 @@
                 <li><b>Full Name or Given Name</b></li>
                 <li><b>Customer Email Address</b></li>
                 <li><b>Customer Phone Number</b></li>
+                <li><b>Reminders</b></li>
             </ul>
         </li>
 
         <li>
-            <span>In case the customer profile could be fetched successfully, <b>OK</b> flow will be executed.</span>
+            <span>If all configured permissions have been granted, <b>OK</b> flow will be executed.</span>
             <br>
             <br>
             <p>After the user has enabled the skill and granted permissions, you'll be able to access the customer profile data like in the following examples:</p>
             <ul>
-                <li><code>${customer_profile_status.fullName}</code> when <b>Full Name</b> permission was granted by the user</li>
-                <li><code>${customer_profile_status.givenName}</code> when <b>Given Name</b> permission was granted by the user</li>
-                <li><code>${customer_profile_status.emailAddress}</code> when <b>Given Name</b> permission was granted by the user</li>
-                <li><code>${customer_profile_status.phoneNumber.countryCode}</code> when <b>Phone Number</b> permission was granted by the user</li>
-                <li><code>${customer_profile_status.phoneNumber.phoneNumber}</code> when <b>Phone Number</b> permission was granted by the user</li>
+                <li><code>${status.customer_profile.fullName}</code> when <b>Full Name</b> permission was granted by the user.</li>
+                <li><code>${status.customer_profile.givenName}</code> when <b>Given Name</b> permission was granted by the user.</li>
+                <li><code>${status.customer_profile.emailAddress}</code> when <b>Given Name</b> permission was granted by the user.</li>
+                <li><code>${status.customer_profile.phoneNumber.countryCode}</code> when <b>Phone Number</b> permission was granted by the user.</li>
+                <li><code>${status.customer_profile.phoneNumber.phoneNumber}</code> when <b>Phone Number</b> permission was granted by the user.</li>
+                <li><code>${status.customer_profile.reminders}</code> when <b>Reminders</b> permission was granted by the user. For more info please visit the help file of <var>Get Alexa Reminders Element</var></li>
             </ul>
             <br>
-            <p>In case the customer profile could not be fetched successfully, <b>On Permission Not Granted</b> or <b>NOK</b> flow will be executed</p>
-            <p>You can access the error message like this <code>${customer_profile_status.error}</code>.</p>
+            <p>If at lease one permission has not been granted, <b>On Permission Not Granted</b> flow will be executed.</p>
+            <p>You'll still have access the fields of the customer profile just like in the OK flow, but expect some missing fields.</p>
+            <p>Additionally you will have access to <var>missing permissions</var> and <var>configured permissions</var>.</p>
+            <p><var>missing permissions</var> indicate what permissions have not been granted by the customer. Example how to access the <var>missing permissions</var>: <code>${status.missing_permissions}</code></p>
+            <p><var>configured permissions</var> indicate what permissions you have configured for your skill. Example how to access the <var>configured permissions</var>: <code>${status.configured_permissions}</code></p>
+            <p>Both <var>missing permissions</var> and <var>configured permissions</var> are arrays of string values with the name of the missing permission.</p>
+            <span>Here are some example of values you can expect on the variables <var>missing permissions</var> and <var>configured permissions</var>:</span>
+            <ul>
+                <li><var>missing permissions</var> array <code>['fullName','givenName','emailAddress','phoneNumber','reminders']</code></li>
+                <li><var>configured permissions</var> array <code>['fullName','givenName','emailAddress','phoneNumber','reminders']</code></li>
+            </ul>
         </li>
     </ol>
 </div>

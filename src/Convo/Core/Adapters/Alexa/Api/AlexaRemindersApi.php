@@ -41,7 +41,7 @@ class AlexaRemindersApi extends AlexaApi
     /**
      * @param AmazonCommandRequest $request
      * @return mixed
-     * @throws AlexaApiException
+     * @throws InsufficientPermissionsGrantedException
      */
     public function getAllReminders(AmazonCommandRequest $request) {
         try {
