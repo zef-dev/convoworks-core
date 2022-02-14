@@ -98,6 +98,43 @@ class EvaluationContextTest extends TestCase
 					}
 				);
 
+                $functions[] = new ExpressionFunction(
+                    'parse_date_time',
+                    function ($date, $platform = 'amazon') {
+                        return sprintf('parse_date_time(%1$d, %2$p)', $date, $platform);
+                    },
+                    function($args, $date, $platform = 'amazon') {
+                        if (strtotime($date)) {
+                            return strval($date);
+                        }
+                        switch ($platform) {
+                            case 'amazon':
+                                // fix specific date slots provided by Alexa
+                                $date = str_replace('-WE', ' +5 days', $date);
+                                $date = str_replace('X', '0', $date);
+                                $date = str_replace('WI', '12', $date);
+                                $date = str_replace('SP', '03', $date);
+                                $date = str_replace('SU', '06', $date);
+                                $date = str_replace('FA', '09', $date);
+
+                                // fix specific time slots provided by Alexa
+                                $date = str_replace('NI', '23:00', $date);
+                                $date = str_replace('MO', '05:00', $date);
+                                $date = str_replace('AF', '13:00', $date);
+                                $date = str_replace('EV', '19:00', $date);
+
+                                // check if the fixed format is still parsable
+                                if (strtotime($date)) {
+                                    return $date;
+                                }
+
+                                return false;
+                            default:
+                                return false;
+                        }
+                    }
+                );
+
 				return $functions;
 			}
 		});
@@ -508,6 +545,96 @@ class EvaluationContextTest extends TestCase
                 'https://www.example2.com/search?items=${items}',
                 [
                     'items' => '1,2,3,4,5'
+                ]
+            ],
+            'Alexa Dirty Weekend Date' => [
+                '2015-W48 +5 days',
+                '${parse_date_time(result.date)}',
+                [
+                    'result' => [
+                        'date' => '2015-W48-WE'
+                    ]
+                ]
+            ],
+            'Alexa Dirty Decade Date' => [
+                '2020',
+                '${parse_date_time(result.date)}',
+                [
+                    'result' => [
+                        'date' => '202X'
+                    ]
+                ]
+            ],
+            'Alexa Dirty Winter Date' => [
+                '2017-12',
+                '${parse_date_time(result.date)}',
+                [
+                    'result' => [
+                        'date' => '2017-WI'
+                    ]
+                ]
+            ],
+            'Alexa Dirty Spring Date' => [
+                '2017-03',
+                '${parse_date_time(result.date)}',
+                [
+                    'result' => [
+                        'date' => '2017-SP'
+                    ]
+                ]
+            ],
+            'Alexa Dirty Summer Date' => [
+                '2017-06',
+                '${parse_date_time(result.date)}',
+                [
+                    'result' => [
+                        'date' => '2017-SU'
+                    ]
+                ]
+            ],
+            'Alexa Dirty Fall Date' => [
+                '2017-09',
+                '${parse_date_time(result.date)}',
+                [
+                    'result' => [
+                        'date' => '2017-FA'
+                    ]
+                ]
+            ],
+            'Alexa Dirty Night Date' => [
+                '2022-02-11 23:00',
+                '${parse_date_time(result.date)}',
+                [
+                    'result' => [
+                        'date' => '2022-02-11 NI'
+                    ]
+                ]
+            ],
+            'Alexa Dirty Morning Date' => [
+                '2022-02-11 05:00',
+                '${parse_date_time(result.date)}',
+                [
+                    'result' => [
+                        'date' => '2022-02-11 MO'
+                    ]
+                ]
+            ],
+            'Alexa Dirty Afternoon Date' => [
+                '2022-02-11 13:00',
+                '${parse_date_time(result.date)}',
+                [
+                    'result' => [
+                        'date' => '2022-02-11 AF'
+                    ]
+                ]
+            ],
+            'Alexa Dirty Evening Date' => [
+                '2022-02-11 19:00',
+                '${parse_date_time(result.date)}',
+                [
+                    'result' => [
+                        'date' => '2022-02-11 EV'
+                    ]
                 ]
             ]
         ];

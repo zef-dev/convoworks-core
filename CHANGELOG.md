@@ -2,6 +2,7 @@
 
 ## [Current development]
 * Add support for Alexa Reminders API
+* Add new expression function parse_date_time which interpolates incoming date formats provided by a slot of an platform
 
 ## [Releases]
 

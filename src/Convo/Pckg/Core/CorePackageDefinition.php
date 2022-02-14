@@ -441,6 +441,43 @@ class CorePackageDefinition extends AbstractPackageDefinition
 			}
 		);
 
+        $functions[] = new ExpressionFunction(
+            'parse_date_time',
+            function ($date, $platform = 'amazon') {
+                return sprintf('parse_date_time(%1$d, %2$p)', $date, $platform);
+            },
+            function($args, $date, $platform = 'amazon') {
+                if (strtotime($date)) {
+                    return strval($date);
+                }
+                switch ($platform) {
+                    case 'amazon':
+                        // fix specific date slots provided by Alexa
+                        $date = str_replace('-WE', ' +5 days', $date);
+                        $date = str_replace('X', '0', $date);
+                        $date = str_replace('WI', '12', $date);
+                        $date = str_replace('SP', '03', $date);
+                        $date = str_replace('SU', '06', $date);
+                        $date = str_replace('FA', '09', $date);
+
+                        // fix specific time slots provided by Alexa
+                        $date = str_replace('NI', '23:00', $date);
+                        $date = str_replace('MO', '05:00', $date);
+                        $date = str_replace('AF', '13:00', $date);
+                        $date = str_replace('EV', '19:00', $date);
+
+                        // check if the fixed format is still parsable
+                        if (strtotime($date)) {
+                            return $date;
+                        }
+
+                        return false;
+                    default:
+                        return false;
+                }
+            }
+        );
+
         return $functions;
     }
 
