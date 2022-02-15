@@ -2,43 +2,134 @@
 	"template_id": "basic-template",
 	"name": "Basic Template",
 	"description": "Basic service template with minimum required intents already set (help, stop, navigate home).",
-	"service": {
-        "service_id": "basic-from-template",
-        "convo_service_version": 34,
+    "service": {
+        "service_id": "basic-template",
+        "convo_service_version": 38,
         "packages": [
             "convo-core"
         ],
         "contexts": [],
         "variables": {
-            "APP_NAME": "Hello World"
+            "APP_NAME": "Basic Template",
+            "MULTIPLY_BY": "${2}"
         },
         "preview_variables": [],
         "entities": [],
         "intents": [
             {
-                "name": "MyTestIntent",
+                "name": "GetNumberIntent",
                 "utterances": [
                     {
-                        "raw": "world",
+                        "raw": "multiply 10",
                         "model": [
                             {
-                                "text": "world"
+                                "text": "multiply"
+                            },
+                            {
+                                "type": "convo-core.number",
+                                "text": "10",
+                                "slot_value": "number"
                             }
                         ]
                     },
                     {
-                        "raw": "hello",
+                        "raw": "multiply by 10",
                         "model": [
                             {
-                                "text": "hello"
+                                "text": "multiply by"
+                            },
+                            {
+                                "type": "convo-core.number",
+                                "text": "10",
+                                "slot_value": "number"
                             }
                         ]
                     },
                     {
-                        "raw": "hello world",
+                        "raw": "try 5",
                         "model": [
                             {
-                                "text": "hello world"
+                                "text": "try"
+                            },
+                            {
+                                "type": "convo-core.number",
+                                "text": "5",
+                                "slot_value": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "i give you 4",
+                        "model": [
+                            {
+                                "text": "i give you"
+                            },
+                            {
+                                "type": "convo-core.number",
+                                "text": "4",
+                                "slot_value": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "another is 3",
+                        "model": [
+                            {
+                                "text": "another is"
+                            },
+                            {
+                                "type": "convo-core.number",
+                                "text": "3",
+                                "slot_value": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "the number is 2",
+                        "model": [
+                            {
+                                "text": "the number is"
+                            },
+                            {
+                                "type": "convo-core.number",
+                                "text": "2",
+                                "slot_value": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "what about 2",
+                        "model": [
+                            {
+                                "text": "what about"
+                            },
+                            {
+                                "type": "convo-core.number",
+                                "text": "2",
+                                "slot_value": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "how about 2",
+                        "model": [
+                            {
+                                "text": "how about"
+                            },
+                            {
+                                "type": "convo-core.number",
+                                "text": "2",
+                                "slot_value": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "2",
+                        "model": [
+                            {
+                                "type": "convo-core.number",
+                                "text": "2",
+                                "slot_value": "number"
                             }
                         ]
                     }
@@ -59,9 +150,18 @@
                             "class": "\\Convo\\Pckg\\Core\\Elements\\RunOnceElement",
                             "namespace": "convo-core",
                             "properties": {
-                                "scope_type": "session",
-                                "name": null,
+                                "scope_type": "installation",
+                                "name": "Greetings",
                                 "child": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "First time user greeting + novice prompt",
+                                            "context": null,
+                                            "_component_id": "pu0lywjg-gid1-r1tf-2upn-ycv6hbiqce53"
+                                        }
+                                    },
                                     {
                                         "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
                                         "namespace": "convo-core",
@@ -70,13 +170,49 @@
                                             "alexa_domain": "normal",
                                             "alexa_emotion": "neutral",
                                             "alexa_emotion_intensity": "medium",
-                                            "text": "Welcome to ${APP_NAME}",
+                                            "text": "Welcome to ${APP_NAME}. Think of a random number and I'll multiply it by ${MULTIPLY_BY}. So, what's the number?",
                                             "append": false,
                                             "_component_id": "9613c12f-d3b6-264c-b397-c1dff1b4e0f5"
                                         }
                                     }
                                 ],
-                                "else": [],
+                                "else": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "Returning user greeting + prompt",
+                                            "context": null,
+                                            "_component_id": "xyjfp5me-n4bf-zxg6-c6n4-aq2ks8cyywwx"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "text": "Welcome back!",
+                                            "append": false,
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "_component_id": "rpuwdmlj-adtz-bljs-d5hg-qw8uu8ij9ie2"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "text": "Give me a number. Any number.",
+                                            "append": false,
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "_component_id": "ckwlf6vl-g9j5-q622-dusf-srbrbiwbsmz4"
+                                        }
+                                    }
+                                ],
                                 "_component_id": "mjdal9vs-cc2x-xfxo-wsdf-ydlinwtvmayo"
                             }
                         },
@@ -84,13 +220,13 @@
                             "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
                             "namespace": "convo-core",
                             "properties": {
-                                "type": "default",
-                                "text": "Say hello world",
+                                "type": "reprompt",
+                                "text": "You can tell me a random number, or if you need more instructions say 'help'.",
                                 "append": false,
                                 "alexa_domain": "normal",
                                 "alexa_emotion": "neutral",
                                 "alexa_emotion_intensity": "medium",
-                                "_component_id": "ckwlf6vl-g9j5-q622-dusf-srbrbiwbsmz4"
+                                "_component_id": "kekdu0wr-wmoj-szby-mvxe-qlilafwxbu2q"
                             }
                         }
                     ],
@@ -99,19 +235,166 @@
                             "class": "\\Convo\\Pckg\\Core\\Processors\\SimpleProcessor",
                             "namespace": "convo-core",
                             "properties": {
-                                "name": null,
+                                "name": "Multiply by",
                                 "ok": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "GetNumberIntent triggered",
+                                            "context": null,
+                                            "_component_id": "bcifwc55-wkaw-ebn0-u7x0-d0lpp2fb2to9"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "Randomize phrases",
+                                            "context": null,
+                                            "_component_id": "q1e4u3xt-hogy-5jne-bkj8-ivybggc7qcle"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\ElementRandomizer",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "name": "Before result phrases",
+                                            "mode": "wild",
+                                            "elements": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "type": "default",
+                                                        "text": "Great! I know this.",
+                                                        "append": false,
+                                                        "alexa_domain": "normal",
+                                                        "alexa_emotion": "neutral",
+                                                        "alexa_emotion_intensity": "medium",
+                                                        "_component_id": "avsk44ww-g9fd-jk5f-lzli-p2lhzx2rl3ze"
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "type": "default",
+                                                        "text": "Right. I got this one.",
+                                                        "append": false,
+                                                        "alexa_domain": "normal",
+                                                        "alexa_emotion": "neutral",
+                                                        "alexa_emotion_intensity": "medium",
+                                                        "_component_id": "ic7pnp4d-xzen-aopd-y5lc-5e2runa16meg"
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "type": "default",
+                                                        "text": "Okay. Just a sec.",
+                                                        "append": false,
+                                                        "alexa_domain": "normal",
+                                                        "alexa_emotion": "neutral",
+                                                        "alexa_emotion_intensity": "medium",
+                                                        "_component_id": "6gmywhpq-pslp-emzm-ran0-ukzt7pdi3lmi"
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "type": "default",
+                                                        "text": "Excellent! Here's the result:",
+                                                        "append": false,
+                                                        "alexa_domain": "normal",
+                                                        "alexa_emotion": "neutral",
+                                                        "alexa_emotion_intensity": "medium",
+                                                        "_component_id": "e1lppezi-apoh-epbd-7gjd-y2opkmhtcyju"
+                                                    }
+                                                }
+                                            ],
+                                            "loop": true,
+                                            "is_repeat": "",
+                                            "scope_type": "installation",
+                                            "_component_id": "njejwfi0-vatc-wsb2-uwwo-eshmehc6xbcf"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\SetParamElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "scope_type": "request",
+                                            "parameters": "service",
+                                            "properties": {
+                                                "multiply_result": "${result.number * MULTIPLY_BY}"
+                                            },
+                                            "_component_id": "kybbx32h-0xss-v8yh-wiat-5hi18paufuub"
+                                        }
+                                    },
                                     {
                                         "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
                                         "namespace": "convo-core",
                                         "properties": {
                                             "type": "default",
-                                            "text": "Great! It works. You can try again.",
+                                            "text": "${result.number} times ${MULTIPLY_BY} is ${multiply_result}.",
                                             "append": false,
                                             "alexa_domain": "normal",
                                             "alexa_emotion": "neutral",
                                             "alexa_emotion_intensity": "medium",
-                                            "_component_id": "yspgncqa-iich-xiiz-jvxo-m5ptf21a9wew"
+                                            "_component_id": "lwrblbb4-3vwa-hsyz-ofaw-vq9aum7ddsyc"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\RunOnceElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "scope_type": "session",
+                                            "name": "Instructions",
+                                            "child": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "type": "default",
+                                                        "text": "You can ask me to repeat, or say 'stop' to exit the app.",
+                                                        "append": false,
+                                                        "alexa_domain": "normal",
+                                                        "alexa_emotion": "neutral",
+                                                        "alexa_emotion_intensity": "medium",
+                                                        "_component_id": "grkzxdzo-yxt9-kjeh-giaa-rtnurq0ltdgc"
+                                                    }
+                                                }
+                                            ],
+                                            "else": [],
+                                            "_component_id": "h9kqsnop-i25v-9en7-zv0i-lsybgrhc3vvw"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "text": "I'm ready for another one.",
+                                            "append": false,
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "_component_id": "qm0gfijy-a7tv-gyai-dlua-lqznvtkicilt"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "reprompt",
+                                            "text": "You can give me another number.",
+                                            "append": false,
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "_component_id": "77o03nji-nrdn-y7k3-sfyj-qwh9lxqvr8ny"
                                         }
                                     }
                                 ],
@@ -126,7 +409,7 @@
                                                     "class": "\\Convo\\Pckg\\Core\\Filters\\ConvoIntentReader",
                                                     "namespace": "convo-core",
                                                     "properties": {
-                                                        "intent": "MyTestIntent",
+                                                        "intent": "GetNumberIntent",
                                                         "required_slots": "",
                                                         "values": [],
                                                         "rename": [],
@@ -140,6 +423,74 @@
                                 ],
                                 "_component_id": "1vnba2xz-dmkt-j49y-8skf-binapkyrw1gh"
                             }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Processors\\SimpleProcessor",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "name": "Help - multiply by",
+                                "ok": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "Intent based help",
+                                            "context": null,
+                                            "_component_id": "pp55wagy-d7ir-30a4-itco-knhvhbzx2p0x"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "text": "To exit the app say 'stop'. Otherwise, think of a number, and I'll multiply it by ${MULTIPLY_BY}.",
+                                            "append": false,
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "_component_id": "wahkgprb-nyn2-gxsl-zdbe-kvlf7yizynjy"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "reprompt",
+                                            "text": "Well, what's the number you want multiplied?",
+                                            "append": false,
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "_component_id": "2zw3kxsu-99mr-cj3z-ccbg-amk6scbnne8t"
+                                        }
+                                    }
+                                ],
+                                "request_filters": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Filters\\IntentRequestFilter",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "name": null,
+                                            "readers": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Filters\\ConvoIntentReader",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "intent": "convo-core.HelpIntent",
+                                                        "required_slots": "",
+                                                        "values": [],
+                                                        "rename": [],
+                                                        "_component_id": "nrgyiilx-51qv-hs5d-d5pg-1ywrj6via1pl"
+                                                    }
+                                                }
+                                            ],
+                                            "_component_id": "f490i7qq-hmu7-dcj7-ugtv-rbtyrimr2ps0"
+                                        }
+                                    }
+                                ],
+                                "_component_id": "wj3kiqk5-oehk-ilvg-t7sd-z7uig8jjh5af"
+                            }
                         }
                     ],
                     "fallback": [
@@ -148,12 +499,25 @@
                             "namespace": "convo-core",
                             "properties": {
                                 "type": "default",
-                                "text": "Sorry I didn't understand that. Say hello world.",
+                                "text": "Sorry, what's the number you want multiplied?",
                                 "append": false,
                                 "alexa_domain": "normal",
                                 "alexa_emotion": "neutral",
                                 "alexa_emotion_intensity": "medium",
-                                "_component_id": "exae1dwl-s9vj-lb3o-oehv-izwdpg4y2wu0"
+                                "_component_id": "xwskeesz-skih-ntwl-dmaw-kwz6ugnnqbje"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "type": "reprompt",
+                                "text": "Tell me a number you want multiplied. If you need more instructions, say 'help'.",
+                                "append": false,
+                                "alexa_domain": "normal",
+                                "alexa_emotion": "neutral",
+                                "alexa_emotion_intensity": "medium",
+                                "_component_id": "dloq6xgz-ojpr-48h8-ehoi-qzhyp027l9bm"
                             }
                         }
                     ],
@@ -176,11 +540,29 @@
                                 "name": "Help",
                                 "ok": [
                                     {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "Generic help",
+                                            "context": null,
+                                            "_component_id": "zmgepgax-szxu-ala1-t3oj-kyer0gzra7en"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "Change this help message to fit your service",
+                                            "context": null,
+                                            "_component_id": "nzaakwnr-rlhn-m9ms-st1o-kb89jgdwuv0d"
+                                        }
+                                    },
+                                    {
                                         "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
                                         "namespace": "convo-core",
                                         "properties": {
                                             "type": "default",
-                                            "text": "This is a basic service template. Change this help message according to your needs.",
+                                            "text": "I'm a basic service template. You can change me to fit your needs. Right now, you can ask me to repeat, start over or stop.",
                                             "append": false,
                                             "alexa_domain": "normal",
                                             "alexa_emotion": "neutral",
@@ -189,10 +571,16 @@
                                         }
                                     },
                                     {
-                                        "class": "\\Convo\\Pckg\\Core\\Elements\\ReadBlockAgainElement",
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
                                         "namespace": "convo-core",
                                         "properties": {
-                                            "_component_id": "yas8ojzi-digi-odx3-fpgc-blbuu2e8r5bs"
+                                            "type": "reprompt",
+                                            "text": "What do you want to do: repeat, start over or stop?",
+                                            "append": false,
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "_component_id": "b21axoty-yji2-inkj-2x0e-hxkyi7mjsmvu"
                                         }
                                     }
                                 ],
@@ -228,6 +616,15 @@
                             "properties": {
                                 "name": "Navigate home",
                                 "ok": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "Goes back to welcome \/ main menu",
+                                            "context": null,
+                                            "_component_id": "hgafuvtj-pbod-s69a-wbey-5fdji3f9asnq"
+                                        }
+                                    },
                                     {
                                         "class": "\\Convo\\Pckg\\Core\\Elements\\GoToElement",
                                         "namespace": "convo-core",
@@ -282,23 +679,29 @@
                                 "name": "End session",
                                 "ok": [
                                     {
-                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
                                         "namespace": "convo-core",
                                         "properties": {
-                                            "type": "default",
-                                            "text": "Bye",
-                                            "append": false,
-                                            "alexa_domain": "normal",
-                                            "alexa_emotion": "neutral",
-                                            "alexa_emotion_intensity": "medium",
-                                            "_component_id": "afjrjm10-vgwa-acxv-ccrd-azg0vgtspli7"
+                                            "comment": "Exits the app",
+                                            "context": null,
+                                            "_component_id": "sfy4nczw-gfjd-kktq-6tkk-abkhp6ctt71s"
                                         }
                                     },
                                     {
-                                        "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
                                         "namespace": "convo-core",
                                         "properties": {
-                                            "_component_id": "kaqy7dow-9tuf-xfz6-byhv-oudknpujeuqh"
+                                            "comment": "Fragment response you can reuse",
+                                            "context": null,
+                                            "_component_id": "yzu90vm5-erxa-fyd3-rogo-fok6r97nv9f9"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\ReadElementsFragment",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "fragment_id": "Exit",
+                                            "_component_id": "8mkfv7xr-qmeh-h8gg-dcy1-6xkigdgxelah"
                                         }
                                     }
                                 ],
@@ -338,14 +741,223 @@
                                 ],
                                 "_component_id": "ie5sh28f-elli-lt5u-whyw-fkr7lzq7rc7f"
                             }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Processors\\SimpleProcessor",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "name": "Repeat",
+                                "ok": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\ReadBlockAgainElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "_component_id": "5tzz4r89-1r1n-jhe0-epm2-9bvfprfwxtap"
+                                        }
+                                    }
+                                ],
+                                "request_filters": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Filters\\IntentRequestFilter",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "name": null,
+                                            "readers": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Filters\\ConvoIntentReader",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "intent": "convo-core.RepeatIntent",
+                                                        "required_slots": "",
+                                                        "values": [],
+                                                        "rename": [],
+                                                        "_component_id": "voxl5i3x-hvpy-1pm4-td6r-9fw7f1hevdt2"
+                                                    }
+                                                }
+                                            ],
+                                            "_component_id": "5khd5efj-tpeg-op2d-0qxg-6uuugd9xtift"
+                                        }
+                                    }
+                                ],
+                                "_component_id": "diu9m39t-wivn-dkl7-swwj-pchapl0th85i"
+                            }
                         }
                     ],
                     "fallback": [],
                     "_component_id": "21mz4rmq-supw-obiy-ekoh-kfmw6fw62r4c"
                 }
+            },
+            {
+                "class": "\\Convo\\Pckg\\Core\\Elements\\ConversationBlock",
+                "namespace": "convo-core",
+                "properties": {
+                    "role": "default_fallback",
+                    "block_id": "Default_fallback",
+                    "name": "Default fallback",
+                    "pre_dispatch": [],
+                    "elements": [
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "comment": "Here if a block fallback is empty",
+                                "context": null,
+                                "_component_id": "lpf5iu3s-lybf-9r3b-5uhk-bvgi4galty99"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "type": "both",
+                                "text": "Sorry, I don\u2019t know that word. Please try again.",
+                                "append": false,
+                                "alexa_domain": "normal",
+                                "alexa_emotion": "neutral",
+                                "alexa_emotion_intensity": "medium",
+                                "_component_id": "jch9kumz-igde-6lti-pfts-lvkjgy49dvq8"
+                            }
+                        }
+                    ],
+                    "processors": [],
+                    "fallback": [],
+                    "_component_id": "l2dobkip-9svo-f0kh-bwuh-h4a9e1xm8ble"
+                }
+            },
+            {
+                "class": "\\Convo\\Pckg\\Core\\Elements\\ConversationBlock",
+                "namespace": "convo-core",
+                "properties": {
+                    "role": "error_handler",
+                    "block_id": "Error_handler",
+                    "name": "Error handler",
+                    "pre_dispatch": [],
+                    "elements": [
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "comment": "Handles error caught during the service run.",
+                                "context": null,
+                                "_component_id": "c99z6gbw-q1iq-4cms-hjvd-afell0gv2i0v"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "type": "default",
+                                "text": "I'm sorry, but something went wrong.",
+                                "append": false,
+                                "alexa_domain": "normal",
+                                "alexa_emotion": "neutral",
+                                "alexa_emotion_intensity": "medium",
+                                "_component_id": "xns9arcw-boxf-cobx-jfig-bqexy0sxovtw"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "type": "default",
+                                "text": "Please try again later.",
+                                "append": false,
+                                "alexa_domain": "normal",
+                                "alexa_emotion": "neutral",
+                                "alexa_emotion_intensity": "medium",
+                                "_component_id": "phgsjxga-lkkq-cdai-ztq8-1dgrlywdeicc"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "_component_id": "97mckss8-pfab-elhu-nggt-qrttys2k2ulh"
+                            }
+                        }
+                    ],
+                    "processors": [],
+                    "fallback": [],
+                    "_component_id": "7d53hlau-htun-hssh-jvhg-llep2mvye4i0"
+                }
             }
         ],
-        "fragments": [],
-        "properties": []
+        "fragments": [
+            {
+                "class": "\\Convo\\Pckg\\Core\\Elements\\ElementsFragment",
+                "namespace": "convo-core",
+                "properties": {
+                    "fragment_id": "Exit",
+                    "name": "Exit",
+                    "elements": [
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\ElementRandomizer",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "name": "Bye responses",
+                                "mode": "wild",
+                                "elements": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "text": "Bye.",
+                                            "append": false,
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "_component_id": "uhvc9ach-be6t-4hi6-eb7g-c6t7mhufppxk"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "text": "Until next time.",
+                                            "append": false,
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "_component_id": "2jaw5gx0-qw1m-7h9z-y6nw-nnshdmbanpsz"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "text": "Don't be a stranger.",
+                                            "append": false,
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "_component_id": "atbzgg7a-cvfx-v5wj-x7nh-eywjv4pfmptb"
+                                        }
+                                    }
+                                ],
+                                "loop": true,
+                                "is_repeat": "",
+                                "scope_type": "installation",
+                                "_component_id": "dzby4rhm-imx5-d6pd-7v1b-x2gcg54d068p"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "_component_id": "zyhqlu5m-lj9a-guoh-wi9l-9lvrds1hvcny"
+                            }
+                        }
+                    ],
+                    "_component_id": "qu7esk7j-tyrh-ly0y-hhmw-bo7sif5r5ujt"
+                }
+            }
+        ],
+        "time_updated": 1644916069,
+        "intents_time_updated": 1643716279,
+        "properties": [],
+        "name": "Basic Template Rework"
     }
 }
