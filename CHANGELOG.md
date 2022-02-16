@@ -1,10 +1,15 @@
 # CHANGELOG
 
 ## [Current development]
-* Add support for Alexa Reminders API
-* Add new expression function parse_date_time which interpolates incoming date formats provided by a slot of an platform
-
 ## [Releases]
+
+## 0.22.11 - 2022-02-16
+* Add support for Alexa Reminders API
+* Add new expression function `parse_date_time` which interpolates incoming date formats provided by platform slots
+* Expose service contexts inside service runtime -- accessible as `${contexts[contextId]}`
+* Accept template file on service import
+* Add ability to download service as a template
+* Various bugfixes and improvements
 
 ## 0.22.10.2 - 2022-01-24
 * Pre-dispatch flow only in session start block (fix wrong interface allowed)
