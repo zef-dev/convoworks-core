@@ -3,7 +3,7 @@
 namespace Convo\Pckg\Core\Elements;
 
 
-abstract class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
+class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
 {
 	
 	/**
