@@ -410,7 +410,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
 				$date_tz = \DateTime::createFromFormat($format, date($format, $timestamp));
 
 				if (!is_bool($date_tz) && !empty($timezone)) {
-					$date_tz->setTimezone(new \DateTImeZone($timezone));
+					$date_tz->setTimezone(new \DateTimeZone($timezone));
 				}
 
 				if (is_bool($date_tz)) {
