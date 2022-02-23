@@ -48,41 +48,31 @@ class ElementQueue extends AbstractWorkflowContainerComponent implements IConver
     public function read(IConvoRequest $request, IConvoResponse $response)
     {
         $params = $this->getService()->getComponentParams($this->evaluateString($this->_scopeType), $this);
-        $ran = $params->getServiceParam('triggered');
+        $current_index = $params->getServiceParam('index') ?: 0;
 
-        if ($ran)
+        if ($current_index === count($this->_elements))
         {
+            $this->_logger->info('Current index ['.$current_index.'] falls outside of elements count.');
+
             $should_reset = $this->evaluateString($this->_shouldReset);
-            $this->_logger->info('Element queue already ran its elements, and should_reset flag is set to ['.$should_reset ? 'true' : 'false'.']');
 
-            if ($should_reset)
-            {
-                $this->_logger->info('Re-reading element queue.');
+            if ($should_reset) {
+                $this->_logger->info('Resetting index to 0');
+                $current_index = 0;
+            } else {
+                $this->_logger->debug('Going to read Done flow');
 
-                foreach ($this->_elements as $element)
-                {
-                    $element->read($request, $response);
-                }
-            }
-            else
-            {
-                $this->_logger->info('Going to read done flow, if any.');
-                foreach ($this->_done as $done)
-                {
+                foreach ($this->_done as $done) {
                     $done->read($request, $response);
                 }
+
+                return;
             }
         }
-        else
-        {
-            $this->_logger->info('Queue has not yet been executed, reading elements.');
 
-            foreach ($this->_elements as $element)
-            {
-                $element->read($request, $response);
-            }
-
-            $params->setServiceParam('triggered', true);
+        if (isset($this->_elements[$current_index])) {
+            $this->_elements[$current_index]->read($request, $response);
+            $params->setServiceParam('index', ($current_index + 1));
         }
     }
 }
