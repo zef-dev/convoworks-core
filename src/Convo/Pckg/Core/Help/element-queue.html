@@ -1,12 +1,13 @@
 <div class="element-queue-help">
     <h3>Element Queue</h3>
-    <p>This element executes its child elements in sequence. You can decide how often it will check if they've been executed, i.e. once per request, session, or installation.</p>
+    <p>This element executes its child elements in sequence, one by one, each time it's called. You can decide how often it will check if its child elements have been executed, i.e. once per request, session, or installation.</p>
     <p>Optionally, you may also put elements in a "Done" flow that will run if the Queue element is read again, but has already executed its elements in the given scope.</p>
-    <p>You can also set the element to always re-read its children, without checking if it's been run already.</p>
+    <p>You can also set the Queue to always re-read its children, without checking if it's been run already, by setting the <code>Should Reset</code> property to true.</p>
+    <p>The <b>Element Queue</b> is similar to the <b>Element Randomizer</b>, difference being that the Queue executes its elements sequentially.</p>
 
     <h4>When to use?</h4>
 
-    <p>When you have elements you wish to run in sequence, while having control over how often they run, and with an additional flow in case they've been executed.</p>
+    <p>When you have elements you wish to run in sequence, one by one, while having control over how often they run, and with an additional flow in case they've been executed.</p>
 
     <h4>How to use?</h4>
 
