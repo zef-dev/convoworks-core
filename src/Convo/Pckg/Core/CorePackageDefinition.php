@@ -1448,6 +1448,61 @@ class CorePackageDefinition extends AbstractPackageDefinition
             ),
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
+                '\Convo\Pckg\Core\Elements\ElementQueue',
+                'Element Queue',
+                'Execute elements in sequence, with an optional flow to read if all elements have been executed',
+                array(
+                    'scope_type' => array(
+                        'editor_type' => 'select',
+                        'editor_properties' => array(
+                            'options' => array('session' => 'Session', 'installation' => 'Installation', 'user' => 'User')
+                        ),
+                        'defaultValue' => 'session',
+                        'name' => 'Scope type',
+                        'description' => 'Sets when to run elements in sequence.',
+                        'valueType' => 'string'
+                    ),
+                    'elements' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'defaultOpen' => true,
+                        'name' => 'Elements',
+                        'description' => 'Elements to be executed in order',
+                        'valueType' => 'class'
+                    ),
+                    'done' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'defaultOpen' => true,
+                        'name' => 'Done',
+                        'description' => 'Elements to be executed if main flow has been executed already.',
+                        'valueType' => 'class'
+                    ),
+					'should_reset' => array(
+						'editor_type' => 'boolean',
+						'editor_properties' => array(),
+						'defaultValue' => false,
+						'name' => 'Should Reset',
+						'description' => 'Toggle whether to read the "Done" flow once elements have been read in sequence, or to start over.',
+						'valueType' => 'boolean'
+					),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'element-queue.html'
+                    ),
+                    '_workflow' => 'read',
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\CardElement',
                 'x!Card',
                 'Display the properties of an object in an visual layout. (Works with devices that have the screen output capability.)',
