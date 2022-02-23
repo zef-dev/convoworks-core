@@ -1455,8 +1455,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'scope_type' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
-                            'options' => array('session' => 'Session', 'installation' => 'Installation', 'user' => 'User'),
-                            'dependency' => 'component.properties.should_reset === false'
+                            'options' => array('session' => 'Session', 'installation' => 'Installation', 'user' => 'User')
                         ),
                         'defaultValue' => 'session',
                         'name' => 'Scope type',
