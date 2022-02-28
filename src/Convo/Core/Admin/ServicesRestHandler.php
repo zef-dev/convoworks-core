@@ -210,6 +210,10 @@ class ServicesRestHandler implements RequestHandlerInterface
 			throw new \Convo\Core\Rest\InvalidRequestException('Invalid JSON in ['.$file->getClientFilename().']['.json_last_error_msg().']');
 		}
 
+		if (isset($service_data['service'])) {
+			$service_data = $service_data['service'];
+		}
+
 		$service_name = $json['name'];
 		$service_data['name'] = $service_name;
 
