@@ -165,7 +165,7 @@ class LoopBlock extends \Convo\Pckg\Core\Elements\ConversationBlock
 			$block_params->setServiceParam($slot_name, [
 				'value' => $items[$start],
 				'index' => $start,
-				'neutral' => $start + 1,
+				'natural' => $start + 1,
 				'first' => true,
 				'last' => false
 			]);
