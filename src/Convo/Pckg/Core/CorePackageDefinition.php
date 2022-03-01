@@ -1452,6 +1452,16 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 'Element Queue',
                 'Execute elements in sequence, with an optional flow to read if all elements have been executed',
                 array(
+                    'name' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Name',
+                        'description' => 'Optional name for the component',
+                        'valueType' => 'string'
+                    ),
                     'scope_type' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
