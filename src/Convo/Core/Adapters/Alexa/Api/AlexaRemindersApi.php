@@ -6,7 +6,6 @@ use Convo\Core\Adapters\Alexa\AmazonCommandRequest;
 use Convo\Core\DataItemNotFoundException;
 use Convo\Core\Rest\InvalidRequestException;
 use Convo\Core\Util\IHttpFactory;
-use PHPUnit\Util\Exception;
 use Psr\Http\Client\ClientExceptionInterface;
 
 class AlexaRemindersApi extends AlexaApi
@@ -33,7 +32,7 @@ class AlexaRemindersApi extends AlexaApi
                 case 404:
                     throw new DataItemNotFoundException(`Reminder with id [${id}] does not exist.`, null, $e);
                 default:
-                    throw new Exception('Something went wrong, please try later again.', null, $e);
+                    throw new \Exception('Something went wrong, please try later again.', null, $e);
             }
         }
     }
@@ -51,7 +50,7 @@ class AlexaRemindersApi extends AlexaApi
                 case 401:
                     throw new InsufficientPermissionsGrantedException('Missing [alexa::alerts:reminders:skill:read] permissions.', null, $e);
                 default:
-                    throw new Exception('Something went wrong, please try later again.', null, $e);
+                    throw new \Exception('Something went wrong, please try later again.', null, $e);
             }
         }
     }
@@ -73,7 +72,7 @@ class AlexaRemindersApi extends AlexaApi
                 case 401:
                     throw new InsufficientPermissionsGrantedException('Missing [alexa::alerts:reminders:skill:write] permissions.', null, $e);
                 default:
-                    throw new Exception('Something went wrong, please try later again.', null, $e);
+                    throw new \Exception('Something went wrong, please try later again.', null, $e);
             }
         }
     }
@@ -99,7 +98,7 @@ class AlexaRemindersApi extends AlexaApi
                 case 404:
                     throw new DataItemNotFoundException(`Reminder with id [${id}] does not exist.`, null, $e);
                 default:
-                    throw new Exception('Something went wrong, please try later again.', null, $e);
+                    throw new \Exception('Something went wrong, please try later again.', null, $e);
             }
         }
     }
@@ -121,7 +120,7 @@ class AlexaRemindersApi extends AlexaApi
                 case 404:
                     throw new DataItemNotFoundException(`Reminder with id [${id}] does not exist.`, null, $e);
                 default:
-                    throw new Exception('Something went wrong, please try later again.', null, $e);
+                    throw new \Exception('Something went wrong, please try later again.', null, $e);
             }
         }
     }
