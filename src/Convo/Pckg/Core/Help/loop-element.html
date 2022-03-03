@@ -11,16 +11,7 @@
     <ol>
         <li>Make sure you've got an indexed array obtained with e.g. an <code>Http Client</code>, a <code>Json Reader</code>, or set manually with <code>Set Parameter</code>.</li>
         <li>In the <b>Items</b> field, enter the name of the array wrapped in the expression syntax, for example <code>${array_name}</code></li>
-        <li>
-            In the <b>Data Collection Item Name</b> enter the name under which you'll be able to access individual array items, for example: <code>item</code>.
-            The item object has several built in properties:
-            <ul>
-                <li>To access the actual value of the item, use the <code>value</code> property: <code>${item.value}</code></li>
-                <li>To get an item's index, use <code>${item.index}</code></li>
-                <li>Since arrays number from 0 instead of 1, you can use the convenience property <code>${item.natural}</code> to get the item's index as if it were counted by a human, that is to say, starting from 1.</li>
-                <li>To identify the first, or the last iteration, use <code>${item.first}</code> and <code>{item.last}</code></li>
-            </ul>
-        </li>
+        <li>In the <b>Data Collection Item Name</b> enter the name under which you'll be able to access individual array items, for example: <code>item</code>.</li>
         <li>You can skip iterations of as many items as you wish, starting from the beginning of the array, by entering an offset number in the <b>Offset</b> field</li>
         <li>Entering a limit number in the <b>Limit</b> field limits the loop to the specified number of iterations</li>
         <li>You can place any number of other elements inside the <b>Loop</b> element</li>
@@ -37,4 +28,37 @@
             <li>In the <code>Text Response</code> element's <b>Text</b> field, write <q>Player <code>${player.natural}</code>'s score is <code>${player.value.score}</code></q></li>
         </ul>
     </div>
+
+    <h3>Status variable fields</h3>
+    <table class="table">
+        <caption>Fields for property <code>Data Collection Item Name</code></caption>
+        <thead>
+            <tr>
+                <th scope="col">Field</th>
+                <th scope="col">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>value</code></td>
+                <td>The current value of the collection being iterated over</td>
+            </tr>
+            <tr>
+                <td><code>index</code></td>
+                <td>Current programmatic index of the loop (starts at 0)</td>
+            </tr>
+            <tr>
+                <td><code>natural</code></td>
+                <td>Human readable index (starts at 1)</td>
+            </tr>
+            <tr>
+                <td><code>first</code></td>
+                <td>Boolean flag, whether the item is first in the collection</td>
+            </tr>
+            <tr>
+                <td><code>last</code></td>
+                <td>Same as <code>first</code>, only checks if the item is last</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
