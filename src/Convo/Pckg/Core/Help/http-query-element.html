@@ -69,4 +69,29 @@
             </li>
         </ul>
     </div>
+
+    <h3>Status variables</h3>
+    <table class="table">
+        <caption>Fields for property <code class="prop-name">Result name</code></caption>
+        <thead>
+            <tr>
+                <th scope="col">Field</th>
+                <th scope="col">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code class="status-prop" title="Copy expression to clipboard">status</code></td>
+                <td>HTTP status of the response</td>
+            </tr>
+            <tr>
+                <td><code class="status-prop" title="Copy expression to clipboard">body</code></td>
+                <td>Response body in the JSON format. This will not be set if <code>error</code> exists</td>
+            </tr>
+            <tr>
+                <td><code class="status-prop" title="Copy expression to clipboard">error</code></td>
+                <td>An error message if the response code is 400 or above. This will not be set if <code>body</code> exists</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
