@@ -17,9 +17,38 @@
         <li>You can set the <b>Skip reset</b> field to <i>true</i> (or an expression that evaluates to <i>true</i>) to skip resetting status variables after the iteration is interrupted, for example: <i>${some_var}</i></li>
         <li>In the <b>Main Processors</b> container place the processors that rely on user reply to advance the iteration</li>
         <li>Processors in the <b>Other Processors</b> container don't advance the iteration</li>
-        <li>To access array values, use this syntax: <i>${item.value}</i></li>
-        <li>To access array indexes, use this syntax: <i>${item.index}</i></li>
-        <li>If you want to output array indexes, counting from number one instead of zero, use this: <i>${item.natural}</i></li>
-        <li>To identify the first, or the last iteration, use this syntax: <i>${item.first}</i>, <i>{item.last}</i></li>
     </ol>
+
+    <h3>Status variable fields</h3>
+    <table class="table">
+        <caption>Fields for property <code class="prop-name">Data Collection Item Name</code></caption>
+        <thead>
+            <tr>
+                <th scope="col">Field</th>
+                <th scope="col">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code class="status-prop" title="Click to copy expression">value</code></td>
+                <td>The current value of the collection being iterated over</td>
+            </tr>
+            <tr>
+                <td><code class="status-prop" title="Click to copy expression">index</code></td>
+                <td>Current programmatic index of the loop (starts at 0)</td>
+            </tr>
+            <tr>
+                <td><code class="status-prop" title="Click to copy expression">natural</code></td>
+                <td>Human readable index (starts at 1)</td>
+            </tr>
+            <tr>
+                <td><code class="status-prop" title="Click to copy expression">first</code></td>
+                <td>Boolean flag, whether the item is first in the collection</td>
+            </tr>
+            <tr>
+                <td><code class="status-prop" title="Click to copy expression">last</code></td>
+                <td>Same as <code>first</code>, only checks if the item is last</td>
+            </tr>
+        </tbody>
+    </table>
 </div>

@@ -13,8 +13,34 @@
         <li>In the <b>Status variable</b> field, enter the name under which you'll be able to access information on the current loop iteration. For example: <code>status</code></li>
         <li>In the <b>Loop Until</b> field, enter the expression which will be true to exit the loop.</li>
         <li>You can place any number of other element components inside the <b>Elements</b> container.</li>
-        <li>To access array indexes, use the <code>index</code> property on the <b>Status variable</b>, e.g. <code>${status.index}</code></li>
-        <li>If you want to output array indexes, counting from one instead of zero, use <code>${status.natural}</code></li>
-        <li>To identify the first, or the last iteration, use <code>${status.first}</code>, <code>${status.last}</code>, both of which are booleans (<code>true</code> or <code>false</code>).</li>
     </ol>
+
+    <h3>Status variable fields</h3>
+    <table>
+        <caption>Fields for property <code class="prop-name">Status variable</code></caption>
+        <thead>
+            <tr>
+                <th>Field</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code class="status-prop" title="Click to copy expression">index</code></td>
+                <td>Current programmatic index of the element</td>
+            </tr>
+            <tr>
+                <td><code class="status-prop" title="Click to copy expression">natural</code></td>
+                <td>Human-readable position in collection (starting at 1)</td>
+            </tr>
+            <tr>
+                <td><code class="status-prop" title="Click to copy expression">first</code></td>
+                <td>Boolean, whether the element is first in collection</td>
+            </tr>
+            <tr>
+                <td><code class="status-prop" title="Click to copy expression">last</code></td>
+                <td>Boolean, same as <code>first</code>, only checks if it is last</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
