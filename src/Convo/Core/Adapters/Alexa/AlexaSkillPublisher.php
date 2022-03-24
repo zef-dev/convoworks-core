@@ -1208,7 +1208,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             ->setSmallIconUri($locales, $smallSkillIcon)
             ->setLargeIconUri($locales, $largeSkillIcon)
             ->setKeywords($locales, explode(",", preg_replace('/\s+/', ',', $config[$this->getPlatformId()]['skill_preview_in_store']['keywords'])))
-            ->setExamplePhrases($locales, explode(";", $config[$this->getPlatformId()]['skill_preview_in_store']['example_phrases']))
+            ->setExamplePhrases($locales, $this->_formatExamplePhrases($config[$this->getPlatformId()]['skill_preview_in_store']['example_phrases']))
             ->setCategory($config[$this->getPlatformId()]['skill_preview_in_store']['category'])
             ->setTermsOfUseUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['terms_of_use_url'])
             ->setPrivacyPolicyUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['privacy_policy_url'])
@@ -1227,6 +1227,14 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         return $manifest->getManifest($asJson);
     }
+
+	private function _formatExamplePhrases($configPhrases) {
+		if (empty($configPhrases)) {
+			return [];
+		}
+
+		return array_map(function ($line) { return rtrim($line); }, explode("\n", $configPhrases));
+	}
 
     private function _preparePropagateData($existingManifest = []) {
         $config            =   $this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
