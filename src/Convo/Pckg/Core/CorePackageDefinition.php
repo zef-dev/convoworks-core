@@ -1209,14 +1209,12 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'valueType' => 'string'
                     ),
                     'required_slots' => array(
-                        'editor_type' => 'text',
-                        'editor_properties' => array(
-                            'multiple' => false
-                        ),
+                        'editor_type' => 'required_slots',
+                        'editor_properties' => array(),
                         'defaultValue' => '',
                         'name' => 'Required slots',
-                        'description' => 'List of required slot names (comma separated). If required slot is empty, filter will not activate even if intent name is correct.',
-                        'valueType' => 'string'
+                        'description' => 'List of slots, their types, and whether or not any of them are absolutely required for the reader to trigger.',
+                        'valueType' => 'array'
                     ),
                     'values' => array(
                         'editor_type' => 'params',

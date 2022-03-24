@@ -23,21 +23,7 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
         $this->_packageProviderFactory  =   $packageProviderFactory;
         $this->_disable = $config['disable'] ?? false;
 
-        if (isset($config['required_slots']) && $config['required_slots'] !== '')
-        {
-            $parts = explode(',', $config['required_slots']);
-
-            if (count($parts) === 1 && empty($parts[0]))
-            {
-                $this->_logger->warning('Exploded empty string and got one empty element.');
-                return;
-            }
-
-            $this->_requiredSlots = array_map(
-                function($slot) { return trim($slot); },
-                $parts
-            );
-        }
+        $this->_requiredSlots = $config['required_slots'] ?: [];
     }
 
     public function accepts(IIntentAwareRequest $request)
