@@ -3,6 +3,14 @@
 ## [Current development]
 ## [Releases]
 
+## 0.22.12 - 2022-03-24
+* Required slots now have a special editor type
+* Split example phrases by line and trim them
+* Update standard for describing status variables
+* New element - Element Queue
+* Accept template when creating service from file
+* Fix exception type in AlexaRemindersApi
+
 ## 0.22.11 - 2022-02-16
 * Add support for Alexa Reminders API
 * Add new expression function `parse_date_time` which interpolates incoming date formats provided by platform slots
