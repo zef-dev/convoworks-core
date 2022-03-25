@@ -3,6 +3,10 @@
 ## [Current development]
 ## [Releases]
 
+# 0.22.12.1 - 2022-03-25
+* Quickfix for splitting example phrases in Alexa configuration
+  * Make splitting backwards compatible with the old method of splitting at semicolons
+
 ## 0.22.12 - 2022-03-24
 * Required slots now have a special editor type
 * Split example phrases by line and trim them
