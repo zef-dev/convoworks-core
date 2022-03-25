@@ -1233,7 +1233,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 			return [];
 		}
 
-		return array_map(function ($line) { return rtrim($line); }, explode("\n", $configPhrases));
+		$delimiter = strpos($configPhrases, ';') !== false ? ';' : "\n";
+
+		return array_map(function ($line) { return rtrim($line); }, explode($delimiter, $configPhrases));
 	}
 
     private function _preparePropagateData($existingManifest = []) {
