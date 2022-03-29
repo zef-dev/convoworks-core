@@ -23,7 +23,7 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
         $this->_packageProviderFactory  =   $packageProviderFactory;
         $this->_disable = $config['disable'] ?? false;
 
-        $this->_requiredSlots = $config['required_slots'] ?: [];
+        $this->_requiredSlots = $config['required_slots'] ?? [];
     }
 
     public function accepts(IIntentAwareRequest $request)
