@@ -3,6 +3,8 @@
 ## [Current development]
 ## [Releases]
 
+# 0.22.12.2 - 2022-03-30
+* Change default value for `ConvoIntentReader::required_slots` from empty string `""` to empty array `[]`
 # 0.22.12.1 - 2022-03-25
 * Quickfix for splitting example phrases in Alexa configuration
   * Make splitting backwards compatible with the old method of splitting at semicolons
