@@ -1211,7 +1211,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'required_slots' => array(
                         'editor_type' => 'required_slots',
                         'editor_properties' => array(),
-                        'defaultValue' => '',
+                        'defaultValue' => [],
                         'name' => 'Required slots',
                         'description' => 'List of slots, their types, and whether or not any of them are absolutely required for the reader to trigger.',
                         'valueType' => 'array'
