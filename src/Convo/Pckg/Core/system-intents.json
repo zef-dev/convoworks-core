@@ -797,6 +797,61 @@
             }
         }
     ],
+    "Rewind": [
+        {
+            "platforms" : ["amazon", "dialogflow"],
+            "definition" : {
+                "name" : "Rewind",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "rewind",
+                        "model" : [
+                            { "text" : "rewind"}
+                        ]
+                    },
+                    {
+                        "raw" : "rewind thirty seconds",
+                        "model" : [
+                            { "text" : "rewind"},
+                            { "text" : "thirty seconds", "type" : "@convo-core.duration", "slot_value" : "Duration"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "FastForward": [
+        {
+            "platforms" : ["amazon", "dialogflow"],
+            "definition" : {
+                "name" : "FastForward",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "forward",
+                        "model" : [
+                            { "text" : "forward"}
+                        ]
+                    },
+                    {
+                        "raw" : "forward thirty seconds",
+                        "model" : [
+                            { "text" : "forward"},
+                            { "text" : "thirty seconds", "type" : "@convo-core.duration", "slot_value" : "Duration"}
+                        ]
+                    },
+                    {
+                        "raw" : "fast forward thirty seconds",
+                        "model" : [
+                            { "text" : "fast forward"},
+                            { "text" : "thirty seconds", "type" : "@convo-core.duration", "slot_value" : "Duration"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
     "DefaultWelcomeIntent": [
         {
             "platforms" : ["dialogflow"],

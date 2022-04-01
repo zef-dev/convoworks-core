@@ -135,6 +135,36 @@ class EvaluationContextTest extends TestCase
                     }
                 );
 
+                $functions[] = new ExpressionFunction(
+                    'parse_duration',
+                    function ($duration, $platform = 'amazon', $defaultDuration = 30) {
+                        return sprintf('parse_duration(%1$d, %2$p, %3$dD)', $duration, $platform, $defaultDuration);
+                    },
+                    function($args, $duration, $platform = 'amazon', $defaultDuration = 30) {
+                        if (empty($duration)) {
+                            return $defaultDuration;
+                        }
+                        switch ($platform) {
+                            case 'amazon':
+                                // $duration in amazon is an ISO 8601 value like PT30S
+                                $dateInterval = new \DateInterval($duration);
+
+                                $durationInSeconds =  ($dateInterval->d * 24 * 60 * 60) +
+                                    ($dateInterval->h * 60 * 60) +
+                                    ($dateInterval->i * 60) +
+                                    $dateInterval->s;
+                                break;
+                            default:
+                                $durationInSeconds = 0;
+                                break;
+                        }
+                        if (!empty($durationInSeconds)) {
+                            return $durationInSeconds;
+                        }
+                        return $defaultDuration;
+                    }
+                );
+
 				return $functions;
 			}
 		});
@@ -634,6 +664,69 @@ class EvaluationContextTest extends TestCase
                 [
                     'result' => [
                         'date' => '2022-02-11 EV'
+                    ]
+                ]
+            ],
+            'Alexa Duration of 10 minutes' => [
+                600,
+                '${parse_duration(result.duration)}',
+                [
+                    'result' => [
+                        'duration' => 'PT10M'
+                    ]
+                ]
+            ],
+            'Alexa Duration of 5 hours' => [
+                18000,
+                '${parse_duration(result.duration)}',
+                [
+                    'result' => [
+                        'duration' => 'PT5H'
+                    ]
+                ]
+            ],
+            'Alexa Duration of 3 days' => [
+                259200,
+                '${parse_duration(result.duration)}',
+                [
+                    'result' => [
+                        'duration' => 'P3D'
+                    ]
+                ]
+            ],
+            'Alexa Duration of 30 seconds' => [
+                30,
+                '${parse_duration(result.duration)}',
+                [
+                    'result' => [
+                        'duration' => 'PT30S'
+                    ]
+                ]
+            ],
+            'Alexa Duration of 8 weeks' => [
+                4838400,
+                '${parse_duration(result.duration)}',
+                [
+                    'result' => [
+                        'duration' => 'P8W'
+                    ]
+                ]
+            ],
+            'Alexa Duration of 5 hours and 10 minutes' => [
+                18600,
+                '${parse_duration(result.duration)}',
+                [
+                    'result' => [
+                        'duration' => 'PT5H10M'
+                    ]
+                ]
+            ],
+            'Alexa Duration slot resolved as null default is 30 seconds' => [
+                30,
+                '${parse_duration(result.duration)}',
+                [
+                    'result' => [
+                        'duration' => null
                     ]
                 ]
             ]
