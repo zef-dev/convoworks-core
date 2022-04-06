@@ -412,8 +412,17 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                 $component_params->setServiceParam('error', $e);
 
                 $error_handler->read($request, $response);
-            } catch (\Convo\Core\StateChangedException $e) {
-                $this->_logger->info('State changing is not allowed in error handling, wanted ['.$e->getMessage().']');
+
+                if (strpos($request->getInstallationId(), 'admin-chat') !== false) {
+                    $this->_logger->info('Running in test view, throwing exception again');
+                    throw $e; // test view, throw exception quickfix
+                }
+            } catch (\Convo\Core\StateChangedException $sce) {
+                $this->_logger->info('State changing is not allowed in error handling, wanted ['.$sce->getMessage().']');
+                if (strpos($request->getInstallationId(), 'admin-chat') !== false) {
+                    $this->_logger->info('Running in test view, throwing exception again');
+                    throw $e; // test view, throw exception quickfix
+                }
             } catch (\Convo\Core\ComponentNotFoundException $cnfe) {
                 $this->_logger->info($cnfe->getMessage());
                 throw $e;
