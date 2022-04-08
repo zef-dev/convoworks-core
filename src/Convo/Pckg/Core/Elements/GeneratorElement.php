@@ -2,7 +2,7 @@
 namespace Convo\Pckg\Core\Elements;
 
 class GeneratorElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent 
-    implements \Convo\Core\Workflow\IConversationElement, \Convo\Core\Workflow\IElementGenerator
+    implements \Convo\Core\Workflow\IElementGenerator
 {
 	/**
 	 * @var \Convo\Core\Workflow\IConversationElement
@@ -29,10 +29,6 @@ class GeneratorElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
 		if ( $properties['element']) {
 		    $this->_element   =   $properties['element'];
 		}
-	}
-	
-	public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
-	{
 	}
 	
 	// ITERATOR

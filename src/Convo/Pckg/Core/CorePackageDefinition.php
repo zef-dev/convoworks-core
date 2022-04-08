@@ -1397,7 +1397,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'elements' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
-                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement', '\Convo\Core\Workflow\IElementGenerator'),
                             'multiple' => true
                         ),
                         'defaultValue' => array(),
@@ -1493,6 +1493,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'filename' => 'element-randomizer.html'
                     ),
                     '_workflow' => 'read',
+                    '_descend' => true
                 )
             ),
             new \Convo\Core\Factory\ComponentDefinition(
@@ -1524,7 +1525,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'elements' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
-                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement', '\Convo\Core\Workflow\IElementGenerator'),
                             'multiple' => true
                         ),
                         'defaultValue' => array(),
