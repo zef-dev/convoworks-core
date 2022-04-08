@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 namespace Convo\Pckg\Core\Elements;
 
-class GeneratorElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement, \Iterator
+class GeneratorElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent 
+    implements \Convo\Core\Workflow\IConversationElement, \Convo\Core\Workflow\IElementGenerator
 {
 	/**
 	 * @var \Convo\Core\Workflow\IConversationElement

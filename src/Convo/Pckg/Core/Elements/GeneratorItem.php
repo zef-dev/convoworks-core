@@ -1,10 +1,15 @@
 <?php declare(strict_types=1);
 namespace Convo\Pckg\Core\Elements;
 
-class GeneratorItem extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent 
+use Convo\Core\Workflow\IElementGeneratorItem;
+use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
+use Convo\Core\Workflow\IConversationElement;
+use Convo\Core\Factory\ConvoServiceFactory;
+
+class GeneratorItem extends AbstractWorkflowContainerComponent implements IElementGeneratorItem
 {
 	/**
-	 * @var \Convo\Core\Workflow\IConversationElement
+	 * @var IConversationElement
 	 */
 	private $_element;
 	private $_varName;
@@ -13,7 +18,7 @@ class GeneratorItem extends \Convo\Core\Workflow\AbstractWorkflowContainerCompon
 
 	public function __construct( $element, $slotName, $data)
 	{
-		parent::__construct( ['_component_id' => 'someid']);
+	    parent::__construct( ['_component_id' => ConvoServiceFactory::generateId()]);
 
 		$this->_element   =   $element;
 		
