@@ -852,6 +852,88 @@
             }
         }
     ],
+    "SeekToSong": [
+        {
+            "platforms" : ["amazon", "dialogflow"],
+            "definition" : {
+                "name" : "SeekToSong",
+                "type" : "custom",
+                "utterances" : [
+                    {
+                        "raw" : "jump to third song",
+                        "model" : [
+                            { "text" : "jump to"},
+                            { "text" : "third", "type" : "@convo-core.ordinal", "slot_value" : "SongPosition"},
+                            { "text" : "song"}
+                        ]
+                    },
+                    {
+                        "raw" : "skip three songs forward",
+                        "model" : [
+                            { "text" : "skip"},
+                            { "text" : "three", "type" : "@convo-core.number", "slot_value" : "NumberOfSongs"},
+                            { "text" : "songs"},
+                            { "text" : "forward", "type" : "@convo-core.PlaybackDirection", "slot_value" : "PlaybackDirection"}
+                        ]
+                    },
+                    {
+                        "raw" : "skip one song forward",
+                        "model" : [
+                            { "text" : "skip"},
+                            { "text" : "one", "type" : "@convo-core.number", "slot_value" : "NumberOfSongs"},
+                            { "text" : "song"},
+                            { "text" : "forward", "type" : "@convo-core.PlaybackDirection", "slot_value" : "PlaybackDirection"}
+                        ]
+                    },
+                    {
+                        "raw" : "skip five songs",
+                        "model" : [
+                            { "text" : "skip"},
+                            { "text" : "five", "type" : "@convo-core.ordinal", "slot_value" : "NumberOfSongs"},
+                            { "text" : "songs"}
+                        ]
+                    },
+                    {
+                        "raw" : "skip one song",
+                        "model" : [
+                            { "text" : "skip"},
+                            { "text" : "one", "type" : "@convo-core.ordinal", "slot_value" : "NumberOfSongs"},
+                            { "text" : "song"}
+                        ]
+                    },
+                    {
+                        "raw" : "skip to easy rider",
+                        "model" : [
+                            { "text" : "skip to"},
+                            { "text" : "easy rider", "type" : "@convo-core.any", "slot_value" : "SearchTermOfSong"}
+                        ]
+                    },
+                    {
+                        "raw" : "find easy rider",
+                        "model" : [
+                            { "text" : "find"},
+                            { "text" : "easy rider", "type" : "@convo-core.any", "slot_value" : "SearchTermOfSong"}
+                        ]
+                    },
+                    {
+                        "raw" : "start easy rider again",
+                        "model" : [
+                            { "text" : "start"},
+                            { "text" : "easy rider", "type" : "@convo-core.any", "slot_value" : "SearchTermOfSong"},
+                            { "text" : "again"}
+                        ]
+                    },
+                    {
+                        "raw" : "start easy rider",
+                        "model" : [
+                            { "text" : "start"},
+                            { "text" : "easy rider", "type" : "@convo-core.any", "slot_value" : "SearchTermOfSong"}
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
     "DefaultWelcomeIntent": [
         {
             "platforms" : ["dialogflow"],

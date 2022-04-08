@@ -123,6 +123,22 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $entities['phone_number'] = new SystemEntity( 'phone_number');
         $entities['phone_number']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.PhoneNumber', true));
         $entities['phone_number']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.phone-number', true));
+
+        $entities['PlaybackDirection'] = new SystemEntity('PlaybackDirection');
+        $playback_direction_model = new EntityModel('PlaybackDirection', false);
+        $playback_direction_model->load([
+            "name" => "PlaybackDirection",
+            "values" => [
+                [
+                    "value" => "forward"
+                ],
+                [
+                    "value" => "backward"
+                ]
+            ]
+        ]);
+        $entities['PlaybackDirection']->setPlatformModel('amazon', $playback_direction_model);
+        $entities['PlaybackDirection']->setPlatformModel('dialogflow', $playback_direction_model);
         return $entities;
     }
 
@@ -2372,6 +2388,68 @@ In default phase you can inform users about problem you have interpreting comman
                     '_help' =>  array(
                         'type' => 'file',
                         'filename' => 'start-audio-playback.html'
+                    ),
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('AUDIO_PLAYER')
+                        )
+                    )
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Core\Elements\SeekAudioPlaybackBySearch',
+                'Seek Audio Playback By Search',
+                'Initiates audio playback by search in the current playlist and automatically stops the current session.',
+                array(
+                    'context_id' => array(
+                        'editor_type' => 'context_id',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'search_media',
+                        'name' => 'Source',
+                        'description' => 'A media source context id',
+                        'valueType' => 'string'
+                    ),
+                    'search_term' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Search Term',
+                        'description' => 'Expression which evaluates to string of the desired song title or artist to seek to',
+                        'valueType' => 'string'
+                    ),
+                    'media_info_var' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'media_info',
+                        'name' => 'Media info',
+                        'description' => 'Variable name for the media info array',
+                        'valueType' => 'string'
+                    ),
+                    'fallback' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true,
+                            'hideWhenEmpty' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Fallback phase',
+                        'description' => 'Elements to be executed if element fails to play desired song',
+                        'valueType' => 'class'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code"><span class="statement">SEEK PLAYBACK </span> on <b>{{component.properties.context_id}}</b>'.
+                            '<span class="statement">{{ component.properties.search_term ? \' SEARCH TERM \' : \'\'}}</span>' .
+                            '<b> {{ component.properties.search_term ? component.properties.search_term : \'\'}}</b>' .
+                            '</div>'
+                    ),
+                    '_interface' => '\Convo\Core\Workflow\IConversationElement',
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'seek-audio-playback-by-search.html'
                     ),
                     '_platform_defaults' => array(
                         'amazon' => array(
