@@ -123,7 +123,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     private $_logger;
 
     /**
-     * @var \Convo\Core\EvaluationContext
+     * @var \Convo\Core\Expression\EvaluationContext
      */
     private $_eval;
 
