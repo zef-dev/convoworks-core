@@ -50,9 +50,11 @@ class ElementQueue extends AbstractWorkflowContainerComponent implements IConver
         $params = $this->getService()->getComponentParams($this->evaluateString($this->_scopeType), $this);
         $current_index = $params->getServiceParam('index') ?: 0;
 
-        if ($current_index === count($this->_elements))
+        $elements = $this->getService()->spreadElements( $this->_elements);
+        
+        if ($current_index === count($elements))
         {
-            $this->_logger->info('Current index ['.$current_index.'] falls outside of elements count.');
+            $this->_logger->debug('Current index ['.$current_index.'] falls outside of elements count.');
 
             $should_reset = $this->evaluateString($this->_shouldReset);
 
@@ -60,7 +62,7 @@ class ElementQueue extends AbstractWorkflowContainerComponent implements IConver
                 $this->_logger->info('Resetting index to 0');
                 $current_index = 0;
             } else {
-                $this->_logger->debug('Going to read Done flow');
+                $this->_logger->info('Going to read Done flow');
 
                 foreach ($this->_done as $done) {
                     $done->read($request, $response);
@@ -70,9 +72,9 @@ class ElementQueue extends AbstractWorkflowContainerComponent implements IConver
             }
         }
 
-        if (isset($this->_elements[$current_index])) {
-            $this->_elements[$current_index]->read($request, $response);
+        if (isset($elements[$current_index])) {
             $params->setServiceParam('index', ($current_index + 1));
+            $elements[$current_index]->read($request, $response);
         }
     }
 }
