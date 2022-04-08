@@ -123,7 +123,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     private $_logger;
 
     /**
-     * @var \Convo\Core\EvaluationContext
+     * @var \Convo\Core\Expression\EvaluationContext
      */
     private $_eval;
 
@@ -865,6 +865,18 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     public function getOwner()
     {
 
+    }
+    
+    public function spreadElements( $elements) {
+        $spread = [];
+        foreach ( $elements as $elem) {
+            if ( $elem instanceof \Iterator) {
+                $spread      =   array_merge( $spread, iterator_to_array( $elem));
+            } else {
+                $spread[]    =   $elem;
+            }
+        }
+        return $spread;
     }
 
     // UTIL

@@ -53,6 +53,9 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 		$isRepeat = $this->evaluateString($this->_isRepeat);
 		$componentId = $this->getId();
 		
+		$elements = $this->getService()->spreadElements( $this->_elements);
+		
+		
 	    if ($mode === self::RANDOM_MODE_SMART) {
 	    	$params = $service->getComponentParams($scope_type, $this)->getServiceParam($componentId);
 
@@ -69,7 +72,7 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 			{
                 $this->_logger->info( 'Shuffling and storing new');
 
-                $shuffled = $this->_shuffleArray( range( 0, count( $this->_elements) - 1));
+                $shuffled = $this->_shuffleArray( range( 0, count( $elements) - 1));
 
                 $service->getComponentParams($scope_type, $this)->setServiceParam($componentId, [
 						'elements' => $shuffled,
@@ -81,10 +84,10 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 				$next = 0;
             }
 
-			if ($next >= count($this->_elements)) {
+			if ($next >= count($elements)) {
 				$next = 0;
 				if (!$loop) {
-					$randomized = $this->_shuffleArray( range( 0, count( $this->_elements) - 1));
+					$randomized = $this->_shuffleArray( range( 0, count( $elements) - 1));
 				}
 			}
 
@@ -94,17 +97,21 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 				]
 			);
 
-            $random_element = $this->_elements[$randomized[$next]];
-            $random_element->read( $request, $response);
+            $random_element = $elements[$randomized[$next]];
         } else {
-	        $random_idx =   rand( 0, count( $this->_elements) - 1);
-
-	        /** @var \Convo\Core\Workflow\IConversationElement $random_el */
-	        $random_el = $this->_elements[$random_idx];
-	        $random_el->read($request, $response);
+	        $random_idx     = rand( 0, count( $elements) - 1);
+	        $random_element = $elements[$random_idx];
         }
+        
+        if ( $random_element instanceof GeneratorItem) {
+            /** @var GeneratorItem $random_el */
+            $random_element =   $random_element->getElement();
+            /** @var \Convo\Core\Workflow\IConversationElement $random_el */
+        }
+        
+        $random_element->read( $request, $response);
 	}
-
+	
 	public function addElement( \Convo\Core\Workflow\IConversationElement $element)
 	{
 		$this->_elements[]		=	$element;

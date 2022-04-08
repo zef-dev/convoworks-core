@@ -1446,6 +1446,57 @@ class CorePackageDefinition extends AbstractPackageDefinition
             ),
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
+                '\Convo\Pckg\Core\Elements\GeneratorElement',
+                'Element Generator',
+                '',
+                array(
+                    'name' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Name',
+                        'description' => 'Optional name for component',
+                        'valueType' => 'string'
+                    ),
+                    'data_collection' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Items',
+                        'description' => 'Collection of items over which to iterate',
+                        'valueType' => 'string'
+                    ),
+                    'item' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'item',
+                        'name' => 'Data collection item name',
+                        'description' => 'Name under which to provide each item of the collection in parameters.',
+                        'valueType' => 'string'
+                    ),
+                    'element' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'defaultOpen' => true,
+                        'name' => 'Element',
+                        'description' => 'Element to be generated',
+                        'valueType' => 'class'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'element-randomizer.html'
+                    ),
+                    '_workflow' => 'read',
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\ElementQueue',
                 'Element Queue',
                 'Execute elements in sequence, with an optional flow to read if all elements have been executed',
