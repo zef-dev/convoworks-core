@@ -478,6 +478,36 @@ class CorePackageDefinition extends AbstractPackageDefinition
             }
         );
 
+        $functions[] = new ExpressionFunction(
+            'parse_duration',
+            function ($duration, $platform = 'amazon', $defaultDuration = 30) {
+                return sprintf('parse_duration(%1$d, %2$p, %3$dD)', $duration, $platform, $defaultDuration);
+            },
+            function($args, $duration, $platform = 'amazon', $defaultDuration = 30) {
+                if (empty($duration)) {
+                    return $defaultDuration;
+                }
+                switch ($platform) {
+                    case 'amazon':
+                        // $duration in amazon is an ISO 8601 value like PT30S
+                        $dateInterval = new \DateInterval($duration);
+
+                        $durationInSeconds =  ($dateInterval->d * 24 * 60 * 60) +
+                            ($dateInterval->h * 60 * 60) +
+                            ($dateInterval->i * 60) +
+                            $dateInterval->s;
+                        break;
+                    default:
+                        $durationInSeconds = 0;
+                        break;
+                }
+                if (!empty($durationInSeconds)) {
+                    return $durationInSeconds;
+                }
+                return $defaultDuration;
+            }
+        );
+
         return $functions;
     }
 
@@ -2342,6 +2372,57 @@ In default phase you can inform users about problem you have interpreting comman
                     '_help' =>  array(
                         'type' => 'file',
                         'filename' => 'start-audio-playback.html'
+                    ),
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('AUDIO_PLAYER')
+                        )
+                    )
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Core\Elements\FastForwardRewindAudioPlayback',
+                'Fast Forward Rewind Audio Playback',
+                'Fast Forwards or Rewinds the currently initiated audio playback and automatically stops the current session.',
+                array(
+                    'context_id' => array(
+                        'editor_type' => 'context_id',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'search_media',
+                        'name' => 'Source',
+                        'description' => 'A media source context id',
+                        'valueType' => 'string'
+                    ),
+                    'mode' => array(
+                        'editor_type' => 'select',
+                        'editor_properties' => array(
+                            'options' => array('rewind' => 'Rewind', 'fast_forward' => 'Fast Forward'),
+                        ),
+                        'defaultValue' => 'rewind',
+                        'name' => 'Mode',
+                        'description' => '',
+                        'valueType' => 'string'
+                    ),
+                    'rewind_fast_forward_value' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '30',
+                        'name' => 'Seconds to Rewind or Fast Forward Playback',
+                        'description' => 'Expression which evaluates to integer seconds of the desired seconds of the song to skip.',
+                        'valueType' => 'string'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code"><span class="statement">{{ component.properties.mode === \'rewind\' ? \'REWIND\' :  \'FAST FORWARD\' }} </span>'.
+                            '<b>{{ component.properties.rewind_fast_forward_value }}</b> seconds' .
+                            '</div>'
+                    ),
+                    '_interface' => '\Convo\Core\Workflow\IConversationElement',
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'fast-forward-rewind-audio-playback.html'
                     ),
                     '_platform_defaults' => array(
                         'amazon' => array(
