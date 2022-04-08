@@ -3,7 +3,6 @@
 namespace Convo\Pckg\Core\Elements;
 
 use Convo\Core\Params\IServiceParamsScope;
-use Convo\Core\Workflow\IElementGeneratorItem;
 
 class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
 {
@@ -102,12 +101,6 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
         } else {
 	        $random_idx     = rand( 0, count( $elements) - 1);
 	        $random_element = $elements[$random_idx];
-        }
-        
-        if ( $random_element instanceof IElementGeneratorItem) {
-            /** @var IElementGeneratorItem $random_el */
-            $random_element =   $random_element->getElement();
-            /** @var \Convo\Core\Workflow\IConversationElement $random_el */
         }
         
         $random_element->read( $request, $response);
