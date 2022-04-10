@@ -6,8 +6,9 @@ use Convo\Core\Workflow\IConvoResponse;
 use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
 use Convo\Core\Workflow\IConversationElement;
 use Convo\Core\Factory\ConvoServiceFactory;
+use Convo\Core\Workflow\IOptionalElement;
 
-class GeneratorItem extends AbstractWorkflowContainerComponent implements IConversationElement
+class GeneratorItem extends AbstractWorkflowContainerComponent implements IConversationElement, IOptionalElement
 {
 	/**
 	 * @var IConversationElement
@@ -38,6 +39,15 @@ class GeneratorItem extends AbstractWorkflowContainerComponent implements IConve
         $this->_element->read( $request, $response);
     }
 
+    public function isEnabled()
+    {
+        if ( !($this->_element instanceof IOptionalElement)) {
+            return true;  
+        }
+        $this->addChild( $this->_element);
+        return $this->_element->isEnabled();
+    }
+    
     // UTIL
     public function __toString()
     {

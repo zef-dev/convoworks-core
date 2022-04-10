@@ -6,6 +6,7 @@ use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
 use Convo\Core\Workflow\IConversationElement;
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
+use Convo\Core\Workflow\IOptionalElement;
 
 class ElementQueue extends AbstractWorkflowContainerComponent implements IConversationElement
 {
@@ -47,27 +48,26 @@ class ElementQueue extends AbstractWorkflowContainerComponent implements IConver
     }
     public function read(IConvoRequest $request, IConvoResponse $response)
     {
-        $params = $this->getService()->getComponentParams($this->evaluateString($this->_scopeType), $this);
-        $current_index = $params->getServiceParam('index') ?: 0;
+        $params         =   $this->getService()->getComponentParams( $this->evaluateString( $this->_scopeType), $this);
+        $current_index  =   $params->getServiceParam( 'index') ?: 0;
 
-        $elements = $this->getService()->spreadElements( $this->_elements);
+        $elements = $this->_getElements();
         
-        if ($current_index === count($elements))
+        if ( $current_index === count( $elements))
         {
-            $this->_logger->debug('Current index ['.$current_index.'] falls outside of elements count.');
+            $this->_logger->debug( 'Current index ['.$current_index.'] falls outside of elements count.');
 
-            $should_reset = $this->evaluateString($this->_shouldReset);
+            $should_reset = $this->evaluateString( $this->_shouldReset);
 
-            if ($should_reset) {
+            if ( $should_reset) {
                 $this->_logger->info('Resetting index to 0');
                 $current_index = 0;
             } else {
                 $this->_logger->info('Going to read Done flow');
 
                 foreach ($this->_done as $done) {
-                    $done->read($request, $response);
+                    $done->read( $request, $response);
                 }
-
                 return;
             }
         }
@@ -76,5 +76,23 @@ class ElementQueue extends AbstractWorkflowContainerComponent implements IConver
             $params->setServiceParam('index', ($current_index + 1));
             $elements[$current_index]->read($request, $response);
         }
+    }
+    
+    private function _getElements() {
+        $elements   =   $this->getService()->spreadElements( $this->_elements);
+        $filtered   =   [];
+        
+        foreach ( $elements as $element) {
+            if ( $element instanceof IOptionalElement) {
+                /* @var IOptionalElement $element*/
+                if ( $element->isEnabled()) {
+                    $filtered[] = $element;
+                }
+                continue;
+            }
+            $filtered[] = $element;
+        }
+        
+        return $filtered;
     }
 }
