@@ -68,9 +68,7 @@ class IfElement extends AbstractWorkflowContainerComponent implements IConversat
 
             /** @var \Convo\Pckg\Core\Elements\ElseIfElement $elseIf */
             foreach ($this->_elseIf as $elseIf) {
-                $elif_result = $elseIf->evaluateTest();
-
-                if ($elif_result) {
+                if ($elseIf->isEnabled()) {
                     $this->_logger->info('Found true result in else if element ['.$elseIf.']');
                     $elseIf->read($request, $response);
                     return;
