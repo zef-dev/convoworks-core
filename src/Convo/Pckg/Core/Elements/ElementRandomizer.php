@@ -3,6 +3,7 @@
 namespace Convo\Pckg\Core\Elements;
 
 use Convo\Core\Params\IServiceParamsScope;
+use Convo\Core\Workflow\IOptionalElement;
 
 class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
 {
@@ -53,7 +54,7 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 		$isRepeat = $this->evaluateString($this->_isRepeat);
 		$componentId = $this->getId();
 		
-		$elements = $this->getService()->spreadElements( $this->_elements);
+		$elements = $this->_getElements();
 		
 		
 	    if ($mode === self::RANDOM_MODE_SMART) {
@@ -104,6 +105,24 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
         }
         
         $random_element->read( $request, $response);
+	}
+	
+	private function _getElements() {
+	    $elements   =   $this->getService()->spreadElements( $this->_elements);
+	    $filtered   =   [];
+	    
+	    foreach ( $elements as $element) {
+	        if ( $element instanceof IOptionalElement) {
+	            /* @var IOptionalElement $element*/
+	            if ( $element->isEnabled()) {
+	                $filtered[] = $element;
+	            }
+	            continue;
+	        }
+	        $filtered[] = $element;
+	    }
+	    
+	    return $filtered;
 	}
 	
 	public function addElement( \Convo\Core\Workflow\IConversationElement $element)
