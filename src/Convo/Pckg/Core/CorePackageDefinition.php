@@ -1547,12 +1547,12 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'valueType' => 'class'
                     ),
 					'should_reset' => array(
-						'editor_type' => 'boolean',
+						'editor_type' => 'text',
 						'editor_properties' => array(),
-						'defaultValue' => false,
+						'defaultValue' => '',
 						'name' => 'Should Reset',
-						'description' => 'Toggle whether to read the "Done" flow once elements have been read in sequence, or to start over.',
-						'valueType' => 'boolean'
+						'description' => 'Whether to read the "Done" flow once elements have been read in sequence, or to start over. Add an expression that evaluates to a boolean.',
+						'valueType' => 'string'
 					),
                     '_help' =>  array(
                         'type' => 'file',
