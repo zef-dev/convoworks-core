@@ -5,7 +5,6 @@ namespace Convo\Pckg\Core\Elements;
 use Convo\Core\Workflow\IConversationElement;
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
-use Convo\Core\Workflow\IOptionalElement;
 
 class ElementQueue extends ElementCollection implements IConversationElement
 {
@@ -63,23 +62,5 @@ class ElementQueue extends ElementCollection implements IConversationElement
             $params->setServiceParam('index', ($current_index + 1));
             $elements[$current_index]->read($request, $response);
         }
-    }
-    
-    public function getElements() {
-        $elements   =   $this->getService()->spreadElements( parent::getElements());
-        $filtered   =   [];
-        
-        foreach ( $elements as $element) {
-            if ( $element instanceof IOptionalElement) {
-                /* @var IOptionalElement $element*/
-                if ( $element->isEnabled()) {
-                    $filtered[] = $element;
-                }
-                continue;
-            }
-            $filtered[] = $element;
-        }
-        
-        return $filtered;
     }
 }

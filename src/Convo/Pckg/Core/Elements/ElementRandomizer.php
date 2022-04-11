@@ -3,7 +3,6 @@
 namespace Convo\Pckg\Core\Elements;
 
 use Convo\Core\Params\IServiceParamsScope;
-use Convo\Core\Workflow\IOptionalElement;
 
 class ElementRandomizer extends ElementCollection implements \Convo\Core\Workflow\IConversationElement
 {
@@ -92,24 +91,6 @@ class ElementRandomizer extends ElementCollection implements \Convo\Core\Workflo
         }
         
         $random_element->read( $request, $response);
-	}
-	
-	public function getElements() {
-	    $elements   =   $this->getService()->spreadElements( parent::getElements());
-	    $filtered   =   [];
-	    
-	    foreach ( $elements as $element) {
-	        if ( $element instanceof IOptionalElement) {
-	            /* @var IOptionalElement $element*/
-	            if ( $element->isEnabled()) {
-	                $filtered[] = $element;
-	            }
-	            continue;
-	        }
-	        $filtered[] = $element;
-	    }
-	    
-	    return $filtered;
 	}
 	
 	private function _shuffleArray( $array)
