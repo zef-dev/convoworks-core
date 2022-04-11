@@ -20,7 +20,8 @@ class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 		$elements = $properties['elements'] ?? [];
 
 		foreach ($elements as $element) {
-			$this->addElement($element);
+			$this->_elements[]		=	$element;
+			$this->addChild( $element);
 		}
 	}
 	
@@ -32,12 +33,6 @@ class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 			/** @var $element \Convo\Core\Workflow\IConversationElement */
 			$element->read( $request, $response);
 		}
-	}
-	
-	public function addElement( \Convo\Core\Workflow\IConversationElement $element)
-	{
-		$this->_elements[]		=	$element;
-		$this->addChild( $element);
 	}
 	
 	public function getElements() {
