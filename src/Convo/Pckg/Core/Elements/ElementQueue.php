@@ -2,20 +2,14 @@
 
 namespace Convo\Pckg\Core\Elements;
 
-use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
 use Convo\Core\Workflow\IConversationElement;
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
 use Convo\Core\Workflow\IOptionalElement;
 
-class ElementQueue extends AbstractWorkflowContainerComponent implements IConversationElement
+class ElementQueue extends ElementCollection implements IConversationElement
 {
     private $_scopeType;
-
-    /**
-     * @var IConversationElement[]
-     */
-    private $_elements;
 
     /**
      * @var IConversationElement[]
@@ -32,13 +26,6 @@ class ElementQueue extends AbstractWorkflowContainerComponent implements IConver
 
         $this->_shouldReset = $properties['should_reset'];
 
-        $this->_elements = $properties['elements'] ?: [];
-
-        foreach ($this->_elements as $element) {
-            $this->addChild($element);
-            $element->setParent($this);
-        }
-
         $this->_done = $properties['done'] ?: [];
 
         foreach ($this->_done as $done) {
@@ -51,7 +38,7 @@ class ElementQueue extends AbstractWorkflowContainerComponent implements IConver
         $params         =   $this->getService()->getComponentParams( $this->evaluateString( $this->_scopeType), $this);
         $current_index  =   $params->getServiceParam( 'index') ?: 0;
 
-        $elements = $this->_getElements();
+        $elements = $this->getElements();
         
         if ( $current_index === count( $elements))
         {
@@ -78,8 +65,8 @@ class ElementQueue extends AbstractWorkflowContainerComponent implements IConver
         }
     }
     
-    private function _getElements() {
-        $elements   =   $this->getService()->spreadElements( $this->_elements);
+    public function getElements() {
+        $elements   =   $this->getService()->spreadElements( parent::getElements());
         $filtered   =   [];
         
         foreach ( $elements as $element) {

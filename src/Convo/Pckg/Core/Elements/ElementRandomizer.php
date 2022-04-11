@@ -5,14 +5,12 @@ namespace Convo\Pckg\Core\Elements;
 use Convo\Core\Params\IServiceParamsScope;
 use Convo\Core\Workflow\IOptionalElement;
 
-class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
+class ElementRandomizer extends ElementCollection implements \Convo\Core\Workflow\IConversationElement
 {
     const RANDOM_MODE_WILD  =   'wild';
     const RANDOM_MODE_SMART =   'smart';
 
     private $_mode;
-
-	private $_elements;
 
 	private $_loop;
 
@@ -30,17 +28,6 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 
 		$this->_isRepeat = $properties['is_repeat'] ?? false;
 
-		$elements = $properties['elements'] ?? [];
-
-		/** @var \Convo\Core\Workflow\IConversationElement $element */
-		foreach ($elements as $element) 
-		{
-		    if (!is_a($element, 'Convo\Pckg\Core\Elements\CommentElement')){
-		        $this->_elements[] = $element;
-		        $this->addChild($element);
-		    }
-        }
-        
 		$this->_scopeType = $properties['scope_type'] ?? IServiceParamsScope::SCOPE_TYPE_INSTALLATION;
 	}
 	
@@ -54,7 +41,7 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 		$isRepeat = $this->evaluateString($this->_isRepeat);
 		$componentId = $this->getId();
 		
-		$elements = $this->_getElements();
+		$elements = $this->getElements();
 		
 		
 	    if ($mode === self::RANDOM_MODE_SMART) {
@@ -107,8 +94,8 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
         $random_element->read( $request, $response);
 	}
 	
-	private function _getElements() {
-	    $elements   =   $this->getService()->spreadElements( $this->_elements);
+	public function getElements() {
+	    $elements   =   $this->getService()->spreadElements( parent::getElements());
 	    $filtered   =   [];
 	    
 	    foreach ( $elements as $element) {
@@ -123,12 +110,6 @@ class ElementRandomizer extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 	    }
 	    
 	    return $filtered;
-	}
-	
-	public function addElement( \Convo\Core\Workflow\IConversationElement $element)
-	{
-		$this->_elements[]		=	$element;
-		$this->addChild( $element);
 	}
 	
 	private function _shuffleArray( $array)

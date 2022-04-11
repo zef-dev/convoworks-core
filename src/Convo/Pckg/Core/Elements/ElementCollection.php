@@ -26,7 +26,7 @@ class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 	{
 		$this->_logger->debug('Reading ['.count( $this->_elements).']');
 		
-		foreach ($this->_elements as $element) {
+		foreach ($this->getElements() as $element) {
 			/** @var $element \Convo\Core\Workflow\IConversationElement */
 			$element->read( $request, $response);
 		}
