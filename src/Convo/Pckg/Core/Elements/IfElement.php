@@ -4,8 +4,9 @@ namespace Convo\Pckg\Core\Elements;
 
 use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
 use Convo\Core\Workflow\IConversationElement;
+use Convo\Core\Workflow\IOptionalElement;
 
-class IfElement extends AbstractWorkflowContainerComponent implements IConversationElement
+class IfElement extends AbstractWorkflowContainerComponent implements IConversationElement, IOptionalElement
 {
     private $_test;
 
@@ -48,7 +49,6 @@ class IfElement extends AbstractWorkflowContainerComponent implements IConversat
 
     public function read(\Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
     {
-//         $then_result = StrUtil::parseBoolean($this->evaluateString($this->_test));
         $then_result = $this->evaluateString($this->_test);
 
         if ($then_result)
@@ -68,9 +68,7 @@ class IfElement extends AbstractWorkflowContainerComponent implements IConversat
 
             /** @var \Convo\Pckg\Core\Elements\ElseIfElement $elseIf */
             foreach ($this->_elseIf as $elseIf) {
-                $elif_result = $elseIf->evaluateTest();
-
-                if ($elif_result) {
+                if ($elseIf->isEnabled()) {
                     $this->_logger->info('Found true result in else if element ['.$elseIf.']');
                     $elseIf->read($request, $response);
                     return;
@@ -84,7 +82,16 @@ class IfElement extends AbstractWorkflowContainerComponent implements IConversat
             $else->read($request, $response);
         }
     }
-
+    
+    public function isEnabled()
+    {
+        if ( !empty( $this->_else) || !empty( $this->_elseIf)) {
+            return true;
+        }
+        
+        return $this->evaluateString( $this->_test);
+    }
+    
     public function __toString()
     {
         return get_class($this).'['.$this->_test.']';

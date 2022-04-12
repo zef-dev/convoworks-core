@@ -866,6 +866,18 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     {
 
     }
+    
+    public function spreadElements( $elements) {
+        $spread = [];
+        foreach ( $elements as $elem) {
+            if ( $elem instanceof \Convo\Core\Workflow\IElementGenerator) {
+                $spread      =   array_merge( $spread, iterator_to_array( $elem));
+            } else {
+                $spread[]    =   $elem;
+            }
+        }
+        return $spread;
+    }
 
     // UTIL
     private function _resolveVariables($variables)

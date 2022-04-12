@@ -1,0 +1,73 @@
+<div class="generator-element-help">
+    <h3>Element Generator</h3>
+    <p>Create a series of elements from a collection, such as an array.</p>
+
+    <h3>When to use?</h3>
+    <p>If you have some sort of a collection of, for example, textual greetings, and you want to use them in something like the <b>Element Queue</b>, or maybe <b>Element Randomizer</b>.</p>
+    <p>Using the <b>Element Generator</b>, you don't have to manually specify each and every element you want queued or randomized, and instead you can define a collection and what to do with every item in that collection.</p>
+
+    <h3>How to use</h3>
+    <p>Inside an <b>Element Queue</b> or <b>Element Randomizer</b>, place this inside the main flow. Then, specify which collection of items you want to iterate over, and then place an element inside the <code>Element</code> container of this element.</p>
+    <p>For every item in the collection you've specified, the <b>Element Generator</b> will read whichever element you have given it, while making certain data available inside its child element's context. Refer to the table below for more information on that.</p>
+
+    <h3>Example usage</h3>
+    <ol>
+        <li>
+            Create a collection of greetings. Store it as either a global service variable, or with the <b>Set Param</b> element. It should look something like this:
+            <code>${["Hello", "Hi", "Howdy"]}</code>
+        </li>
+        <li>
+            Place an <b>Element Queue</b> in your service.
+        </li>
+        <li>
+            Place an <b>Element Generator</b> inside the <b>Element Queue</b>'s main flow.
+            <br>
+            <ul>
+                <li>For the <code>Items</code> property, use the expression syntax to get your collection of greetings. For example, <code>${GREETINGS}</code></li>
+                <li>Under <code>Data collection item name</code>, write <b>greeting</b></li>
+            </ul>
+        </li>
+        <li>
+            Place a <b>Text Response</b> under the <code>Element</code> flow for the <b>Element Generator</b>.
+            <br>
+            <ul>
+                <li>
+                    For the <code>Text</code> property, write <b>${greeting.natural}: ${greeting.value}!</b>
+                </li>
+            </ul>
+        </li>
+        <li>
+            Run your service through the test view. For every greeting you've defined, the <b>Element Generator</b> will take its child, and run it.
+            With this, you no longer have to manually define every entry for your <b>Element Queue</b>s and <b>Element Randomizer</b>s, and can instead work with collections.
+        </li>
+    </ol>
+
+    <h3>Status variable fields</h3>
+    <table class="table">
+        <caption>Fields for property <code class="prop-name">Data collection item name</code></caption>
+        <thead>
+            <tr>
+                <th scope="col">Field</th>
+                <th scope="col">Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code class="status-prop" title="Copy expression to clipboard">value</code></td>
+                <td>The actual value of the current element of the collection being iterated over.</td>
+            </tr>
+            <tr>
+                <td><code class="status-prop" title="Copy expression to clipboard">index</code></td>
+                <td>Programmatic index of the current element, beginning with 0.</td>
+            </tr>
+            <tr>
+                <td><code class="status-prop" title="Copy expression to clipboard">natural</code></td>
+                <td>Index of the current element incremented by one, how humans count.</td>
+            </tr>
+            <tr>
+                <td><code class="status-prop" title="Copy expression to clipboard">first</code></td>
+                <td>Boolean value, true if the element is the first in the collection. False otherwise.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

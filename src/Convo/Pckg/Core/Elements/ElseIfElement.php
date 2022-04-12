@@ -4,8 +4,9 @@ namespace Convo\Pckg\Core\Elements;
 
 use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
 use Convo\Core\Workflow\IConversationElement;
+use Convo\Core\Workflow\IOptionalElement;
 
-class ElseIfElement extends AbstractWorkflowContainerComponent implements IConversationElement
+class ElseIfElement extends AbstractWorkflowContainerComponent implements IConversationElement, IOptionalElement
 {
     private $_test;
 
@@ -34,10 +35,18 @@ class ElseIfElement extends AbstractWorkflowContainerComponent implements IConve
         }
     }
 
+    /**
+     * @deprecated
+     * @return string
+     */
     public function evaluateTest()
     {
-//         return StrUtil::parseBoolean($this->evaluateString($this->_test));
         return $this->evaluateString($this->_test);
+    }
+    
+    public function isEnabled()
+    {
+        return $this->evaluateString( $this->_test);
     }
 
     // UTIL

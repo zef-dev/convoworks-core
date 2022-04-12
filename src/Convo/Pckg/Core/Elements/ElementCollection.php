@@ -3,6 +3,8 @@
 namespace Convo\Pckg\Core\Elements;
 
 
+use Convo\Core\Workflow\IOptionalElement;
+
 class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
 {
 	
@@ -18,7 +20,8 @@ class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 		$elements = $properties['elements'] ?? [];
 
 		foreach ($elements as $element) {
-			$this->addElement($element);
+			$this->_elements[]		=	$element;
+			$this->addChild( $element);
 		}
 	}
 	
@@ -26,23 +29,28 @@ class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 	{
 		$this->_logger->debug('Reading ['.count( $this->_elements).']');
 		
-		foreach ($this->_elements as $element) {
+		foreach ($this->getElements() as $element) {
 			/** @var $element \Convo\Core\Workflow\IConversationElement */
 			$element->read( $request, $response);
 		}
 	}
 	
-	public function addElement( \Convo\Core\Workflow\IConversationElement $element)
-	{
-		$this->_elements[]		=	$element;
-		$this->addChild( $element);
-	}
-	
-	/**
-	 * @return \Convo\Core\Workflow\IConversationElement[]
-	 */
 	public function getElements() {
-		return $this->_elements;
+	    $elements   =   $this->getService()->spreadElements( $this->_elements);
+	    $filtered   =   [];
+	    
+	    foreach ( $elements as $element) {
+	        if ( $element instanceof IOptionalElement) {
+	            /* @var IOptionalElement $element*/
+	            if ( $element->isEnabled()) {
+	                $filtered[] = $element;
+	            }
+	            continue;
+	        }
+	        $filtered[] = $element;
+	    }
+	    
+	    return $filtered;
 	}
 	
 	// UTIL

@@ -2,9 +2,9 @@
     <h3>Element Queue</h3>
     <p>This element executes its child elements in sequence, one by one, each time it's called. You can decide how often it will check if its child elements have been executed, i.e. once per request, session, or installation.</p>
     <p>Optionally, you may also put elements in a "Done" flow that will run if the Queue element is read again, but has already executed its elements in the given scope.</p>
-    <p>You can also set the Queue to always re-read its children, without checking if it's been run already, by setting the <code>Should Reset</code> property to true.</p>
+    <p>You can also make the Queue re-read its children, without checking if it's been run already, by placing an expression that evaluates to <code>true</code> under the <code>Should Reset</code> property.</p>
     <p>The <b>Element Queue</b> is similar to the <b>Element Randomizer</b>, difference being that the Queue executes its elements sequentially.</p>
-
+    
     <h4>When to use?</h4>
 
     <p>When you have elements you wish to run in sequence, one by one, while having control over how often they run, and with an additional flow in case they've been executed.</p>
@@ -15,6 +15,15 @@
         <li>Place whichever children elements you wish to execute in sequence in the <code>Elements</code> flow.</li>
         <li>Optionally, you may also add child elements to the <code>Done</code> flow which will run if the Queue element is read again, but has already executed its children.</li>
         <li>The <code>Should reset</code> property dictates whether or not to execute the <code>Done</code> flow once the queue has been executed, or to re-read the queue again.</li>
-        <li><code>Scope type</code> governs how "often" the queue will run, if <code>Should reset</code> is toggled off. This essentially means, "read the queue once per installation/session/request".</li>
+        <li><code>Scope type</code> governs how "often" the queue will run, if <code>Should reset</code> is empty or evaluates to <code>false</code>. This essentially means, "run every member of the queue once per installation/session/request".</li>
     </ul>
+
+    <p>
+        You can completely skip certain elements of the queue based on certain criteria by using an <b>If Element</b>. To do this, place an <b>If Element</b> in the queue, and then place whichever element(s) you want to <em>conditionally</em> run inside the <code>Then</code> flow.
+    </p>
+    <p>
+        If the <code>Test</code> of the <b>If Element</b> evaluates to <code>true</code>, then its <code>Then</code> flow will be run by the queue. Otherwise, the entire <b>If Element</b> will never be taken into consideration for execution.
+        <br>
+        <b>NOTE:</b> Placing anything into the <code>Else</code> flow, and&sol;or placing <code>Else If</code> elements inside the <b>If Element</b> will <em>ALWAYS</em> execute the <b>If Element</b>, i.e. it will never be skipped.
+    </p>
 </div>
