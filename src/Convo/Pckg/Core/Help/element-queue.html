@@ -19,11 +19,11 @@
     </ul>
 
     <p>
-        You can completely skip certain elements of the queue by using an <b>If Element</b>. To do this, place an <b>If Element</b> in the queue, and then place whichever element you want to <em>conditionally</em> run inside the <code>Then</code> flow.
+        You can completely skip certain elements of the queue based on certain criteria by using an <b>If Element</b>. To do this, place an <b>If Element</b> in the queue, and then place whichever element(s) you want to <em>conditionally</em> run inside the <code>Then</code> flow.
     </p>
     <p>
-        If the <code>Test</code> of the <b>If Element</b> evaluates to <code>true</code>, then its <code>Then</code> flow will be run by the queue. Otherwise, the entire <b>If Element</b> will be skipped.
+        If the <code>Test</code> of the <b>If Element</b> evaluates to <code>true</code>, then its <code>Then</code> flow will be run by the queue. Otherwise, the entire <b>If Element</b> will never be taken into consideration for execution.
         <br>
-        <b>NOTE:</b> Placing anything into the <code>Else</code> flow, or placing <code>Else If</code> elements inside the <b>If Element</b> will <em>ALWAYS</em> execute the <b>If Element</b>, i.e. it will never be skipped.
+        <b>NOTE:</b> Placing anything into the <code>Else</code> flow, and&sol;or placing <code>Else If</code> elements inside the <b>If Element</b> will <em>ALWAYS</em> execute the <b>If Element</b>, i.e. it will never be skipped.
     </p>
 </div>

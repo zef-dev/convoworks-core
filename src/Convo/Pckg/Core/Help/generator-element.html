@@ -10,9 +10,6 @@
     <p>Inside an <b>Element Queue</b> or <b>Element Randomizer</b>, place this inside the main flow. Then, specify which collection of items you want to iterate over, and then place an element inside the <code>Element</code> container of this element.</p>
     <p>For every item in the collection you've specified, the <b>Element Generator</b> will read whichever element you have given it, while making certain data available inside its child element's context. Refer to the table below for more information on that.</p>
 
-    <p>Another thing you can do is to place an <b>If Element</b> inside the main flow of the <b>Element Generator</b>. You can then specify some sort of a condition. If the condition evaluates to false, then the current item in the collection will be skipped. This can be useful if you want to, for example, skip explaining how to use a specific part of your skill if the user has already interacted with it.</p>
-    <p><b>NOTE:</b> if you place an <b>Else If</b> subelement, or place anything in the <code>Else</code> flow of the <b>If Element</b>, the current item will NOT be skipped even if the main condition evaluates to false. You could, however, do something different with the item, such as formatting it differently or reading some sort of a generic fallback.</p>
-
     <h3>Example usage</h3>
     <ol>
         <li>
