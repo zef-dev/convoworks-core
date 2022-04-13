@@ -9,6 +9,7 @@ use Zef\Zel\ArrayResolver;
 use Zef\Zel\ObjectResolver;
 use Convo\Core\Workflow\IRunnableBlock;
 use Convo\Core\Params\NoRequestParamsException;
+use Convo\Core\Workflow\IBasicServiceComponent;
 
 class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerComponent, \Convo\Core\Workflow\IIdentifiableComponent
 {
@@ -848,11 +849,41 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $this->_children[]	=	$child;
         if ( is_a( $child, '\Convo\Core\Workflow\IServiceWorkflowComponent')) {
             /** @var \Convo\Core\Workflow\IServiceWorkflowComponent $child */
-            $child->setParent( $this);
+            
+            try {
+                $parent = $child->getParent();
+                
+                if ($parent !== $this) {
+                    $child->getParent()->removeChild($child);
+                }
+            } catch (ComponentNotFoundException $e) {
+                $this->_logger->info($e->getMessage());
+            } finally {
+                $child->setParent( $this);
+            }
         }
 
         $child->setService( $this);
     }
+
+    public function removeChild(IBasicServiceComponent $child)
+	{
+		$index_to_remove = -1;
+
+		foreach ($this->_children as $index => $c) {
+            echo 'Currently checking removal ID ['.$child->getId().'] against child ['.$c->getId().']'.PHP_EOL;
+			if ($child->getId() === $c->getId()) {
+				$index_to_remove = $index;
+				break;
+			}
+		}
+
+		if ($index_to_remove === -1) {
+			throw new \Exception('Child element ['.$child.'] could not be found inside parent element ['.$this.']');
+		}
+
+		\array_splice($this->_children, $index_to_remove, 1);
+	}
 
     /**
      * {@inheritDoc}
