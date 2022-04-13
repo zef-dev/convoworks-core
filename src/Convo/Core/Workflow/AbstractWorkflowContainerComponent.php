@@ -11,7 +11,7 @@ abstract class AbstractWorkflowContainerComponent extends AbstractWorkflowCompon
 {
 	
 	/**
-	 * @var \Convo\Core\Workflow\IBasicServiceComponent
+	 * @var \Convo\Core\Workflow\IBasicServiceComponent[]
 	 */
 	private $_children	=	array();
 	
