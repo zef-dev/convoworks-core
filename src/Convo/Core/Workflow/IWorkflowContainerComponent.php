@@ -17,6 +17,13 @@ interface IWorkflowContainerComponent extends \Convo\Core\Workflow\IServiceWorkf
 	public function addChild(\Convo\Core\Workflow\IBasicServiceComponent $child);
 
 	/**
+	 * Removes the given child component from the parent. Implement it such that the parent is removed from the child only if the child is
+	 * an instance of IServiceWorkflowComponent
+	 * @param \Convo\Core\Workflow\IBasicServiceComponent $child
+	 */
+	public function removeChild(\Convo\Core\Workflow\IBasicServiceComponent $child);
+
+	/**
 	 * Returns direct component children.
 	 * @return \Convo\Core\Workflow\IBasicServiceComponent[]
 	 */

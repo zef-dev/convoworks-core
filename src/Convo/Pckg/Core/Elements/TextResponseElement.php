@@ -69,7 +69,7 @@ class TextResponseElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
 	// UTIL
 	public function __toString()
 	{
-		return parent::__toString().'['.$this->evaluateString($this->_type).']['.$this->_break.']['.$this->_text.']';
+		return parent::__toString().'['.$this->_type.']['.$this->_break.']['.$this->_text.']';
 	}
 
     private function _addPlatformText($response, $text, $type): void

@@ -2,6 +2,8 @@
 
 namespace Convo\Core\Workflow;
 
+use Convo\Core\ComponentNotFoundException;
+
 /**
  * Implements working with children as base class for concrete implementations.
  * @author Tole
@@ -11,7 +13,7 @@ abstract class AbstractWorkflowContainerComponent extends AbstractWorkflowCompon
 {
 	
 	/**
-	 * @var \Convo\Core\Workflow\IBasicServiceComponent
+	 * @var \Convo\Core\Workflow\IBasicServiceComponent[]
 	 */
 	private $_children	=	array();
 	
@@ -34,8 +36,25 @@ abstract class AbstractWorkflowContainerComponent extends AbstractWorkflowCompon
 		$this->_children[]	=	$child;
 		if ( is_a( $child, '\Convo\Core\Workflow\IServiceWorkflowComponent')) {
 		    /** @var \Convo\Core\Workflow\IServiceWorkflowComponent $child */
-		    $child->setParent( $this);
+
+			try {
+                $parent = $child->getParent();
+                
+                if ($parent !== $this) {
+                    $parent->removeChild($child);
+                }
+            } catch (ComponentNotFoundException $e) {
+            } finally {
+				$child->setParent( $this);
+			}
 		}
+	}
+
+	public function removeChild(IBasicServiceComponent $child)
+	{
+		$this->_children = \array_filter($this->_children, function ($c) use ($child) {
+            return $c->getId() !== $child->getId();
+        });
 	}
 	
 	/**

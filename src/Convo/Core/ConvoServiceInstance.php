@@ -9,6 +9,7 @@ use Zef\Zel\ArrayResolver;
 use Zef\Zel\ObjectResolver;
 use Convo\Core\Workflow\IRunnableBlock;
 use Convo\Core\Params\NoRequestParamsException;
+use Convo\Core\Workflow\IBasicServiceComponent;
 
 class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerComponent, \Convo\Core\Workflow\IIdentifiableComponent
 {
@@ -848,11 +849,28 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $this->_children[]	=	$child;
         if ( is_a( $child, '\Convo\Core\Workflow\IServiceWorkflowComponent')) {
             /** @var \Convo\Core\Workflow\IServiceWorkflowComponent $child */
-            $child->setParent( $this);
+            
+            try {
+                $parent = $child->getParent();
+                
+                if ($parent !== $this) {
+                    $parent->removeChild($child);
+                }
+            } catch (ComponentNotFoundException $e) {
+            } finally {
+                $child->setParent( $this);
+            }
         }
 
         $child->setService( $this);
     }
+
+    public function removeChild(IBasicServiceComponent $child)
+	{
+        $this->_children = \array_filter($this->_children, function ($c) use ($child) {
+            return $c->getId() !== $child->getId();
+        });
+	}
 
     /**
      * {@inheritDoc}
