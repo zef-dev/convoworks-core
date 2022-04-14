@@ -52,20 +52,9 @@ abstract class AbstractWorkflowContainerComponent extends AbstractWorkflowCompon
 
 	public function removeChild(IBasicServiceComponent $child)
 	{
-		$index_to_remove = -1;
-
-		foreach ($this->_children as $index => $c) {
-			if ($child->getId() === $c->getId()) {
-				$index_to_remove = $index;
-				break;
-			}
-		}
-
-		if ($index_to_remove === -1) {
-			throw new \Exception('Child element ['.$child.'] could not be found inside parent element ['.$this.']');
-		}
-
-		\array_splice($this->_children, $index_to_remove, 1);
+		$this->_children = \array_filter($this->_children, function ($c) use ($child) {
+            return $c->getId() !== $child->getId();
+        });
 	}
 	
 	/**
