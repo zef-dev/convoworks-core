@@ -857,7 +857,6 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                     $parent->removeChild($child);
                 }
             } catch (ComponentNotFoundException $e) {
-                $this->_logger->info($e->getMessage());
             } finally {
                 $child->setParent( $this);
             }

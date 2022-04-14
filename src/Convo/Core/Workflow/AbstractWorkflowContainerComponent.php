@@ -44,7 +44,6 @@ abstract class AbstractWorkflowContainerComponent extends AbstractWorkflowCompon
                     $parent->removeChild($child);
                 }
             } catch (ComponentNotFoundException $e) {
-                $this->_logger->info($e->getMessage());
             } finally {
 				$child->setParent( $this);
 			}
