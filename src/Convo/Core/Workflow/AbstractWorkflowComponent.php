@@ -27,7 +27,7 @@ abstract class AbstractWorkflowComponent extends AbstractBasicComponent implemen
 	 */
 	public function getParent() {
 		if ( !$this->_parent) {
-			throw new \Convo\Core\ComponentNotFoundException( 'Parent not set in ['.get_class($this).']['.$this->getId().']');
+			throw new \Convo\Core\ComponentNotFoundException( 'Parent not set in ['.$this.']');
 		}
 		return $this->_parent;
 	}
