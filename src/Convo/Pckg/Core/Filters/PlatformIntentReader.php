@@ -42,7 +42,7 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
 
     public function accepts(IIntentAwareRequest $request)
     {
-        $disable = $this->evaluateString($this->_disable);
+        $disable = $this->evaluateString( $this->_disable, $request->getSlotValues());
         if (!empty($this->_disable) && $disable) {
             $this->_logger->info('Ignoring accept in PlatformIntentReader [' . $disable . ']');
             return false;
