@@ -45,6 +45,12 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     private $_sendPermissionsConsentCard = false;
     private $_permissionsToAskFor = [];
 
+    private $_shouldSendStandardCard = false;
+    private $_standardCardTitle = '';
+    private $_standardCardText = '';
+    private $_standardCardSmallImageURL = null;
+    private $_standardCardLargeImageURL = null;
+
     /**
      * @var AmazonCommandRequest
      */
@@ -229,6 +235,15 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     public function promptAccountLinking()
     {
         $this->_sendAccountLinkingCard = true;
+    }
+
+    public function sendStandardCard($title, $text, $smallImageURL = null, $largeImageURL = null)
+    {
+        $this->_shouldSendStandardCard = true;
+        $this->_standardCardTitle = $title;
+        $this->_standardCardText = $text;
+        $this->_standardCardSmallImageURL = $smallImageURL;
+        $this->_standardCardLargeImageURL = $largeImageURL;
     }
 
 	public function promptPermissionsConsent()
@@ -721,6 +736,21 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                     'title' => isset($this->_serviceAmazonConfig['invocation']) ? ucwords($this->_serviceAmazonConfig['invocation']) : '',
                     'content' => $this->getText()
                 ];
+            }
+
+            if ($this->_shouldSendStandardCard) {
+                $data['response']['card'] = [
+                    'type' => 'Standard',
+                    'title' => $this->_standardCardTitle,
+                    'text' => $this->_standardCardText
+                ];
+
+                if (!empty($this->_standardCardSmallImageURL) && !empty($this->_standardCardLargeImageURL)) {
+                    $data['response']['card']['image'] = [
+                        'smallImageUrl' => $this->_standardCardSmallImageURL,
+                        'largeImageUrl' => $this->_standardCardLargeImageURL
+                    ];
+                }
             }
 
             if ($this->_sendAccountLinkingCard) {

@@ -796,6 +796,65 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 					'_workflow' => 'read'
 				]
 			),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\StandardCardElement',
+                'Standard Card Element',
+                'Displays an card on Alexa devices with display, and in Activity View of the Alexa Companion App.',
+                [
+                    'title' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => null,
+                        'name' => 'Title',
+                        'description' => 'Expression which evaluates the title for the Standard Card',
+                        'valueType' => 'string'
+                    ],
+                    'text' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => null,
+                        'name' => 'Text',
+                        'description' => 'Expression which evaluates the text for the Standard Card',
+                        'valueType' => 'string'
+                    ],
+                    'small_image_url' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => null,
+                        'name' => 'Small Image URL',
+                        'description' => 'Expression which evaluates the small Image URL for the Standard Card',
+                        'valueType' => 'string'
+                    ],
+                    'large_image_url' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => null,
+                        'name' => 'Large Image URL',
+                        'description' => 'Expression which evaluates the large Image URL for the Standard Card',
+                        'valueType' => 'string'
+                    ],
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        'template' =>
+                            '<div class="code">' .
+                                '<span class="statement">STANDARD CARD</span> ' .
+                                '<hr ng-if="component.properties.title || component.properties.text">' .
+                                '<ul ng-if="component.properties.title || component.properties.text" class="list-unstyled">' .
+                                    '<li ng-if="component.properties.title">Title: <b>{{component.properties.title}}</b></li>' .
+                                    '<li ng-if="component.properties.text">Text: <b>{{component.properties.text}}</b></li>' .
+                                    '<li ng-if="component.properties.small_image_url">Small Image URL: <b>{{component.properties.small_image_url}}</b></li>' .
+                                    '<li ng-if="component.properties.large_image_url">Large Image URL: <b>{{component.properties.large_image_url}}</b></li>' .
+                                '</ul>' .
+                            '</div>'
+                    ],
+                    '_help' => [
+                        'type' => 'file',
+                        'filename' => 'standard-card-element.html'
+                    ],
+                    '_workflow' => 'read'
+                ]
+            ),
 			new \Convo\Core\Factory\ComponentDefinition(
 				$this->getNamespace(),
 				'\Convo\Pckg\Alexa\Elements\GenericAplElement',
