@@ -843,9 +843,24 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                                 '<ul ng-if="component.properties.title || component.properties.text" class="list-unstyled">' .
                                     '<li ng-if="component.properties.title">Title: <b>{{component.properties.title}}</b></li>' .
                                     '<li ng-if="component.properties.text">Text: <b>{{component.properties.text}}</b></li>' .
-                                    '<li ng-if="component.properties.small_image_url">Small Image URL: <b>{{component.properties.small_image_url}}</b></li>' .
-                                    '<li ng-if="component.properties.large_image_url">Large Image URL: <b>{{component.properties.large_image_url}}</b></li>' .
                                 '</ul>' .
+                                '<div ng-if="component.properties.small_image_url" class="row align-items-center">'.
+                                    '<div class="col-xs-4">'.
+                                        '<div class="title">Small Image: </div>' .
+                                    '</div>'.
+                                    '<div class="col-xs-8">'.
+                                        '<img onerror="this.src=\'https://place-hold.it/60x60/\'" src="{{component.properties.small_image_url}}" width="60" height="60" alt="SMALL IMG">'.
+                                    '</div>'.
+                                '</div>'.
+                                '<hr ng-if="component.properties.small_image_url && component.properties.large_image_url">'.
+                                '<div ng-if="component.properties.large_image_url" class="row align-items-center">'.
+                                    '<div class="col-xs-4">'.
+                                        '<div class="title">Large Image: </div>' .
+                                    '</div>'.
+                                    '<div class="col-xs-8">'.
+                                        '<img onerror="this.src=\'https://place-hold.it/100x100/\'" src="{{component.properties.large_image_url}}" width="100" height="100" alt="LARGE IMG">'.
+                                    '</div>'.
+                                '</div>'.
                             '</div>'
                     ],
                     '_help' => [
