@@ -244,7 +244,7 @@ class PackageProvider implements
                     throw new \Exception('Package ['.$package->getNamespace().'] is not [\Convo\Core\Factory\IComponentProvider]');
                 }
 
-                /** @var Convo\Core\Factory\IComponentProvider $package */
+                /** @var \Convo\Core\Factory\IComponentProvider $package */
                 $component = $package->createPackageComponent( $service, $this, $componentData);
                 $this->_logger->debug( 'Created component ['.get_class( $component).']');
 // 				$this->_logger->debug( '-----');
