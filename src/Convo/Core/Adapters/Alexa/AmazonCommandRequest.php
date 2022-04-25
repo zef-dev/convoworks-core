@@ -17,6 +17,8 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	private $_sessionId = '';
 	private $_requestId = '';
 
+	private $_personId = '';
+
 	private $_accessToken;
 	private $_aplToken;
 
@@ -82,6 +84,7 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 		$this->_locale		    =   $this->_data['request']['locale'];
 
 		$this->_accessToken		=	$this->_data['context']['System']['user']['accessToken'] ?? null;
+		$this->_personId		=	$this->_data['context']['System']['person']['personId'] ?? null;
 
 		$this->_intentType		=	$this->_data['request']['type'];
 		$this->_intentName		=   isset( $this->_data['request']['intent']['name']) ? $this->_data['request']['intent']['name'] : null;
@@ -319,6 +322,9 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 		return $this->_isAplEnabled;
 	}
 
+    public function getPersonId() {
+        return $this->_personId;
+    }
 
 	private function _parseSlotValues( $slots)
 	{
