@@ -3,8 +3,10 @@
 namespace Convo\Pckg\Alexa\Elements;
 
 use Convo\Core\Adapters\Alexa\Api\AlexaCustomerProfileApi;
+use Convo\Core\Adapters\Alexa\Api\AlexaPersonProfileApi;
 use Convo\Core\Adapters\Alexa\Api\AlexaRemindersApi;
 use Convo\Core\Adapters\Alexa\Api\InsufficientPermissionsGrantedException;
+use Convo\Core\Factory\InvalidComponentDataException;
 use Convo\Core\Publish\IPlatformPublisher;
 use Convo\Core\Rest\RestSystemUser;
 use Convo\Core\Workflow\IConvoRequest;
@@ -13,6 +15,8 @@ use Convo\Core\Workflow\IConvoResponse;
 class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
 {
 	private $_name;
+
+	private $_profileType;
 
 	/**
 	 * @var \Convo\Core\Workflow\IConversationElement[]
@@ -31,6 +35,12 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 
 
     /**
+     * @var AlexaPersonProfileApi
+     */
+    private $_alexaPersonProfileApi;
+
+
+    /**
      * @var AlexaRemindersApi
      */
     private $_alexaRemindersApi;
@@ -40,11 +50,12 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 	 */
 	private $_convoServiceDataProvider;
 
-	public function __construct($properties, $alexaCustomerProfileApi, $alexaRemindersApi, $convoServiceDataProvider)
+	public function __construct($properties, $alexaCustomerProfileApi, $alexaPersonProfileApi, $alexaRemindersApi, $convoServiceDataProvider)
 	{
 		parent::__construct($properties);
 
 		$this->_name = $properties['name'] ?? 'customerProfile';
+		$this->_profileType = $properties['profile_type'] ?? 'CUSTOMER';
 
 		foreach ($properties['ok'] as $element) {
 			$this->_ok[] = $element;
@@ -57,6 +68,7 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 		}
 
 		$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
+		$this->_alexaPersonProfileApi = $alexaPersonProfileApi;
 		$this->_alexaRemindersApi = $alexaRemindersApi;
 		$this->_convoServiceDataProvider = $convoServiceDataProvider;
 	}
@@ -71,6 +83,7 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 		$params = $this->getService()->getComponentParams($scope_type, $this);
 
 		$name = $this->evaluateString($this->_name);
+		$profileType = $this->evaluateString($this->_profileType);
 
 		if (is_a($request, '\Convo\Core\Adapters\Alexa\AmazonCommandRequest')) {
 			$amazon_platform_config = $this->_convoServiceDataProvider->getServicePlatformConfig(
@@ -84,63 +97,100 @@ class GetAmazonCustomerProfileElement extends \Convo\Core\Workflow\AbstractWorkf
 			$shouldGetPhoneNumber = in_array('alexa::profile:mobile_number:read', $amazon_skill_permissions);
 			$shouldGetReminders = in_array('alexa::alerts:reminders:skill:readwrite', $amazon_skill_permissions);
 
-			$customerProfile = [];
+			$alexaProfile = [];
             $missingPermissions = [];
             $configuredPermissions = [];
-			$this->_logger->info('Getting Amazon Customer Profile with the following permissions [' . json_encode($amazon_skill_permissions) . ']');
-            if ($shouldGetFullName) {
-                $configuredPermissions[] = 'fullName';
-                try {
-                    $customerProfile['fullName'] = $this->_alexaCustomerProfileApi->getCustomerFullName($request);
-                } catch (InsufficientPermissionsGrantedException $e) {
-                    $missingPermissions[] = 'fullName';
-                }
-            }
-            if ($shouldGetGivenName) {
-                $configuredPermissions[] = 'givenName';
-                try {
-                    $customerProfile['givenName'] = $this->_alexaCustomerProfileApi->getCustomerGivenName($request);
-                } catch (InsufficientPermissionsGrantedException $e) {
-                    $missingPermissions[] = 'givenName';
-                }
-            }
-            if ($shouldGetEmailAddress) {
-                $configuredPermissions[] = 'emailAddress';
-                try {
-                    $customerProfile['emailAddress'] = $this->_alexaCustomerProfileApi->getCustomerEmailAddress($request);
-                } catch (InsufficientPermissionsGrantedException $e) {
-                    $missingPermissions[] = 'emailAddress';
-                }
-            }
-            if ($shouldGetPhoneNumber) {
-                $configuredPermissions[] = 'phoneNumber';
-                try {
-                    $customerProfile['phoneNumber'] = $this->_alexaCustomerProfileApi->getCustomerPhoneNumber($request);
-                } catch (InsufficientPermissionsGrantedException $e) {
-                    $missingPermissions[] = 'phoneNumber';
-                }
-            }
+			$this->_logger->info('Getting Amazon ['.$profileType.'] with the following permissions [' . json_encode($amazon_skill_permissions) . ']');
             if ($shouldGetReminders) {
                 $configuredPermissions[] = 'reminders';
                 try {
-                    $customerProfile['reminders'] = $this->_alexaRemindersApi->getAllReminders($request);
+                    $alexaProfile['reminders'] = $this->_alexaRemindersApi->getAllReminders($request);
                 } catch (InsufficientPermissionsGrantedException $e) {
                     $missingPermissions[] = 'reminders';
                 }
             }
+            $profileVariableName = '';
+            switch ($profileType) {
+                case 'CUSTOMER':
+                    $profileVariableName = 'customer_profile';
+                    if ($shouldGetFullName) {
+                        $configuredPermissions[] = 'fullName';
+                        try {
+                            $alexaProfile['fullName'] = $this->_alexaCustomerProfileApi->getCustomerFullName($request);
+                        } catch (InsufficientPermissionsGrantedException $e) {
+                            $missingPermissions[] = 'fullName';
+                        }
+                    }
+                    if ($shouldGetGivenName) {
+                        $configuredPermissions[] = 'givenName';
+                        try {
+                            $alexaProfile['givenName'] = $this->_alexaCustomerProfileApi->getCustomerGivenName($request);
+                        } catch (InsufficientPermissionsGrantedException $e) {
+                            $missingPermissions[] = 'givenName';
+                        }
+                    }
+                    if ($shouldGetEmailAddress) {
+                        $configuredPermissions[] = 'emailAddress';
+                        try {
+                            $alexaProfile['emailAddress'] = $this->_alexaCustomerProfileApi->getCustomerEmailAddress($request);
+                        } catch (InsufficientPermissionsGrantedException $e) {
+                            $missingPermissions[] = 'emailAddress';
+                        }
+                    }
+                    if ($shouldGetPhoneNumber) {
+                        $configuredPermissions[] = 'phoneNumber';
+                        try {
+                            $alexaProfile['phoneNumber'] = $this->_alexaCustomerProfileApi->getCustomerPhoneNumber($request);
+                        } catch (InsufficientPermissionsGrantedException $e) {
+                            $missingPermissions[] = 'phoneNumber';
+                        }
+                    }
+                    break;
+                case 'PERSON':
+                    $profileVariableName = 'person_profile';
+                    $alexaProfile['personId'] = $request->getPersonId();
+
+                    if ($shouldGetFullName) {
+                        $configuredPermissions[] = 'fullName';
+                        try {
+                            $alexaProfile['fullName'] = $this->_alexaPersonProfileApi->getPersonFullName($request);
+                        } catch (InsufficientPermissionsGrantedException $e) {
+                            $missingPermissions[] = 'fullName';
+                        }
+                    }
+                    if ($shouldGetGivenName) {
+                        $configuredPermissions[] = 'givenName';
+                        try {
+                            $alexaProfile['givenName'] = $this->_alexaPersonProfileApi->getPersonGivenName($request);
+                        } catch (InsufficientPermissionsGrantedException $e) {
+                            $missingPermissions[] = 'givenName';
+                        }
+                    }
+                    if ($shouldGetPhoneNumber) {
+                        $configuredPermissions[] = 'phoneNumber';
+                        try {
+                            $alexaProfile['phoneNumber'] = $this->_alexaPersonProfileApi->getPersonPhoneNumber($request);
+                        } catch (InsufficientPermissionsGrantedException $e) {
+                            $missingPermissions[] = 'phoneNumber';
+                        }
+                    }
+                    break;
+                default:
+                    throw new InvalidComponentDataException('['.$profileType. '] is not supported.');
+            }
 
             if (empty($missingPermissions)) {
                 $selected_flow = $this->_ok;
-                $this->_logger->info('Got all requested data of Amazon Customer Profile [' . json_encode($customerProfile) . ']');
-                $params->setServiceParam($name, ['customer_profile' => $customerProfile]);
+                $this->_logger->info('Got all requested data of Amazon Customer Profile [' . json_encode($alexaProfile) . ']');
+                $params->setServiceParam($name, [$profileVariableName => $alexaProfile]);
             } else {
                 $selected_flow = $this->_onPermissionNotGranted;
                 $this->_logger->info('Missing permissions ['.json_encode($missingPermissions).'] of configured permissions ['.json_encode($configuredPermissions).']');
-                $this->_logger->info('Could not get all requested data of Amazon Customer Profile [' . json_encode($customerProfile) . ']');
+                $this->_logger->info('Could not get all requested data of Amazon Customer Profile [' . json_encode($alexaProfile) . ']');
                 $params->setServiceParam($name, [
                     'configured_permissions' => $configuredPermissions,
                     'missing_permissions' => $missingPermissions,
-                    'customer_profile' => $customerProfile
+                    $profileVariableName => $alexaProfile
                 ]);
             }
 

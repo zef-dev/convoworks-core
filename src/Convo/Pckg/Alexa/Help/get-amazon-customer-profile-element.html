@@ -1,14 +1,45 @@
 <div class="for-help">
     <h3>Get Amazon Customer Profile Element</h3>
 
-    <p>Retrieves data from default active account that is on Alexa Device with granted user permissions.</p>
+    <p>Retrieves data from default active account or recognized speaker's voice id that is on Alexa Device with granted user permissions.</p>
 
     <h3>When to use?</h3>
 
-    <p>When you want to retrieve customer information from the Amazon User Account, see what permissions the customer has granted to the Alexa Skill and use it in your Alexa Skill.</p>
+    <p>When you want to retrieve customer information from the Amazon User Account or Recognized Speaker's Voice ID, see what permissions the customer has granted to the Alexa Skill on the Account and Person Profile Level and use it in your Alexa Skill.</p>
 
     <h3>How to use: </h3>
     <ol>
+        <li>
+            <span>
+                Select between <var>Customer</var> or <var>Person</var> <code>Profile Type</code>
+            </span>
+            <ul>
+                <li><span>In case of <var>Customer</var> <code>Profile Type</code>, contact information will be gathered of the active account on Alexa Device, when the customer accepts permission on the account level.</span></li>
+                <li>
+                    <ul>
+                        <li><b>Full Name or Given Name</b></li>
+                        <li><b>Customer Phone Number</b></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul>
+                <li>
+                    <span>
+                        In case of <var>Person</var> <code>Profile Type</code>, contact information will be gathered of the recognized speaker, when the customer accepts permission on the profile level.
+                    </span>
+                    <span>
+                        Also don't forget to enable <var>Skill Personalization</var> in <var>Amazon Alexa Skill Permissions</var> configuration.
+                    </span>
+                </li>
+                <li>
+                    <ul>
+                        <li><b>Full Name or Given Name</b></li>
+                        <li><b>Customer Email Address</b></li>
+                        <li><b>Customer Phone Number</b></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
         <li>
             <span>Make sure you already have configured and propagated your service to Amazon Alexa with checked permissions for your needs in <b>Amazon Alexa Skill Permissions</b>:</span>
             <ul>
@@ -20,10 +51,11 @@
         </li>
 
         <li>
-            <span>If all configured permissions have been granted, <b>OK</b> flow will be executed.</span>
+            <span>If all configured permissions have been granted on Account or Profile Level, <b>OK</b> flow will be executed.</span>
             <br>
             <br>
-            <p>After the user has enabled the skill and granted permissions, you'll be able to access the customer profile data like in the following examples:</p>
+            <p>After the user has enabled the skill and granted permissions, you'll be able to access the customer/person profile data like in the following examples:</p>
+            <p>Case for <var>Customer</var> or <var>Person</var> <code>Profile Type</code></p>
             <ul>
                 <li><code>${status.customer_profile.fullName}</code> when <b>Full Name</b> permission was granted by the user.</li>
                 <li><code>${status.customer_profile.givenName}</code> when <b>Given Name</b> permission was granted by the user.</li>
@@ -32,11 +64,19 @@
                 <li><code>${status.customer_profile.phoneNumber.phoneNumber}</code> when <b>Phone Number</b> permission was granted by the user.</li>
                 <li><code>${status.customer_profile.reminders}</code> when <b>Reminders</b> permission was granted by the user. For more info please visit the help file of <var>Get Alexa Reminders Element</var></li>
             </ul>
+            <p>Case for <var>Person</var> or <var>Person</var> <code>Profile Type</code></p>
+            <ul>
+                <li><code>${status.person_profile.fullName}</code> when <b>Full Name</b> permission was granted by the user.</li>
+                <li><code>${status.person_profile.givenName}</code> when <b>Given Name</b> permission was granted by the user.</li>
+                <li><code>${status.person_profile.phoneNumber.countryCode}</code> when <b>Phone Number</b> permission was granted by the user.</li>
+                <li><code>${status.person_profile.phoneNumber.phoneNumber}</code> when <b>Phone Number</b> permission was granted by the user.</li>
+                <li><code>${status.person_profile.reminders}</code> when <b>Reminders</b> permission was granted by the user. For more info please visit the help file of <var>Get Alexa Reminders Element</var></li>
+            </ul>
             <br>
             <p>If at lease one permission has not been granted, <b>On Permission Not Granted</b> flow will be executed.</p>
             <p>You'll still have access the fields of the customer profile just like in the OK flow, but expect some missing fields.</p>
             <p>Additionally you will have access to <var>missing permissions</var> and <var>configured permissions</var>.</p>
-            <p><var>missing permissions</var> indicate what permissions have not been granted by the customer. Example how to access the <var>missing permissions</var>: <code>${status.missing_permissions}</code></p>
+            <p><var>missing permissions</var> indicate what permissions have not been granted by the <var>customer</var> or <var>person</var>. Example how to access the <var>missing permissions</var>: <code>${status.missing_permissions}</code></p>
             <p><var>configured permissions</var> indicate what permissions you have configured for your skill. Example how to access the <var>configured permissions</var>: <code>${status.configured_permissions}</code></p>
             <p>Both <var>missing permissions</var> and <var>configured permissions</var> are arrays of string values with the name of the missing permission.</p>
             <span>Here are some example of values you can expect on the variables <var>missing permissions</var> and <var>configured permissions</var>:</span>

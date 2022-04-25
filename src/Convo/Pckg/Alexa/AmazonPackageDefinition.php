@@ -3,6 +3,7 @@
 namespace Convo\Pckg\Alexa;
 
 use Convo\Core\Adapters\Alexa\Api\AlexaCustomerProfileApi;
+use Convo\Core\Adapters\Alexa\Api\AlexaPersonProfileApi;
 use Convo\Core\Adapters\Alexa\Api\AlexaRemindersApi;
 use Convo\Core\Factory\AbstractPackageDefinition;
 use Convo\Core\Factory\ComponentDefinition;
@@ -30,6 +31,11 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 	private $_alexaCustomerProfileApi;
 
     /**
+     * @var AlexaPersonProfileApi
+     */
+    private $_alexaPersonProfileApi;
+
+    /**
      * @var AlexaRemindersApi
      */
     private $_alexaRemindersApi;
@@ -45,12 +51,14 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
         \Convo\Core\IServiceDataProvider $convoServiceDataProvider,
         \Convo\Core\Adapters\Alexa\Api\AmazonUserApi $amazonUserApi,
 		AlexaCustomerProfileApi $alexaCustomerProfileApi,
+		AlexaPersonProfileApi $alexaPersonProfileApi,
 		AlexaRemindersApi $alexaRemindersApi
     ) {
         $this->_httpFactory = $httpFactory;
         $this->_convoServiceDataProvider = $convoServiceDataProvider;
 		$this->_amazonUserApi = $amazonUserApi;
 		$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
+		$this->_alexaPersonProfileApi = $alexaPersonProfileApi;
 		$this->_alexaRemindersApi = $alexaRemindersApi;
 
 		parent::__construct( $logger, self::NAMESPACE, __DIR__);
@@ -121,6 +129,16 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 						'description' => 'Name under which to store the loaded user object in the context',
 						'valueType' => 'string'
 					],
+                    'profile_type' => [
+                        'editor_type' => 'select',
+                        'editor_properties' => [
+                            'options' => ['CUSTOMER' => 'Customer', 'PERSON' => 'Person']
+                        ],
+                        'defaultValue' => 'CUSTOMER',
+                        'name' => 'Profile Type',
+                        'description' => 'Selection between the Person Profile API and the Customer Profile API.',
+                        'valueType' => 'string'
+                    ],
 					'ok' => [
 						'editor_type' => 'service_components',
 						'editor_properties' => [
@@ -156,17 +174,20 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 					),
 					'_factory' => new class (
                         $this->_alexaCustomerProfileApi,
+                        $this->_alexaPersonProfileApi,
                         $this->_alexaRemindersApi,
                         $this->_convoServiceDataProvider
                     ) implements IComponentFactory
 					{
 						private $_alexaCustomerProfileApi;
+						private $_alexaPersonProfileApi;
 						private $_alexaRemindersProfileApi;
 						private $_convoServiceDataProvider;
 
-						public function __construct($alexaCustomerProfileApi, $alexaRemindersProfileApi, $convoServiceDataProvider)
+						public function __construct($alexaCustomerProfileApi, $alexaPersonProfileApi, $alexaRemindersProfileApi, $convoServiceDataProvider)
 						{
 							$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
+							$this->_alexaPersonProfileApi = $alexaPersonProfileApi;
 							$this->_alexaRemindersProfileApi = $alexaRemindersProfileApi;
 							$this->_convoServiceDataProvider = $convoServiceDataProvider;
 						}
@@ -176,6 +197,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 							return new \Convo\Pckg\Alexa\Elements\GetAmazonCustomerProfileElement(
                                 $properties,
                                 $this->_alexaCustomerProfileApi,
+                                $this->_alexaPersonProfileApi,
                                 $this->_alexaRemindersProfileApi,
                                 $this->_convoServiceDataProvider
                             );
