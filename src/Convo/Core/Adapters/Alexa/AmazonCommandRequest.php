@@ -84,6 +84,9 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 		$this->_locale		    =   $this->_data['request']['locale'];
 
 		$this->_accessToken		=	$this->_data['context']['System']['user']['accessToken'] ?? null;
+        if (isset($this->_data['context']['System']['person']['accessToken'])) {
+            $this->_accessToken		=	$this->_data['context']['System']['person']['accessToken'];
+        }
 		$this->_personId		=	$this->_data['context']['System']['person']['personId'] ?? null;
 
 		$this->_intentType		=	$this->_data['request']['type'];
