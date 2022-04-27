@@ -250,12 +250,12 @@ class PackageProvider implements
 // 				$this->_logger->debug( '-----');
 
                 if ( is_a( $component, '\Psr\Log\LoggerAwareInterface')) {
-                    /* @var $component \Psr\Log\LoggerAwareInterface */
+                    /** @var \Psr\Log\LoggerAwareInterface $component */
                     $component->setLogger( $this->_logger);
                 }
 
                 if ( is_a( $component, '\Convo\Core\Workflow\IBasicServiceComponent')) {
-                    /* @var $component \Convo\Core\Workflow\IBasicServiceComponent */
+                    /** @var \Convo\Core\Workflow\IBasicServiceComponent $component */
                     $component->setService( $service);
                 }
 
