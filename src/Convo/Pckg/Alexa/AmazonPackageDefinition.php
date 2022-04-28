@@ -820,6 +820,47 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 			),
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\SimpleCardElement',
+                'Simple Card Element',
+                'Displays an card without image on Alexa devices with display, and in Activity View of the Alexa Companion App.',
+                [
+                    'title' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => null,
+                        'name' => 'Title',
+                        'description' => 'Expression which evaluates the title for the Simple Card',
+                        'valueType' => 'string'
+                    ],
+                    'content' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => null,
+                        'name' => 'Content',
+                        'description' => 'Expression which evaluates the content for the Simple Card',
+                        'valueType' => 'string'
+                    ],
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        'template' =>
+                            '<div class="code">' .
+                                '<span class="statement">SIMPLE CARD</span> ' .
+                                '<hr ng-if="component.properties.title || component.properties.content">' .
+                                '<ul ng-if="component.properties.title || component.properties.content" class="list-unstyled">' .
+                                    '<li ng-if="component.properties.title">Title: <b>{{component.properties.title}}</b></li>' .
+                                    '<li ng-if="component.properties.content">Content: <b>{{component.properties.content}}</b></li>' .
+                                '</ul>' .
+                            '</div>'
+                    ],
+                    '_help' => [
+                        'type' => 'file',
+                        'filename' => 'simple-card-element.html'
+                    ],
+                    '_workflow' => 'read'
+                ]
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
                 '\Convo\Pckg\Alexa\Elements\StandardCardElement',
                 'Standard Card Element',
                 'Displays an card on Alexa devices with display, and in Activity View of the Alexa Companion App.',

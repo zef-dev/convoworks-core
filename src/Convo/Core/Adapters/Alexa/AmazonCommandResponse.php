@@ -51,6 +51,10 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     private $_standardCardSmallImageURL = null;
     private $_standardCardLargeImageURL = null;
 
+    private $_shouldSendSimpleCard = false;
+    private $_simpleCardTitle = '';
+    private $_simpleCardContent = '';
+
     /**
      * @var AmazonCommandRequest
      */
@@ -244,6 +248,13 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         $this->_standardCardText = $text;
         $this->_standardCardSmallImageURL = $smallImageURL;
         $this->_standardCardLargeImageURL = $largeImageURL;
+    }
+
+    public function sendSimpleCard($title, $content)
+    {
+        $this->_shouldSendSimpleCard = true;
+        $this->_simpleCardTitle = $title;
+        $this->_simpleCardContent = $content;
     }
 
 	public function promptPermissionsConsent()
@@ -730,11 +741,19 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                 $isAutoDisplay = false;
             }
 
-            if ($this->_isDisplaySupported && $isAutoDisplay) {
+            if (($isAutoDisplay) || ($this->_shouldSendSimpleCard)) {
+                $title = isset($this->_serviceAmazonConfig['invocation']) ? ucwords($this->_serviceAmazonConfig['invocation']) : '';
+                $content = $this->getText();
+
+                if ($this->_shouldSendSimpleCard) {
+                    $title = $this->_simpleCardTitle;
+                    $content = $this->_simpleCardContent;
+                }
+
                 $data['response']['card'] = [
                     'type' => 'Simple',
-                    'title' => isset($this->_serviceAmazonConfig['invocation']) ? ucwords($this->_serviceAmazonConfig['invocation']) : '',
-                    'content' => $this->getText()
+                    'title' => $title,
+                    'content' => $content
                 ];
             }
 
