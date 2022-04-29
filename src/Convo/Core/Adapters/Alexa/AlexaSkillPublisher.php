@@ -448,7 +448,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             ];
         }
 
-	    /** @var \Convo\Core\Intent\IIntentDriven $intent_drivens */
+	    /** @var \Convo\Core\Intent\IIntentDriven[] $intent_drivens */
 	    $intent_drivens    =   $service->findChildren( '\Convo\Core\Intent\IIntentDriven');
 
 	    $intents           =   [];
@@ -1141,7 +1141,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
     }
 
     private function _sanitizeText($text) {
-        return preg_replace('/[^a-zA-Z ]/', '', $text);
+        return preg_replace('/[^a-zA-Z ._\'{}-]/', '', $text);
     }
 
     private function _prepareManifestData($existingManifest = [], $asJson = false) {
