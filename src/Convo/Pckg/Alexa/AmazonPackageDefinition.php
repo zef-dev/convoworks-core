@@ -833,7 +833,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         'valueType' => 'string'
                     ],
                     'content' => [
-                        'editor_type' => 'text',
+                        'editor_type' => 'ssml',
                         'editor_properties' => [],
                         'defaultValue' => null,
                         'name' => 'Content',
@@ -874,7 +874,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         'valueType' => 'string'
                     ],
                     'text' => [
-                        'editor_type' => 'text',
+                        'editor_type' => 'ssml',
                         'editor_properties' => [],
                         'defaultValue' => null,
                         'name' => 'Text',
