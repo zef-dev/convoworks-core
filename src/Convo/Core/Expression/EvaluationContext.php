@@ -3,7 +3,6 @@
 namespace Convo\Core\Expression;
 
 use Zef\Zel\Symfony\ExpressionLanguage;
-use Convo\Core\Expression\ExpressionFunctionProviderInterface;
 
 class EvaluationContext
 {
