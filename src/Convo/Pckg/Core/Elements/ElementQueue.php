@@ -32,35 +32,53 @@ class ElementQueue extends ElementCollection implements IConversationElement
             $done->setParent($this);
         }
     }
+    
     public function read(IConvoRequest $request, IConvoResponse $response)
     {
-        $params         =   $this->getService()->getComponentParams( $this->evaluateString( $this->_scopeType), $this);
-        $current_index  =   $params->getServiceParam( 'index') ?: 0;
-
-        $elements = $this->getElements();
+        $elements       =   $this->getElements();
+        $should_reset   =   $this->evaluateString( $this->_shouldReset);
         
-        if ( $current_index === count( $elements))
-        {
-            $this->_logger->debug( 'Current index ['.$current_index.'] falls outside of elements count.');
-
-            $should_reset = $this->evaluateString( $this->_shouldReset);
-
-            if ( $should_reset) {
-                $this->_logger->info('Resetting index to 0');
-                $current_index = 0;
-            } else {
-                $this->_logger->info('Going to read Done flow');
-
-                foreach ($this->_done as $done) {
-                    $done->read( $request, $response);
-                }
+        if ( $should_reset) {
+            $this->_logger->info( 'Resetting elements queue');
+            $this->_reset();
+        }
+        
+        foreach ( $elements as $elem) {
+            if ( $this->_registerElement( $elem)) {
+                $elem->read( $request, $response);
                 return;
             }
         }
-
-        if (isset($elements[$current_index])) {
-            $params->setServiceParam('index', ($current_index + 1));
-            $elements[$current_index]->read($request, $response);
+        
+        $this->_logger->info('Going to read Done flow');
+        
+        foreach ( $this->_done as $done) {
+            $done->read( $request, $response);
         }
+    }
+    
+    /**
+     * @param IConversationElement $element
+     * @return boolean
+     */
+    private function _registerElement( $element) {
+        $params         =   $this->getService()->getComponentParams( $this->evaluateString( $this->_scopeType), $this);
+        $used           =   $params->getServiceParam( 'used');
+        if ( !$used) {
+            $used   =   [];
+        }
+        
+        if ( in_array( $element->getId(), $used)) {
+            return false;
+        }
+        
+        $used[] = $element->getId();
+        $params->setServiceParam( 'used', $used);
+        return true;
+    }
+    
+    private function _reset() {
+        $params         =   $this->getService()->getComponentParams( $this->evaluateString( $this->_scopeType), $this);
+        $params->setServiceParam( 'used', []);
     }
 }
