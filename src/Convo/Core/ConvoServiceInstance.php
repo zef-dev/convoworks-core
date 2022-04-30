@@ -885,6 +885,10 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     }
     
+    /**
+     * @param \Convo\Core\Workflow\IConversationElement[] $elements
+     * @return \Convo\Core\Workflow\IConversationElement[]
+     */
     public function spreadElements( $elements) {
         $spread = [];
         foreach ( $elements as $elem) {

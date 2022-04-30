@@ -35,6 +35,9 @@ class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 		}
 	}
 	
+	/**
+	 * @return \Convo\Core\Workflow\IConversationElement[]
+	 */
 	public function getElements() {
 	    $elements   =   $this->getService()->spreadElements( $this->_elements);
 	    $filtered   =   [];
