@@ -57,20 +57,6 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
         return false;
     }
 
-    public function read( \Convo\Core\Workflow\IIntentAwareRequest $request)
-    {
-        $result =   parent::read( $request);
-
-        foreach ( $this->_requiredSlots as $required) {
-            if ( $result->isSlotEmpty( $required)) {
-                $this->_logger->warning( 'Required slot ['.$required.'] is empty for intent ['.$request->getIntentName().']. Returning empty result ...');
-                return new \Convo\Core\Workflow\DefaultFilterResult();
-            }
-        }
-
-        return $result;
-    }
-
     public function getPlatformIntentName( $platformId)
     {
         $intent     =   $this->getPlatformIntentModel( $platformId);
