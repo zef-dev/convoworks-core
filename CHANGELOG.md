@@ -1,6 +1,9 @@
 # CHANGELOG
 
 ## [Current development]
+
+* Add `implode()` function to core package
+
 ## [Releases]
 
 # 0.22.12.2 - 2022-03-30
