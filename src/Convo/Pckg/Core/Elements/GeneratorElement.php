@@ -84,7 +84,7 @@ class GeneratorElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
     // UTIL
     public function __toString()
     {
-        return parent::__toString().'['.count( $this->_elements).']';
+        return parent::__toString().'[]';
     }
 
 }
