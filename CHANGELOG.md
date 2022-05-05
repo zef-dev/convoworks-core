@@ -2,13 +2,25 @@
 
 ## [Current development]
 
-* Add `implode()` function to core package
-
 ## [Releases]
 
-# 0.22.12.2 - 2022-03-30
+## 0.22.13.0 - 2022-05-05
+* Add new element - Element Generator
+  * Iterates over a given collection and for each item, creates an instance of its child element
+* Add `implode()` to core functions
+* Add ability to remove a child
+* Expand list of allowed characters in Amazon Alexa utterances
+* Add new element - Simple Card
+* Add ability to fast forward and rewind audio playback
+* Add ability to seek playback via search
+* Get access token from person object in Alexa Request if available
+* Add support for Person Profile API in `GetAmazonCustomerProfileElement`
+* Add `AmazonCommandRequest::getPersonId`
+
+## 0.22.12.2 - 2022-03-30
 * Change default value for `ConvoIntentReader::required_slots` from empty string `""` to empty array `[]`
-# 0.22.12.1 - 2022-03-25
+
+## 0.22.12.1 - 2022-03-25
 * Quickfix for splitting example phrases in Alexa configuration
   * Make splitting backwards compatible with the old method of splitting at semicolons
 
