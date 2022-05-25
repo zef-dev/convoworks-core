@@ -99,7 +99,7 @@ class LoopElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 			]);
 
 			$loop_until = $this->evaluateString($this->_loop_until);
-			if (is_bool($loop_until) && $loop_until) {
+			if ($loop_until) {
 				$this->_logger->info('Exiting loop.');
 				break;
 			}
