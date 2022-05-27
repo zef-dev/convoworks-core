@@ -1,584 +1,1175 @@
 {
-    "template_id" : "daily-quotes",
-    "name" : "Daily Quotes",
-    "description" : "Template for daily quotes",
-    "service" : {
-        "convo_service_version": 27,
-        "properties": [],
+    "template_id": "quote-of-the-day",
+    "name": "Quote of the Day",
+    "description": "A template that lets users get the quote of the day in different categories",
+    "service": {
+        "convo_service_version": 38,
         "packages": [
-          "convo-core",
-          "convo-visuals"
+            "convo-core",
+            "convo-visuals"
         ],
-        "configurations": [],
         "contexts": [],
         "variables": {
-			"allCategories": "${[\"inspire\",\"management\",\"sports\",\"life\",\"funny\",\"love\",\"art\",\"students\"]}"
-    },
-        "fragments": [],
-        "entities": [
-        {
-            "name": "categories",
-            "values": [
-                {
-                    "value": "inspire"
-                },
-                {
-                    "value": "management"
-                },
-                {
-                    "value": "sports"
-                },
-                {
-                    "value": "life"
-                },
-                {
-                    "value": "funny"
-                },
-                {
-                    "value": "love"
-                },
-                {
-                    "value": "art"
-                },
-                {
-                    "value": "students"
-                }
-            ]
-        }
-    ],
-        "intents": [
-        {
-            "name": "DailyQuoteForCategory",
-            "type": "custom",
-            "utterances": [
-                {
-                    "raw": "give me daily quote for inspire",
-                    "model": [
-                        {
-                            "text": "give me daily quote for"
-                        },
-                        {
-                            "text": "inspire",
-                            "type": "categories",
-                            "slot_value": "categories"
-                        }
-                    ]
-                },
-                {
-                    "raw": "show me daily quote for inspire",
-                    "model": [
-                        {
-                            "text": "show me daily quote for"
-                        },
-                        {
-                            "text": "inspire",
-                            "type": "categories",
-                            "slot_value": "categories"
-                        }
-                    ]
-                },
-                {
-                    "raw": "give me quote for inspire",
-                    "model": [
-                        {
-                            "text": "give me quote for"
-                        },
-                        {
-                            "text": "inspire",
-                            "type": "categories",
-                            "slot_value": "categories"
-                        }
-                    ]
-                },
-                {
-                    "raw": "show me quote for inspire",
-                    "model": [
-                        {
-                            "text": "show me quote for"
-                        },
-                        {
-                            "text": "inspire",
-                            "type": "categories",
-                            "slot_value": "categories"
-                        }
-                    ]
-                },
-                {
-                    "raw": "show me daily quotes for inspire",
-                    "model": [
-                        {
-                            "text": "show me daily quotes for"
-                        },
-                        {
-                            "text": "inspire",
-                            "type": "categories",
-                            "slot_value": "categories"
-                        }
-                    ]
-                },
-                {
-                    "raw": "give me daily quotes for inspire",
-                    "model": [
-                        {
-                            "text": "give me daily quotes for"
-                        },
-                        {
-                            "text": "inspire",
-                            "type": "categories",
-                            "slot_value": "categories"
-                        }
-                    ]
-                }
-            ]
-        }
-    ],
-        "blocks": [
-        {
-            "class": "\\Convo\\Pckg\\Core\\Elements\\ConversationBlock",
-            "namespace": "convo-core",
-            "properties": {
-                "block_id": "__sessionStart",
-                "elements": [
-                    {
-                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                        "namespace": "convo-core",
-                        "properties": {
-                            "comment": "Welcome message",
-                            "_component_id": "bea40940-6408-fb80-f644-a68e12b2b327"
-                        }
-                    },
-                    {
-                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
-                        "namespace": "convo-core",
-                        "properties": {
-                            "type": "default",
-                            "alexa_domain": "normal",
-                            "alexa_emotion": "neutral",
-                            "alexa_emotion_intensity": "medium",
-                            "text": "Welcome to daily quotes template.",
-                            "append": false,
-                            "_component_id": "ee786ece-ef08-4706-0a9e-c190bc92cf57"
-                        }
-                    },
-                    {
-                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                        "namespace": "convo-core",
-                        "properties": {
-                            "comment": "Change block state",
-                            "_component_id": "2e1e02cf-8c8e-1a00-d363-d742816974cc"
-                        }
-                    },
-                    {
-                        "class": "\\Convo\\Pckg\\Core\\Elements\\GoToElement",
-                        "namespace": "convo-core",
-                        "properties": {
-                            "value": "daily_quote",
-                            "next": false,
-                            "_component_id": "fd5d7011-5211-29ee-9902-db265ca33140"
-                        }
-                    }
-                ],
-                "processors": [
-                    {
-                        "class": "\\Convo\\Pckg\\Core\\Processors\\SimpleProcessor",
-                        "namespace": "convo-core",
-                        "properties": {
-                            "ok": [
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "comment": "Check if pronounced category exist in array allCategories",
-                                        "_component_id": "075ea14f-5982-c609-3fc7-ed60709989e6"
-                                    }
-                                },
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Elements\\IfElement",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "test": "${in_array(result.categories, allCategories)}",
-                                        "then": [
-                                            {
-                                                "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                                "namespace": "convo-core",
-                                                "properties": {
-                                                    "comment": "Use HTTP element to get json file from certain API",
-                                                    "_component_id": "6aa49ce0-54b5-729e-95f2-ac39cf6d2e50"
-                                                }
-                                            },
-                                            {
-                                                "class": "\\Convo\\Pckg\\Core\\Elements\\HttpQueryElement",
-                                                "namespace": "convo-core",
-                                                "properties": {
-                                                    "name": "quote",
-                                                    "url": "https:\/\/quotes.rest\/qod\/${result.categories}.json",
-                                                    "content_type": "AUTO",
-                                                    "method": "GET",
-                                                    "cache_timeout": 3610,
-                                                    "timeout": 1000,
-                                                    "headers": [],
-                                                    "params": [],
-                                                    "ok": [
-                                                        {
-                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                                            "namespace": "convo-core",
-                                                            "properties": {
-                                                                "comment": "Pronounce text from json file",
-                                                                "_component_id": "9ee4f2c8-ff8e-334d-45f1-df8393f2c1da"
-                                                            }
-                                                        },
-                                                        {
-                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
-                                                            "namespace": "convo-core",
-                                                            "properties": {
-                                                                "type": "default",
-                                                                "alexa_domain": "normal",
-                                                                "alexa_emotion": "neutral",
-                                                                "alexa_emotion_intensity": "medium",
-                                                                "text": "Here is a quote from ${quote.body.contents.quotes[0].author}.",
-                                                                "append": false,
-                                                                "_component_id": "ec097940-73df-5779-cf4a-31882ca50f6d"
-                                                            }
-                                                        },
-                                                        {
-                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
-                                                            "namespace": "convo-core",
-                                                            "properties": {
-                                                                "type": "default",
-                                                                "alexa_domain": "normal",
-                                                                "alexa_emotion": "neutral",
-                                                                "alexa_emotion_intensity": "medium",
-                                                                "text": "${quote.body.contents.quotes[0].quote}",
-                                                                "append": false,
-                                                                "_component_id": "ecc206df-f52a-0817-219f-2fbe074a044a"
-                                                            }
-                                                        },
-                                                        {
-                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                                            "namespace": "convo-core",
-                                                            "properties": {
-                                                                "comment": "Preview text and picture with Card element on devices with display",
-                                                                "_component_id": "18ae490d-4607-e262-151b-2dc5db0712a6"
-                                                            }
-                                                        },
-                                                        {
-                                                            "class": "\\Convo\\Pckg\\Visuals\\Elements\\CardElement",
-                                                            "namespace": "convo-visuals",
-                                                            "properties": {
-                                                                "data_item": "${quote.body.contents.quotes[0]}",
-                                                                "back_button": "HIDDEN",
-                                                                "data_item_title": "${cardItem.author}",
-                                                                "data_item_subtitle": "",
-                                                                "data_item_description_1": "${cardItem.quote}",
-                                                                "data_item_description_2": "",
-                                                                "data_item_description_3": "",
-                                                                "data_item_image_url": "${cardItem.background}",
-                                                                "data_item_image_text": "img",
-                                                                "_component_id": "7qj157q9-wetc-wwvs-nutf-h5ziibngnfey"
-                                                            }
-                                                        },
-                                                        {
-                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                                            "namespace": "convo-core",
-                                                            "properties": {
-                                                                "comment": "Exit service with END session element",
-                                                                "_component_id": "009ecc3d-3308-3acf-b925-57f4ec37261b"
-                                                            }
-                                                        },
-                                                        {
-                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
-                                                            "namespace": "convo-core",
-                                                            "properties": {
-                                                                "_component_id": "bd2c75e7-9f2f-d6ca-e97d-f7f68d0c7462"
-                                                            }
-                                                        }
-                                                    ],
-                                                    "nok": [
-                                                        {
-                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                                            "namespace": "convo-core",
-                                                            "properties": {
-                                                                "comment": "If we get error from API, display error message",
-                                                                "_component_id": "875850e1-e60f-711d-1045-450cbddae08b"
-                                                            }
-                                                        },
-                                                        {
-                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
-                                                            "namespace": "convo-core",
-                                                            "properties": {
-                                                                "type": "default",
-                                                                "alexa_domain": "normal",
-                                                                "alexa_emotion": "neutral",
-                                                                "alexa_emotion_intensity": "medium",
-                                                                "text": "API is not responding, please try again later.",
-                                                                "append": false,
-                                                                "_component_id": "9b9842be-95cb-1574-aed0-bb1d44d99556"
-                                                            }
-                                                        },
-                                                        {
-                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                                            "namespace": "convo-core",
-                                                            "properties": {
-                                                                "comment": "Exit service with END session element",
-                                                                "_component_id": "521d829e-4770-beb5-11b4-da5ac2a2a933"
-                                                            }
-                                                        },
-                                                        {
-                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
-                                                            "namespace": "convo-core",
-                                                            "properties": {
-                                                                "_component_id": "ea403e93-a652-a7a8-f77f-bc9212399907"
-                                                            }
-                                                        }
-                                                    ],
-                                                    "_component_id": "edcf908e-498a-9de9-0661-b1491d67a171",
-                                                    "scope_type": "installation",
-                                                    "parameters": "service"
-                                                }
-                                            }
-                                        ],
-                                        "else_if": [],
-                                        "else": [
-                                            {
-                                                "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                                "namespace": "convo-core",
-                                                "properties": {
-                                                    "comment": "If category does not exist, display message",
-                                                    "_component_id": "f8f58d29-8bce-2bfa-7452-a1759fa683e7"
-                                                }
-                                            },
-                                            {
-                                                "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
-                                                "namespace": "convo-core",
-                                                "properties": {
-                                                    "type": "default",
-                                                    "alexa_domain": "normal",
-                                                    "alexa_emotion": "neutral",
-                                                    "alexa_emotion_intensity": "medium",
-                                                    "text": "This category does not exist.",
-                                                    "append": false,
-                                                    "_component_id": "6ed0eaa3-ffad-0f41-a4c4-4b5ea2b469cb"
-                                                }
-                                            },
-                                            {
-                                                "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                                "namespace": "convo-core",
-                                                "properties": {
-                                                    "comment": "Exit service with END session element",
-                                                    "_component_id": "714f6d8f-48cd-ca37-e454-78753f4edff4"
-                                                }
-                                            },
-                                            {
-                                                "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
-                                                "namespace": "convo-core",
-                                                "properties": {
-                                                    "_component_id": "18007c8f-c0d3-5628-fb77-f356bb6bacbd"
-                                                }
-                                            }
-                                        ],
-                                        "_component_id": "14d27dc2-5172-60cc-e262-5e698c9de275"
-                                    }
-                                }
-                            ],
-                            "request_filters": [
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Filters\\IntentRequestFilter",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "readers": [
-                                            {
-                                                "class": "\\Convo\\Pckg\\Core\\Filters\\ConvoIntentReader",
-                                                "namespace": "convo-core",
-                                                "properties": {
-                                                    "intent": "DailyQuoteForCategory",
-                                                    "values": [],
-                                                    "rename": [],
-                                                    "_component_id": "fe64be24-424a-031b-dcbf-fc5ddca589da"
-                                                }
-                                            }
-                                        ],
-                                        "_component_id": "5a332c04-68b1-47ee-5d6c-14baffcf1a9f"
-                                    }
-                                }
-                            ],
-                            "_component_id": "5bd99c00-d843-25ee-d7d9-2e9ae852bf5c"
-                        }
-                    }
-                ],
-                "fallback": [],
-                "_component_id": "ed4b67f3-7af2-8a50-5cdf-c68e287d2d17",
-                "role": "session_start",
-                "name": "Session start"
-            }
+            "allCategories": "${[\"inspire\",\"management\",\"sports\",\"life\",\"funny\",\"love\",\"art\",\"students\"]}",
+            "APP_NAME": "Quote of the Day",
+            "SHORT_PAUSE": "<break time=\"1s\"\/>"
         },
-        {
-            "class": "\\Convo\\Pckg\\Core\\Elements\\ConversationBlock",
-            "namespace": "convo-core",
-            "properties": {
-                "block_id": "daily_quote",
-                "name": "Daily quote",
-                "elements": [
+        "preview_variables": [],
+        "entities": [
+            {
+                "name": "categories",
+                "values": [
                     {
-                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                        "namespace": "convo-core",
-                        "properties": {
-                            "comment": "Get random category from all categories and save it to variable",
-                            "_component_id": "96c4730b-45d9-48d1-51b7-456c268e606a"
-                        }
+                        "value": "inspire",
+                        "synonyms": [
+                            "inspiration",
+                            "inspiring"
+                        ]
                     },
                     {
-                        "class": "\\Convo\\Pckg\\Core\\Elements\\SetParamElement",
-                        "namespace": "convo-core",
-                        "properties": {
-                            "scope_type": "session",
-                            "properties": {
-                                "randomCategory": "${allCategories[array_rand(allCategories, 1)]}"
+                        "value": "life",
+                        "synonyms": [
+                            "living"
+                        ]
+                    },
+                    {
+                        "value": "funny",
+                        "synonyms": [
+                            "humor",
+                            "humorous",
+                            "humour",
+                            "fun",
+                            "amusing"
+                        ]
+                    },
+                    {
+                        "value": "love",
+                        "synonyms": [
+                            "loving"
+                        ]
+                    },
+                    {
+                        "value": "random",
+                        "synonyms": [
+                            "any"
+                        ]
+                    }
+                ]
+            }
+        ],
+        "intents": [
+            {
+                "name": "DailyQuoteForCategory",
+                "utterances": [
+                    {
+                        "raw": "give me an amusing quote",
+                        "model": [
+                            {
+                                "text": "give me an"
                             },
-                            "_component_id": "8ad497bc-4f05-427e-6b23-ffbc111acc39"
-                        }
+                            {
+                                "type": "categories",
+                                "text": "amusing",
+                                "slot_value": "categories"
+                            },
+                            {
+                                "text": "quote"
+                            }
+                        ]
                     },
                     {
-                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                        "namespace": "convo-core",
-                        "properties": {
-                            "comment": "Use HTTP element to get json file from certain API",
-                            "_component_id": "495e4a60-eb16-1c3f-8a6a-09accefeff8a"
-                        }
+                        "raw": "give me a quote from the inspire category",
+                        "model": [
+                            {
+                                "text": "give me a quote from the"
+                            },
+                            {
+                                "type": "categories",
+                                "text": "inspire",
+                                "slot_value": "categories"
+                            },
+                            {
+                                "text": "category"
+                            }
+                        ]
                     },
                     {
-                        "class": "\\Convo\\Pckg\\Core\\Elements\\HttpQueryElement",
-                        "namespace": "convo-core",
-                        "properties": {
-                            "name": "quote",
-                            "url": "https:\/\/quotes.rest\/qod\/${randomCategory}.json",
-                            "content_type": "AUTO",
-                            "method": "GET",
-                            "cache_timeout": 3610,
-                            "timeout": 1000,
-                            "headers": [],
-                            "params": [],
-                            "ok": [
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "comment": "Pronounce text from json file",
-                                        "_component_id": "b150ac2b-0f04-e2d3-4214-af9a4a13f5af"
-                                    }
-                                },
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "type": "default",
-                                        "alexa_domain": "normal",
-                                        "alexa_emotion": "neutral",
-                                        "alexa_emotion_intensity": "medium",
-                                        "text": "Here is a quote from ${quote.body.contents.quotes[0].author}.",
-                                        "append": false,
-                                        "_component_id": "2eabb6fc-50f5-ce91-f549-1575547f0d6b"
-                                    }
-                                },
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "type": "default",
-                                        "alexa_domain": "normal",
-                                        "alexa_emotion": "neutral",
-                                        "alexa_emotion_intensity": "medium",
-                                        "text": "${quote.body.contents.quotes[0].quote}",
-                                        "append": false,
-                                        "_component_id": "b32105ac-2300-056e-c371-f8f200455623"
-                                    }
-                                },
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "comment": "Preview text and picture with Card element on devices with display",
-                                        "_component_id": "c6498091-e49e-3149-8928-32988817c0d7"
-                                    }
-                                },
-                                {
-                                    "class": "\\Convo\\Pckg\\Visuals\\Elements\\CardElement",
-                                    "namespace": "convo-visuals",
-                                    "properties": {
-                                        "data_item": "${quote.body.contents.quotes[0]}",
-                                        "back_button": "HIDDEN",
-                                        "data_item_title": "${cardItem.author}",
-                                        "data_item_subtitle": "",
-                                        "data_item_description_1": "${cardItem.quote}",
-                                        "data_item_description_2": "",
-                                        "data_item_description_3": "",
-                                        "data_item_image_url": "${cardItem.background}",
-                                        "data_item_image_text": "img",
-                                        "_component_id": "ujf49wt2-qar1-kzzh-ovum-yppg8p4izack"
-                                    }
-                                },
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "comment": "Exit service with END session element",
-                                        "_component_id": "cc40e986-28b1-8065-fe12-ae4537fb7250"
-                                    }
-                                },
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "_component_id": "b3755b1c-81f3-fedd-9d85-7666e8675462"
-                                    }
-                                }
-                            ],
-                            "nok": [
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "comment": "If we get error from API, display error message",
-                                        "_component_id": "6424a020-1f47-b2af-7f5b-db370f517121"
-                                    }
-                                },
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "type": "default",
-                                        "alexa_domain": "normal",
-                                        "alexa_emotion": "neutral",
-                                        "alexa_emotion_intensity": "medium",
-                                        "text": "API is not responding, please try again later.",
-                                        "append": false,
-                                        "_component_id": "32a1e7d1-b598-599c-652e-d6a59e3627ce"
-                                    }
-                                },
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "comment": "Exit service with END session element",
-                                        "_component_id": "fe5756b9-da09-c774-ea52-97789920c253"
-                                    }
-                                },
-                                {
-                                    "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
-                                    "namespace": "convo-core",
-                                    "properties": {
-                                        "_component_id": "23866eb7-5d06-643c-5ac5-406f5dc2bd5b"
-                                    }
-                                }
-                            ],
-                            "_component_id": "09ae21d1-3b56-7850-cd54-6d873eb97e9f"
-                        }
+                        "raw": "give me a quote from a random category",
+                        "model": [
+                            {
+                                "text": "give me a quote from a"
+                            },
+                            {
+                                "type": "categories",
+                                "text": "random",
+                                "slot_value": "categories"
+                            },
+                            {
+                                "text": "category"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "I want an inspiring quote",
+                        "model": [
+                            {
+                                "text": "I want an"
+                            },
+                            {
+                                "type": "categories",
+                                "text": "inspiring",
+                                "slot_value": "categories"
+                            },
+                            {
+                                "text": "quote"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "give me a quote to inspire",
+                        "model": [
+                            {
+                                "text": "give me a quote to"
+                            },
+                            {
+                                "type": "categories",
+                                "text": "inspire",
+                                "slot_value": "categories"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "give me a quote about love",
+                        "model": [
+                            {
+                                "text": "give me a quote about"
+                            },
+                            {
+                                "type": "categories",
+                                "text": "love",
+                                "slot_value": "categories"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "inspire me",
+                        "model": [
+                            {
+                                "type": "categories",
+                                "text": "inspire",
+                                "slot_value": "categories"
+                            },
+                            {
+                                "text": "me"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "give me a funny quote",
+                        "model": [
+                            {
+                                "text": "give me a"
+                            },
+                            {
+                                "type": "categories",
+                                "text": "funny",
+                                "slot_value": "categories"
+                            },
+                            {
+                                "text": "quote"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "show me daily quote for inspire",
+                        "model": [
+                            {
+                                "text": "show me daily quote for"
+                            },
+                            {
+                                "text": "inspire",
+                                "type": "categories",
+                                "slot_value": "categories"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "give me quote for inspire",
+                        "model": [
+                            {
+                                "text": "give me quote for"
+                            },
+                            {
+                                "text": "inspire",
+                                "type": "categories",
+                                "slot_value": "categories"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "show me quote for inspire",
+                        "model": [
+                            {
+                                "text": "show me quote for"
+                            },
+                            {
+                                "text": "inspire",
+                                "type": "categories",
+                                "slot_value": "categories"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "show me inspirational quotes",
+                        "model": [
+                            {
+                                "text": "show me"
+                            },
+                            {
+                                "type": "categories",
+                                "text": "inspirational",
+                                "slot_value": "categories"
+                            },
+                            {
+                                "text": "quotes"
+                            }
+                        ]
+                    },
+                    {
+                        "raw": "give me quotes to inspire",
+                        "model": [
+                            {
+                                "text": "give me quotes to"
+                            },
+                            {
+                                "type": "categories",
+                                "text": "inspire",
+                                "slot_value": "categories"
+                            }
+                        ]
                     }
                 ],
-                "processors": [],
-                "fallback": [],
-                "_component_id": "a9d9274c-9477-9810-f516-f498d8e373a8"
+                "type": "custom"
             }
-        }
-    ]
+        ],
+        "blocks": [
+            {
+                "class": "\\Convo\\Pckg\\Core\\Elements\\ConversationBlock",
+                "namespace": "convo-core",
+                "properties": {
+                    "block_id": "__sessionStart",
+                    "elements": [
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "comment": "Welcome message",
+                                "_component_id": "bea40940-6408-fb80-f644-a68e12b2b327"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\RunOnceElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "scope_type": "installation",
+                                "name": "Greetings",
+                                "child": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "text": "Welcome to the ${APP_NAME}.",
+                                            "append": false,
+                                            "_component_id": "rjnpuhtc-q3bs-gkpk-zd1q-bpngegdweycm"
+                                        }
+                                    }
+                                ],
+                                "else": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "text": "Welcome back.",
+                                            "append": false,
+                                            "_component_id": "0yzbhylf-mbxj-qujx-qofo-wh5jbzscexkn"
+                                        }
+                                    }
+                                ],
+                                "_component_id": "mxis94hd-x8zt-5xaz-huwz-9fpwz26wxw5s"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "comment": "Change block state",
+                                "_component_id": "2e1e02cf-8c8e-1a00-d363-d742816974cc"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\GoToElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "value": "daily_quote",
+                                "next": false,
+                                "_component_id": "fd5d7011-5211-29ee-9902-db265ca33140"
+                            }
+                        }
+                    ],
+                    "processors": [
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Processors\\SimpleProcessor",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "ok": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "Check if pronounced category exist in array allCategories",
+                                            "_component_id": "075ea14f-5982-c609-3fc7-ed60709989e6"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\IfElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "test": "${result.categories === 'random'}",
+                                            "then": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\GoToElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "value": "daily_quote",
+                                                        "next": false,
+                                                        "_component_id": "acrxighr-zygg-fpk1-5ycc-jdbdlwdct1gw"
+                                                    }
+                                                }
+                                            ],
+                                            "else_if": [],
+                                            "else": [],
+                                            "_component_id": "qc2e9x2v-v7ro-oase-kysw-vlzqpmcky1mt"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\IfElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "test": "${in_array(result.categories, allCategories)}",
+                                            "then": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "comment": "Use HTTP element to get json file from certain API",
+                                                        "_component_id": "6aa49ce0-54b5-729e-95f2-ac39cf6d2e50"
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\HttpQueryElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "name": "quote",
+                                                        "url": "https:\/\/quotes.rest\/qod\/${result.categories}.json",
+                                                        "content_type": "AUTO",
+                                                        "method": "GET",
+                                                        "cache_timeout": 8280,
+                                                        "timeout": 1000,
+                                                        "headers": [],
+                                                        "params": [],
+                                                        "ok": [
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "comment": "Pronounce text from json file",
+                                                                    "_component_id": "9ee4f2c8-ff8e-334d-45f1-df8393f2c1da"
+                                                                }
+                                                            },
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "type": "default",
+                                                                    "alexa_domain": "normal",
+                                                                    "alexa_emotion": "neutral",
+                                                                    "alexa_emotion_intensity": "medium",
+                                                                    "text": "Here's the ${quote.body.contents.quotes[0].title}.",
+                                                                    "append": false,
+                                                                    "_component_id": "ec097940-73df-5779-cf4a-31882ca50f6d"
+                                                                }
+                                                            },
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "type": "default",
+                                                                    "alexa_domain": "normal",
+                                                                    "alexa_emotion": "neutral",
+                                                                    "alexa_emotion_intensity": "medium",
+                                                                    "text": "As ${quote.body.contents.quotes[0].author} once put it <break time=\"1s\"\/>",
+                                                                    "append": true,
+                                                                    "_component_id": "xjefgbzo-5zc5-8xhq-lqvc-h7ogtp0efujz"
+                                                                }
+                                                            },
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "type": "default",
+                                                                    "alexa_domain": "normal",
+                                                                    "alexa_emotion": "neutral",
+                                                                    "alexa_emotion_intensity": "medium",
+                                                                    "text": "${quote.body.contents.quotes[0].quote}",
+                                                                    "append": false,
+                                                                    "_component_id": "ecc206df-f52a-0817-219f-2fbe074a044a"
+                                                                }
+                                                            },
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "comment": "Preview text and picture with Card element on devices with display",
+                                                                    "_component_id": "18ae490d-4607-e262-151b-2dc5db0712a6"
+                                                                }
+                                                            },
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Visuals\\Elements\\CardElement",
+                                                                "namespace": "convo-visuals",
+                                                                "properties": {
+                                                                    "data_item": "${quote.body.contents.quotes[0]}",
+                                                                    "back_button": "HIDDEN",
+                                                                    "data_item_title": "${quote.body.contents.quotes[0].title}",
+                                                                    "data_item_subtitle": "by ${quote.body.contents.quotes[0].author}",
+                                                                    "data_item_description_1": "${quote.body.contents.quotes[0].quote}",
+                                                                    "data_item_description_2": "",
+                                                                    "data_item_description_3": "",
+                                                                    "data_item_image_url": "${quote.body.contents.quotes[0].background}",
+                                                                    "_component_id": "7qj157q9-wetc-wwvs-nutf-h5ziibngnfey"
+                                                                }
+                                                            },
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "type": "default",
+                                                                    "alexa_domain": "normal",
+                                                                    "alexa_emotion": "neutral",
+                                                                    "alexa_emotion_intensity": "medium",
+                                                                    "text": "<break time=\"1s\"\/>",
+                                                                    "append": false,
+                                                                    "_component_id": "r4vdg6tf-lznc-hh0y-0w29-yzkdhkjgpnn7"
+                                                                }
+                                                            },
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "comment": "Exit service with END session element",
+                                                                    "_component_id": "009ecc3d-3308-3acf-b925-57f4ec37261b"
+                                                                }
+                                                            },
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "_component_id": "bd2c75e7-9f2f-d6ca-e97d-f7f68d0c7462"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "nok": [
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "comment": "If we get error from API, display error message",
+                                                                    "_component_id": "875850e1-e60f-711d-1045-450cbddae08b"
+                                                                }
+                                                            },
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\IfElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "test": "${quote.status === 429}",
+                                                                    "then": [
+                                                                        {
+                                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                                            "namespace": "convo-core",
+                                                                            "properties": {
+                                                                                "type": "default",
+                                                                                "text": "<break time=\"1s\"\/>Sorry,",
+                                                                                "append": false,
+                                                                                "alexa_domain": "normal",
+                                                                                "alexa_emotion": "neutral",
+                                                                                "alexa_emotion_intensity": "medium",
+                                                                                "_component_id": "zfdztqih-qvfk-v4go-qzx6-nuampm2tlsqu"
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                                            "namespace": "convo-core",
+                                                                            "properties": {
+                                                                                "type": "default",
+                                                                                "alexa_domain": "normal",
+                                                                                "alexa_emotion": "neutral",
+                                                                                "alexa_emotion_intensity": "medium",
+                                                                                "text": "I can't manage any more quotes of the day today. <say-as interpret-as=\"interjection\">achoo<\/say-as>.  Please come back tomorrow.",
+                                                                                "append": true,
+                                                                                "_component_id": "nlubz43p-4tzx-othv-sggy-xbch7u2unyl7"
+                                                                            }
+                                                                        }
+                                                                    ],
+                                                                    "else_if": [],
+                                                                    "else": [
+                                                                        {
+                                                                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                                            "namespace": "convo-core",
+                                                                            "properties": {
+                                                                                "type": "default",
+                                                                                "alexa_domain": "normal",
+                                                                                "alexa_emotion": "neutral",
+                                                                                "alexa_emotion_intensity": "medium",
+                                                                                "text": "Sorry, I seem to be malfunctioning.  <say-as interpret-as=\"interjection\">achoo<\/say-as>. Please try again later.",
+                                                                                "append": false,
+                                                                                "_component_id": "kv05ymle-mbce-ff8m-ijjg-ti4xo0hbijhi"
+                                                                            }
+                                                                        }
+                                                                    ],
+                                                                    "_component_id": "ck4dfinq-mfv5-dq93-cwbe-tkd1ik35mama"
+                                                                }
+                                                            },
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "comment": "Exit service with END session element",
+                                                                    "_component_id": "521d829e-4770-beb5-11b4-da5ac2a2a933"
+                                                                }
+                                                            },
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "_component_id": "ea403e93-a652-a7a8-f77f-bc9212399907"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "_component_id": "edcf908e-498a-9de9-0661-b1491d67a171",
+                                                        "scope_type": "installation",
+                                                        "parameters": "service"
+                                                    }
+                                                }
+                                            ],
+                                            "else_if": [],
+                                            "else": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "comment": "If category does not exist, display message",
+                                                        "_component_id": "f8f58d29-8bce-2bfa-7452-a1759fa683e7"
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\SetParamElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "scope_type": "session",
+                                                        "parameters": "service",
+                                                        "properties": {
+                                                            "fallback": "${true}"
+                                                        },
+                                                        "_component_id": "lhri7omh-ivku-adyr-gf8t-u8zrwvkz3nsg"
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "type": "default",
+                                                        "alexa_domain": "normal",
+                                                        "alexa_emotion": "neutral",
+                                                        "alexa_emotion_intensity": "medium",
+                                                        "text": "Sorry. You can ask for an inspirational or funny quotes. Quotes about love or life. ${SHORT_PAUSE}.",
+                                                        "append": false,
+                                                        "_component_id": "j7fxtgqn-jvzx-vxvd-cwrm-abtwaou8zk9z"
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\GoToElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "value": "daily_quote",
+                                                        "next": false,
+                                                        "_component_id": "rnigqlut-e69f-t2bi-l1q9-yx1g6qtil8pp"
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "comment": "Exit service with END session element",
+                                                        "_component_id": "714f6d8f-48cd-ca37-e454-78753f4edff4"
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "_component_id": "18007c8f-c0d3-5628-fb77-f356bb6bacbd"
+                                                    }
+                                                }
+                                            ],
+                                            "_component_id": "14d27dc2-5172-60cc-e262-5e698c9de275"
+                                        }
+                                    }
+                                ],
+                                "request_filters": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Filters\\IntentRequestFilter",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "readers": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Filters\\ConvoIntentReader",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "intent": "DailyQuoteForCategory",
+                                                        "values": [],
+                                                        "rename": [],
+                                                        "_component_id": "fe64be24-424a-031b-dcbf-fc5ddca589da",
+                                                        "required_slots": [
+                                                            "categories"
+                                                        ]
+                                                    }
+                                                }
+                                            ],
+                                            "_component_id": "5a332c04-68b1-47ee-5d6c-14baffcf1a9f"
+                                        }
+                                    }
+                                ],
+                                "_component_id": "5bd99c00-d843-25ee-d7d9-2e9ae852bf5c",
+                                "name": "Process category"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Processors\\SimpleProcessor",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "ok": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "text": "You can ask for an inspirational or funny quotes. Quotes about love or life. ${SHORT_PAUSE} If you just say, Alexa, open Quote of the Day, you'll get a random quote.",
+                                            "append": false,
+                                            "_component_id": "38rlkq8v-ecif-smgv-gnnf-hhxqzikfglmo"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "_component_id": "hzm8hnxk-akek-wf4h-nyyr-km0dvdgyhqme"
+                                        }
+                                    }
+                                ],
+                                "request_filters": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Filters\\IntentRequestFilter",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "readers": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Filters\\ConvoIntentReader",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "intent": "convo-core.HelpIntent",
+                                                        "values": [],
+                                                        "rename": [],
+                                                        "_component_id": "ksknnmlb-rpe4-f7x9-rmdv-h1vr4wgfka9a",
+                                                        "required_slots": []
+                                                    }
+                                                }
+                                            ],
+                                            "_component_id": "cqbvmura-yl4z-qump-ttnm-u8jasyz2bwta"
+                                        }
+                                    }
+                                ],
+                                "_component_id": "kctslkrk-3pyt-0f1a-voja-prynetn3jow0",
+                                "name": "Help"
+                            }
+                        }
+                    ],
+                    "fallback": [
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\SetParamElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "scope_type": "session",
+                                "parameters": "service",
+                                "properties": {
+                                    "fallback": "${true}"
+                                },
+                                "_component_id": "axn4ja4o-frxy-ymvj-vwaa-1lz0cfxmritr"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "type": "default",
+                                "alexa_domain": "normal",
+                                "alexa_emotion": "neutral",
+                                "alexa_emotion_intensity": "medium",
+                                "text": "Sorry. You can ask for an inspiring or funny quote. Quotes about love, or life. ${SHORT_PAUSE}",
+                                "append": false,
+                                "_component_id": "4l31kbkz-4pvq-pkr4-5frx-dfrszznmzrv3"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\GoToElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "value": "daily_quote",
+                                "next": false,
+                                "_component_id": "abhxjbu6-lhpv-p25a-0omc-qfh1npwkgezr"
+                            }
+                        }
+                    ],
+                    "_component_id": "ed4b67f3-7af2-8a50-5cdf-c68e287d2d17",
+                    "role": "session_start",
+                    "name": "Session start",
+                    "pre_dispatch": []
+                }
+            },
+            {
+                "class": "\\Convo\\Pckg\\Core\\Elements\\ConversationBlock",
+                "namespace": "convo-core",
+                "properties": {
+                    "block_id": "daily_quote",
+                    "name": "Daily quote",
+                    "elements": [
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "comment": "Get random category from all categories and save it to variable",
+                                "_component_id": "96c4730b-45d9-48d1-51b7-456c268e606a"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\SetParamElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "scope_type": "session",
+                                "properties": {
+                                    "randomCategory": "${allCategories[array_rand(allCategories, 1)]}"
+                                },
+                                "_component_id": "8ad497bc-4f05-427e-6b23-ffbc111acc39",
+                                "parameters": "service"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "comment": "Use HTTP element to get json file from certain API",
+                                "_component_id": "495e4a60-eb16-1c3f-8a6a-09accefeff8a"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\HttpQueryElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "name": "quote",
+                                "url": "https:\/\/quotes.rest\/qod\/${randomCategory}.json",
+                                "content_type": "AUTO",
+                                "method": "GET",
+                                "cache_timeout": 8280,
+                                "timeout": 1000,
+                                "headers": [],
+                                "params": [],
+                                "ok": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "Add additional text if here after the session start fallback",
+                                            "context": null,
+                                            "_component_id": "lrcgu1zf-5vyp-rihf-2vbh-cpzkfixu4xkq"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\IfElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "test": "${fallback}",
+                                            "then": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "type": "default",
+                                                        "text": "Here's one from a random category:",
+                                                        "append": false,
+                                                        "alexa_domain": "normal",
+                                                        "alexa_emotion": "neutral",
+                                                        "alexa_emotion_intensity": "medium",
+                                                        "_component_id": "mckzwazt-pbc9-yrrw-f7hv-p4t4rr8rwvgs"
+                                                    }
+                                                }
+                                            ],
+                                            "else_if": [],
+                                            "else": [],
+                                            "_component_id": "wa4ovv31-kgo5-u1pz-zwxu-z5qv3hopd0sm"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "Pronounce text from json file",
+                                            "_component_id": "uo9m0anm-hnyq-yp2m-o6cb-itmvx95u1etl"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "text": "As ${quote.body.contents.quotes[0].author} once put it <break time=\"1s\"\/>",
+                                            "append": true,
+                                            "_component_id": "i7uhzzvj-r9ni-zj6b-19q5-hbhihxealss8"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "text": "${quote.body.contents.quotes[0].quote}",
+                                            "append": false,
+                                            "_component_id": "b32105ac-2300-056e-c371-f8f200455623"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "Preview text and picture with Card element on devices with display",
+                                            "_component_id": "c6498091-e49e-3149-8928-32988817c0d7"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Visuals\\Elements\\CardElement",
+                                        "namespace": "convo-visuals",
+                                        "properties": {
+                                            "data_item": "${quote.body.contents.quotes[0]}",
+                                            "back_button": "HIDDEN",
+                                            "data_item_title": "RANDOM QUOTE OF THE DAY",
+                                            "data_item_subtitle": "by ${quote.body.contents.quotes[0].author}",
+                                            "data_item_description_1": "${quote.body.contents.quotes[0].quote}",
+                                            "data_item_description_2": "",
+                                            "data_item_description_3": "",
+                                            "data_item_image_url": "${quote.body.contents.quotes[0].background}",
+                                            "_component_id": "alyxq7mq-tnid-ya7e-dkst-lovwixbsmpsx"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "text": "<break time=\"1s\"\/>",
+                                            "append": false,
+                                            "_component_id": "0lqwoeiv-ogqz-dd8h-jcxw-604qwckrl9lh"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "Exit service with END session element",
+                                            "_component_id": "mfhmpett-2v6k-hd1x-6bwj-ysnefyboydmp"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "_component_id": "dqzmzoky-cifs-criu-oewx-b2dzs45aloop"
+                                        }
+                                    }
+                                ],
+                                "nok": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "If we get error from API, display error message",
+                                            "_component_id": "6424a020-1f47-b2af-7f5b-db370f517121"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\IfElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "test": "${quote.status === 429}",
+                                            "then": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "comment": "Change text if here after the session start fallback",
+                                                        "context": null,
+                                                        "_component_id": "wrpvtako-djie-de3l-phms-2icnu6lfimf1"
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\IfElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "test": "${fallback}",
+                                                        "then": [
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "type": "default",
+                                                                    "text": "But,",
+                                                                    "append": false,
+                                                                    "alexa_domain": "normal",
+                                                                    "alexa_emotion": "neutral",
+                                                                    "alexa_emotion_intensity": "medium",
+                                                                    "_component_id": "echlv6rc-enxq-nm0g-wnpt-z5tl1zoummz2"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "else_if": [],
+                                                        "else": [
+                                                            {
+                                                                "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                                "namespace": "convo-core",
+                                                                "properties": {
+                                                                    "type": "default",
+                                                                    "text": "<break time=\"1s\"\/>Sorry,",
+                                                                    "append": false,
+                                                                    "alexa_domain": "normal",
+                                                                    "alexa_emotion": "neutral",
+                                                                    "alexa_emotion_intensity": "medium",
+                                                                    "_component_id": "mr3ywndq-gl7f-wioc-nulj-uhrogmuusfj0"
+                                                                }
+                                                            }
+                                                        ],
+                                                        "_component_id": "eb8hndsa-kpvd-drhp-lalr-3pbrm0b0vupq"
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "type": "default",
+                                                        "alexa_domain": "normal",
+                                                        "alexa_emotion": "neutral",
+                                                        "alexa_emotion_intensity": "medium",
+                                                        "text": "I can't manage any more quotes of the day today. <say-as interpret-as=\"interjection\">achoo<\/say-as>.  Please come back tomorrow.",
+                                                        "append": true,
+                                                        "_component_id": "ytpijkcw-vdf7-ui6v-xtjr-f2rscfq5krre"
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "comment": "Add additional text if here after the session start fallback",
+                                                        "context": null,
+                                                        "_component_id": "it0i3z1u-enmu-jaw4-wcwy-zknzyvmzegkc"
+                                                    }
+                                                }
+                                            ],
+                                            "else_if": [],
+                                            "else": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "type": "default",
+                                                        "alexa_domain": "normal",
+                                                        "alexa_emotion": "neutral",
+                                                        "alexa_emotion_intensity": "medium",
+                                                        "text": "Sorry, I seem to be malfunctioning.  <say-as interpret-as=\"interjection\">achoo<\/say-as>. Please try again later.",
+                                                        "append": false,
+                                                        "_component_id": "32a1e7d1-b598-599c-652e-d6a59e3627ce"
+                                                    }
+                                                }
+                                            ],
+                                            "_component_id": "indozs44-8uau-isfj-dpf8-zi7gfxzlhiai"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "comment": "Exit service with END session element",
+                                            "_component_id": "fe5756b9-da09-c774-ea52-97789920c253"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "_component_id": "23866eb7-5d06-643c-5ac5-406f5dc2bd5b"
+                                        }
+                                    }
+                                ],
+                                "_component_id": "09ae21d1-3b56-7850-cd54-6d873eb97e9f"
+                            }
+                        }
+                    ],
+                    "processors": [],
+                    "fallback": [],
+                    "_component_id": "a9d9274c-9477-9810-f516-f498d8e373a8",
+                    "role": "conversation_block"
+                }
+            },
+            {
+                "class": "\\Convo\\Pckg\\Core\\Elements\\ConversationBlock",
+                "namespace": "convo-core",
+                "properties": {
+                    "role": "service_processors",
+                    "block_id": "Service_processors",
+                    "name": "Service processors",
+                    "pre_dispatch": [],
+                    "elements": [],
+                    "processors": [
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Processors\\SimpleProcessor",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "ok": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "type": "default",
+                                            "text": "Bye.",
+                                            "append": false,
+                                            "alexa_domain": "normal",
+                                            "alexa_emotion": "neutral",
+                                            "alexa_emotion_intensity": "medium",
+                                            "_component_id": "weyt7ddn-ixqy-ioce-lfyr-ludfbwhynvyq"
+                                        }
+                                    },
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "_component_id": "wu0ahqme-cu2y-y1h9-lmb5-o4zsy7eniaov"
+                                        }
+                                    }
+                                ],
+                                "request_filters": [
+                                    {
+                                        "class": "\\Convo\\Pckg\\Core\\Filters\\IntentRequestFilter",
+                                        "namespace": "convo-core",
+                                        "properties": {
+                                            "readers": [
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Filters\\ConvoIntentReader",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "intent": "convo-core.StopIntent",
+                                                        "values": [],
+                                                        "rename": [],
+                                                        "_component_id": "zeep94bt-jtim-u2xr-mwhh-f6yzbyjwe6yo",
+                                                        "required_slots": []
+                                                    }
+                                                },
+                                                {
+                                                    "class": "\\Convo\\Pckg\\Core\\Filters\\ConvoIntentReader",
+                                                    "namespace": "convo-core",
+                                                    "properties": {
+                                                        "intent": "convo-core.CancelIntent",
+                                                        "values": [],
+                                                        "rename": [],
+                                                        "_component_id": "ih6upqjk-ltlh-qdxr-s2kh-j0uam4x0rzwt",
+                                                        "required_slots": []
+                                                    }
+                                                }
+                                            ],
+                                            "_component_id": "nu1pzpcn-wwba-j8bp-grax-8byroyrwrrpy"
+                                        }
+                                    }
+                                ],
+                                "_component_id": "sb9nlumb-mglw-k5lk-sc3m-eq0f1aprz0zi",
+                                "name": "Exit"
+                            }
+                        }
+                    ],
+                    "fallback": [],
+                    "_component_id": "ihqgipyj-sjxl-iw4m-bipv-md1qvl8u3h89"
+                }
+            },
+            {
+                "class": "\\Convo\\Pckg\\Core\\Elements\\ConversationBlock",
+                "namespace": "convo-core",
+                "properties": {
+                    "role": "error_handler",
+                    "block_id": "Error_handler",
+                    "name": "Error handler",
+                    "pre_dispatch": [],
+                    "elements": [
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "type": "default",
+                                "text": "Sorry, something went wrong. Please try again later.",
+                                "append": false,
+                                "alexa_domain": "normal",
+                                "alexa_emotion": "neutral",
+                                "alexa_emotion_intensity": "medium",
+                                "_component_id": "rtlm3oz4-xvfg-xpii-u7eb-blcjqz0ftana"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\EndSessionElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "_component_id": "ry1uxxgn-8dxo-f8yg-khwf-qnedvyg2wibi"
+                            }
+                        }
+                    ],
+                    "processors": [],
+                    "fallback": [],
+                    "_component_id": "yrl1vg9a-qxww-y1ar-ldgm-rnzrtxlifjx3"
+                }
+            }
+        ],
+        "fragments": [],
+        "properties": [],
+        "configurations": []
     }
 }
