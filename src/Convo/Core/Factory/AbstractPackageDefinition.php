@@ -9,6 +9,7 @@ use Convo\Core\Intent\ISystemIntentRepository;
 use Convo\Core\Intent\SystemEntity;
 use Convo\Core\Intent\SystemIntent;
 use Convo\Core\Expression\ExpressionFunctionProviderInterface;
+use Convo\Core\Util\StrUtil;
 
 abstract class AbstractPackageDefinition
     implements
@@ -307,7 +308,17 @@ abstract class AbstractPackageDefinition
 
     public function getComponentHelp($component)
     {
-        $path = $this->_packageDir.'/Help/'.$component.'.html';
+        $path = $this->_packageDir.'/Help/'.$component;
+
+        if (!StrUtil::endsWith($path, '.html')) {
+            $path .= '.html';
+        }
+
+        $path = realpath($path);
+
+        if ($path === false) {
+            throw new ComponentNotFoundException("Requested help file [$component] does not exist.");
+        }
 
         $this->_logger->debug('Going to try opening help file ['.$path.']');
 
