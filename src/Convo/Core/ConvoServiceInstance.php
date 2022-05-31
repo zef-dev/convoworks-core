@@ -47,6 +47,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     private $_serviceId;
 
+    private $_resolveCache	=	array();
+    
     /**
      * @var array
      */
@@ -557,8 +559,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     public function previewString( $string, $context=[])
     {
-        $previewVariables   =   $this->_resolveVariables($this->_previewVariables);
-        $serviceVariables   =   $this->_resolveVariables($this->_variables);
+        $previewVariables   =   $this->_resolveVariables($this->_previewVariables, 'previewVariables');
+        $serviceVariables   =   $this->_resolveVariables($this->_variables, 'variables');
         $context			=	array_merge($serviceVariables, $previewVariables, $context);
         $arrResolver		=	new ArrayResolver( $context);
         return $this->_eval->evalString( $string, $arrResolver->getValues(), true);
@@ -582,7 +584,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         }
 
         // VARIABLES
-        $variables          =   $this->_resolveVariables($this->_variables);
+        $variables          =   $this->_resolveVariables($this->_variables, 'variables');
         $context			=	array_merge( $variables, $context);
 
         // CONTEXTS
@@ -902,27 +904,32 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     }
 
     // UTIL
-    private function _resolveVariables($variables)
+    private function _resolveVariables($variables, $cacheKey)
     {
-        $variables = $this->_evaluateVariables($variables);
-
-        foreach ( $variables as $key => $val)
+        if ( !isset( $this->_resolveCache[$cacheKey])) 
         {
-            if (!ArrayUtil::isComplexKey($key))
+            $variables = $this->_evaluateVariables($variables);
+            
+            foreach ( $variables as $key => $val)
             {
-                // old simple setting
-                // $this->_logger->debug( "Parsed [$key][".gettype($val)."][$val]");
-                $variables[$key] = $val;
+                if (!ArrayUtil::isComplexKey($key))
+                {
+                    // old simple setting
+                    // $this->_logger->debug( "Parsed [$key][".gettype($val)."][$val]");
+                    $variables[$key] = $val;
+                }
+                else
+                {
+                    $root = ArrayUtil::getRootOfKey($key);
+                    $final = ArrayUtil::setDeepObject($key, $val, $variables[$root] ?? []);
+                    $variables[$root] = $final;
+                }
             }
-            else
-            {
-                $root = ArrayUtil::getRootOfKey($key);
-                $final = ArrayUtil::setDeepObject($key, $val, $variables[$root] ?? []);
-                $variables[$root] = $final;
-            }
+            
+            $this->_resolveCache[$cacheKey]  =   $variables;
         }
 
-        return $variables;
+        return $this->_resolveCache[$cacheKey];
     }
 
     private function _evaluateVariables( $variables)
