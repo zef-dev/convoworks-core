@@ -33,10 +33,12 @@ class ReadElementsFragment extends \Convo\Core\Workflow\AbstractWorkflowContaine
 	 */
 	private function _findFragment()
 	{
-		$fragment	=	$this->getService()->findFragment( $this->evaluateString( $this->_fragmentId));
+	    $fragment_id   =   $this->evaluateString( $this->_fragmentId);
+	    $this->_logger->info( 'Searching for fragment ['.$fragment_id.']');
+	    $fragment	=	$this->getService()->findFragment( $fragment_id);
 		
 		if ( !is_a( $fragment, 'Convo\Core\Workflow\IConversationElement')) {
-			throw new \Convo\Core\ComponentNotFoundException( 'Fragment ['.$this->_fragmentId.'] is not an element');
+		    throw new \Convo\Core\ComponentNotFoundException( 'Fragment ['.$this->_fragmentId.']['.$fragment_id.'] is not an element');
 		}
 		
 		/* @var $fragment  \Convo\Core\Workflow\IConversationElement */

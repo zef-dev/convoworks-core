@@ -45,7 +45,7 @@ class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
 		}
 
 		if (!is_array($this->_params) && StrUtil::startsWith($this->_params, '${')) {
-			$this->_logger->info('Params are a string to be evaluated');
+			$this->_logger->debug('Params are a string to be evaluated');
 
 			/** @var array $parsed */
 			$parsed = $this->evaluateString($this->_params);
@@ -55,12 +55,14 @@ class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
 
 				if (!ArrayUtil::isComplexKey($key))
 				{
+				    $this->_logger->info( 'Setting param ['.$key.']');
 					$params->setServiceParam($key, $value);
 				}
 				else
 				{
 					$root = ArrayUtil::getRootOfKey($key);
 					$final = ArrayUtil::setDeepObject($key, $value, $params->getServiceParam($root) ?? []);
+					$this->_logger->info( 'Setting complex param ['.$key.']['.$root.']');
 					$params->setServiceParam($root, $final);
 				}
 			}
@@ -69,7 +71,7 @@ class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
 		}
 		else if (is_array($this->_params))
 		{
-			$this->_logger->info('Params are regular array');
+			$this->_logger->debug('Params are regular array');
 
 			foreach ( $this->_params as $key => $val) {
 				$key	=	$this->evaluateString( $key);
@@ -77,12 +79,15 @@ class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
 	
 				if (!ArrayUtil::isComplexKey($key))
 				{
+				    $this->_logger->info( 'Setting param ['.$key.']');
 					$params->setServiceParam( $key, $parsed);
 				}
 				else
 				{
 					$root = ArrayUtil::getRootOfKey($key);
 					$final = ArrayUtil::setDeepObject($key, $parsed, $params->getServiceParam($root) ?? []);
+					$this->_logger->info( 'Setting complex param ['.$key.']['.$root.']');
+					$this->_logger->debug( 'Setting at value ['.print_r( $final, true).']');
 					$params->setServiceParam($root, $final);
 				}
 			}
