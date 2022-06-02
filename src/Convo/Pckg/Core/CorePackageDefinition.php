@@ -207,7 +207,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = new ExpressionFunction(
             'array_shuffle',
             function ($array) {
-                return sprintf('(is_array(%1$a) ? array_shuffle(%1$a) : %1$a', $array);
+                return sprintf('is_array(%1$a) ? array_shuffle(%1$a) : %1$a', $array);
             },
             function($args, $array) {
                 if (!is_array($array)) {
@@ -223,7 +223,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = new ExpressionFunction(
             'array_push',
             function ($array, $item) {
-                return sprintf('(is_array(%1$a) ? array_push(%1$a, %2$i) : %1$a', $array, $item);
+                return sprintf('is_array(%1$a) ? array_push(%1$a, %2$i) : %1$a', $array, $item);
             },
             function($args, $array, $item) {
                 if (!is_array($array)) {
@@ -239,7 +239,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = new ExpressionFunction(
             'decode_special_chars',
             function ($string) {
-                return sprintf('(is_string(%1$a) ? decode_special_chars(%1$a) : %1$a', $string);
+                return sprintf('is_string(%1$a) ? decode_special_chars(%1$a) : %1$a', $string);
             },
             function($args, $string) {
                 if (!is_string($string)) {
@@ -256,7 +256,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = new ExpressionFunction(
             'array_sort_by_field',
             function ($array, $field) {
-                return sprintf('(is_array(%1$a) ? array_sort_by_field(%1$a, %2$a) : %1$a', $array);
+                return sprintf('is_array(%1$a) ? array_sort_by_field(%1$a, %2$a) : %1$a', $array, $field);
             },
             function($args, $array, $field) {
                 if (!is_array($array)) {
@@ -271,7 +271,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = new ExpressionFunction(
             'ordinal',
             function ($string) {
-                return sprintf('(is_numeric(%1$a) ? ordinal(%1$a) : %1$a', $string);
+                return sprintf('is_numeric(%1$a) ? ordinal(%1$a) : %1$a', $string);
             },
             function($args, $string) {
                 if (!is_numeric($string)) {
@@ -292,7 +292,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = new ExpressionFunction(
             'human_concat',
             function ($array,  $conjunction = null) {
-                return sprintf('(is_array(%1$a) ? human_concat(%1$a, %2$a) : %1$a', $array, $conjunction);
+                return sprintf('is_array(%1$a) ? human_concat(%1$a, %2$a) : %1$a', $array, $conjunction);
             },
 
             function($args, $array, $conjunction = null) {
@@ -315,7 +315,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
 		$functions[] = new ExpressionFunction(
 			'json_encode',
 			function ($value, $flags, $depth) {
-				return sprintf('(is_array(%1$a) ? json_encode(%1$v, %2$f, %3$d) : %1$a', $value, $flags, $depth);
+				return sprintf('is_array(%1$a) ? json_encode(%1$v, %2$f, %3$d) : %1$a', $value, $flags, $depth);
 			},
 
 			function($args, $value, $flags = 'JSON_ERROR_NONE', $depth = 512 ) {
@@ -326,7 +326,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
 		$functions[] = new ExpressionFunction(
 			'json_decode',
 			function ($string, $associative, $depth, $flags = 'JSON_ERROR_NONE') {
-				return sprintf('(is_array(%1$a) ? json_decode(%1$s, %2$a, %3$d, %4$f) : %1$a', $string, $associative, $depth, $flags);
+				return sprintf('is_array(%1$a) ? json_decode(%1$s, %2$a, %3$d, %4$f) : %1$a', $string, $associative, $depth, $flags);
 			},
 			function($args, $string, $associative = false, $depth = 512, $flags = 'JSON_ERROR_NONE' ) {
 				if (!is_string($string)) {
