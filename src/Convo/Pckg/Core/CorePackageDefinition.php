@@ -834,7 +834,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     '_help' =>  array(
                         'type' => 'file',
-                        'filename' => 'set-parameter-element.html'
+                        'filename' => 'set-param-element.html'
                     ),
                     '_workflow' => 'read',
                 )
