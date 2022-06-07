@@ -5,7 +5,6 @@ namespace Convo\Pckg\Core\Elements;
 
 use Convo\Core\Preview\PreviewBlock;
 use Convo\Core\Preview\PreviewSection;
-use Convo\Core\Preview\PreviewUtterance;
 use Convo\Core\Workflow\IRunnableBlock;
 use Convo\Core\ConvoServiceInstance;
 use Convo\Core\StateChangedException;
@@ -213,13 +212,6 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 				$this->_logger->info('No valid matches found, with no block level fallback nor service level fallback');
 			}
 		}
-	}
-
-
-	public function evaluateString( $string, $context=[])
-	{
-		$own_params		=	$this->getService()->getAllComponentParams( $this);
-		return parent::evaluateString( $string, array_merge( $own_params, $context));
 	}
 
 	/**

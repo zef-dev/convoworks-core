@@ -3,6 +3,7 @@
 namespace Convo\Core\Workflow;
 
 use Convo\Core\ComponentNotFoundException;
+use Convo\Core\Params\NoRequestParamsException;
 
 /**
  * Implements working with children as base class for concrete implementations.
@@ -108,7 +109,11 @@ abstract class AbstractWorkflowContainerComponent extends AbstractWorkflowCompon
      */
     public function evaluateString( $string, $context = [])
     {
-        $own_params		=	$this->getService()->getAllComponentParams( $this);
+        try {
+            $own_params		=	$this->getService()->getAllComponentParams( $this);
+        } catch ( NoRequestParamsException $e) {
+            $own_params     =   [];
+        }
         return parent::evaluateString( $string, array_merge( $own_params, $context));
     }
 	

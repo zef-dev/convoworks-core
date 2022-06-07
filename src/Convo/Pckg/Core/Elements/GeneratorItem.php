@@ -29,8 +29,7 @@ class GeneratorItem extends AbstractWorkflowContainerComponent implements IConve
 	
 	public function evaluateString( $string, $context = [])
 	{
-	    $own_params		=	$this->getService()->getAllComponentParams( $this);
-	    return parent::evaluateString( $string, array_merge( $own_params, $context, [ $this->_varName => $this->_varData]));
+	    return parent::evaluateString( $string, array_merge( $context, [ $this->_varName => $this->_varData]));
 	}
 	
     public function read( IConvoRequest $request, IConvoResponse $response)
