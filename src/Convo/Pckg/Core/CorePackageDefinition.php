@@ -176,6 +176,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('explode');
         $functions[] = ExpressionFunction::fromPhp('implode');
         $functions[] = ExpressionFunction::fromPhp('array_filter');
+        $functions[] = ExpressionFunction::fromPhp('unserialize');
+        $functions[] = ExpressionFunction::fromPhp('serialize');
 
         $convo_val = function ($args, $data) use (&$convo_val) {
             if (is_array($data)) {
@@ -336,6 +338,17 @@ class CorePackageDefinition extends AbstractPackageDefinition
 				return json_decode($string, $associative, $depth, constant($flags));
 			}
 		);
+
+        $functions[] = new ExpressionFunction(
+            'empty',
+            function ($var) {
+                return sprintf('empty(%1$v)', $var);
+            },
+
+            function($args, $var) {
+                return empty($var);
+            }
+        );
 
 		$functions[] = new ExpressionFunction(
 			'relative_date',
@@ -822,7 +835,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     '_help' =>  array(
                         'type' => 'file',
-                        'filename' => 'set-parameter-element.html'
+                        'filename' => 'set-param-element.html'
                     ),
                     '_workflow' => 'read',
                 )

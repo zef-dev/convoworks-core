@@ -37,15 +37,15 @@ class AmazonAdapterTest extends ConvoTestCase
     }
 
     /**
-     * @dataProvider getLaunchRequestWithDisplayInterface
-     * @param $getLaunchRequestWithDisplayInterface
+     * @dataProvider getLaunchRequestWithAplInterface
+     * @param $getLaunchRequestWithAplInterface
      * @throws Exception
      */
-    public function testIsDisplayInterfaceEnabled($getLaunchRequestWithDisplayInterface)
+    public function testIsAplInterfaceEnabled($getLaunchRequestWithAplInterface)
     {
-        $amazonCommandRequest = new AmazonCommandRequest($this->_logger, self::SERVICE_ID, $getLaunchRequestWithDisplayInterface);
+        $amazonCommandRequest = new AmazonCommandRequest($this->_logger, self::SERVICE_ID, $getLaunchRequestWithAplInterface);
         $amazonCommandRequest->init();
-        $this->assertEquals(true, $amazonCommandRequest->getIsDisplayInterfaceEnabled());
+        $this->assertEquals(true, $amazonCommandRequest->getIsAplSupported());
     }
 
     /**
@@ -53,11 +53,11 @@ class AmazonAdapterTest extends ConvoTestCase
      * @param $getLaunchRequestWithViewport
      * @throws Exception
      */
-    public function testIsDisplayInterfaceNotEnabled($getLaunchRequestWithViewport)
+    public function testIsWithoutDisplayRequest($getLaunchRequestWithViewport)
     {
         $amazonCommandRequest = new AmazonCommandRequest($this->_logger, self::SERVICE_ID, $getLaunchRequestWithViewport);
         $amazonCommandRequest->init();
-        $this->assertEquals(false, $amazonCommandRequest->getIsDisplayInterfaceEnabled());
+        $this->assertEquals(false, $amazonCommandRequest->getIsDisplaySupported());
     }
 
     /**
@@ -132,30 +132,6 @@ class AmazonAdapterTest extends ConvoTestCase
         $this->assertEquals(true, $amazonCommandRequest->isMediaRequest());
     }
 
-    /**
-     * @dataProvider getContinuePlaybackRequest
-     * @param $getContinuePlaybackRequest
-     * @throws Exception
-     */
-    public function testContinuePlaybackRequest($getContinuePlaybackRequest)
-    {
-        $amazonCommandRequest = new AmazonCommandRequest($this->_logger, self::SERVICE_ID, $getContinuePlaybackRequest);
-        $amazonCommandRequest->init();
-        $this->assertEquals(true, $amazonCommandRequest->isMediaRequest());
-    }
-
-    /**
-     * @dataProvider getContinuePlaybackAfterPlayDirectiveRequest
-     * @param $getContinuePlaybackAfterPlayDirectiveRequest
-     * @throws Exception
-     */
-    public function testContinuePlaybackAfterPlayDirectiveRequest($getContinuePlaybackAfterPlayDirectiveRequest)
-    {
-        $amazonCommandRequest = new AmazonCommandRequest($this->_logger, self::SERVICE_ID, $getContinuePlaybackAfterPlayDirectiveRequest);
-        $amazonCommandRequest->init();
-        $this->assertEquals(true, $amazonCommandRequest->isMediaRequest());
-    }
-
     // data providers form real json requests
     public function getLaunchRequestWithViewport() {
         return $this->_establishTestData(__DIR__ . './data/launch_request_with_viewport.json');
@@ -165,7 +141,7 @@ class AmazonAdapterTest extends ConvoTestCase
         return $this->_establishTestData(__DIR__ . './data/launch_request_without_viewport.json');
     }
 
-    public function getLaunchRequestWithDisplayInterface() {
+    public function getLaunchRequestWithAplInterface() {
         return $this->_establishTestData(__DIR__ . './data/launch_request_with_display_interface.json');
     }
 
@@ -185,10 +161,6 @@ class AmazonAdapterTest extends ConvoTestCase
         return $this->_establishTestData(__DIR__ . './data/previous_intent_request_after_play_directive.json');
     }
 
-    public function getContinuePlaybackRequest() {
-        return $this->_establishTestData(__DIR__ . './data/continue_playback_intent.json');
-    }
-
     public function getRegularRepeatRequest() {
         return $this->_establishTestData(__DIR__ . './data/repeat_intent_request.json');
     }
@@ -196,9 +168,4 @@ class AmazonAdapterTest extends ConvoTestCase
     public function getRepeatMediaRequest() {
         return $this->_establishTestData(__DIR__ . './data/repeat_intent_request_after_play_directive.json');
     }
-
-    public function getContinuePlaybackAfterPlayDirectiveRequest() {
-        return $this->_establishTestData(__DIR__ . './data/continue_playback_intent_after_play_directive.json');
-    }
-
 }

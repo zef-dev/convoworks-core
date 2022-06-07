@@ -29,7 +29,7 @@ class DialogflowAdapterTest extends ConvoTestCase
         $this->assertCount(1, $slotValues);
         $this->assertEquals(false, $dialogflowCommandRequest->isLaunchRequest());
         $this->assertArrayHasKey('TeamName', $slotValues, 'Slot TeamName is present.');
-        $this->assertEquals(59, $slotValues['TeamName'], 'Value of slot is not correct.');
+        $this->assertEquals('preston', $slotValues['TeamName'], 'Value of slot is not correct.');
     }
 
     /**
