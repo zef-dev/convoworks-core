@@ -580,7 +580,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         try {
             $context			=	array_merge( $this->_getAllServiceParams(), $context);
         } catch ( NoRequestParamsException $e) {
-            $this->_logger->error( $e);
+            $this->_logger->debug( $e->getMessage());
         }
 
         // VARIABLES
