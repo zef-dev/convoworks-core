@@ -76,7 +76,7 @@ class EvaluationContext
 
 			$this->_logger->debug( 'Got value type ['.gettype( $value).'] for expression ['.$expression.']');
 
-			if ( is_string( $value) || is_numeric( $value) || is_null( $value) || is_bool( $value)) {
+			if ( is_string( $value) || is_numeric( $value) || is_null( $value)) {
 
 			    if  ( !$skipEmpty || $skipEmpty && !empty( $value)) {
 					$quot_expr = preg_quote($expression, '/');
@@ -88,11 +88,13 @@ class EvaluationContext
 			    }
 
 				if ( $string === '') {
-				    if ( is_null( $value) || is_int( $value) || is_bool( $value) || is_float( $value)) {
+				    if ( is_null( $value) || is_int( $value) || is_float( $value)) {
 				        $string =   $value;
 				    }
 				}
-			} else {
+			} else if (is_bool( $value)) {
+                return $value;
+            } else {
 				// not parsing, single value get
 				if ( is_a( $value, 'Zef\Zel\IValueAdapter')) {
 					return $value->get();

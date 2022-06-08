@@ -807,6 +807,18 @@ class EvaluationContextTest extends TestCase
                     'number' => '${0}'
                 ],
                 'The number is ${number === 0 ? "zero" : "not zero"}', 'The number is zero'
+            ],
+            [
+                [
+                    'boolean' => '${false}'
+                ],
+                'The boolean is ${boolean === false ? "boolean false" : "not boolean false"}', 'The boolean is boolean false'
+            ],
+            [
+                [
+                    'boolean' => '${true}'
+                ],
+                'The boolean is ${boolean === true ? "boolean true" : "not boolean true"}', 'The boolean is boolean true'
             ]
         ];
     }
