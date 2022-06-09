@@ -131,6 +131,6 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
     // UTIL
     public function __toString()
     {
-        return parent::__toString().'['.$this->_disable.']['.implode( ', ', $this->_requiredSlots).']';
+        return parent::__toString().'['.$this->_disable.']';
     }
 }
