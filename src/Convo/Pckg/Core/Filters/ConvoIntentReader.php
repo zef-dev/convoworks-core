@@ -40,9 +40,10 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
 
             if (!empty($this->_requiredSlots))
             {
-                $this->_logger->info('Required slots are present ['.print_r($this->_requiredSlots, true).']');
+                $this->_logger->debug('Required slots are present ['.print_r($this->_requiredSlots, true).']');
                 $request_slots = $request->getSlotValues();
-
+                $this->_logger->debug('Checking in real slots ['.print_r($request_slots, true).']');
+                
                 foreach ($this->_requiredSlots as $slot) {
                     if (!isset($request_slots[$slot]) || $request_slots[$slot] === null) {
                         $this->_logger->warning('Slot ['.$slot.'] is required but empty.');
@@ -50,6 +51,8 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
                     }
                 }
             }
+            
+            $this->_logger->info('Accepting request ['.$this.']');
 
             return true;
         }
@@ -124,5 +127,11 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
         }
 
         return $part;
+    }
+    
+    // UTIL
+    public function __toString()
+    {
+        return parent::__toString().'['.$this->_disable.']['.implode( ', ', $this->_requiredSlots).']';
     }
 }
