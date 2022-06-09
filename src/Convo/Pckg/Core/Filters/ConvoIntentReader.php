@@ -28,7 +28,8 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
 
     public function accepts(IIntentAwareRequest $request)
     {
-        $disable = $this->evaluateString($this->_disable);
+        $request_slots = $request->getSlotValues();
+        $disable = $this->evaluateString($this->_disable, $request_slots);
         if (!empty($this->_disable) && $disable) {
             $this->_logger->info('Ignoring accept in ConvoIntentReader [' . $disable . ']');
             return false;
@@ -40,9 +41,7 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
 
             if (!empty($this->_requiredSlots))
             {
-                $this->_logger->debug('Required slots are present ['.print_r($this->_requiredSlots, true).']');
-                $request_slots = $request->getSlotValues();
-                $this->_logger->debug('Checking in real slots ['.print_r($request_slots, true).']');
+                $this->_logger->debug('Required slots are present ['.print_r($this->_requiredSlots, true).'] in real slots ['.print_r($request_slots, true).']');
                 
                 foreach ($this->_requiredSlots as $slot) {
                     if (!isset($request_slots[$slot]) || $request_slots[$slot] === null) {
