@@ -4,6 +4,13 @@
 
 ## [Releases]
 
+## 0.22.14.0 - 2022-06-10
+* Add functions `array_filter`, `serialize`, `unserialize`, `empty`
+* Fix help file loading
+* Cache variables so that they don't have to be constantly re-evaluated
+* Improvements to logging
+* Take slots into consideration when checking `disabled` in `ConvoIntentReader`
+
 ## 0.22.13.0 - 2022-05-05
 * Add new element - Element Generator
   * Iterates over a given collection and for each item, creates an instance of its child element
