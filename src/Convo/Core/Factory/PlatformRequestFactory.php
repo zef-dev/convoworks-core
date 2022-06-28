@@ -106,7 +106,8 @@ class PlatformRequestFactory implements IPlatformRequestFactory
         $this->_logger->debug('Got simulation data ['.print_r($simulation_data, true).']');
 
         if (!isset($simulation_data['selectedIntent'])) {
-            throw new \Exception('Simulation request failed, no intents matched.');
+            $this->_logger->warning('Filed [Selected Intent] is not present, going to set the field with name [AMAZON.FallbackIntent]');
+            $simulation_data['selectedIntent'] = ['name' => 'AMAZON.FallbackIntent'];
         }
 
         $intent_name = $simulation_data['selectedIntent']['name'];
