@@ -707,7 +707,6 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 	}
 
 	private function _prepareAplExecuteCommandsDirective() {
-		$this->_amazonCommandRequest->init();
 		return [
 			'type' => 'Alexa.Presentation.APL.ExecuteCommands',
 			'token' => empty($this->_aplCommandToken) ? $this->_amazonCommandRequest->getAplToken() : $this->_aplCommandToken,
@@ -726,7 +725,6 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                 'shouldEndSession' => $this->shouldEndSession(),
             ),
         );
-        $this->_amazonCommandRequest->init();
         if ($this->getText() != null) {
             $data['response']['outputSpeech']['type'] = 'SSML';
             $data['response']['outputSpeech']['ssml'] = $this->getTextSsml();
