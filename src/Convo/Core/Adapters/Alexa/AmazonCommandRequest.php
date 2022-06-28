@@ -106,7 +106,7 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 			$this->_isDisplaySupported = false;
 		}
 
-		if (array_key_exists('ALEXA_PRESENTATION_APL', $this->_data['context']['System']['device']['supportedInterfaces'])) {
+		if (array_key_exists('Alexa.Presentation.APL', $this->_data['context']['System']['device']['supportedInterfaces'])) {
 			$this->_isAplEnabled = true;
 		}
         
