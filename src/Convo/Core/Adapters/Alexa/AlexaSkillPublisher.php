@@ -95,176 +95,111 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	public function enable()
 	{
 	    parent::enable();
-	    $meta = $this->_convoServiceDataProvider->getServiceMeta($this->_user, $this->_serviceId);
+        $meta = $this->_getServiceMeta();
+        $amazonUserConfig = $this->_getAmazonUserConfig();
+        $amazonConfig = $this->_getAmazonConfig();
 
-		if (!$meta['owner']) {
-			throw new \Exception('Could not determine owner for service ['.$this->_serviceId.']');
-		}
-
-		$config = $this->_convoServiceDataProvider->getServicePlatformConfig(
-			$this->_user,
-			$this->_serviceId,
-		    IPlatformPublisher::MAPPING_TYPE_DEVELOP
-		);
-
-		$mode     =   strtoupper($config[$this->getPlatformId()]['mode'] ?? 'MANUAL');
-		if ( $mode !== 'AUTO') {
-		    $this->_logger->debug( 'No propagation in ['.$mode.'] mode');
-		    return ;
-		}
-
-        if ($config[$this->getPlatformId()]['app_id']) {
-            $existing = $this->_amazonPublishingService->getSkill($this->_user, $config[$this->getPlatformId()]['app_id'], 'development');
-            $manifestData = $existing['manifest'];
-            $defaultLocale = array_keys($manifestData['publishingInformation']['locales'])[0];
-            $interfaces = isset($manifestData['apis']['custom']['interfaces']) ? array_values($manifestData['apis']['custom']['interfaces']) : [];
-            $sslCertificateType = isset($manifestData['apis']['custom']['endpoint']['sslCertificateType']) ?
-                $manifestData['apis']['custom']['endpoint']['sslCertificateType'] : AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD;
-
-            $config[$this->getPlatformId()]['invocation'] = $manifestData['publishingInformation']['locales'][$defaultLocale]['name'];
-            if (isset($config[$this->getPlatformId()]['interfaces'])) {
-                $config[$this->getPlatformId()]['interfaces'] = array_map(function ( $item) { return $item['type']; }, $interfaces);
-            }
-            $this->_logger->debug("Showing existing ssl certificate type [" . $sslCertificateType . "]");
-            if ($sslCertificateType === AmazonSkillManifest::CERTIFICATE_TYPE_SELF_SIGNED) {
-                $selfSignedSslCertificateFromSkill = $this->_amazonPublishingService->getSelfSignedSslCertificateFromSkill($this->_user, $config[$this->getPlatformId()]['app_id']);
-                $this->_logger->debug("Showing existing ssl certificate [" . $selfSignedSslCertificateFromSkill . "]");
-                if ($selfSignedSslCertificateFromSkill !== null) {
-                    $certFile = $this->_serviceId . "_cert.pem";
-                    $this->_logger->debug("Going to create cert file [" . $certFile . "]");
-                    $config[$this->getPlatformId()]['endpoint_ssl_certificate_type'] = $sslCertificateType;
-                    $config[$this->getPlatformId()]['self_signed_certificate'] = $selfSignedSslCertificateFromSkill;
-                } else {
-                    $config[$this->getPlatformId()]['endpoint_ssl_certificate_type'] = AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD;
-                    $config[$this->getPlatformId()]['self_signed_certificate'] = null;
-                }
-            }
-            try {
-                $accountLinkingResponse = $this->_amazonPublishingService->getAccountLinkingInformation($this->_user, $config[$this->getPlatformId()]['app_id'], 'development');
-                $config[$this->getPlatformId()]['enable_account_linking'] = true;
-                $config[$this->getPlatformId()]['account_linking_config']['skip_on_enablement'] = $accountLinkingResponse['skipOnEnablement'];
-                $config[$this->getPlatformId()]['account_linking_config']['authorization_url'] = $accountLinkingResponse['authorizationUrl'];
-                $config[$this->getPlatformId()]['account_linking_config']['access_token_url'] = $accountLinkingResponse['accessTokenUrl'];
-                $config[$this->getPlatformId()]['account_linking_config']['client_id'] = $accountLinkingResponse['clientId'];
-                $config[$this->getPlatformId()]['account_linking_config']['scopes'] = $accountLinkingResponse['scopes'];
-                $config[$this->getPlatformId()]['account_linking_config']['domains'] = $accountLinkingResponse['domains'];
-            } catch (ClientExceptionInterface $e) {
-                if ($e->getCode() !== 404) {
-                    throw new \Exception($e->getMessage(), 0, $e);
-                } else {
-                    $this->_logger->warning("Can't get account linking partner with skill id [". $config[$this->getPlatformId()]['app_id'] . "] because it could not be found.");
-                }
-            }
-            $config[$this->getPlatformId()]['time_updated'] = time();
-            $this->_platformPublishingHistory->storePropagationData(
-                $this->_serviceId,
-                $this->getPlatformId(),
-                $this->_preparePropagateData($manifestData)
-            );
-            $this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
+        if (!$this->_checkEnableOrPropagate($meta, $amazonUserConfig, $amazonConfig)) {
             return;
         }
 
-		$sys_config = isset($this->_adminUserDataProvider->getPlatformConfig($this->_user->getId())[$this->getPlatformId()]) ?
-                      $this->_adminUserDataProvider->getPlatformConfig($this->_user->getId())[$this->getPlatformId()] : [];
-
-		if (!isset($sys_config['vendor_id'])) {
-			throw new \Exception('Missing vendor ID for skill creation');
-		}
+        if (!empty($amazonConfig['app_id'])) {
+            $this->_importExistingAlexaSkill($amazonConfig);
+            return;
+        }
 
 		$this->_logger->debug('Going to go through enable procedure for ['.$this->_serviceId.']');
 
-		$invocation = strtolower($config[$this->getPlatformId()]['invocation']);
-
-		if (empty($invocation)) {
-		    throw new \Exception("Invocation can't be empty.");
-        }
-
-		$locales = $meta['supported_locales'];
         $owner = $this->_adminUserDataProvider->findUser($meta['owner']);
 
-		$vendorId = $sys_config['vendor_id'];
+		$vendorId = $amazonUserConfig['vendor_id'];
 		$this->_logger->info("Going to print manifest [" . $this->_prepareManifestData([], true) . "]");
 
 		$manifestToCreate = $this->_prepareManifestData();
-        if (!in_array('en-US', $locales)) {
-            unset($manifestToCreate['publishingInformation']['locales']['en-US']);
-        }
 
 		$res = $this->_amazonPublishingService->createSkill($owner, $vendorId, $manifestToCreate);
 
 		$this->_logger->debug('Got res ['.print_r($res, true).']');
 
-		$config[$this->getPlatformId()]['app_id'] = $res['skillId'];
-		$config[$this->getPlatformId()]['time_updated'] = time();
-		$this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
+        $amazonConfig['app_id'] = $res['skillId'];
+        $this->_updateAmazonConfig($amazonConfig);
 
 		$this->_logger->debug('Going to poll until skill has been created.');
 		$this->_amazonPublishingService->pollUntilSkillCreated($this->_user, $res['skillId']);
 		$this->_logger->debug('Polling complete. Updating skill interaction model.');
 
-		$model = json_decode($this->export()->getContent(), true);
+        $warnings = [];
+        // try to prepare the interaction model
+        $model = [];
+        $this->_logger->info('Trying to build convoworks model');
+        try {
+            $model = json_decode($this->export()->getContent(), true);
+        } catch (\Exception $e) {
+            $this->_logger->warning($e);
+            $warnings[] = ['code' => $e->getCode(), 'message' => $e->getMessage()];
+        }
 
-        foreach ($locales as $locale) {
+        if (empty($model)) {
+            $this->_logger->warning('Failed to export convo model');
+            $warnings[] = ['code' => 'convoworks_model_export_failed', 'message' => "Failed to export interaction model."];
+        } else {
+            $buildFailures = 0;
             try {
-                $interaction_model_update_res = $this->_amazonPublishingService->updateInteractionModel(
-                    $owner, $res['skillId'], $model, $locale
-                );
-                $this->_logger->debug('Updated interaction model for [' . $locale . '], res ['.print_r($interaction_model_update_res, true).']');
-            } catch (ClientExceptionInterface $e) {
-                $this->_logger->critical($e);
-                $report = ['errors' => []];
-                $report['errors']['convoworks']['skill'] = "Interaction model couldn't be created, going to delete skill with id [" . $res['skillId'] . "]";
-                $this->delete($report);
-                throw new InvalidRequestException('An error occurred while updating the interaction model for locale [' . $locale . ']');
+                $this->_buildInteractionModel($owner, $res['skillId'], $meta['supported_locales'], $model);
+            } catch (\Exception $e) {
+                $buildErrors = json_decode($e->getMessage(), true);
+                foreach ($buildErrors as $buildError) {
+                    $buildFailures++;
+                    $warnings[] = ['code' => $buildError['code'], 'message' => $buildError['message']];
+                }
+            }
+
+            // try to and manage additional stuff like account linking management, upload self-signed certificate for skill API and so on
+            if ($buildFailures < count($meta['supported_locales'])) {
+                try {
+                    $this->_uploadSelfSignedSslCertificateToAlexaSkill($amazonConfig, $owner, $res['skillId']);
+                } catch (\Exception $e) {
+                    $this->_logger->warning($e);
+                    $warnings[] = ['code' => $e->getCode(), 'message' => $e->getMessage()];
+                }
+
+                try {
+                    $this->_manageAccountLinking($owner, $res['skillId'], 'development', $amazonConfig);
+                } catch (\Exception $e) {
+                    $this->_logger->warning($e);
+                    $warnings[] = ['code' => $e->getCode(), 'message' => $e->getMessage()];
+                }
             }
         }
 
-        $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $res['skillId']);
-        $this->_manageAccountLinking($owner, $res['skillId'], 'development', $config);
 		$this->_recordPropagation();
         $this->_platformPublishingHistory->storePropagationData(
             $this->_serviceId,
             $this->getPlatformId(),
-            $this->_preparePropagateData()
+            $this->_preparePropagateData($model, $manifestToCreate)
         );
+
+        if (!empty($warnings)) {
+            throw new \Convo\Core\Adapters\Alexa\AlexaSkillPublisherWarningsOccurredException(json_encode($warnings));
+        }
 	}
 
 	public function propagate()
 	{
         $this->_checkOperationReady();
-		$config = $this->_convoServiceDataProvider->getServicePlatformConfig(
-		    $this->_user,
-		    $this->_serviceId,
-		    IPlatformPublisher::MAPPING_TYPE_DEVELOP
-		    );
 
-		$mode     =   strtoupper( $config[$this->getPlatformId()]['mode'] ?? 'MANUAL');
-		if ( $mode !== 'AUTO') {
-		    $this->_logger->debug( 'No propagation in ['.$mode.'] mode');
-		    return ;
-		}
+        $meta = $this->_getServiceMeta();
+		$config = $this->_getAmazonConfig();
+		$userConfig = $this->_getAmazonUserConfig();
 
-
-		$meta = $this->_convoServiceDataProvider->getServiceMeta(
-			$this->_user, $this->_serviceId
-		);
-
-		if (!$meta['owner']) {
-			throw new \Exception('Could not determine service owner for service ['.$this->_serviceId.']');
-		}
-
-		$owner = $this->_adminUserDataProvider->findUser($meta['owner']);
-
-		$skillId = $config[$this->getPlatformId()]['app_id'];
-
-        $locales = $meta['supported_locales'];
-
-        $manifestToPropagate = $this->_prepareManifestData();
-        if (!in_array('en-US', $locales)) {
-            unset($manifestToPropagate['publishingInformation']['locales']['en-US']);
+        if (!$this->_checkEnableOrPropagate($meta, $userConfig, $config)) {
+            return;
         }
 
+		$owner = $this->_adminUserDataProvider->findUser($meta['owner']);
+		$skillId = $config['app_id'];
+        $locales = $meta['supported_locales'];
+        $manifestToPropagate = $this->_prepareManifestData();
 		$this->_logger->info('Updating skill manifest [' . json_encode($manifestToPropagate) . ']');
 
 		$this->_amazonPublishingService->updateSkill(
@@ -272,34 +207,29 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 		);
 
         $model = json_decode($this->export()->getContent(), true);
-        foreach ($locales as $locale) {
-            $this->_amazonPublishingService->updateInteractionModel(
-                $owner, $skillId, $model, $locale
-            );
-        }
 
-        $this->_uploadSelfSignedSslCertificateToAlexaSkill($config[$this->getPlatformId()], $owner, $skillId);
+        $this->_buildInteractionModel($owner, $skillId, $locales, $model);
+
+        $this->_uploadSelfSignedSslCertificateToAlexaSkill($config, $owner, $skillId);
         $this->_manageAccountLinking($owner, $skillId, 'development', $config);
 
+        $this->_recordPropagation();
         $this->_platformPublishingHistory->storePropagationData(
             $this->_serviceId,
             $this->getPlatformId(),
-            $this->_preparePropagateData()
+            $this->_preparePropagateData($model)
         );
-		$this->_recordPropagation();
 	}
 
 	public function getPropagateInfo()
 	{
 	    $data              =   parent::getPropagateInfo();
-	    $config            =   $this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+        $platform_config            =   $this->_getAmazonConfig();
 
-	    if ( !isset( $config[$this->getPlatformId()])) {
+	    if ( empty( $platform_config)) {
 	        $this->_logger->debug( 'No platform ['.$this->getPlatformId().'] config in service ['.$this->_serviceId.']. Exiting ... ');
 	        return $data;
 	    }
-
-	    $platform_config   =   $config[$this->getPlatformId()];
 
 	    if ( isset( $platform_config['mode']) && strtolower( $platform_config['mode']) === 'auto')
 	    {
@@ -312,7 +242,13 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	        $alias     =   $this->_serviceReleaseManager->getDevelopmentAlias( $this->_user, $this->_serviceId, $this->getPlatformId());
 	        $mapping   =   $meta['release_mapping'][$this->getPlatformId()][$alias];
 	        $manifest  =   $this->_prepareManifestData();
-	        $model     =   json_decode($this->export()->getContent(), true);
+            $model = [];
+            try {
+                $model = json_decode($this->export()->getContent(), true);
+            } catch (\Exception $e) {
+                $this->_logger->warning($e);
+            }
+
 	        $changesCount = 0;
 
 	        if ( !isset( $mapping['time_propagated']) || empty( $mapping['time_propagated'])) {
@@ -398,12 +334,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	public function export()
 	{
 		$service	=   $this->_convoServiceFactory->getService($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory);
-		$sys_config = isset($this->_adminUserDataProvider->getPlatformConfig($this->_user->getId())[$this->getPlatformId()]) ?
-			$this->_adminUserDataProvider->getPlatformConfig($this->_user->getId())[$this->getPlatformId()] : [];
-		
-		$config		=   $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+		$sys_config = $this->_getAmazonUserConfig();
+		$config = $this->_getAmazonConfig();
 
-		$workflow  =   $this->_convoServiceDataProvider->getServiceData( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
         $interfaces = $this->_prepareInterfacesFromWorkflowComponents();
 
         $meta = $this->_convoServiceDataProvider->getServiceMeta(
@@ -416,7 +349,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $owner      =   $this->_adminUserDataProvider->findUser($meta['owner']);
 
-        $skillId    =   $config[$this->getPlatformId()]['app_id'];
+        $skillId    =   $config['app_id'];
 
         if (!isset($sys_config['vendor_id'])) {
             throw new \Exception('Missing vendor ID for skill creation');
@@ -437,13 +370,13 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	        ]
 	    ];
 
-        $invocation = $config['amazon']['invocation'] ?? $this->_invocationToName($meta['name']);
+        $invocation = $config['invocation'] ?? $this->_invocationToName($meta['name']);
         $data['interactionModel']['languageModel']['invocationName'] = strtolower($invocation);
 
-	    if (isset($config[AmazonCommandRequest::PLATFORM_ID]['interaction_model_sensitivity'])) {
+	    if (isset($config['interaction_model_sensitivity'])) {
             $data['interactionModel']['languageModel']['modelConfiguration'] = [
                 "fallbackIntentSensitivity" => [
-                    "level" => strtoupper($config[AmazonCommandRequest::PLATFORM_ID]['interaction_model_sensitivity'])
+                    "level" => strtoupper($config['interaction_model_sensitivity'])
                 ]
             ];
         }
@@ -626,6 +559,63 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	    return $export;
 	}
 
+    private function _updateAmazonConfig($data) {
+        $config = $this->_convoServiceDataProvider->getServicePlatformConfig(
+            $this->_user,
+            $this->_serviceId,
+            IPlatformPublisher::MAPPING_TYPE_DEVELOP
+        );
+
+        $config[$this->getPlatformId()] = array_merge($config[$this->getPlatformId()], $data);
+        $config[$this->getPlatformId()]['time_updated'] = time();
+
+        $this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
+    }
+
+    private function _getAmazonUserConfig() {
+        return isset($this->_adminUserDataProvider->getPlatformConfig($this->_user->getId())[$this->getPlatformId()]) ?
+            $this->_adminUserDataProvider->getPlatformConfig($this->_user->getId())[$this->getPlatformId()] : [];
+    }
+
+    private function _getAmazonConfig() {
+        return $this->_convoServiceDataProvider->getServicePlatformConfig(
+            $this->_user,
+            $this->_serviceId,
+            IPlatformPublisher::MAPPING_TYPE_DEVELOP
+        )[$this->getPlatformId()] ?? [];
+    }
+
+    private function _getServiceMeta() {
+        return $this->_convoServiceDataProvider->getServiceMeta($this->_user, $this->_serviceId);
+    }
+
+    private function _checkEnableOrPropagate($serviceMeta, $amazonUserConfig, $amazonConfig) {
+        $canEnableOrPropagate = true;
+        if (!$serviceMeta['owner']) {
+            throw new \Exception('Could not determine owner for service ['.$this->_serviceId.']');
+        }
+
+        if (!isset($amazonUserConfig['vendor_id'])) {
+            throw new \Exception('Missing vendor ID for skill creation');
+        }
+
+        if (empty($amazonConfig)) {
+            throw new \Exception('Missing amazon config');
+        }
+
+        $mode     =   strtoupper($amazonConfig['mode'] ?? 'MANUAL');
+        if ( $mode !== 'AUTO') {
+            $this->_logger->debug( 'No propagation in ['.$mode.'] mode');
+            $canEnableOrPropagate = false;
+        }
+
+        if (empty(strtolower($amazonConfig['invocation']))) {
+            throw new \Exception("Invocation can't be empty.");
+        }
+
+        return $canEnableOrPropagate;
+    }
+
 	/**
 	 * @param IntentModel $intent
 	 * @return array
@@ -779,8 +769,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 		
 		$this->_logger->debug('Going to check if catalog ['.$catalogName.'] exists.');
 
-		$config = $this->_convoServiceDataProvider->getServicePlatformConfig(
-		    $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+		$config = $this->_getAmazonConfig();
 
 		$dev_version = $this->_serviceReleaseManager->getDevelopmentAlias(
 			$this->_user, $this->_serviceId, $this->getPlatformId()
@@ -788,7 +777,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 		$this->_logger->debug('Got development version alias ['.$dev_version.']');
 
-		if (!isset($config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version]))
+		if (!isset($config['catalogs'][$catalogName][$dev_version]))
 		{
 			$this->_logger->warning('Catalog ['.$catalogName.'] not yet created.');
 
@@ -805,46 +794,51 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 			$this->_logger->debug('Catalog ['.$catalog_id.'] created successfully.');
 
-			$config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version] = [
+			$config['catalogs'][$catalogName][$dev_version] = [
 				'time_created' => time(),
 				'time_updated' => time(),
 				'catalog_id' => $catalog_id
 			];
 
-			$version = $this->_amazonPublishingService->createCatalogVersion(
-				$this->_user,
-				$catalog_id,
-				$this->_buildCatalogSourceUrl($catalogName, $dev_version),
-				StrUtil::uuidV4()
-			);
+            try {
+                // try to crete a new catalog version
+                $version = $this->_amazonPublishingService->createCatalogVersion(
+                    $this->_user,
+                    $catalog_id,
+                    $this->_buildCatalogSourceUrl($catalogName, $dev_version),
+                    StrUtil::uuidV4()
+                );
 
-			$this->_logger->debug('Catalog version created successfully');
+                $this->_logger->debug('Catalog version created successfully');
 
-			$config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version]['time_updated'] = time();
-			$config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version]['version'] = $version['lastUpdateRequest']['version'];
-			$this->_convoServiceDataProvider->updateServicePlatformConfig(
-				$this->_user, $this->_serviceId, $config
-			);
+                $config['catalogs'][$catalogName][$dev_version]['time_updated'] = time();
+                $config['catalogs'][$catalogName][$dev_version]['version'] = $version['lastUpdateRequest']['version'];
+                $this->_updateAmazonConfig($config);
 
-			return [
-				"name" => $entityName,
-				"valueSupplier" => [
-					"type" => "CatalogValueSupplier",
-					"valueCatalog" => [
-						"catalogId" => $catalog_id,
-						"version" => $version['lastUpdateRequest']['version']
-					]
-				]
-			];
+                return [
+                    "name" => $entityName,
+                    "valueSupplier" => [
+                        "type" => "CatalogValueSupplier",
+                        "valueCatalog" => [
+                            "catalogId" => $catalog_id,
+                            "version" => $version['lastUpdateRequest']['version']
+                        ]
+                    ]
+                ];
+            } catch (\Exception $e) {
+                // remove catalog without version
+                $this->_amazonPublishingService->deleteCatalog($this->_user, $catalog_id);
+                throw new \Exception($e->getMessage());
+            }
 		}
 		else
 		{
-			$existing = $config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version];
+			$existing = $config['catalogs'][$catalogName][$dev_version];
 			$v = $existing['version'];
 
 			$this->_logger->debug('Catalog already exists ['.print_r($existing, true).']['.$context->getCatalogVersion().']');
 
-			if ($v !== $context->getCatalogVersion())
+			if (is_numeric($context->getCatalogVersion()) && $v !== $context->getCatalogVersion())
 			{
 				$this->_logger->debug('Stored catalog version does not match actual. Going to update new version');
 
@@ -859,11 +853,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 				$this->_logger->info('Amazon catalog version ['.$current_ver.'] created successfully');
 
-				$config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version]['time_updated'] = time();
-				$config[$this->getPlatformId()]['catalogs'][$catalogName][$dev_version]['version'] = $context->getCatalogVersion();
-				$this->_convoServiceDataProvider->updateServicePlatformConfig(
-					$this->_user, $this->_serviceId, $config
-				);
+				$config['catalogs'][$catalogName][$dev_version]['time_updated'] = time();
+				$config['catalogs'][$catalogName][$dev_version]['version'] = $context->getCatalogVersion();
+				$this->_updateAmazonConfig($config);
 
 				$v = $current_ver;
 			}
@@ -907,11 +899,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
     public function delete(array &$report)
     {
-        $platform_config = $this->_convoServiceDataProvider->getServicePlatformConfig(
-            $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP
-        );
-        $skill_id = $platform_config[$this->getPlatformId()]['app_id'];
-        $mode = $platform_config[$this->getPlatformId()]['mode'] ?? 'manual';
+        $platform_config = $this->_getAmazonConfig();
+        $skill_id = $platform_config['app_id'];
+        $mode = $platform_config['mode'] ?? 'manual';
 
         if ($mode === 'auto') {
             try {
@@ -924,11 +914,11 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 $report['errors'][$this->getPlatformId()]['service'] = $e->getMessage();
             }
 
-            if (isset($platform_config['amazon']['catalogs']))
+            if (isset($platform_config['catalogs']))
             {
                 $this->_logger->info('Going to delete Amazon catalogs');
 
-                foreach ($platform_config['amazon']['catalogs'] as $catalog_name => $catalog)
+                foreach ($platform_config['catalogs'] as $catalog_name => $catalog)
                 {
 					$this->_logger->info('Deleting versions for catalog ['.$catalog_name.']');
 
@@ -958,13 +948,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
     {
         $status = ['status' => IPlatformPublisher::SERVICE_PROPAGATION_STATUS_IN_PROGRESS];
 
-        $config = $this->_convoServiceDataProvider->getServicePlatformConfig(
-            $this->_user,
-            $this->_serviceId,
-            IPlatformPublisher::MAPPING_TYPE_DEVELOP
-        );
+        $config = $this->_getAmazonConfig();
 
-        if ($config[$this->getPlatformId()]['mode'] === 'manual') {
+        if ($config['mode'] === 'manual') {
             return ['status' => IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED];
         }
 
@@ -973,12 +959,19 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         );
 
         $owner = $this->_adminUserDataProvider->findUser($meta['owner']);
-        $skillId = $config[$this->getPlatformId()]['app_id'];
+        $skillId = $config['app_id'];
 
         $existingManifest = $this->_amazonPublishingService->getSkill($this->_user, $skillId, 'development');
         $manifestData = $existingManifest['manifest'];
 
         $skillStatus = $this->_amazonPublishingService->getSkillStatus($owner, $skillId);
+
+        $this->_logger->debug('Got Alexa Skill status ['. json_encode($skillStatus).']');
+
+        if (!isset($skillStatus['interactionModel'])) {
+            return ['status' => IPlatformPublisher::SERVICE_PROPAGATION_STATUS_MISSING_INTERACTION_MODEL];
+        }
+
         $finishedBuilds = 0;
 
         $localesFromExistingManifest = array_keys($manifestData['publishingInformation']['locales']);
@@ -998,17 +991,13 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 	private function _getLatestPublicationStatus()
 	{
-		$config = $this->_convoServiceDataProvider->getServicePlatformConfig(
-			$this->_user,
-			$this->_serviceId,
-			IPlatformPublisher::MAPPING_TYPE_DEVELOP
-		);
+		$config = $this->_getAmazonConfig();
 
 		$meta = $this->_convoServiceDataProvider->getServiceMeta(
 			$this->_user, $this->_serviceId
 		);
 
-		$skillId = $config[$this->getPlatformId()]['app_id'];
+		$skillId = $config['app_id'];
 		$owner = $this->_adminUserDataProvider->findUser($meta['owner']);
 
 		try {
@@ -1041,32 +1030,30 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         }
     }
 
-    private function _manageAccountLinking($owner, $skillId, $stage, $config) {
-		$amazonConfiguration = $config[$this->getPlatformId()];
-
-        if (isset($amazonConfiguration['enable_account_linking']) && isset($amazonConfiguration['account_linking_config'])) {
-			$accountLinkingMode = $amazonConfiguration['account_linking_mode'] ?? '';
-			$clientId = $amazonConfiguration['account_linking_config']["client_id"] ?? "";
-			$clientSecret = $amazonConfiguration['account_linking_config']["client_secret"] ?? "";
+    private function _manageAccountLinking($owner, $skillId, $stage, $amazonConfig) {
+        if (isset($amazonConfig['enable_account_linking']) && isset($amazonConfig['account_linking_config'])) {
+			$accountLinkingMode = $amazonConfig['account_linking_mode'] ?? '';
+			$clientId = $amazonConfig['account_linking_config']["client_id"] ?? "";
+			$clientSecret = $amazonConfig['account_linking_config']["client_secret"] ?? "";
 
 			if ($accountLinkingMode === 'installation') {
 				$clientId = $this->_serviceId;
 				$clientSecret = md5($clientId);
-				$config[$this->getPlatformId()]['account_linking_config']['client_id'] = $clientId;
-				$config[$this->getPlatformId()]['account_linking_config']['client_secret'] = $clientSecret;
-				$config[$this->getPlatformId()]['account_linking_config']['scopes'] = '';
-				$this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
+                $amazonConfig['account_linking_config']['client_id'] = $clientId;
+                $amazonConfig['account_linking_config']['client_secret'] = $clientSecret;
+                $amazonConfig['account_linking_config']['scopes'] = '';
+                $this->_updateAmazonConfig($amazonConfig);
 			}
 
-            if ($amazonConfiguration['enable_account_linking']) {
+            if ($amazonConfig['enable_account_linking']) {
                 $body = [
                     "accountLinkingRequest" => [
-                        "skipOnEnablement" => $amazonConfiguration['account_linking_config']["skip_on_enablement"] ?? false,
+                        "skipOnEnablement" => $amazonConfig['account_linking_config']["skip_on_enablement"] ?? false,
                         "type" => "AUTH_CODE",
-                        "authorizationUrl" => $amazonConfiguration['account_linking_config']["authorization_url"] ?? "",
-                        "domains" => isset($amazonConfiguration['account_linking_config']["domains"]) ? explode(";", $amazonConfiguration['account_linking_config']["domains"]) : [],
-                        "scopes" => isset($amazonConfiguration['account_linking_config']["scopes"]) ? explode(";", $amazonConfiguration['account_linking_config']["scopes"]) : [],
-                        "accessTokenUrl" => $amazonConfiguration['account_linking_config']["access_token_url"] ?? "",
+                        "authorizationUrl" => $amazonConfig['account_linking_config']["authorization_url"] ?? "",
+                        "domains" => isset($amazonConfig['account_linking_config']["domains"]) ? explode(";", $amazonConfig['account_linking_config']["domains"]) : [],
+                        "scopes" => isset($amazonConfig['account_linking_config']["scopes"]) ? explode(";", $amazonConfig['account_linking_config']["scopes"]) : [],
+                        "accessTokenUrl" => $amazonConfig['account_linking_config']["access_token_url"] ?? "",
                         "clientId" => $clientId,
                         "clientSecret" => $clientSecret,
                         "accessTokenScheme" => "HTTP_BASIC"
@@ -1150,11 +1137,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             return $existingManifest;
         }
 
-        $config = $this->_convoServiceDataProvider->getServicePlatformConfig(
-            $this->_user,
-            $this->_serviceId,
-            IPlatformPublisher::MAPPING_TYPE_DEVELOP
-        );
+        $config = $this->_getAmazonConfig();
 
         $meta = $this->_convoServiceDataProvider->getServiceMeta(
             $this->_user, $this->_serviceId
@@ -1164,8 +1147,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $locales = $meta['supported_locales'];
         $defaultLocale = $meta['default_locale'];
-        $optInAutomaticDistribution = isset($config[$this->getPlatformId()]['availability']['automatic_distribution']) ?
-            $config[$this->getPlatformId()]['availability']['automatic_distribution'] : true;
+        $optInAutomaticDistribution = isset($config['availability']['automatic_distribution']) ?
+            $config['availability']['automatic_distribution'] : true;
 
         $manifest = new AmazonSkillManifest();
         $manifest->setLogger($this->_logger);
@@ -1177,50 +1160,50 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $manifest->clearInterfaces();
         }
 
-        $endpointCertificate = isset($config[$this->getPlatformId()]['endpoint_ssl_certificate_type']) ? $config[$this->getPlatformId()]['endpoint_ssl_certificate_type'] :
+        $endpointCertificate = isset($config['endpoint_ssl_certificate_type']) ? $config['endpoint_ssl_certificate_type'] :
             AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD;
 
-        $smallSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon']) ?
+        $smallSkillIcon = isset($config['skill_preview_in_store']['small_skill_icon']) ?
             $this->_getDownloadLink(
                 $this->_serviceId,
-                $config[$this->getPlatformId()]['skill_preview_in_store']['small_skill_icon'],
+                $config['skill_preview_in_store']['small_skill_icon'],
                 $owner,
                 self::TYPE_SMALL_SKILL_URL
             ) : '';
 
-        $largeSkillIcon = isset($config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon']) ?
+        $largeSkillIcon = isset($config['skill_preview_in_store']['large_skill_icon']) ?
             $this->_getDownloadLink(
                 $this->_serviceId,
-                $config[$this->getPlatformId()]['skill_preview_in_store']['large_skill_icon'],
+                $config['skill_preview_in_store']['large_skill_icon'],
                 $owner,
                 self::TYPE_LARGE_SKILL_URL
             ) : '';
 
-		$permissions = $config[$this->getPlatformId()]['permissions'] ?? [];
+		$permissions = $config['permissions'] ?? [];
 
         $manifest->setGlobalEndpoint(
             $this->_serviceReleaseManager->getWebhookUrl(
                 $this->_user, $this->_serviceId, $this->getPlatformId()
             )
-        )->setName($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['public_name'])
-            ->setSummary($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['one_sentence_description'])
-            ->setDescription($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['detailed_description'])
-            ->setWhatsNew($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['whats_new'])
+        )->setName($locales, $config['skill_preview_in_store']['public_name'])
+            ->setSummary($locales, $config['skill_preview_in_store']['one_sentence_description'])
+            ->setDescription($locales, $config['skill_preview_in_store']['detailed_description'])
+            ->setWhatsNew($locales, $config['skill_preview_in_store']['whats_new'])
             ->setSmallIconUri($locales, $smallSkillIcon)
             ->setLargeIconUri($locales, $largeSkillIcon)
-            ->setKeywords($locales, explode(",", preg_replace('/\s+/', ',', $config[$this->getPlatformId()]['skill_preview_in_store']['keywords'])))
-            ->setExamplePhrases($locales, $this->_formatExamplePhrases($config[$this->getPlatformId()]['skill_preview_in_store']['example_phrases']))
-            ->setCategory($config[$this->getPlatformId()]['skill_preview_in_store']['category'])
-            ->setTermsOfUseUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['terms_of_use_url'])
-            ->setPrivacyPolicyUrl($locales, $config[$this->getPlatformId()]['skill_preview_in_store']['privacy_policy_url'])
-            ->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
+            ->setKeywords($locales, explode(",", preg_replace('/\s+/', ',', $config['skill_preview_in_store']['keywords'])))
+            ->setExamplePhrases($locales, $this->_formatExamplePhrases($config['skill_preview_in_store']['example_phrases']))
+            ->setCategory($config['skill_preview_in_store']['category'])
+            ->setTermsOfUseUrl($locales, $config['skill_preview_in_store']['terms_of_use_url'])
+            ->setPrivacyPolicyUrl($locales, $config['skill_preview_in_store']['privacy_policy_url'])
+            ->setTestingInstructions($config['privacy_and_compliance']['testing_instructions'])
             ->setDistributionMode(AmazonSkillManifest::DISTRIBUTION_MODE_PUBLIC)
-            ->allowsPurchases($config[$this->getPlatformId()]['privacy_and_compliance']['allows_purchases'])
-            ->usesPersonalInfo($config[$this->getPlatformId()]['privacy_and_compliance']['uses_personal_info'])
-            ->isChildDirected($config[$this->getPlatformId()]['privacy_and_compliance']['is_child_directed'])
-            ->containsAds($config[$this->getPlatformId()]['privacy_and_compliance']['contains_ads'])
-            ->isExportCompliant($config[$this->getPlatformId()]['privacy_and_compliance']['is_export_compliant'])
-            ->setTestingInstructions($config[$this->getPlatformId()]['privacy_and_compliance']['testing_instructions'])
+            ->allowsPurchases($config['privacy_and_compliance']['allows_purchases'])
+            ->usesPersonalInfo($config['privacy_and_compliance']['uses_personal_info'])
+            ->isChildDirected($config['privacy_and_compliance']['is_child_directed'])
+            ->containsAds($config['privacy_and_compliance']['contains_ads'])
+            ->isExportCompliant($config['privacy_and_compliance']['is_export_compliant'])
+            ->setTestingInstructions($config['privacy_and_compliance']['testing_instructions'])
             ->setOptInToAutomaticLocaleDistribution($optInAutomaticDistribution, $defaultLocale)
 			->setPermissions($permissions)
             ->setGlobalCertificateType($endpointCertificate)
@@ -1239,16 +1222,14 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 		return array_map(function ($line) { return rtrim($line); }, explode($delimiter, $configPhrases));
 	}
 
-    private function _preparePropagateData($existingManifest = []) {
-        $config            =   $this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
-        $platform_config   =   $config[$this->getPlatformId()];
+    private function _preparePropagateData($model = [], $existingManifest = []) {
+        $platform_config = $this->_getAmazonConfig();
 
         $accountLinkingData = array_merge(
             ['enable_account_linking' => $platform_config['enable_account_linking']],
             $platform_config['account_linking_config']
         );
 
-        $model = json_decode($this->export()->getContent(), true);
         return [
             PlatformPublishingHistory::AMAZON_ACCOUNT_LINKING_INFORMATION => $accountLinkingData,
             PlatformPublishingHistory::AMAZON_SELF_SIGNED_CERTIFICATE => $platform_config['self_signed_certificate'] ?? null,
@@ -1294,4 +1275,93 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 		return array_unique($interfaces);
 	}
+
+    /**
+     * @param $amazonConfig
+     * @return bool
+     */
+    private function _importExistingAlexaSkill($amazonConfig): bool
+    {
+        $this->_logger->debug('Adapting existing Alexa Skill...');
+        $existing = $this->_amazonPublishingService->getSkill($this->_user, $amazonConfig['app_id'], 'development');
+        $manifestData = $existing['manifest'];
+        $defaultLocale = array_keys($manifestData['publishingInformation']['locales'])[0];
+        $interfaces = isset($manifestData['apis']['custom']['interfaces']) ? array_values($manifestData['apis']['custom']['interfaces']) : [];
+        $sslCertificateType = isset($manifestData['apis']['custom']['endpoint']['sslCertificateType']) ?
+            $manifestData['apis']['custom']['endpoint']['sslCertificateType'] : AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD;
+
+        $amazonConfig['invocation'] = $manifestData['publishingInformation']['locales'][$defaultLocale]['name'];
+        if (isset($amazonConfig['interfaces'])) {
+            $amazonConfig['interfaces'] = array_map(function ($item) {
+                return $item['type'];
+            }, $interfaces);
+        }
+
+        $this->_logger->debug("Got existing ssl certificate type [" . $sslCertificateType . "]");
+        if ($sslCertificateType === AmazonSkillManifest::CERTIFICATE_TYPE_SELF_SIGNED) {
+            $selfSignedSslCertificateFromSkill = $this->_amazonPublishingService->getSelfSignedSslCertificateFromSkill($this->_user, $amazonConfig['app_id']);
+            $this->_logger->debug("Showing existing ssl certificate [" . $selfSignedSslCertificateFromSkill . "]");
+            if ($selfSignedSslCertificateFromSkill !== null) {
+                $certFile = $this->_serviceId . "_cert.pem";
+                $this->_logger->debug("Going to create cert file [" . $certFile . "]");
+                $amazonConfig['endpoint_ssl_certificate_type'] = $sslCertificateType;
+                $amazonConfig['self_signed_certificate'] = $selfSignedSslCertificateFromSkill;
+            } else {
+                $amazonConfig['endpoint_ssl_certificate_type'] = AmazonSkillManifest::CERTIFICATE_TYPE_WILDCARD;
+                $amazonConfig['self_signed_certificate'] = null;
+            }
+        }
+
+        try {
+            $accountLinkingResponse = $this->_amazonPublishingService->getAccountLinkingInformation($this->_user, $amazonConfig['app_id'], 'development');
+            $amazonConfig['enable_account_linking'] = true;
+            $amazonConfig['account_linking_config']['skip_on_enablement'] = $accountLinkingResponse['skipOnEnablement'];
+            $amazonConfig['account_linking_config']['authorization_url'] = $accountLinkingResponse['authorizationUrl'];
+            $amazonConfig['account_linking_config']['access_token_url'] = $accountLinkingResponse['accessTokenUrl'];
+            $amazonConfig['account_linking_config']['client_id'] = $accountLinkingResponse['clientId'];
+            $amazonConfig['account_linking_config']['scopes'] = $accountLinkingResponse['scopes'];
+            $amazonConfig['account_linking_config']['domains'] = $accountLinkingResponse['domains'];
+        } catch (ClientExceptionInterface $e) {
+            if ($e->getCode() !== 404) {
+                throw new \Exception($e->getMessage(), 0, $e);
+            } else {
+                $this->_logger->warning("Can't get account linking partner with skill id [". $amazonConfig['app_id'] . "] because it could not be found.");
+            }
+        }
+
+        $this->_updateAmazonConfig($amazonConfig);
+        $this->_platformPublishingHistory->storePropagationData(
+            $this->_serviceId,
+            $this->getPlatformId(),
+            $this->_preparePropagateData([], $manifestData)
+        );
+    }
+
+    /**
+     * @param $locales
+     * @param \Convo\Core\IAdminUser $owner
+     * @param $skillId
+     * @param $model
+     * @return void
+     */
+    private function _buildInteractionModel(\Convo\Core\IAdminUser $owner, $skillId, $locales, $model): void
+    {
+        $this->_logger->info('Going to Alexa build interaction model');
+        $buildErrors = [];
+        foreach ($locales as $locale) {
+            try {
+                $interaction_model_update_res = $this->_amazonPublishingService->updateInteractionModel(
+                    $owner, $skillId, $model, $locale
+                );
+                $this->_logger->debug('Updated interaction model for [' . $locale . '], res [' . print_r($interaction_model_update_res, true) . ']');
+            } catch (\Exception $e) {
+                $this->_logger->warning($e);
+                $buildErrors[] = ['code' => $e->getCode(), 'message' => $e->getMessage()];
+            }
+        }
+
+        if (!empty($buildErrors)) {
+            throw new \Exception(json_encode($buildErrors));
+        }
+    }
 }

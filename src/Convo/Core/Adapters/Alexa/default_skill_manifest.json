@@ -1,17 +1,6 @@
 {
   "publishingInformation": {
-    "locales": {
-      "en-US": {
-        "summary": "",
-        "examplePhrases": [],
-        "keywords": [],
-        "smallIconUri": "",
-        "largeIconUri": "",
-        "name": "",
-        "description": "",
-        "updatesDescription": ""
-      }
-    },
+    "locales": {},
     "isAvailableWorldwide": false,
     "testingInstructions": "",
     "category": "",
@@ -35,12 +24,7 @@
     "isChildDirected": null,
     "isExportCompliant": null,
     "containsAds": null,
-    "locales": {
-      "en-US": {
-        "privacyPolicyUrl": "",
-        "termsOfUseUrl": ""
-      }
-    }
+    "locales": {}
   },
   "events": {
     "endpoint": {

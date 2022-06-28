@@ -144,6 +144,18 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
             $publisher->enable();
             
 			return $this->_performServicePlatformPathServiceIdPathPlatformIdConfigGet( $request, $user, $serviceId, $platformId);
+        } catch (\Convo\Core\Adapters\Alexa\AlexaSkillPublisherWarningsOccurredException $e) {
+            $this->_logger->warning( $e);
+            $config		=	$this->_convoServiceDataProvider->getServicePlatformConfig( $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+
+            if ( !isset( $config[$platformId])) {
+                throw new \Convo\Core\Rest\NotFoundException( 'Service ['.$serviceId.'] config ['.$platformId.'] not found');
+            }
+
+            $response = $config[$platformId];
+            $response['warnings'] = json_decode($e->getMessage(), true);
+
+            return $this->_httpFactory->buildResponse($response, 201);
         } catch (\Exception $e) {
             $this->_logger->critical( $e);
             
