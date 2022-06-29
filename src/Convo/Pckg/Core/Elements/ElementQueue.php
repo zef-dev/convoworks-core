@@ -17,6 +17,8 @@ class ElementQueue extends ElementCollection implements IConversationElement
 
     private $_shouldReset;
 
+    private $_wraparound;
+
     public function __construct($properties)
     {
         parent::__construct($properties);
@@ -24,6 +26,8 @@ class ElementQueue extends ElementCollection implements IConversationElement
         $this->_scopeType = $properties['scope_type'];
 
         $this->_shouldReset = $properties['should_reset'];
+
+        $this->_wraparound = $properties['wraparound'] ?? false;
 
         $this->_done = $properties['done'] ?: [];
 
@@ -49,7 +53,14 @@ class ElementQueue extends ElementCollection implements IConversationElement
                 return;
             }
         }
-        
+
+        $wraparound = $this->evaluateString($this->_wraparound);
+        if ($wraparound) {
+            $this->_reset();
+            $this->read($request, $response);
+            return;
+        }
+
         $this->_logger->info('Going to read Done flow');
         
         foreach ( $this->_done as $done) {

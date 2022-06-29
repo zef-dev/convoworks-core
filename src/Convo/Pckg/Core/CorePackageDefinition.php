@@ -1613,9 +1613,17 @@ class CorePackageDefinition extends AbstractPackageDefinition
 						'editor_properties' => array(),
 						'defaultValue' => '',
 						'name' => 'Should Reset',
-						'description' => 'Whether to read the "Done" flow once elements have been read in sequence, or to start over. Add an expression that evaluates to a boolean.',
+						'description' => 'If this expression evaluates to true, the queue will reset and start from the beginning.',
 						'valueType' => 'string'
 					),
+                    'wraparound' => array(
+                        'editor_type' => 'boolean',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Wraparound',
+                        'description' => 'Whether to read the "Done" flow once elements have been read in sequence, or to start over. You can also toggle to raw to add an expression that evaluates to a boolean.',
+                        'valueType' => 'boolean'
+                    ),
                     '_help' =>  array(
                         'type' => 'file',
                         'filename' => 'element-queue.html'
