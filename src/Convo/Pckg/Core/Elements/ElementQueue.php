@@ -59,6 +59,7 @@ class ElementQueue extends ElementCollection implements IConversationElement
             $this->_logger->info('All elements read with wrap-around evaluated to true. Resetting available pool of elements.');
             $this->_reset();
             $this->read($request, $response);
+            return;
         }
 
         $this->_logger->info('Going to read Done flow');
