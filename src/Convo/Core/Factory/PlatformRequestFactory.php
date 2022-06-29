@@ -116,7 +116,16 @@ class PlatformRequestFactory implements IPlatformRequestFactory
         if (isset($simulation_data['selectedIntent']['slots'])) {
             foreach ($simulation_data['selectedIntent']['slots'] as $definition) {
                 $name = $definition['name'];
-                $value = $definition['value'] ?? null;
+                $value = null;
+
+                if (!isset($definition['resolutions'])) {
+                    $value = $definition['value'] ?? null;
+                }
+
+                $statusCode = $definition['slotValue']['resolutions']['resolutionsPerAuthority'][0]['status']['code'] ?? null;
+                if ($statusCode === 'ER_SUCCESS_MATCH') {
+                    $value = $definition['slotValue']['resolutions']['resolutionsPerAuthority'][0]['values'][0]['name'] ?? null;
+                }
 
                 $slots[$name] = $value;
             }
