@@ -56,6 +56,7 @@ class ElementQueue extends ElementCollection implements IConversationElement
 
         $wraparound = $this->evaluateString($this->_wraparound);
         if ($wraparound) {
+            $this->_logger->info('All elements read with wrap-around evaluated to true. Resetting available pool of elements.');
             $this->_reset();
             $this->read($request, $response);
         }
