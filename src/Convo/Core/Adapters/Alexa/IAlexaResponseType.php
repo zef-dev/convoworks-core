@@ -12,4 +12,5 @@ interface IAlexaResponseType
     public const VIDEO_RESPONSE = 'VIDEO_RESPONSE';
 	public const APL_RESPONSE = 'APL_RESPONSE';
 	public const SALES_DIRECTIVE = 'SALES_DIRECTIVE';
+	public const DIALOG_DELEGATE_DIRECTIVE = 'DIALOG_DELEGATE_DIRECTIVE';
 }

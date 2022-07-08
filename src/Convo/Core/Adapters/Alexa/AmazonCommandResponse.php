@@ -33,6 +33,9 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 	private $_aplCommandToken;
 	private $_aplCommands = [];
 
+    private $_shouldDelegateToAlexaDialog = false;
+    private $_dialogDelegateDirectiveUpdatedIntent = [];
+
     private $_backButton;
 
     private $_responseType;
@@ -290,6 +293,9 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 			case IAlexaResponseType::SALES_DIRECTIVE:
 				$this->_platformResponse = $this->_prepareSalesDirectiveResponse();
 				break;
+            case IAlexaResponseType::DIALOG_DELEGATE_DIRECTIVE:
+                $this->_platformResponse = $this->_prepareDialogDelegateResponse();
+                break;
             default:
                 $this->_platformResponse = $this->_prepareSimpleResponse();
                 break;
@@ -335,6 +341,11 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 		}
 		$this->_aplCommands[] = $aplCommand;
 	}
+
+    public function delegate($intent = []) {
+        $this->_shouldDelegateToAlexaDialog = true;
+        $this->_dialogDelegateDirectiveUpdatedIntent = $intent;
+    }
 
     private function _prepareListResponse() {
 
@@ -677,6 +688,24 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     	return $data;
 	}
 
+    private function _prepareDialogDelegateResponse() {
+        $data = array(
+            'version' => '1.0',
+            'response' => array(),
+        );
+
+        $data['response']['shouldEndSession'] = $this->shouldEndSession();
+        $data['response']['directives'] = [];
+
+        if ($this->_shouldDelegateToAlexaDialog) {
+            $data['response']['directives'][] = $this->_prepareDelegateDirective();
+        }
+
+        $this->_logger->info("Printing Dialog Delegate response in AmazonCommandResponse [" . json_encode($data, JSON_PRETTY_PRINT) . "]" );
+
+        return $data;
+    }
+
 	private function _prepareSalesDirectiveResponse() {
 		$data = array(
 			'version' => '1.0',
@@ -713,6 +742,16 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 			'commands' => $this->_aplCommands
 		];
 	}
+
+    private function _prepareDelegateDirective() {
+        $directive['type'] = 'Dialog.Delegate';
+
+        if (!empty($this->_dialogDelegateDirectiveUpdatedIntent)) {
+            $directive['updatedIntent'] = $this->_dialogDelegateDirectiveUpdatedIntent;
+        }
+
+        return $directive;
+    }
 
     private function _prepareSimpleResponse() {
         $data = array(

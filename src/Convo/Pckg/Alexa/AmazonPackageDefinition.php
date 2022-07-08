@@ -45,6 +45,11 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
      */
     private $_convoServiceDataProvider;
 
+    /**
+     * @var \Convo\Core\Factory\PackageProviderFactory
+     */
+    private $_packageProviderFactory;
+
 	public function __construct(
 	    \Psr\Log\LoggerInterface $logger,
         \Convo\Core\Util\IHttpFactory $httpFactory,
@@ -52,7 +57,8 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
         \Convo\Core\Adapters\Alexa\Api\AmazonUserApi $amazonUserApi,
 		AlexaCustomerProfileApi $alexaCustomerProfileApi,
 		AlexaPersonProfileApi $alexaPersonProfileApi,
-		AlexaRemindersApi $alexaRemindersApi
+		AlexaRemindersApi $alexaRemindersApi,
+        \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory
     ) {
         $this->_httpFactory = $httpFactory;
         $this->_convoServiceDataProvider = $convoServiceDataProvider;
@@ -60,6 +66,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 		$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
 		$this->_alexaPersonProfileApi = $alexaPersonProfileApi;
 		$this->_alexaRemindersApi = $alexaRemindersApi;
+		$this->_packageProviderFactory = $packageProviderFactory;
 
 		parent::__construct( $logger, self::NAMESPACE, __DIR__);
 	}
@@ -1753,6 +1760,270 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 					}
 				)
 			),
+            new ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\DialogDelegateElement',
+                'Dialog Delegate Element',
+                'Delegate to Alexa Delegation.',
+                [
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div>' .
+                            '<span> Delegate to dialog.</span>' .
+                            '</div>'
+                    ),
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'get-amazon-user-element.html'
+                    )
+                ]
+            ),
+            new ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\AlexaPromptElement',
+                'Alexa Prompt Element',
+                'Initialize an Amazon user.',
+                [
+                    'alexa_prompt' => [
+                        'editor_type' => 'ssml',
+                        'editor_properties' => [],
+                        'defaultValue' => '',
+                        'name' => 'Alexa Prompt',
+                        'description' => 'What will Alexa say when delegation to dialog.',
+                        'valueType' => 'string'
+                    ],
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="we-say">' .
+                            '<div> Alexa says: <span class="we-say-text">{{component.properties.alexa_prompt}}</span> </div>' .
+                            '</div>'
+                    ),
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'get-amazon-user-element.html'
+                    )
+                ]
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\AlexaDialogProcessor',
+                'Alexa Dialog Processor',
+                'Process elements if dialog filters are activated',
+                array(
+                    'name' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Name',
+                        'description' => 'Optional name for component',
+                        'valueType' => 'string'
+                    ),
+                    'completed' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => false,
+                        'name' => 'Completed Flow',
+                        'description' => 'Flow to be executed if the processor matches a negative value.',
+                        'valueType' => 'class'
+                    ),
+                    'started' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => true,
+                        'name' => 'Started Flow',
+                        'description' => 'Flow to be executed if the processor matches an affirmative value.',
+                        'valueType' => 'class'
+                    ),
+                    'in_progress' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => false,
+                        'name' => 'In Progress Flow',
+                        'description' => 'Flow to be executed if the processor matches a negative value.',
+                        'valueType' => 'class'
+                    ),
+                    'request_filters' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IRequestFilter'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'defaultOpen' => true,
+                        'name' => 'Request filters',
+                        'description' => 'Filters to be applied against request',
+                        'valueType' => 'class'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="user-say">' .
+                            'Handle dialog state: <b>"STARTED"</b>, <b>"IN_PROGRESS"</b> or <b>"COMPLETED"</b></b>' .
+                            '</div>'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'yes-no-processor.html'
+                    ),
+                    '_workflow' => 'process',
+                    '_factory' => new class ( $this->_packageProviderFactory, $this->_convoServiceDataProvider) implements \Convo\Core\Factory\IComponentFactory
+                    {
+                        private $_packageProviderFactory;
+                        private $_convoServiceDataProvider;
+                        public function __construct( $packageProviderFactory, $convoServiceDataProvider)
+                        {
+                            $this->_packageProviderFactory	    =	$packageProviderFactory;
+                            $this->_convoServiceDataProvider	=	$convoServiceDataProvider;
+                        }
+                        public function createComponent( $properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Elements\AlexaDialogProcessor( $properties, $this->_packageProviderFactory, $this->_convoServiceDataProvider, $service);
+                        }
+                    }
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Filters\DialogIntentRequestFilter',
+                'Dialog Intent Filter',
+                'Intent capable dialog request filter',
+                array(
+                    'intent' => array(
+                        'editor_type' => 'convo_intent',
+                        'editor_properties' => array(
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Intent',
+                        'description' => 'Name of the intent which activates this filter',
+                        'valueType' => 'string'
+                    ),
+                    'delegation_strategy' => [
+                        'editor_type' => 'select',
+                        'editor_properties' => [
+                            'options' => ['ALWAYS' => 'Automatic', 'SKILL_RESPONSE' => 'Manual']
+                        ],
+                        'defaultValue' => 'ALWAYS',
+                        'name' => 'Delegation Strategy',
+                        'description' => 'Intent level strategies will supersede the skill level setting selected in Interfaces.',
+                        'valueType' => 'string'
+                    ],
+                    'intent_slot_dialog_filters' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Intent\IIntentAdapter'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'defaultOpen' => true,
+                        'name' => 'Intent Slot Dialog Filters',
+                        'description' => 'Filters by skill definition and intents in it',
+                        'valueType' => 'class'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code">Intent to delegate '.
+                            '<b ng-if="component.properties.intent">{{ component.properties.intent}}</b>'.
+                            '</div>'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'intent-request-filter.html'
+                    ),
+                    '_workflow' => 'filter',
+                    '_factory' => new class ($this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
+                    {
+                        private $_packageProviderFactory;
+                        public function __construct( $packageProviderFactory)
+                        {
+                            $this->_packageProviderFactory	= $packageProviderFactory;
+                        }
+                        public function createComponent( $properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Filters\DialogIntentRequestFilter( $properties, $this->_packageProviderFactory);
+                        }
+                    }
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Filters\DialogIntentSlotFilter',
+                'Intent Slot Dialog',
+                'Matches against Convo intent definitions',
+                array(
+                    'intent' => array(
+                        'editor_type' => 'convo_intent',
+                        'editor_properties' => array(
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Intent',
+                        'description' => 'Intent which contains possible user responses to Alexa Prompts.',
+                        'valueType' => 'string'
+                    ),
+                    'target_slot' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Target Slot',
+                        'description' => 'Slot you want to target for dialog delegation.',
+                        'valueType' => 'string'
+                    ),
+                    'alexa_prompts' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            /*'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),*/
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => true,
+                        'name' => 'Alexa Prompts',
+                        'description' => 'Flow to be executed if the processor matches an affirmative value.',
+                        'valueType' => 'class'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code">Slot for Dialog Delegation '.
+                            '<b ng-if="component.properties.target_slot">{{ component.properties.target_slot}}</b>'.
+                            '</div>'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'convo-intent-reader.html'
+                    ),
+                    '_workflow' => 'filter',
+                    '_descend' => true,
+                    '_factory' => new class ($this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
+                    {
+                        private $_packageProviderFactory;
+                        public function __construct( $packageProviderFactory)
+                        {
+                            $this->_packageProviderFactory	= $packageProviderFactory;
+                        }
+                        public function createComponent( $properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Filters\DialogIntentSlotFilter( $properties, $this->_packageProviderFactory);
+                        }
+                    }
+                )
+            )
         ];
     }
 

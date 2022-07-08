@@ -207,6 +207,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 		);
 
         $model = json_decode($this->export()->getContent(), true);
+        // throw new \Exception('Testing new dialog driven propagation. Exiting');
 
         $this->_buildInteractionModel($owner, $skillId, $locales, $model);
 
@@ -553,6 +554,62 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	        return true;
 	    }));
 
+        /** @var \Convo\Core\Adapters\Alexa\IAlexaDialogDriven[] $intent_drivens */
+        $dialog_drivens    =   $service->findChildren( '\Convo\Core\Adapters\Alexa\IAlexaDialogDriven');
+
+        $dialogDefinitions = [];
+        if (!empty($dialog_drivens)) {
+            foreach ($dialog_drivens as $dialog_driven) {
+                $dialogDefinitions[] = $dialog_driven->getDialogDefinition();
+            }
+        }
+
+        $slotSamples = [];
+        foreach ($dialogDefinitions as $dialogDefinition) {
+            if (isset($dialogDefinition['slotSamples'])) {
+                foreach ($dialogDefinition['slotSamples'] as $slotSample) {
+                    $slotSamples[key($slotSample)] = array_values($slotSample)[0];
+                }
+            }
+        }
+
+        // attaching slot samples
+        if (!empty($slotSamples)) {
+            foreach($data['interactionModel']['languageModel']['intents'] as $intentIndex => $intent) {
+                if (isset($intent['slots'])) {
+                    foreach ($intent['slots'] as $slotIndex => $slot) {
+                        if (isset($slotSamples[$slot['name']])) {
+                            $data['interactionModel']['languageModel']['intents'][$intentIndex]['slots'][$slotIndex]['samples'] = $slotSamples[$slot['name']];
+                        }
+                    }
+                }
+            }
+        }
+
+        $dialogIntents = [];
+        foreach ($dialogDefinitions as $dialogDefinition) {
+            if (isset($dialogDefinition['dialogIntent'])) {
+                $dialogIntents[] = $dialogDefinition['dialogIntent'];
+            }
+        }
+        $data['interactionModel']['dialog'] = [
+            'intents' => $dialogIntents,
+            // TODO: make this setting based on alexa skill manifest interfaces
+            'delegationStrategy' => 'ALWAYS'
+        ];
+
+        $prompts = [];
+        foreach ($dialogDefinitions as $dialogDefinition) {
+            if (isset($dialogDefinition['prompts'])) {
+                foreach ($dialogDefinition['prompts'] as $prompt) {
+                    $prompts[] = $prompt;
+                }
+            }
+        }
+        $data['interactionModel']['prompts'] = $prompts;
+
+        // $this->_logger->debug('Got final Dialog Definitions '.json_encode($dialogDefinitions, JSON_PRETTY_PRINT));
+        // $this->_logger->debug('Got final model '.json_encode($data, JSON_PRETTY_PRINT));
 	    $export    =   new \Convo\Core\Util\SimpleFileResource(
 	        $this->_serviceId.'-'.$this->getPlatformId().'.json', 'application/json', json_encode( $data, JSON_PRETTY_PRINT));
 
@@ -762,11 +819,11 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	//         }
 	//     }
 	// }
-		
+
 		// @TODO: The handling of "our" catalog versions vs Amazon's catalog versions
 		// isn't very robust. Currently we only check to see that the versions are different
 		// during propagation. Maybe we need to enforce strict increments?
-		
+
 		$this->_logger->debug('Going to check if catalog ['.$catalogName.'] exists.');
 
 		$config = $this->_getAmazonConfig();
