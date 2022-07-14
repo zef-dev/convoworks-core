@@ -4,7 +4,7 @@ namespace Convo\Pckg\Core\Elements;
 
 use Convo\Core\Params\IServiceParamsScope;
 
-class ElementRandomizer extends ElementCollection implements \Convo\Core\Workflow\IConversationElement
+class ElementRandomizer extends AbstractElementQueue
 {
     const RANDOM_MODE_WILD  =   'wild';
     const RANDOM_MODE_SMART =   'smart';

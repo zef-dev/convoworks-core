@@ -2,10 +2,9 @@
 
 namespace Convo\Pckg\Core\Elements;
 
+use Convo\Core\Workflow\IConversationElement;
 
-use Convo\Core\Workflow\IOptionalElement;
-
-class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IConversationElement
+class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent implements IConversationElement
 {
 	
 	/**
@@ -40,21 +39,7 @@ class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 	 * @return \Convo\Core\Workflow\IConversationElement[]
 	 */
 	public function getElements() {
-	    $elements   =   $this->getService()->spreadElements( $this->_elements);
-	    $filtered   =   [];
-	    
-	    foreach ( $elements as $element) {
-	        if ( $element instanceof IOptionalElement) {
-	            /* @var IOptionalElement $element*/
-	            if ( $element->isEnabled()) {
-	                $filtered[] = $element;
-	            }
-	            continue;
-	        }
-	        $filtered[] = $element;
-	    }
-	    
-	    return $filtered;
+	    return $this->getService()->spreadElements( $this->_elements);
 	}
 	
 	// UTIL
