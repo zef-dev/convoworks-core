@@ -27,9 +27,10 @@ class ElementCollection extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 	
 	public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
-		$this->_logger->debug('Reading ['.count( $this->_elements).']');
+		$this->_logger->info('Reading ['.count( $this->_elements).']');
 		
-		foreach ($this->getElements() as $element) {
+		foreach ($this->getElements() as $i=>$element) {
+		    $this->_logger->info('Reading element at index ['.$i.']');
 			/** @var $element \Convo\Core\Workflow\IConversationElement */
 			$element->read( $request, $response);
 		}
