@@ -4,6 +4,7 @@
 
  * Fixed collection skipping optional elements
  * Add optional element interface to the run once element
+ * Consider value "?" as empty value in Convo Intent Reader
 
 ## [Releases]
 
