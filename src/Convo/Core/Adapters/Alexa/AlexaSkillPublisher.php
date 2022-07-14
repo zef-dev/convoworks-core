@@ -568,7 +568,9 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         foreach ($dialogDefinitions as $dialogDefinition) {
             if (isset($dialogDefinition['slotSamples'])) {
                 foreach ($dialogDefinition['slotSamples'] as $slotSample) {
-                    $slotSamples[key($slotSample)] = array_values($slotSample)[0];
+                    if (isset(array_values($slotSample)[0])) {
+                        $slotSamples[key($slotSample)] = array_values($slotSample)[0];
+                    }
                 }
             }
         }
@@ -598,6 +600,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             'delegationStrategy' => 'ALWAYS'
         ];
 
+        // TODO: add dialog validation definition
+
         $prompts = [];
         foreach ($dialogDefinitions as $dialogDefinition) {
             if (isset($dialogDefinition['prompts'])) {
@@ -609,7 +613,7 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $data['interactionModel']['prompts'] = $prompts;
 
         // $this->_logger->debug('Got final Dialog Definitions '.json_encode($dialogDefinitions, JSON_PRETTY_PRINT));
-        // $this->_logger->debug('Got final model '.json_encode($data, JSON_PRETTY_PRINT));
+        $this->_logger->debug('Got final model '.json_encode($data, JSON_PRETTY_PRINT));
 	    $export    =   new \Convo\Core\Util\SimpleFileResource(
 	        $this->_serviceId.'-'.$this->getPlatformId().'.json', 'application/json', json_encode( $data, JSON_PRETTY_PRINT));
 

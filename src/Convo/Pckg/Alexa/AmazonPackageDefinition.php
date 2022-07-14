@@ -1766,10 +1766,35 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                 'Dialog Delegate Element',
                 'Delegate to Alexa Delegation.',
                 [
+                    'should_update_intent' => [
+                        'editor_type' => 'boolean',
+                        'editor_properties' => [],
+                        'defaultValue' => false,
+                        'name' => 'Should update incoming intent?',
+                        'description' => 'When enabled, this directive will update the selected intent.',
+                        'valueType' => 'boolean'
+                    ],
+                    'intent_slot_values' => array(
+                        'editor_type' => 'params',
+                        'editor_properties' => array(
+                            'multiple' => 'true',
+                            'dependency' => "component.properties.should_update_intent === true"
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Intent Slot Values',
+                        'description' => 'Values of intent slots to be updated. If left empty, only the "Dialog.Delegate" directive will be sent.',
+                        'valueType' => 'array'
+                    ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div>' .
-                            '<span> Delegate to dialog.</span>' .
+                        'template' =>'<div>'.
+                            '<div ng-if="!component.properties.should_update_intent" class="code">Send the <b>Dialog.Delegate</b> directive.</div ng-if="!component.properties.should_update_intent" class="code">'.
+                            '<div ng-if="component.properties.should_update_intent" class="code"><span>Send the <b>Dialog.Delegate</b> directive</span><br><span><b>AND</b></span><br>Update slots of the incoming intent: </span><br>' .
+                            ' <span ng-if="!component.properties[\'_use_var_properties\']" ng-repeat="(key, val) in component.properties.intent_slot_values track by key">' .
+                            ' <span class="statement"></span> <b>{{ key}}</b> = <b>{{ val }};</b><br>' .
+                            ' </span>' .
+                            '<span ng-if="component.properties[\'_use_var_properties\']">{{ component.properties.intent_slot_values }}</span>' .
+                            '</div>'.
                             '</div>'
                     ),
                     '_workflow' => 'read',
@@ -1783,7 +1808,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                 $this->getNamespace(),
                 '\Convo\Pckg\Alexa\Elements\AlexaPromptElement',
                 'Alexa Prompt Element',
-                'Initialize an Amazon user.',
+                'What will Alexa as an response.',
                 [
                     'alexa_prompt' => [
                         'editor_type' => 'ssml',
@@ -1797,6 +1822,157 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         'type' => 'html',
                         'template' => '<div class="we-say">' .
                             '<div> Alexa says: <span class="we-say-text">{{component.properties.alexa_prompt}}</span> </div>' .
+                            '</div>'
+                    ),
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'get-amazon-user-element.html'
+                    )
+                ]
+            ),
+            new ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\AlexaDialogValidatorElement',
+                'Alexa Dialog Validator Element',
+                'Initialize an Amazon user.',
+                [
+                    'alexa_prompts' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            /*'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),*/
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => true,
+                        'name' => 'Alexa Prompts',
+                        'description' => 'Flow to be executed if the processor matches an affirmative value.',
+                        'valueType' => 'class'
+                    ),
+                    'validation_rule' => [
+                        'editor_type' => 'select',
+                        'editor_properties' => [
+                            'options' => [
+                                'hasEntityResolutionMatch' => 'Has Entity Resolution Match',
+                                'isInSet' => 'Is In Set',
+                                'isNotInSet' => 'Is Not In Set',
+                                'isGreaterThan' => 'Is Greater Than',
+                                'isGreaterThanOrEqualTo' => 'Is Greater Than Or Equal To',
+                                'isLessThan' => 'Is Less Than',
+                                'isLessThanOrEqualTo' => 'Is Less Than Or Equal To',
+                                'isInDuration' => 'Is In Duration',
+                                'isNotInDuration' => 'Is Not In Duration'
+                            ]
+                        ],
+                        'defaultValue' => 'hasEntityResolutionMatch',
+                        'name' => 'Validation Rule',
+                        'description' => 'Validation rule to check against.',
+                        'valueType' => 'string'
+                    ],
+                    'validation_rule_is_in_set' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isInSet'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Values',
+                        'description' => 'Value to check if the actual slot value is in an given set',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_not_in_set' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isNotInSet'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Values',
+                        'description' => 'Value to check if the actual slot value is not in an given set.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_greater_than' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isGreaterThan'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Value',
+                        'description' => 'Value to check if is greater then the actual slot value.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_greater_than_or_equal_to' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isGreaterThanOrEqualTo'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Value',
+                        'description' => 'Value to check if is greater or equal then the actual slot value.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_less_than' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isLessThan'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Value',
+                        'description' => 'Value to check if is less than the actual slot value.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_less_than_or_equal_to' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isLessThanOrEqualTo'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Value',
+                        'description' => 'Value to check if is less or equal to actual slot value.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_in_duration_start' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isInDuration'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Start',
+                        'description' => 'Start of is in duration.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_in_duration_end' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isInDuration'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'End',
+                        'description' => 'End of is in duration.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_not_in_duration_start' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isNotInDuration'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Start',
+                        'description' => 'Start of is not in duration.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_not_in_duration_end' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isNotInDuration'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'End',
+                        'description' => 'Start of is not in duration.',
+                        'valueType' => 'string'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code">' .
+                            '<div> Validate against rule: <b>{{component.properties.validation_rule}}</b> </div>' .
                             '</div>'
                     ),
                     '_workflow' => 'read',
@@ -1822,7 +1998,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         'description' => 'Optional name for component',
                         'valueType' => 'string'
                     ),
-                    'completed' => array(
+                    'ok' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
                             'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
@@ -1830,32 +2006,8 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         ),
                         'defaultValue' => [],
                         'defaultOpen' => false,
-                        'name' => 'Completed Flow',
-                        'description' => 'Flow to be executed if the processor matches a negative value.',
-                        'valueType' => 'class'
-                    ),
-                    'started' => array(
-                        'editor_type' => 'service_components',
-                        'editor_properties' => array(
-                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
-                            'multiple' => true
-                        ),
-                        'defaultValue' => [],
-                        'defaultOpen' => true,
-                        'name' => 'Started Flow',
-                        'description' => 'Flow to be executed if the processor matches an affirmative value.',
-                        'valueType' => 'class'
-                    ),
-                    'in_progress' => array(
-                        'editor_type' => 'service_components',
-                        'editor_properties' => array(
-                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
-                            'multiple' => true
-                        ),
-                        'defaultValue' => [],
-                        'defaultOpen' => false,
-                        'name' => 'In Progress Flow',
-                        'description' => 'Flow to be executed if the processor matches a negative value.',
+                        'name' => 'OK Flow',
+                        'description' => 'Flow to be executed if the processor matches the target intent with dialog state STARTED, IN_PROGRESS or COMPLETED.',
                         'valueType' => 'class'
                     ),
                     'request_filters' => array(
@@ -1870,29 +2022,20 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         'description' => 'Filters to be applied against request',
                         'valueType' => 'class'
                     ),
-                    '_preview_angular' => array(
-                        'type' => 'html',
-                        'template' => '<div class="user-say">' .
-                            'Handle dialog state: <b>"STARTED"</b>, <b>"IN_PROGRESS"</b> or <b>"COMPLETED"</b></b>' .
-                            '</div>'
-                    ),
                     '_help' =>  array(
                         'type' => 'file',
                         'filename' => 'yes-no-processor.html'
                     ),
                     '_workflow' => 'process',
-                    '_factory' => new class ( $this->_packageProviderFactory, $this->_convoServiceDataProvider) implements \Convo\Core\Factory\IComponentFactory
+                    '_factory' => new class ( $this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
                     {
-                        private $_packageProviderFactory;
-                        private $_convoServiceDataProvider;
-                        public function __construct( $packageProviderFactory, $convoServiceDataProvider)
+                        public function __construct( )
                         {
-                            $this->_packageProviderFactory	    =	$packageProviderFactory;
-                            $this->_convoServiceDataProvider	=	$convoServiceDataProvider;
+
                         }
                         public function createComponent( $properties, $service)
                         {
-                            return new \Convo\Pckg\Alexa\Elements\AlexaDialogProcessor( $properties, $this->_packageProviderFactory, $this->_convoServiceDataProvider, $service);
+                            return new \Convo\Pckg\Alexa\Elements\AlexaDialogProcessor( $properties, $service);
                         }
                     }
                 )
@@ -1935,6 +2078,18 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         'description' => 'Filters by skill definition and intents in it',
                         'valueType' => 'class'
                     ),
+                    'alexa_prompts' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            /*'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),*/
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => true,
+                        'name' => 'Intent Confirmation Alexa Prompts',
+                        'description' => 'Flow to be executed if the processor matches an affirmative value.',
+                        'valueType' => 'class'
+                    ),
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code">Intent to delegate '.
@@ -1946,16 +2101,18 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         'filename' => 'intent-request-filter.html'
                     ),
                     '_workflow' => 'filter',
-                    '_factory' => new class ($this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
+                    '_factory' => new class ($this->_packageProviderFactory, $this->_convoServiceDataProvider) implements \Convo\Core\Factory\IComponentFactory
                     {
                         private $_packageProviderFactory;
-                        public function __construct( $packageProviderFactory)
+                        private $_convoServiceDataProvider;
+                        public function __construct( $packageProviderFactory, $convoServiceDataProvider)
                         {
                             $this->_packageProviderFactory	= $packageProviderFactory;
+                            $this->_convoServiceDataProvider	=	$convoServiceDataProvider;
                         }
                         public function createComponent( $properties, $service)
                         {
-                            return new \Convo\Pckg\Alexa\Filters\DialogIntentRequestFilter( $properties, $this->_packageProviderFactory);
+                            return new \Convo\Pckg\Alexa\Filters\DialogIntentRequestFilter( $properties, $this->_packageProviderFactory, $this->_convoServiceDataProvider);
                         }
                     }
                 )
@@ -1995,6 +2152,30 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         'defaultValue' => [],
                         'defaultOpen' => true,
                         'name' => 'Alexa Prompts',
+                        'description' => 'Flow to be executed if the processor matches an affirmative value.',
+                        'valueType' => 'class'
+                    ),
+                    'dialog_validation_rules' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            /*'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),*/
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => true,
+                        'name' => 'Dialog Validation Rules',
+                        'description' => 'Flow to be executed if the processor matches an affirmative value.',
+                        'valueType' => 'class'
+                    ),
+                    'intent_slot_confirmation_alexa_prompts' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            /*'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),*/
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => true,
+                        'name' => 'Intent Slot Confirmation Alexa Prompts',
                         'description' => 'Flow to be executed if the processor matches an affirmative value.',
                         'valueType' => 'class'
                     ),

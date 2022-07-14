@@ -17,6 +17,10 @@ class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core
 
     private $_alexaPrompts = [];
 
+    private $_intentSlotConfirmationAlexaPrompts = [];
+
+    private $_dialogValidationRules = [];
+
     public function __construct($config, $packageProviderFactory)
     {
         parent::__construct( $config);
@@ -25,6 +29,8 @@ class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core
 
         $this->_targetSlot = $config['target_slot'] ?? '';
         $this->_alexaPrompts = $config['alexa_prompts'] ?? [];
+        $this->_intentSlotConfirmationAlexaPrompts = $config['intent_slot_confirmation_alexa_prompts'] ?? [];
+        $this->_dialogValidationRules = $config['dialog_validation_rules'] ?? [];
     }
 
     public function getTargetSlot() {
@@ -37,6 +43,28 @@ class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core
             $alexaPrompts[$this->getTargetSlot()][] = $alexaPrompt->getAlexaPrompt();
         }
         return $alexaPrompts;
+    }
+
+    public function getDialogValidators()
+    {
+        $dialogValidators = [];
+
+        foreach ($this->_dialogValidationRules as $dialogValidationRule) {
+            $dialogValidationRule->setSlotToValidate($this->_targetSlot);
+            if (!empty($dialogValidationRule->getDialogValidation())) {
+                $dialogValidators[$this->getTargetSlot()][] = $dialogValidationRule->getDialogValidation();
+            }
+        }
+
+        return $dialogValidators;
+    }
+
+    public function getIntentSlotConfirmationAlexaPrompts() {
+        $intentSlotConfirmationAlexaPrompts = [];
+        foreach ($this->_intentSlotConfirmationAlexaPrompts as $intentSlotConfirmationAlexaPrompt) {
+            $intentSlotConfirmationAlexaPrompts[$this->getTargetSlot()][] = $intentSlotConfirmationAlexaPrompt->getAlexaPrompt();
+        }
+        return $intentSlotConfirmationAlexaPrompts;
     }
 
     public function getUserUtterances() {
@@ -60,18 +88,20 @@ class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core
             }
         }
 
-        foreach ($intent->getUtterances() as $utterance)
+        $userSpeechUtterances = $this->_getUserSpeechUtterance($intent->getUtterances());
+
+        foreach ($userSpeechUtterances as $utterance)
         {
             $parts = $utterance->getParts();
             $text = '';
             foreach ($parts as $part) {
                 if (isset($part['type']) && isset($part['text'])) {
-                    try {
+                    /*try {
                         $entity = $provider->getEntity($part['type']);
                     } catch (\Convo\Core\ComponentNotFoundException $e) {
                         $entity = $service->getEntity($part['type']);
-                    }
-                    $text .= ' '.'{'.$entity->getName().'}';
+                    }*/
+                    $text .= ' '.'{'.$part['slot_value'].'}';
                 } else if (!isset($part['type']) && isset($part['text'])) {
                     $text .= ' '.$part['text'];
                 }
@@ -125,6 +155,18 @@ class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core
         }
 
         return $part;
+    }
+
+    private function _getUserSpeechUtterance($utterances) {
+        $dialogUserSpeechUtterances = [];
+
+        $dialogUserSpeechUtterances = array_filter( $utterances, function ( $utterance) {
+            $this->_logger->debug('User utterance part '. json_encode($utterance->getParts()));
+            return true;
+        });
+
+        $this->_logger->debug('Printing user utterances parts '.json_encode($dialogUserSpeechUtterances));
+        return $dialogUserSpeechUtterances;
     }
 
     // UTIL
