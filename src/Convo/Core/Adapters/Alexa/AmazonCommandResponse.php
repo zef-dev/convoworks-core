@@ -554,6 +554,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                     }
                 }
             } else if ($this->_mode === 'stop') {
+                $data['response']['shouldEndSession'] = true;
                 $data['response']['directives'][] = [
                     'type' => 'AudioPlayer.Stop'
                 ];
