@@ -91,15 +91,20 @@ class DialogIntentRequestFilter extends AbstractWorkflowContainerComponent imple
     {
         /** @var \Convo\Core\Adapters\Alexa\AmazonCommandRequest $request */
 
+        $platformData = $request->getPlatformData();
         $result    =  new \Convo\Core\Workflow\DefaultFilterResult();
         $slotValues = $request->getSlotValues();
 
+        $intentConfirmationStatus = $platformData['request']['intent']['confirmationStatus'] ?? 'NONE';
         $this->_logger->debug( 'Matching dialog against intent ['.$request->getIntentName().'] with slots ['.json_encode($slotValues).']');
         $result->setSlotValue('dialogState', $request->getPlatformData()['request']['dialogState']);
+        $result->setSlotValue('intentName', $request->getIntentName());
+        $result->setSlotValue('intentConfirmationStatus', $intentConfirmationStatus);
 
         if (!empty($slotValues)) {
             foreach ($slotValues as $slotName => $slotValue) {
-                $result->setSlotValue($slotName, $slotValue);
+                $slotConfirmationStatus = $platformData['request']['intent']['slots'][$slotName]['confirmationStatus'] ?? 'NONE';
+                $result->setSlotValue($slotName, ['value' => $slotValue, 'confirmationStatus' => $slotConfirmationStatus]);
             }
         }
 
