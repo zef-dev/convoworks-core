@@ -1972,7 +1972,15 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code">' .
-                            '<div> Validate against rule: <b>{{component.properties.validation_rule}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'hasEntityResolutionMatch\'">Incoming slot value has entity resolution match.</div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isInSet\'">Incoming slot value is in set of <b>{{component.properties.validation_rule_is_in_set}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isNotInSet\'">Incoming slot value is not in set of <b>{{component.properties.validation_rule_is_not_in_set}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isGreaterThan\'">Incoming slot value is greater than <b>{{component.properties.validation_rule_is_greater_than}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isGreaterThanOrEqualTo\'">Incoming slot value is greater than or equal to <b>{{component.properties.validation_rule_is_greater_than_or_equal_to}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isLessThan\'">Incoming slot value is less than <b>{{component.properties.validation_rule_is_less_than}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isLessThanOrEqualTo\'">Incoming slot value is less than or equal to <b>{{component.properties.validation_rule_is_less_than_or_equal_to}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isInDuration\'">Incoming slot value is in duration from <b>{{component.properties.validation_rule_is_in_duration_start}}</b> to <b>{{component.properties.validation_rule_is_in_duration_end}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isNotInDuration\'">Incoming slot value is not in duration from <b>{{component.properties.validation_rule_is_not_in_duration_start}}</b> to <b>{{component.properties.validation_rule_is_not_in_duration_end}}</b> </div>' .
                             '</div>'
                     ),
                     '_workflow' => 'read',
