@@ -86,26 +86,26 @@ class AlexaDialogValidatorElement extends \Convo\Core\Workflow\AbstractWorkflowC
             case 'hasEntityResolutionMatch':
                 return [];
             case 'isInSet':
-                return ["values" => $this->_validationRuleIsInSet];
+                return ["values" => $this->getService()->evaluateString($this->_validationRuleIsInSet)];
             case 'isNotInSet':
-                return ["values" => $this->_validationRuleIsNotInSet];
+                return ["values" => $this->getService()->evaluateString($this->_validationRuleIsNotInSet)];
             case 'isGreaterThan':
-                return ["value" => $this->_validationRuleIsGreaterThan];
+                return ["value" => $this->getService()->evaluateString($this->_validationRuleIsGreaterThan)];
             case 'isGreaterThanOrEqualTo':
-                return ["value" => $this->_validationRuleIsGreaterThanOrEqualTo];
+                return ["value" => $this->getService()->evaluateString($this->_validationRuleIsGreaterThanOrEqualTo)];
             case 'isLessThan':
-                return ["value" => $this->_validationRuleIsLessThan];
+                return ["value" => $this->getService()->evaluateString($this->_validationRuleIsLessThan)];
             case 'isLessThanOrEqualTo':
-                return ["value" => $this->_validationRuleIsLessThanOrEqualTo];
+                return ["value" => $this->getService()->evaluateString($this->_validationRuleIsLessThanOrEqualTo)];
             case 'isInDuration':
                 return [
-                    "start" => $this->_validationRuleIsInDurationStart,
-                    "end" => $this->_validationRuleIsInDurationEnd
+                    "start" => $this->getService()->evaluateString($this->_validationRuleIsInDurationStart),
+                    "end" => $this->getService()->evaluateString($this->_validationRuleIsInDurationEnd)
                 ];
             case 'isNotInDuration':
                 return [
-                    "start" => $this->_validationRuleIsNotInDurationStart,
-                    "end" => $this->_validationRuleIsNotInDurationEnd
+                    "start" => $this->getService()->evaluateString($this->_validationRuleIsNotInDurationStart),
+                    "end" => $this->getService()->evaluateString($this->_validationRuleIsNotInDurationEnd)
                 ];
             default:
                 throw new \Exception('Unsupported validation rule ['.$validationRule.']');

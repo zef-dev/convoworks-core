@@ -1766,19 +1766,36 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                 'Dialog Delegate Element',
                 'Delegate to Alexa Delegation.',
                 [
-                    'should_update_intent' => [
-                        'editor_type' => 'boolean',
-                        'editor_properties' => [],
-                        'defaultValue' => false,
-                        'name' => 'Should update incoming intent?',
+                    'delegation_action' => [
+                        'editor_type' => 'select',
+                        'editor_properties' => [
+                            'options' => [
+                                'DELEGATE' => 'Delegate',
+                                'DELEGATE_AND_UPDATE_INCOMING_INTENT' => 'Delegate and update incoming intent',
+                                'DELEGATE_AND_UPDATE_ANOTHER_INTENT' => 'Delegate and update another intent'
+                            ]
+                        ],
+                        'defaultValue' => 'DELEGATE',
+                        'name' => 'Action',
                         'description' => 'When enabled, this directive will update the selected intent.',
-                        'valueType' => 'boolean'
+                        'valueType' => 'string'
                     ],
+                    'intent_to_update' => array(
+                        'editor_type' => 'convo_intent',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.delegation_action === 'DELEGATE_AND_UPDATE_ANOTHER_INTENT'",
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Intent',
+                        'description' => 'Intent to Update',
+                        'valueType' => 'string'
+                    ),
                     'intent_slot_values' => array(
                         'editor_type' => 'params',
                         'editor_properties' => array(
                             'multiple' => 'true',
-                            'dependency' => "component.properties.should_update_intent === true"
+                            'dependency' => "component.properties.delegation_action === 'DELEGATE_AND_UPDATE_INCOMING_INTENT' || component.properties.delegation_action === 'DELEGATE_AND_UPDATE_ANOTHER_INTENT'"
                         ),
                         'defaultValue' => array(),
                         'name' => 'Intent Slot Values',
@@ -1788,8 +1805,8 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' =>'<div>'.
-                            '<div ng-if="!component.properties.should_update_intent" class="code">Send the <b>Dialog.Delegate</b> directive.</div ng-if="!component.properties.should_update_intent" class="code">'.
-                            '<div ng-if="component.properties.should_update_intent" class="code"><span>Send the <b>Dialog.Delegate</b> directive</span><br><span><b>AND</b></span><br>Update slots of the incoming intent: </span><br>' .
+                            '<div ng-if="!component.properties.delegation_action === \'DELEGATE\'" class="code">Send the <b>Dialog.Delegate</b> directive.</div ng-if="!component.properties.should_update_intent" class="code">'.
+                            '<div ng-if="component.properties.delegation_action !== \'DELEGATE\'" class="code"><span>Send the <b>Dialog.Delegate</b> directive</span><br><span><b>AND</b></span><br>Update slot values of the </span> <b ng-if="component.properties.delegation_action === \'DELEGATE_AND_UPDATE_INCOMING_INTENT\'">incoming intent</b> <b ng-if="component.properties.delegation_action === \'DELEGATE_AND_UPDATE_ANOTHER_INTENT\'">{{component.properties.intent_to_update}}</b>:<br>' .
                             ' <span ng-if="!component.properties[\'_use_var_properties\']" ng-repeat="(key, val) in component.properties.intent_slot_values track by key">' .
                             ' <span class="statement"></span> <b>{{ key}}</b> = <b>{{ val }};</b><br>' .
                             ' </span>' .
@@ -1824,7 +1841,8 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                             '<div> Alexa says: <span class="we-say-text">{{component.properties.alexa_prompt}}</span> </div>' .
                             '</div>'
                     ),
-                    '_workflow' => 'read',
+                    '_workflow' => 'filter',
+                    '_descend' => true,
                     '_help' =>  array(
                         'type' => 'file',
                         'filename' => 'get-amazon-user-element.html'
@@ -1983,7 +2001,8 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                             '<div ng-if="component.properties.validation_rule === \'isNotInDuration\'">Incoming slot value is not in duration from <b>{{component.properties.validation_rule_is_not_in_duration_start}}</b> to <b>{{component.properties.validation_rule_is_not_in_duration_end}}</b> </div>' .
                             '</div>'
                     ),
-                    '_workflow' => 'read',
+                    '_workflow' => 'filter',
+                    '_descend' => true,
                     '_help' =>  array(
                         'type' => 'file',
                         'filename' => 'get-amazon-user-element.html'

@@ -594,23 +594,23 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                 $dialogIntents[] = $dialogDefinition['dialogIntent'];
             }
         }
-        $data['interactionModel']['dialog'] = [
-            'intents' => $dialogIntents,
-            // TODO: make this setting based on alexa skill manifest interfaces
-            'delegationStrategy' => 'ALWAYS'
-        ];
 
-        // TODO: add dialog validation definition
-
-        $prompts = [];
-        foreach ($dialogDefinitions as $dialogDefinition) {
-            if (isset($dialogDefinition['prompts'])) {
-                foreach ($dialogDefinition['prompts'] as $prompt) {
-                    $prompts[] = $prompt;
+        if (!empty($dialogIntents)) {
+            $data['interactionModel']['dialog'] = [
+                'intents' => $dialogIntents,
+                // TODO: make this setting based on alexa skill manifest interfaces
+                'delegationStrategy' => 'ALWAYS'
+            ];
+            $prompts = [];
+            foreach ($dialogDefinitions as $dialogDefinition) {
+                if (isset($dialogDefinition['prompts'])) {
+                    foreach ($dialogDefinition['prompts'] as $prompt) {
+                        $prompts[] = $prompt;
+                    }
                 }
             }
+            $data['interactionModel']['prompts'] = $prompts;
         }
-        $data['interactionModel']['prompts'] = $prompts;
 
         // $this->_logger->debug('Got final Dialog Definitions '.json_encode($dialogDefinitions, JSON_PRETTY_PRINT));
         $this->_logger->debug('Got final model '.json_encode($data, JSON_PRETTY_PRINT));

@@ -8,14 +8,16 @@ use Convo\Core\Util\ArrayUtil;
 
 class DialogDelegateElement extends \Convo\Core\Workflow\AbstractWorkflowComponent implements \Convo\Core\Workflow\IConversationElement
 {
-    private $_shouldUpdateIntent;
+    private $_delegationAction;
+    private $_intentToUpdate;
     private $_slotSlotValues;
 
 	public function __construct( $properties)
 	{
 		parent::__construct( $properties);
         $this->getId();
-        $this->_shouldUpdateIntent = $properties['should_update_intent'] ?? false;
+        $this->_delegationAction = $properties['delegation_action'] ?? 'DELEGATE';
+        $this->_intentToUpdate = $properties['intent_to_update'] ?? '';
         $this->_slotSlotValues = $properties['intent_slot_values'] ?? [];
 	}
 
@@ -24,20 +26,34 @@ class DialogDelegateElement extends \Convo\Core\Workflow\AbstractWorkflowCompone
         /* @var \Convo\Core\Adapters\Alexa\AmazonCommandRequest  $request */
         /* @var \Convo\Core\Adapters\Alexa\AmazonCommandResponse  $response */
         if ( is_a( $request, 'Convo\Core\Adapters\Alexa\AmazonCommandRequest')) {
-            $shouldUpdateIntent = $this->evaluateString($this->_shouldUpdateIntent);
+            $delegationAction = $this->evaluateString($this->_delegationAction);
+            $intentToUpdate = $this->evaluateString($this->_intentToUpdate);
             $intentSlotValues = $this->_evaluateArgs($this->_slotSlotValues);
 
             $response->prepareResponse(IAlexaResponseType::DIALOG_DELEGATE_DIRECTIVE);
 
             $updatedIntent = [];
-            if ($shouldUpdateIntent && !empty($intentSlotValues) ) {
-                $updatedIntent = $request->getPlatformData()['request']['intent'] ?? [];
-                if (!empty($updatedIntent)) {
+            if ($delegationAction === 'DELEGATE_AND_UPDATE_INCOMING_INTENT') {
+                if (!empty($intentSlotValues) ) {
+                    $updatedIntent = $request->getPlatformData()['request']['intent'] ?? [];
+                    if (!empty($updatedIntent)) {
+                        foreach ($intentSlotValues as $key => $value) {
+                            $updatedIntent['slots'][$key]['value'] = $value;
+                        }
+                    }
+                }
+            } else if ($delegationAction === 'DELEGATE_AND_UPDATE_ANOTHER_INTENT') {
+                if (!empty($intentSlotValues) ) {
+                    $updatedIntent = [
+                        'name' => $intentToUpdate
+                    ];
                     foreach ($intentSlotValues as $key => $value) {
+                        $updatedIntent['slots'][$key]['name'] = $key;
                         $updatedIntent['slots'][$key]['value'] = $value;
                     }
                 }
             }
+
             $response->delegate($updatedIntent);
         }
 	}

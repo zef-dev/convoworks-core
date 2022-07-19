@@ -13,6 +13,6 @@ class AlexaPromptElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
     }
 
     public function getAlexaPrompt() {
-        return $this->_prompt;
+        return $this->getService()->evaluateString($this->_prompt);
     }
 }

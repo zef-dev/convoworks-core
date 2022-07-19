@@ -215,7 +215,7 @@ class DialogIntentRequestFilter extends AbstractWorkflowContainerComponent imple
         $this->_logger->debug('Going to prepare dialog slots.');
 
         foreach ($dialogEntitiesNames as $dialogEntitiesName) {
-            $this->_logger->debug('Got dialog slot ['.json_encode($dialogEntitiesName)).'] with ['.json_encode($entityNameTypeDialog).']';
+            $this->_logger->debug('Got dialog slot ['.json_encode($dialogEntitiesName).'] with ['.json_encode($entityNameTypeDialog).']');
             $dialogIntentDefinition = [
                 'name' => $dialogEntitiesName,
                 'type' => $entityNameTypeDialog[$dialogEntitiesName],
