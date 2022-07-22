@@ -1,0 +1,56 @@
+<div class="for-help">
+    <h3>Voice Pin Confirmation Block</h3>
+
+    <p>This this block will handle the <var>SessionResumedRequest</var> after the Voice Pin Confirmation Directive Element was executed.</p>
+
+    <h4>Parameters:</h4>
+    <ul>
+        <li><code>Voice Pin Confirmation Variable</code> - Variable name for the Voice Pin Confirmation array.</li>
+    </ul>
+
+    <p>Example of <code>${voice_pin_confirmation.token}</code> value:</p>
+    <pre>
+    <code>"exampleToken"</code>
+    </pre>
+
+    <p>Example of <code>${voice_pin_confirmation.status}</code> value:</p>
+    <pre>
+    <code>{
+        "code": "200",
+        "message": "Okay"
+    }</code>
+    </pre>
+
+    <p>Example of <code>${voice_pin_confirmation.result}</code> value:</p>
+    <pre>
+    <code>{
+        "version": "2",
+        "status": "NOT_ENABLED"
+    }</code>
+    </pre>
+
+    <p>Example of <code>${voice_pin_confirmation.personId}</code> value:</p>
+    <pre>
+    <code>"amzn1.ask.person.example-value-here"</code>
+    </pre>
+
+    <p>Example of <code>${voice_pin_confirmation.personAuthenticationConfidenceLevel}</code> value:</p>
+    <pre>
+    <code>"300" (if the voice of the user was recognized) or "400" (if the user profile was confirmed by a PIN)</code>
+    </pre>
+
+    <h4>Flows:</h4>
+    <ul>
+        <li><code>On PIN Correct</code> - executes when a correct user profile PIN was provided</li>
+        <li><code>On Not PIN Correct</code> - executes when a wrong user profile PIN was provided</li>
+        <li><code>On Not PIN Provided</code> - executes when the user has not provided the PIN and the Optional PIN Confirmation is configured in Amazon Configuration Section</li>
+        <li><code>Fallback</code> - executes when there is an error</li>
+    </ul>
+
+    <p>For more details, please visit the Alexa Developer Documentation at
+        <a href="https://developer.amazon.com/en-US/docs/alexa/custom-skills/pin-confirmation-for-alexa-skills.html#receive-sesesionresumedrequest" target="_blank">
+            Receive a SessionResumedRequest
+        </a>
+    </p>
+
+</div>

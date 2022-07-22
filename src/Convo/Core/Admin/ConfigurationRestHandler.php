@@ -80,7 +80,9 @@ class ConfigurationRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
 				['value' => 'alexa::profile:email:read', 'name' => 'Customer Email Address', 'checked' => false],
 				['value' => 'alexa::profile:mobile_number:read', 'name' => 'Customer Phone Number', 'checked' => false],
                 ['value' => 'alexa::alerts:reminders:skill:readwrite', 'name' => 'Reminders', 'checked' => false],
-                ['value' => 'alexa::person_id:read', 'name' => 'Skill Personalization', 'checked' => false]
+                ['value' => 'alexa::person_id:read', 'name' => 'Skill Personalization', 'checked' => false],
+                ['value' => 'alexa::authenticate:2:mandatory', 'name' => 'Mandatory PIN Confirmation', 'checked' => false],
+                ['value' => 'alexa::authenticate:2:optional', 'name' => 'Optional PIN Confirmation', 'checked' => false]
 			],
             'CONVO_AMAZON_SKILL_ENDPOINT_SSL_CERTIFICATE' => [
                 ['value' => AmazonSkillManifest::CERTIFICATE_TYPE_TRUSTED, 'description' => 'My Development endpoint has a certificate from a trusted certificate authority'],

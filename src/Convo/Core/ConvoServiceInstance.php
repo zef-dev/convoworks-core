@@ -353,12 +353,32 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                 $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SALES_BLOCK);
                 try {
                     $block->run($request, $response);
-                } catch (StateChangedException $e) {
+                } catch (\Convo\Core\SessionEndedException $e) {
+                    $this->_logger->info('Session terminate signal.');
+                }  catch (StateChangedException $e) {
                     $this->_logger->info($e->getMessage());
                     $this->_readState($e->getState(), $request, $response);
                 }
                 $this->_logger->info('Exiting ...');
                 return;
+            }
+
+            if ( is_a( $request, '\Convo\Core\Adapters\Alexa\AmazonCommandRequest')) {
+                /** @var \Convo\Core\Adapters\Alexa\AmazonCommandRequest $request */
+                if ($request->isVoicePinConfirmationRequest()) {
+                    $this->_logger->info('Voice PIN Confirmation request.');
+                    $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_VOICE_PIN_CONFIRMATION_BLOCK);
+                    try {
+                        $block->run($request, $response);
+                    } catch (\Convo\Core\SessionEndedException $e) {
+                        $this->_logger->info('Session terminate signal.');
+                    }  catch (StateChangedException $e) {
+                        $this->_logger->info($e->getMessage());
+                        $this->_readState($e->getState(), $request, $response);
+                    }
+                    $this->_logger->info('Exiting ...');
+                    return;
+                }
             }
 
             // SESSION START

@@ -16,6 +16,7 @@ interface IRunnableBlock extends IConversationElement, IIdentifiableComponent
 	const ROLE_CONVERSATION_BLOCK  =   'conversation_block';
 	const ROLE_MEDIA_PLAYER        =   'media_player';
 	const ROLE_SALES_BLOCK   	   =   'sales_block';
+	const ROLE_VOICE_PIN_CONFIRMATION_BLOCK = 'voice_pin_confirmation_block';
 	const ROLE_SESSION_START       =   'session_start';
 	const ROLE_SESSION_ENDED       =   'session_ended';
 	const ROLE_SERVICE_PROCESSORS  =   'service_processors';
