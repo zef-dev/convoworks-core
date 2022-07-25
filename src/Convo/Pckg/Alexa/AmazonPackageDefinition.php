@@ -1845,7 +1845,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     '_descend' => true,
                     '_help' =>  array(
                         'type' => 'file',
-                        'filename' => 'get-amazon-user-element.html'
+                        'filename' => 'alexa-prompt-element.html'
                     )
                 ]
             ),
@@ -2005,7 +2005,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     '_descend' => true,
                     '_help' =>  array(
                         'type' => 'file',
-                        'filename' => 'get-amazon-user-element.html'
+                        'filename' => 'alexa-dialog-validator-element.html'
                     )
                 ]
             ),
@@ -2051,7 +2051,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     ),
                     '_help' =>  array(
                         'type' => 'file',
-                        'filename' => 'yes-no-processor.html'
+                        'filename' => 'alexa-dialog-processor.html'
                     ),
                     '_workflow' => 'process',
                     '_factory' => new class ( $this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
@@ -2125,7 +2125,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     ),
                     '_help' =>  array(
                         'type' => 'file',
-                        'filename' => 'intent-request-filter.html'
+                        'filename' => 'dialog-intent-request-filter.html'
                     ),
                     '_workflow' => 'filter',
                     '_factory' => new class ($this->_packageProviderFactory, $this->_convoServiceDataProvider) implements \Convo\Core\Factory\IComponentFactory

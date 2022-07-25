@@ -1,3 +1,27 @@
-<div>
-    <h1>Alexa Dialog Processor</h1>
+<div class="for-help">
+    <h3>Alexa Dialog Processor</h3>
+
+    <p>Enables you to handle an intent of which all intent slots have to be filled in order to fulfill the intent request.</p>
+
+    <h3>When to use?</h3>
+
+    <p>If you have an Intent which requires all slots to be filled in order to fulfill the Intent Request.</p>
+    <p>Use specialized filter <code>Dialog Intent Filter</code> and its additional elements to define the dialog definition for this intent and its slots.</p>
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>In the <b>Request filters</b> container, add an <b>Dialog Intent Filter</b> element with a <b>Intent Slot Dialog</b></li>
+        <li>In the <b>OK flow</b>, add elements to be executed if your filter has been matched against the following dialog states "STARTED", "IN_PROGRESS" or "COMPLETED". Depending on the delegation strategy, in case it is "automatic" you can just place elements to execute and that is it. In case you have the delegation strategy set to manual you will receive intent requests with dialog state which can be: "STARTED", "IN_PROGRESS" or "COMPLETED". In case it is "STARTED" or "IN_PROGRESS" use the <code>Dialog Delegate Element</code> which is able to pre-fill some slots of the intent or just leave it as it is, to delegate the conversation to Alexa Dialog.</li>
+    </ol>
+
+    <p>OK Flow Result Parameters Example</p>
+    <ul>
+        <li>Get the name of the intent - <code>${result.intentName}</code></li>
+        <li>Get the dialog state of the intent which can be ("STARTED", "IN_PROGRESS" or "COMPLETED") - <code>${result.dialogState}</code></li>
+        <li>Get the confirmation status of the intent which can be ("NONE", "ACCEPTED" or "DENIED") <code>${result.intentConfirmationStatus}</code></li>
+        <li>Get the value of the intent slot <code>${result.slotName.value}</code></li>
+        <li>Get the confirmation status of the intent slot <code>${result.slotName.confirmationStatus}</code></li>
+    </ul>
+
+    <p>For more info please check out the Official Alexa Documentation at <a href="https://developer.amazon.com/en-US/docs/alexa/custom-skills/delegate-dialog-to-alexa.html#ways-to-delegate-the-dialog-to-alexa" target="_blank">Ways to delegate the dialog to Alexa</a>.</p>
 </div>

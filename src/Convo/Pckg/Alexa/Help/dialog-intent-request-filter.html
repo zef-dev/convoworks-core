@@ -1,0 +1,43 @@
+<div class="for-help">
+    <h3>Dialog Intent Request Filter</h3>
+
+    <p>Reads the intent which has dialog state of "STARTED", "IN_PROGRESS" or "COMPLETED". This filter is also used to define the Alexa Dialog Model and Delegation Strategy based on the intent.</p>
+
+    <h3>When to use?</h3>
+
+    <p>When you want to use the Dialog Delegation feature on Alexa.</p>
+
+
+    <h4>Parameters:</h4>
+    <ul>
+        <li><var>Intent</var> - Intent to delegate to</li>
+        <li><var>Delegation Strategy</var> - Here we have two available options, <code>AUTOMATIC</code> or <code>MANUAL</code>. When selected <code>AUTOMATIC</code> you will receive an intent request with dialog state <code>"COMPLETED"</code> or <code>MANUAL</code> where you can update an intent with the <code>Dialog Delegate Element</code></li>
+    </ul>
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>Select an intent you want to delegate to.</li>
+        <li>Select dialog delegation strategy which can be ("AUTOMATIC" or "MANUAL").</li>
+        <li>In the <b>Intent Slot Dialog Filters</b> container, add an <b>Intent Slot Dialog</b> elements which can also contain <code>Alexa Prompt Dialog</code> elements which asks a question about the slot to be filled, multiple <b>Alexa Dialog Validation Element</b> elements which define the validation of the value of the target slot, and <code>Alexa Prompt Dialog</code> elements which define the intent slot confirmation.</li>
+        <!--<li>
+            <span>You can check the <b>Use APL User Event Argument Part</b> checkbox to specify a part of an APL User Argument to be caught, or you can leave it so that the reader can catch all APL User Events regardless of the provided arguments.</span>
+        </li>
+        <li>
+            <span>Enter a part of the APL User Event Argument in <b>APL User Event Argument Part</b>.</span>
+            <br>
+            <p>Examples:</p>
+            <ul>
+                <li>To catch the list item selected APL User Event from APL Arguments <code>${request.aplArguments[0]['selected_list_item_key']}</code></li>
+                <li>To catch a part from APL Arguments - <code>selected_list_item_key</code></li>
+            </ul>
+        </li>
+        <li>
+            <span>Make use of the Result variables to do what you want.</span>
+            <p>Helpful Result variables:</p>
+            <ul>
+                <li>To get the intent name - <code>${result.intentName}</code></li>
+                <li>To get the APL Arguments of an APL User Event - <code>${result.aplArguments}</code></li>
+            </ul>
+        </li>-->
+    </ol>
+</div>
