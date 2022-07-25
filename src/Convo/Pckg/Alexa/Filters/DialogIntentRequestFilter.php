@@ -3,13 +3,11 @@
 namespace Convo\Pckg\Alexa\Filters;
 
 use Convo\Core\ComponentNotFoundException;
-use Convo\Core\Intent\IntentModel;
 use Convo\Core\Publish\IPlatformPublisher;
 use Convo\Core\Rest\RestSystemUser;
 use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
-use phpDocumentor\Reflection\Types\This;
 
-class DialogIntentRequestFilter extends AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IRequestFilter, \Convo\Core\Intent\IIntentDriven, \Convo\Core\Adapters\Alexa\IAlexaDialogDriven
+class DialogIntentRequestFilter extends AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IRequestFilter, \Convo\Core\Intent\IIntentDriven, \Convo\Core\Adapters\Alexa\IAlexaDialogDriven, IAlexaDialogIntentFilter
 {
     /**
      * @var \Convo\Core\Factory\PackageProviderFactory
@@ -145,6 +143,9 @@ class DialogIntentRequestFilter extends AbstractWorkflowContainerComponent imple
 
         $intentConfirmationAlexaPrompts = [];
         foreach ($this->_alexaPrompts as $alexaPrompt) {
+            /**
+             * @var $alexaPrompt \Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt
+             */
             $intentConfirmationAlexaPrompts[] = $alexaPrompt->getAlexaPrompt();
         }
 
@@ -345,15 +346,6 @@ class DialogIntentRequestFilter extends AbstractWorkflowContainerComponent imple
         }
 
         return $serviceWorkflowEntitiesOfIntent;
-    }
-
-    private function _getServiceWorkflowEntities($service) {
-        $user = new RestSystemUser();
-        return $this->_convoServiceDataProvider->getServiceData(
-            $user,
-            $service->getId(),
-            IPlatformPublisher::MAPPING_TYPE_DEVELOP
-        )['entities'] ?? [];
     }
 
     // UTIL

@@ -2,7 +2,7 @@
 
 namespace Convo\Pckg\Alexa\Elements;
 
-class AlexaDialogValidatorElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
+class AlexaDialogValidatorElement extends \Convo\Core\Workflow\AbstractWorkflowComponent implements IAlexaDialogSlotValidator
 {
     private $_slotToValidate = '';
     private $_alexaPrompts = [];

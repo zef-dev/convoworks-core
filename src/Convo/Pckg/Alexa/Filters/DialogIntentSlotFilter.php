@@ -6,7 +6,7 @@ use Convo\Core\Preview\PreviewSpeechPart;
 use Convo\Core\Workflow\IIntentAwareRequest;
 use Convo\Pckg\Core\Filters\PlatformIntentReader;
 
-class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core\Preview\IUserSpeechResource, IDialogFilter
+class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core\Preview\IUserSpeechResource, IAlexaDialogIntentSlotFilter
 {
     /**
      * @var \Convo\Core\Factory\PackageProviderFactory
@@ -40,6 +40,9 @@ class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core
     public function getAlexaPrompts() {
         $alexaPrompts = [];
         foreach ($this->_alexaPrompts as $alexaPrompt) {
+            /**
+             * @var $alexaPrompt \Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt
+             */
             $alexaPrompts[$this->getTargetSlot()][] = $alexaPrompt->getAlexaPrompt();
         }
         return $alexaPrompts;
@@ -50,6 +53,9 @@ class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core
         $dialogValidators = [];
 
         foreach ($this->_dialogValidationRules as $dialogValidationRule) {
+            /**
+             * @var $dialogValidationRule \Convo\Pckg\Alexa\Elements\IAlexaDialogSlotValidator
+             */
             $dialogValidationRule->setSlotToValidate($this->_targetSlot);
             if (!empty($dialogValidationRule->getDialogValidation())) {
                 $dialogValidators[$this->getTargetSlot()][] = $dialogValidationRule->getDialogValidation();

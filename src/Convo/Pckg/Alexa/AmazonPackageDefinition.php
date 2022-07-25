@@ -1858,7 +1858,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     'alexa_prompts' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
-                            /*'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),*/
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt'),
                             'multiple' => true
                         ),
                         'defaultValue' => [],
@@ -2040,7 +2040,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     'request_filters' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
-                            'allow_interfaces' => array('\Convo\Core\Workflow\IRequestFilter'),
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Filters\IAlexaDialogIntentFilter'),
                             'multiple' => true
                         ),
                         'defaultValue' => array(),
@@ -2096,7 +2096,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     'intent_slot_dialog_filters' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
-                            'allow_interfaces' => array('\Convo\Core\Intent\IIntentAdapter'),
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Filters\IAlexaDialogIntentSlotFilter'),
                             'multiple' => true
                         ),
                         'defaultValue' => array(),
@@ -2108,7 +2108,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     'alexa_prompts' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
-                            /*'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),*/
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt'),
                             'multiple' => true
                         ),
                         'defaultValue' => [],
@@ -2173,7 +2173,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     'alexa_prompts' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
-                            /*'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),*/
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt'),
                             'multiple' => true
                         ),
                         'defaultValue' => [],
@@ -2185,7 +2185,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     'dialog_validation_rules' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
-                            /*'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),*/
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Elements\IAlexaDialogSlotValidator'),
                             'multiple' => true
                         ),
                         'defaultValue' => [],
@@ -2197,7 +2197,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     'intent_slot_confirmation_alexa_prompts' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
-                            /*'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),*/
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt'),
                             'multiple' => true
                         ),
                         'defaultValue' => [],

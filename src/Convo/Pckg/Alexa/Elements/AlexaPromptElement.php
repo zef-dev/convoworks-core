@@ -2,7 +2,7 @@
 
 namespace Convo\Pckg\Alexa\Elements;
 
-class AlexaPromptElement extends \Convo\Core\Workflow\AbstractWorkflowComponent
+class AlexaPromptElement extends \Convo\Core\Workflow\AbstractWorkflowComponent implements IAlexaDialogPrompt
 {
     private $_prompt = '';
 
