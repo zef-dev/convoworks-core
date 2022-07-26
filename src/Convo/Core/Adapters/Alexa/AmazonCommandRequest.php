@@ -48,6 +48,10 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	private $_isAplUserEvent = false;
 	private $_aplArguments;
 
+    private $_dialogState = null;
+    private $_intentConfirmationStatus = null;
+    private $_intentSlots = null;
+
 	/**
 	 * @var \Psr\Log\LoggerInterface
 	 */
@@ -88,6 +92,9 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
             $this->_accessToken		=	$this->_data['context']['System']['person']['accessToken'];
         }
 		$this->_personId		=	$this->_data['context']['System']['person']['personId'] ?? null;
+		$this->_dialogState		=	$this->_data['request']['dialogState'] ?? null;
+		$this->_intentConfirmationStatus		=	$this->_data['request']['intent']['confirmationStatus'] ?? null;
+		$this->_intentSlots		=	['request']['intent']['slots'] ?? null;
 
 		$this->_intentType		=	$this->_data['request']['type'];
 		$this->_intentName		=   isset( $this->_data['request']['intent']['name']) ? $this->_data['request']['intent']['name'] : null;
@@ -327,6 +334,18 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 
     public function getPersonId() {
         return $this->_personId;
+    }
+
+    public function getDialogState() {
+        return $this->_dialogState;
+    }
+
+    public function getIntentConfirmationStatus() {
+        return $this->_intentConfirmationStatus;
+    }
+
+    public function getIntentSlotConfirmationStatus($slotName) {
+        return $this->_intentSlots[$slotName]['confirmationStatus'] ?? null;
     }
 
 	private function _parseSlotValues( $slots)
