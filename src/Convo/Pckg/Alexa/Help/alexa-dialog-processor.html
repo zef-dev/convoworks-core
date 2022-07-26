@@ -18,9 +18,9 @@
     <ul>
         <li>Get the name of the intent - <code>${result.intentName}</code></li>
         <li>Get the dialog state of the intent which can be ("STARTED", "IN_PROGRESS" or "COMPLETED") - <code>${result.dialogState}</code></li>
-        <li>Get the confirmation status of the intent which can be ("NONE", "ACCEPTED" or "DENIED") <code>${result.intentConfirmationStatus}</code></li>
+        <li>Get the confirmation status of the intent which can be ("NONE", "CONFIRMED" or "DENIED") <code>${result.intentConfirmationStatus}</code></li>
         <li>Get the value of the intent slot <code>${result.slotName.value}</code></li>
-        <li>Get the confirmation status of the intent slot <code>${result.slotName.confirmationStatus}</code></li>
+        <li>Get the confirmation status of the intent slot which can be ("NONE", "CONFIRMED" or "DENIED") <code>${result.slotName.confirmationStatus}</code></li>
     </ul>
 
     <p>For more info please check out the Official Alexa Documentation at <a href="https://developer.amazon.com/en-US/docs/alexa/custom-skills/delegate-dialog-to-alexa.html#ways-to-delegate-the-dialog-to-alexa" target="_blank">Ways to delegate the dialog to Alexa</a>.</p>
