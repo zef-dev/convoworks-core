@@ -17,4 +17,13 @@
         <li>Just fill the <code>Alexa Prompt</code> with the phrase what Alexa will say.</li>
         <li>Place the element in one of the respective elements and containers defined before.</li>
     </ol>
+
+    <h3>Example Usage</h3>
+    <ul>
+        <li>For general question you can write something like this: "What planet do you want to know about?"</li>
+        <li>For question that represents an intent slot confirmation flow you can write something like this: "Is systolic <code>{systolic}</code> OK?"</li>
+        <li>For question that represents an intent confirmation flow you can write something like this: "I have your meeting request on <code>{appointmentDate}</code> at <code>{appointmentTime}</code>. Is that correct?"</li>
+    </ul>
+    <p>Note that in the example below we used <code>{systolic}</code>, <code>{appointmentDate}</code> or <code>{appointmentTime}</code>. This expression represent the actual slot value which will also be the part of the Alexa Speech Prompt.</p>
+    <p>With that you can let the user know if the slot values are correct to continue with the flow.</p>
 </div>

@@ -1,11 +1,11 @@
 <div class="for-help">
     <h3>Dialog Intent Slot Filter</h3>
 
-    <p>Reads the intent which has dialog state of "STARTED", "IN_PROGRESS" or "COMPLETED". This filter is also used to define the Alexa Dialog Model.</p>
+    <p>Defines slot filling for a specific slot with user utterances as answer to the provided question form the Alexa Dialog. This filter is also used to define the Alexa Dialog Model.</p>
 
     <h3>When to use?</h3>
 
-    <p>When you want to use the Dialog Delegation feature on Alexa.</p>
+    <p>When you want to fill a specific slot for an Intent.</p>
 
     <h4>Parameters:</h4>
     <ul>
@@ -16,8 +16,9 @@
     <h3>How to use: </h3>
     <ol>
         <li>Select a sub intent where the user provides answer to the Alexa Dialog question.</li>
+        <li>Select a target slot which has to be filled.</li>
         <li>In the <b>Alexa Prompts</b> container, add an <b>Alexa Prompt Element</b> and write the specific question for that slot. For example: "What date would you like to check?"</li>
         <li>In the <b>Dialog Validation Rules</b> container, add an <b>Alexa Dialog Validator Element</b> to add a validation rule for the current slot value. For more info check out the help section of <b>Alexa Dialog Validator Element</b>.</li>
-        <li>In the <b>Intent Slot Confirmation</b> container, add an <b>Alexa Prompt Element</b> and write the specific question for that slot if the current slot value is OK. For example: "Is systolic {systolic} OK?". Note that the {systolic} from the example is the actual name of the slot.</li>
+        <li>In the <b>Intent Slot Confirmation</b> container, add an <b>Alexa Prompt Element</b> and write the specific question for that slot to check if the current slot value is OK with te user. For example: "Is systolic {systolic} OK?". Note that the {systolic} from the example is the actual name of the slot.</li>
     </ol>
 </div>
