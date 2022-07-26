@@ -2214,7 +2214,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     ),
                     '_help' =>  array(
                         'type' => 'file',
-                        'filename' => 'convo-intent-reader.html'
+                        'filename' => 'dialog-intent-slot-filter.html'
                     ),
                     '_workflow' => 'filter',
                     '_descend' => true,
