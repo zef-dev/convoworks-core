@@ -26,10 +26,11 @@ class AlexaDialogProcessor extends \Convo\Pckg\Core\Processors\AbstractServicePr
 
     public function process( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response, \Convo\Core\Workflow\IRequestFilterResult $result)
     {
-        if ( !is_a( $request, \Convo\Core\Workflow\IIntentAwareRequest::class)) {
-            throw new \Exception( 'This processor requires IIntentAwareRequest environment');
+        if ( !is_a( $request, \Convo\Core\Adapters\Alexa\AmazonCommandRequest::class)) {
+            throw new \Exception( 'This processor requires AmazonCommandRequest environment');
         }
-        $dialogState = $request->getPlatformData()['request']['dialogState'] ?? '';
+
+        $dialogState = $request->getDialogState();
 
         $this->_logger->debug('Got dialog state ['.$dialogState.']');
         if (!empty($dialogState)) {

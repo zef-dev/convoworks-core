@@ -23,10 +23,13 @@ class DialogIntentRequestFilter extends AbstractWorkflowContainerComponent imple
 
     private $_delegationStrategy;
 
+    /**
+     * @var \Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt[]
+     */
     private $_alexaPrompts = [];
 
     /**
-	 * @var \Convo\Core\Intent\IIntentAdapter[]
+	 * @var \Convo\Pckg\Alexa\Filters\IAlexaDialogIntentSlotFilter[]
 	 */
     private $_adapters = [];
 
@@ -75,7 +78,7 @@ class DialogIntentRequestFilter extends AbstractWorkflowContainerComponent imple
             return false;
         }
 
-        $dialogState = $request->getPlatformData()['request']['dialogState'] ?? '';
+        $dialogState = $request->getDialogState();
         if (empty($dialogState)) {
             $this->_logger->notice("Dialog state can't be empty.");
             return false;
@@ -88,20 +91,18 @@ class DialogIntentRequestFilter extends AbstractWorkflowContainerComponent imple
     public function filter( \Convo\Core\Workflow\IConvoRequest $request)
     {
         /** @var \Convo\Core\Adapters\Alexa\AmazonCommandRequest $request */
-
-        $platformData = $request->getPlatformData();
         $result    =  new \Convo\Core\Workflow\DefaultFilterResult();
         $slotValues = $request->getSlotValues();
 
-        $intentConfirmationStatus = $platformData['request']['intent']['confirmationStatus'] ?? 'NONE';
+        $intentConfirmationStatus = $request->getIntentConfirmationStatus();
         $this->_logger->debug( 'Matching dialog against intent ['.$request->getIntentName().'] with slots ['.json_encode($slotValues).']');
-        $result->setSlotValue('dialogState', $request->getPlatformData()['request']['dialogState']);
+        $result->setSlotValue('dialogState', $request->getDialogState());
         $result->setSlotValue('intentName', $request->getIntentName());
         $result->setSlotValue('intentConfirmationStatus', $intentConfirmationStatus);
 
         if (!empty($slotValues)) {
             foreach ($slotValues as $slotName => $slotValue) {
-                $slotConfirmationStatus = $platformData['request']['intent']['slots'][$slotName]['confirmationStatus'] ?? 'NONE';
+                $slotConfirmationStatus =  $request->getIntentSlotConfirmationStatus($slotName);
                 $result->setSlotValue($slotName, ['value' => $slotValue, 'confirmationStatus' => $slotConfirmationStatus]);
             }
         }
@@ -143,9 +144,6 @@ class DialogIntentRequestFilter extends AbstractWorkflowContainerComponent imple
 
         $intentConfirmationAlexaPrompts = [];
         foreach ($this->_alexaPrompts as $alexaPrompt) {
-            /**
-             * @var $alexaPrompt \Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt
-             */
             $intentConfirmationAlexaPrompts[] = $alexaPrompt->getAlexaPrompt();
         }
 
@@ -212,7 +210,6 @@ class DialogIntentRequestFilter extends AbstractWorkflowContainerComponent imple
 
         $dialogIntent['slots'] = [];
         $validationPrompts = [];
-        $confirmationPrompts = [];
         $this->_logger->debug('Going to prepare dialog slots.');
 
         foreach ($dialogEntitiesNames as $dialogEntitiesName) {

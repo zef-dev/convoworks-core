@@ -15,10 +15,19 @@ class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core
 
     private $_targetSlot = '';
 
+    /**
+     * @var \Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt[]
+     */
     private $_alexaPrompts = [];
 
+    /**
+     * @var \Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt[]
+     */
     private $_intentSlotConfirmationAlexaPrompts = [];
 
+    /**
+     * @var \Convo\Pckg\Alexa\Elements\IAlexaDialogSlotValidator[]
+     */
     private $_dialogValidationRules = [];
 
     public function __construct($config, $packageProviderFactory)
@@ -40,9 +49,6 @@ class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core
     public function getAlexaPrompts() {
         $alexaPrompts = [];
         foreach ($this->_alexaPrompts as $alexaPrompt) {
-            /**
-             * @var $alexaPrompt \Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt
-             */
             $alexaPrompts[$this->getTargetSlot()][] = $alexaPrompt->getAlexaPrompt();
         }
         return $alexaPrompts;
@@ -53,9 +59,6 @@ class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core
         $dialogValidators = [];
 
         foreach ($this->_dialogValidationRules as $dialogValidationRule) {
-            /**
-             * @var $dialogValidationRule \Convo\Pckg\Alexa\Elements\IAlexaDialogSlotValidator
-             */
             $dialogValidationRule->setSlotToValidate($this->_targetSlot);
             if (!empty($dialogValidationRule->getDialogValidation())) {
                 $dialogValidators[$this->getTargetSlot()][] = $dialogValidationRule->getDialogValidation();
@@ -73,6 +76,9 @@ class DialogIntentSlotFilter extends PlatformIntentReader implements \Convo\Core
         return $intentSlotConfirmationAlexaPrompts;
     }
 
+    /**
+     * TODO: change this after green light
+     */
     public function getUserUtterances() {
         $service = $this->getService();
         $provider = $this->_packageProviderFactory->getProviderFromPackageIds($service->getPackageIds());

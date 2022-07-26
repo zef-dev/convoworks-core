@@ -5,7 +5,12 @@ namespace Convo\Pckg\Alexa\Elements;
 class AlexaDialogValidatorElement extends \Convo\Core\Workflow\AbstractWorkflowComponent implements IAlexaDialogSlotValidator
 {
     private $_slotToValidate = '';
+
+    /**
+     * @var \Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt[]
+     */
     private $_alexaPrompts = [];
+
     private $_validationRule = '';
 
     // isInSet
@@ -68,7 +73,10 @@ class AlexaDialogValidatorElement extends \Convo\Core\Workflow\AbstractWorkflowC
             'prompts' => $this->_getAlexaValidationPrompts()
         ];
         $validation['validation']['name'] = $validationRule;
-        $validation['validation']['properties'] = $this->_getValidationProperties($validationRule);
+        $value = $this->_getValidationProperties($validationRule);
+        if (!empty($value)) {
+            $validation['validation']['properties'] = $value;
+        }
 
         return $validation;
     }
