@@ -1179,11 +1179,12 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 		$permissions = $config['permissions'] ?? [];
 
+        $public_name = $config['skill_preview_in_store']['public_name'] ?? $this->_invocationToName($meta['name']);
         $manifest->setGlobalEndpoint(
             $this->_serviceReleaseManager->getWebhookUrl(
                 $this->_user, $this->_serviceId, $this->getPlatformId()
             )
-        )->setName($locales, $meta['name'])
+        )->setName($locales, $public_name)
             ->setSummary($locales, $config['skill_preview_in_store']['one_sentence_description'])
             ->setDescription($locales, $config['skill_preview_in_store']['detailed_description'])
             ->setWhatsNew($locales, $config['skill_preview_in_store']['whats_new'])
