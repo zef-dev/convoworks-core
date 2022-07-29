@@ -2,11 +2,14 @@
 
 ## [Current development]
 
- * Fixed collection skipping optional elements
- * Add optional element interface to the run once element
- * Consider value "?" as empty value in Convo Intent Reader
-
 ## [Releases]
+
+## 0.22.15.0 - 2022-07-29
+* Added new block type - Voice PIN Confirmation block
+* Added support for Alexa dialogue delegation
+* Fixed collection skipping optional elements
+* Add optional element interface to the run once element
+* Consider value "?" as empty value in Convo Intent Reader
 
 ## 0.22.14.0 - 2022-06-10
 * Add functions `array_filter`, `serialize`, `unserialize`, `empty`
