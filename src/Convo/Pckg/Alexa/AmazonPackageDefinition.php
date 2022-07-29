@@ -1784,7 +1784,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                 $this->getNamespace(),
                 '\Convo\Pckg\Alexa\Elements\VoicePinConfirmationBlock',
                 'Voice PIN Confirmation Block',
-                'A special role "sales_block" block, that handles Ceca.',
+                'A block that handles user profile PIN confirmations.',
                 array(
                     'role' => array(
                         'defaultValue' => IRunnableBlock::ROLE_VOICE_PIN_CONFIRMATION_BLOCK
