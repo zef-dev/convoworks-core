@@ -2151,7 +2151,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                 'Matches against Convo intent definitions',
                 array(
                     'intent' => array(
-                        'editor_type' => 'convo_intent',
+                        'editor_type' => 'intent_delegate',
                         'editor_properties' => array(
                             'multiple' => false
                         ),
@@ -2161,7 +2161,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         'valueType' => 'string'
                     ),
                     'target_slot' => array(
-                        'editor_type' => 'text',
+                        'editor_type' => 'delegate_slot',
                         'editor_properties' => array(
                             'multiple' => false
                         ),
