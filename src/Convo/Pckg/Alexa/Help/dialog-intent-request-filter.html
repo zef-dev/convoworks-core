@@ -1,0 +1,22 @@
+<div class="for-help">
+    <h3>Dialog Intent Request Filter</h3>
+
+    <p>Reads the intent which has dialog state of "STARTED", "IN_PROGRESS" or "COMPLETED". This filter is also used to define the Alexa Dialog Model and Delegation Strategy based on the intent.</p>
+
+    <h3>When to use?</h3>
+
+    <p>When you want to use the Dialog Delegation feature on Alexa.</p>
+
+    <h4>Parameters:</h4>
+    <ul>
+        <li><var>Intent</var> - Intent to delegate to</li>
+        <li><var>Delegation Strategy</var> - Here we have two available options, <code>AUTOMATIC</code> or <code>MANUAL</code>. When selected <code>AUTOMATIC</code> you will receive an intent request with dialog state <code>"COMPLETED"</code> or <code>MANUAL</code> where you can update an intent with the <code>Dialog Delegate Element</code></li>
+    </ul>
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>Select an intent you want to delegate to.</li>
+        <li>Select dialog delegation strategy which can be ("AUTOMATIC" or "MANUAL").</li>
+        <li>In the <b>Intent Slot Dialog Filters</b> container, add an <b>Intent Slot Dialog</b> elements which can also contain <code>Alexa Prompt Dialog</code> elements which asks a question about the slot to be filled, multiple <b>Alexa Dialog Validation Element</b> elements which define the validation of the value of the target slot, and <code>Alexa Prompt Dialog</code> elements which define the intent slot confirmation.</li>
+    </ol>
+</div>

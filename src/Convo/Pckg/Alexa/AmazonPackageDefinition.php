@@ -45,6 +45,11 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
      */
     private $_convoServiceDataProvider;
 
+    /**
+     * @var \Convo\Core\Factory\PackageProviderFactory
+     */
+    private $_packageProviderFactory;
+
 	public function __construct(
 	    \Psr\Log\LoggerInterface $logger,
         \Convo\Core\Util\IHttpFactory $httpFactory,
@@ -52,7 +57,8 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
         \Convo\Core\Adapters\Alexa\Api\AmazonUserApi $amazonUserApi,
 		AlexaCustomerProfileApi $alexaCustomerProfileApi,
 		AlexaPersonProfileApi $alexaPersonProfileApi,
-		AlexaRemindersApi $alexaRemindersApi
+		AlexaRemindersApi $alexaRemindersApi,
+        \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory
     ) {
         $this->_httpFactory = $httpFactory;
         $this->_convoServiceDataProvider = $convoServiceDataProvider;
@@ -60,6 +66,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 		$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
 		$this->_alexaPersonProfileApi = $alexaPersonProfileApi;
 		$this->_alexaRemindersApi = $alexaRemindersApi;
+		$this->_packageProviderFactory = $packageProviderFactory;
 
 		parent::__construct( $logger, self::NAMESPACE, __DIR__);
 	}
@@ -1755,6 +1762,255 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 			),
             new ComponentDefinition(
                 $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\DialogDelegateElement',
+                'Dialog Delegate Element',
+                'Delegate to Alexa Delegation.',
+                [
+                    'delegation_action' => [
+                        'editor_type' => 'select',
+                        'editor_properties' => [
+                            'options' => [
+                                'DELEGATE' => 'Delegate',
+                                'DELEGATE_AND_UPDATE_INCOMING_INTENT' => 'Delegate and update incoming intent',
+                                'DELEGATE_AND_UPDATE_ANOTHER_INTENT' => 'Delegate and update another intent'
+                            ]
+                        ],
+                        'defaultValue' => 'DELEGATE',
+                        'name' => 'Action',
+                        'description' => 'When enabled, this directive will update the selected intent.',
+                        'valueType' => 'string'
+                    ],
+                    'intent_to_update' => array(
+                        'editor_type' => 'convo_intent',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.delegation_action === 'DELEGATE_AND_UPDATE_ANOTHER_INTENT'",
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Intent',
+                        'description' => 'Intent to Update',
+                        'valueType' => 'string'
+                    ),
+                    'intent_slot_values' => array(
+                        'editor_type' => 'params',
+                        'editor_properties' => array(
+                            'multiple' => 'true',
+                            'dependency' => "component.properties.delegation_action === 'DELEGATE_AND_UPDATE_INCOMING_INTENT' || component.properties.delegation_action === 'DELEGATE_AND_UPDATE_ANOTHER_INTENT'"
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Intent Slot Values',
+                        'description' => 'Values of intent slots to be updated. If left empty, only the "Dialog.Delegate" directive will be sent.',
+                        'valueType' => 'array'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' =>'<div>'.
+                            '<div ng-if="!component.properties.delegation_action === \'DELEGATE\'" class="code">Send the <b>Dialog.Delegate</b> directive.</div ng-if="!component.properties.should_update_intent" class="code">'.
+                            '<div ng-if="component.properties.delegation_action !== \'DELEGATE\'" class="code"><span>Send the <b>Dialog.Delegate</b> directive</span><br><span><b>AND</b></span><br>Update slot values of the </span> <b ng-if="component.properties.delegation_action === \'DELEGATE_AND_UPDATE_INCOMING_INTENT\'">incoming intent</b> <b ng-if="component.properties.delegation_action === \'DELEGATE_AND_UPDATE_ANOTHER_INTENT\'">{{component.properties.intent_to_update}}</b>:<br>' .
+                            ' <span ng-if="!component.properties[\'_use_var_properties\']" ng-repeat="(key, val) in component.properties.intent_slot_values track by key">' .
+                            ' <span class="statement"></span> <b>{{ key}}</b> = <b>{{ val }};</b><br>' .
+                            ' </span>' .
+                            '<span ng-if="component.properties[\'_use_var_properties\']">{{ component.properties.intent_slot_values }}</span>' .
+                            '</div>'.
+                            '</div>'
+                    ),
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'get-amazon-user-element.html'
+                    )
+                ]
+            ),
+            new ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\AlexaPromptElement',
+                'Alexa Prompt Element',
+                'What will Alexa as an response.',
+                [
+                    'alexa_prompt' => [
+                        'editor_type' => 'ssml',
+                        'editor_properties' => [],
+                        'defaultValue' => '',
+                        'name' => 'Alexa Prompt',
+                        'description' => 'What will Alexa say when delegation to dialog.',
+                        'valueType' => 'string'
+                    ],
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="we-say">' .
+                            '<div> Alexa says: <span class="we-say-text">{{component.properties.alexa_prompt}}</span> </div>' .
+                            '</div>'
+                    ),
+                    '_workflow' => 'filter',
+                    '_descend' => true,
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'alexa-prompt-element.html'
+                    )
+                ]
+            ),
+            new ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\AlexaDialogValidatorElement',
+                'Alexa Dialog Validator Element',
+                'Initialize an Amazon user.',
+                [
+                    'alexa_prompts' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => true,
+                        'name' => 'Alexa Prompts',
+                        'description' => 'Flow to be executed if the processor matches an affirmative value.',
+                        'valueType' => 'class'
+                    ),
+                    'validation_rule' => [
+                        'editor_type' => 'select',
+                        'editor_properties' => [
+                            'options' => [
+                                'hasEntityResolutionMatch' => 'Has Entity Resolution Match',
+                                'isInSet' => 'Is In Set',
+                                'isNotInSet' => 'Is Not In Set',
+                                'isGreaterThan' => 'Is Greater Than',
+                                'isGreaterThanOrEqualTo' => 'Is Greater Than Or Equal To',
+                                'isLessThan' => 'Is Less Than',
+                                'isLessThanOrEqualTo' => 'Is Less Than Or Equal To',
+                                'isInDuration' => 'Is In Duration',
+                                'isNotInDuration' => 'Is Not In Duration'
+                            ]
+                        ],
+                        'defaultValue' => 'hasEntityResolutionMatch',
+                        'name' => 'Validation Rule',
+                        'description' => 'Validation rule to check against.',
+                        'valueType' => 'string'
+                    ],
+                    'validation_rule_is_in_set' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isInSet'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Values',
+                        'description' => 'Value to check if the actual slot value is in an given set',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_not_in_set' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isNotInSet'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Values',
+                        'description' => 'Value to check if the actual slot value is not in an given set.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_greater_than' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isGreaterThan'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Value',
+                        'description' => 'Value to check if is greater then the actual slot value.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_greater_than_or_equal_to' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isGreaterThanOrEqualTo'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Value',
+                        'description' => 'Value to check if is greater or equal then the actual slot value.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_less_than' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isLessThan'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Value',
+                        'description' => 'Value to check if is less than the actual slot value.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_less_than_or_equal_to' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isLessThanOrEqualTo'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Value',
+                        'description' => 'Value to check if is less or equal to actual slot value.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_in_duration_start' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isInDuration'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Start',
+                        'description' => 'Start of is in duration.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_in_duration_end' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isInDuration'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'End',
+                        'description' => 'End of is in duration.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_not_in_duration_start' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isNotInDuration'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Start',
+                        'description' => 'Start of is not in duration.',
+                        'valueType' => 'string'
+                    ),
+                    'validation_rule_is_not_in_duration_end' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.validation_rule === 'isNotInDuration'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'End',
+                        'description' => 'Start of is not in duration.',
+                        'valueType' => 'string'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code">' .
+                            '<div ng-if="component.properties.validation_rule === \'hasEntityResolutionMatch\'">Incoming slot value has entity resolution match.</div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isInSet\'">Incoming slot value is in set of <b>{{component.properties.validation_rule_is_in_set}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isNotInSet\'">Incoming slot value is not in set of <b>{{component.properties.validation_rule_is_not_in_set}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isGreaterThan\'">Incoming slot value is greater than <b>{{component.properties.validation_rule_is_greater_than}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isGreaterThanOrEqualTo\'">Incoming slot value is greater than or equal to <b>{{component.properties.validation_rule_is_greater_than_or_equal_to}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isLessThan\'">Incoming slot value is less than <b>{{component.properties.validation_rule_is_less_than}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isLessThanOrEqualTo\'">Incoming slot value is less than or equal to <b>{{component.properties.validation_rule_is_less_than_or_equal_to}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isInDuration\'">Incoming slot value is in duration from <b>{{component.properties.validation_rule_is_in_duration_start}}</b> to <b>{{component.properties.validation_rule_is_in_duration_end}}</b> </div>' .
+                            '<div ng-if="component.properties.validation_rule === \'isNotInDuration\'">Incoming slot value is not in duration from <b>{{component.properties.validation_rule_is_not_in_duration_start}}</b> to <b>{{component.properties.validation_rule_is_not_in_duration_end}}</b> </div>' .
+                            '</div>'
+                    ),
+                    '_workflow' => 'filter',
+                    '_descend' => true,
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'alexa-dialog-validator-element.html'
+                    )
+                ]
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
                 '\Convo\Pckg\Alexa\Elements\VoicePinConfirmationDirectiveElement',
                 'Voice Pin Confirmation Directive Element',
                 'Voice Pin Confirmation Directive Element sends a Connections.StartConnection request which initiates the PIN confirmation step.',
@@ -1865,6 +2121,229 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     }
                 )
             ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\AlexaDialogProcessor',
+                'Alexa Dialog Processor',
+                'Process elements if dialog filters are activated',
+                array(
+                    'name' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Name',
+                        'description' => 'Optional name for component',
+                        'valueType' => 'string'
+                    ),
+                    'ok' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => false,
+                        'name' => 'OK Flow',
+                        'description' => 'Flow to be executed if the processor matches the target intent with dialog state STARTED, IN_PROGRESS or COMPLETED.',
+                        'valueType' => 'class'
+                    ),
+                    'request_filters' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Filters\IAlexaDialogIntentFilter'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'defaultOpen' => true,
+                        'name' => 'Request filters',
+                        'description' => 'Filters to be applied against request',
+                        'valueType' => 'class'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'alexa-dialog-processor.html'
+                    ),
+                    '_workflow' => 'process',
+                    '_factory' => new class ( $this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
+                    {
+                        public function __construct( )
+                        {
+
+                        }
+                        public function createComponent( $properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Elements\AlexaDialogProcessor( $properties, $service);
+                        }
+                    }
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Filters\DialogIntentRequestFilter',
+                'Dialog Intent Filter',
+                'Intent capable dialog request filter',
+                array(
+                    'intent' => array(
+                        'editor_type' => 'convo_intent',
+                        'editor_properties' => array(
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Intent',
+                        'description' => 'Name of the intent which activates this filter',
+                        'valueType' => 'string'
+                    ),
+                    'delegation_strategy' => [
+                        'editor_type' => 'select',
+                        'editor_properties' => [
+                            'options' => ['ALWAYS' => 'Automatic', 'SKILL_RESPONSE' => 'Manual']
+                        ],
+                        'defaultValue' => 'ALWAYS',
+                        'name' => 'Delegation Strategy',
+                        'description' => 'Intent level strategies will supersede the skill level setting selected in Interfaces.',
+                        'valueType' => 'string'
+                    ],
+                    'intent_slot_dialog_filters' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Filters\IAlexaDialogIntentSlotFilter'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'defaultOpen' => true,
+                        'name' => 'Intent Slot Dialog Filters',
+                        'description' => 'Filters by skill definition and intents in it',
+                        'valueType' => 'class'
+                    ),
+                    'alexa_prompts' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => true,
+                        'name' => 'Intent Confirmation Alexa Prompts',
+                        'description' => 'Flow to be executed if the processor matches an affirmative value.',
+                        'valueType' => 'class'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code">Intent to delegate '.
+                            '<b ng-if="component.properties.intent">{{ component.properties.intent}}</b>'.
+                            '</div>'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'dialog-intent-request-filter.html'
+                    ),
+                    '_workflow' => 'filter',
+                    '_factory' => new class ($this->_packageProviderFactory, $this->_convoServiceDataProvider) implements \Convo\Core\Factory\IComponentFactory
+                    {
+                        private $_packageProviderFactory;
+                        private $_convoServiceDataProvider;
+                        public function __construct( $packageProviderFactory, $convoServiceDataProvider)
+                        {
+                            $this->_packageProviderFactory	= $packageProviderFactory;
+                            $this->_convoServiceDataProvider	=	$convoServiceDataProvider;
+                        }
+                        public function createComponent( $properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Filters\DialogIntentRequestFilter( $properties, $this->_packageProviderFactory, $this->_convoServiceDataProvider);
+                        }
+                    }
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Filters\DialogIntentSlotFilter',
+                'Intent Slot Dialog',
+                'Matches against Convo intent definitions',
+                array(
+                    'intent' => array(
+                        'editor_type' => 'intent_delegate',
+                        'editor_properties' => array(
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Intent',
+                        'description' => 'Intent which contains possible user responses to Alexa Prompts.',
+                        'valueType' => 'string'
+                    ),
+                    'target_slot' => array(
+                        'editor_type' => 'delegate_slot',
+                        'editor_properties' => array(
+                            'multiple' => false
+                        ),
+                        'defaultValue' => null,
+                        'name' => 'Target Slot',
+                        'description' => 'Slot you want to target for dialog delegation.',
+                        'valueType' => 'string'
+                    ),
+                    'alexa_prompts' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => true,
+                        'name' => 'Alexa Prompts',
+                        'description' => 'Flow to be executed if the processor matches an affirmative value.',
+                        'valueType' => 'class'
+                    ),
+                    'dialog_validation_rules' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Elements\IAlexaDialogSlotValidator'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => true,
+                        'name' => 'Dialog Validation Rules',
+                        'description' => 'Flow to be executed if the processor matches an affirmative value.',
+                        'valueType' => 'class'
+                    ),
+                    'intent_slot_confirmation_alexa_prompts' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Pckg\Alexa\Elements\IAlexaDialogPrompt'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => [],
+                        'defaultOpen' => true,
+                        'name' => 'Intent Slot Confirmation Alexa Prompts',
+                        'description' => 'Flow to be executed if the processor matches an affirmative value.',
+                        'valueType' => 'class'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code">Slot for Dialog Delegation '.
+                            '<b ng-if="component.properties.target_slot">{{ component.properties.target_slot}}</b>'.
+                            '</div>'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'dialog-intent-slot-filter.html'
+                    ),
+                    '_workflow' => 'filter',
+                    '_descend' => true,
+                    '_factory' => new class ($this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
+                    {
+                        private $_packageProviderFactory;
+                        public function __construct( $packageProviderFactory)
+                        {
+                            $this->_packageProviderFactory	= $packageProviderFactory;
+                        }
+                        public function createComponent( $properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Filters\DialogIntentSlotFilter( $properties, $this->_packageProviderFactory);
+                        }
+                    }
+                )
+            )
         ];
     }
 
