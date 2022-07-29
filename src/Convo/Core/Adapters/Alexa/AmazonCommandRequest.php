@@ -17,7 +17,8 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	private $_sessionId = '';
 	private $_requestId = '';
 
-	private $_personId = '';
+	private $_personId = null;
+    private $_personAuthenticationConfidenceLevel = null;
 
 	private $_accessToken;
 	private $_aplToken;
@@ -34,6 +35,11 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 
 	private $_isMediaRequest = false;
 	private $_isSalesRequest = false;
+
+	private $_isVoicePinConfirmationRequest = false;
+	private $_voicePinConfirmationToken = '';
+	private $_voicePinConfirmationStatus = [];
+	private $_voicePinConfirmationResult = [];
 
     private $_selectedOption;
     private $_isDisplaySupported = false;
@@ -95,6 +101,7 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 		$this->_dialogState		=	$this->_data['request']['dialogState'] ?? null;
 		$this->_intentConfirmationStatus		=	$this->_data['request']['intent']['confirmationStatus'] ?? null;
 		$this->_intentSlots		=	['request']['intent']['slots'] ?? null;
+		$this->_personAuthenticationConfidenceLevel		=	$this->_data['context']['System']['person']['authenticationConfidenceLevel']['level'] ?? null;
 
 		$this->_intentType		=	$this->_data['request']['type'];
 		$this->_intentName		=   isset( $this->_data['request']['intent']['name']) ? $this->_data['request']['intent']['name'] : null;
@@ -183,6 +190,14 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 					$this->_intentName = $this->_data['request']['name'];
 				}
 				break;
+            case 'SessionResumedRequest':
+                if (isset($this->_data['request']['cause']) && $this->_data['request']['cause']['type'] === 'ConnectionCompleted') {
+                    $this->_intentName = $this->_intentType;
+                    $this->_isVoicePinConfirmationRequest = true;
+                    $this->_voicePinConfirmationStatus = $this->_data['request']['cause']['status'] ?? [];
+                    $this->_voicePinConfirmationResult = $this->_data['request']['cause']['result'] ?? [];
+                }
+                break;
 			default:
 				throw new \Exception( 'Not expected request type ['.$this->_intentType.']');
 		}
@@ -346,6 +361,10 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 
     public function getIntentSlotConfirmationStatus($slotName) {
         return $this->_intentSlots[$slotName]['confirmationStatus'] ?? null;
+	}
+	
+    public function getPersonAuthenticationConfidenceLevel() {
+        return $this->_personAuthenticationConfidenceLevel;
     }
 
 	private function _parseSlotValues( $slots)
@@ -433,6 +452,23 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	{
 		return $this->_isSalesRequest;
 	}
+
+    public function isVoicePinConfirmationRequest() {
+        return $this->_isVoicePinConfirmationRequest;
+    }
+
+    public function getVoicePinConfirmationToken() {
+        return $this->_voicePinConfirmationToken;
+    }
+
+    public function getVoicePinConfirmationStatus() {
+        return $this->_voicePinConfirmationStatus;
+    }
+
+    public function getVoicePinConfirmationResult() {
+        return $this->_voicePinConfirmationResult;
+    }
+
 
     private function _getAlexaAudioPlayerIntents() {
         return [

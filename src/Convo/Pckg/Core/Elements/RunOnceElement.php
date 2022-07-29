@@ -5,9 +5,12 @@ namespace Convo\Pckg\Core\Elements;
 use Convo\Core\StateChangedException;
 use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
 use Convo\Core\Workflow\IConversationElement;
+use Convo\Core\Workflow\IOptionalElement;
 
-class RunOnceElement extends AbstractWorkflowContainerComponent implements IConversationElement
+class RunOnceElement extends AbstractWorkflowContainerComponent implements IConversationElement, IOptionalElement
 {
+    const PARAM_NAME_TRIGGERED  =   'triggered';
+    
     private $_scopeType;
 
     /**
@@ -41,44 +44,56 @@ class RunOnceElement extends AbstractWorkflowContainerComponent implements IConv
 
     public function read(\Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
     {
-        $scope_type = $this->evaluateString($this->_scopeType);
-        $params = $this->getService()->getComponentParams($scope_type, $this);
-
-        $this->_logger->info('Got component params ['.$this->_scopeType.']['.print_r($params->getData(), true).']');
-
-        $triggered = $params->getServiceParam('triggered');
-
-        if (!$triggered) {
+        if ( !$this->_isTriggered()) 
+        {
             $this->_logger->info('One-off element hasn\'t fired yet in scope ['.$this->_scopeType.']');
-
-            if ($this->_children) {
-                $this->_logger->debug('Reading children');
-                
-                foreach ($this->_children as $child) {
-                    try {
-                        $child->read($request, $response);
-                    }
-                    catch (StateChangedException $e) {
-                        $this->_logger->info('State changed while reading children. Setting triggered to true before transition.');
-                        $params->setServiceParam('triggered', true);
-                        throw $e;
-                    }
+            
+            foreach ( $this->_children as $child)
+            {
+                try {
+                    $child->read($request, $response);
+                }
+                catch (StateChangedException $e) {
+                    $this->_logger->info( 'State changed while reading children. Setting triggered to true before transition.');
+                    $this->_markAsTriggered();
+                    throw $e;
                 }
             }
 
-            $params->setServiceParam('triggered', true);
+            $this->_markAsTriggered();
         }
-        
-        if ($triggered) {
+        else 
+        {
             $this->_logger->info('One-off element already fired in ['.$this->_scopeType.'] scope. Checking for else elements');
 
-            if ($this->_else) {
-                $this->_logger->debug('Reading else flow');
-                
-                foreach ($this->_else as $else) {
-                    $else->read($request, $response);
-                }
+            foreach ($this->_else as $else) {
+                $else->read($request, $response);
             }
         }
+    }
+    
+    private function _getParams()
+    {
+        $scope_type =   $this->evaluateString( $this->_scopeType);
+        return $this->getService()->getComponentParams( $scope_type, $this);
+    }
+    
+    private function _isTriggered()
+    {
+        return $this->_getParams()->getServiceParam( self::PARAM_NAME_TRIGGERED);
+    }
+    
+    private function _markAsTriggered()
+    {
+        $this->_getParams()->setServiceParam( self::PARAM_NAME_TRIGGERED, true);
+    }
+    
+    public function isEnabled()
+    {
+        if ( !empty( $this->_else)) {
+            return true;
+        }
+        
+        return $this->evaluateString( $this->_test);
     }
 }

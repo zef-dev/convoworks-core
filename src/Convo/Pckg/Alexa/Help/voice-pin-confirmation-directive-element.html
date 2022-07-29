@@ -1,0 +1,60 @@
+<div class="for-help">
+    <h3>Voice Pin Confirmation Directive Element</h3>
+
+    <p>This element will initiate the User Profile PIN Confirmation process and after this process is finished you'll receive a <var>SessionResumedRequest</var>.</p>
+
+    <p>Example of an successful <var>SessionResumedRequest</var>: </p>
+    <pre>
+    <code>{
+        "request": {
+        "type": "SessionResumedRequest",
+        "requestId": "amzn1.echo-api.request.7f8eab94-dadb-443d-bda7-7153df267db5",
+        "timestamp": "2022-07-22T08:40:00Z",
+        "locale": "en-US",
+        "cause": {
+            "type": "ConnectionCompleted",
+            "token": "confirmRideOrder",
+            "status": {
+                "code": "200",
+                "message": "Okay"
+            },
+            "result": {
+                "version": "2",
+                "status": "NOT_ENABLED"
+            }
+        }
+    }</code>
+    </pre>
+
+    <p>Example of an faulty <var>SessionResumedRequest</var>: </p>
+    <pre>
+    <code>{
+        "request": {
+        "type": "SessionResumedRequest",
+        "requestId": "amzn1.echo-api.request.c1b9f4b5-5336-4e20-9fbc-352357845567",
+        "timestamp": "2022-07-22T08:46:41Z",
+        "locale": "en-US",
+        "cause": {
+            "type": "ConnectionCompleted",
+            "token": "confirmRideOrder",
+            "status": {
+                "code": "403",
+                "message": "Developer didn't configure skill personalization for the skill."
+            },
+            "result": {
+                "version": "2"
+            }
+        }
+    }</code>
+    </pre>
+    <h4>Parameters:</h4>
+    <ul>
+        <li><code>Token</code> - A token that is returned to the skill as-is in the <var>SessionResumedRequest</var>. You can use the token to resume the skill after the task is complete.</li>
+    </ul>
+
+    <p>For more details, please visit the Alexa Developer Documentation at
+        <a href="https://developer.amazon.com/en-US/docs/alexa/custom-skills/pin-confirmation-for-alexa-skills.html#connections-startconnection-format" target="_blank">
+            Connections.StartConnection directive format
+        </a>
+    </p>
+</div>

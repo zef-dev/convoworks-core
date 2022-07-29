@@ -49,6 +49,7 @@ class IfElement extends AbstractWorkflowContainerComponent implements IConversat
 
     public function read(\Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
     {
+        $this->_logger->info('Evaluating test expression ['.$this->_test.']');
         $then_result = $this->evaluateString($this->_test);
 
         if ($then_result)

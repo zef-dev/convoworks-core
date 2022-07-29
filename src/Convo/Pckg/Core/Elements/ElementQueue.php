@@ -6,7 +6,7 @@ use Convo\Core\Workflow\IConversationElement;
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
 
-class ElementQueue extends ElementCollection implements IConversationElement
+class ElementQueue extends AbstractElementQueue
 {
     private $_scopeType;
 

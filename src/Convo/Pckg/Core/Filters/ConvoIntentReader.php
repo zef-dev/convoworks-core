@@ -48,6 +48,10 @@ class ConvoIntentReader extends PlatformIntentReader implements \Convo\Core\Inte
                         $this->_logger->warning('Slot ['.$slot.'] is required but empty.');
                         return false;
                     }
+                    if ($request_slots[$slot] === '?') {
+                        $this->_logger->warning('Slot ['.$slot.'] is required but value is "?", considering slot as empty.');
+                        return false;
+                    }
                 }
             }
             

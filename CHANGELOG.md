@@ -2,6 +2,10 @@
 
 ## [Current development]
 
+ * Fixed collection skipping optional elements
+ * Add optional element interface to the run once element
+ * Consider value "?" as empty value in Convo Intent Reader
+
 ## [Releases]
 
 ## 0.22.14.0 - 2022-06-10

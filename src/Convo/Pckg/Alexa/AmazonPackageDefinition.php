@@ -2011,6 +2011,118 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
             ),
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\VoicePinConfirmationDirectiveElement',
+                'Voice Pin Confirmation Directive Element',
+                'Voice Pin Confirmation Directive Element sends a Connections.StartConnection request which initiates the PIN confirmation step.',
+                [
+                    'token' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => '',
+                        'name' => 'Token',
+                        'description' => 'A token that is returned to the skill as-is in the SessionResumedRequest. You can use the token to resume the skill after the task is complete.',
+                        'valueType' => 'string'
+                    ],
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        'template' => '<div class="code">' .
+                            '<div>Send <span class="statement"><b>Connections.StartConnection Directive</b></span> for Voice Pin Confirmation with token <span class="statement"><b>{{ component.properties.token }}</b></span></div>' .
+                            '</div>'
+                    ],
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'voice-pin-confirmation-directive-element.html'
+                    )
+                ]
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\VoicePinConfirmationBlock',
+                'Voice PIN Confirmation Block',
+                'A block that handles user profile PIN confirmations.',
+                array(
+                    'role' => array(
+                        'defaultValue' => IRunnableBlock::ROLE_VOICE_PIN_CONFIRMATION_BLOCK
+                    ),
+                    'block_id' => array(
+                        'editor_type' => 'block_id',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'new-block-id',
+                        'name' => 'Block ID',
+                        'description' => 'Unique string identifier.',
+                        'valueType' => 'string'
+                    ),
+                    'voice_pin_confirmation_var' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'voice_pin_confirmation',
+                        'name' => 'Voice Pin Confirmation Variable',
+                        'description' => 'Variable name for the Voice Pin Confirmation array.',
+                        'valueType' => 'string'
+                    ),
+                    'on_achieved' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'On PIN Correct',
+                        'description' => 'Elements to be read if status is OK and if the provided PIN is correct.',
+                        'valueType' => 'class'
+                    ),
+                    'on_not_achieved' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'On PIN Not Correct',
+                        'description' => 'Elements to be read if status is OK and if the provided PIN is not correct.',
+                        'valueType' => 'class'
+                    ),
+                    'on_not_enabled' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'On PIN Not Provided',
+                        'description' => 'Elements to be read if status is OK and user has not provided the PIN.',
+                        'valueType' => 'class'
+                    ),
+                    'fallback' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Fallback',
+                        'description' => 'Elements to be read if status is not OK.',
+                        'valueType' => 'class'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'voice-pin-confirmation-block.html'
+                    ),
+                    '_interface' => '\Convo\Core\Workflow\IConversationElement',
+                    '_workflow' => 'read',
+                    '_system' => true,
+                    '_factory' => new class () implements \Convo\Core\Factory\IComponentFactory
+                    {
+                        public function createComponent( $properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Elements\VoicePinConfirmationBlock( $properties, $service);
+                        }
+                    }
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
                 '\Convo\Pckg\Alexa\Elements\AlexaDialogProcessor',
                 'Alexa Dialog Processor',
                 'Process elements if dialog filters are activated',

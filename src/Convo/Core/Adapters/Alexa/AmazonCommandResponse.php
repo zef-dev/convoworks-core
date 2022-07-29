@@ -30,6 +30,8 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 
 	private $_salesDirective;
 
+	private $_voicePinConfirmationDirectiveToken;
+
 	private $_aplCommandToken;
 	private $_aplCommands = [];
 
@@ -165,6 +167,11 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 		$this->_salesDirective = $salesDirective;
 	}
 
+    public function setVoicePinConfirmationDirectiveToken($voicePinConfirmationDirectiveToken)
+    {
+        $this->_voicePinConfirmationDirectiveToken = $voicePinConfirmationDirectiveToken;
+    }
+
 	public function getAplDefinition()
 	{
 		return $this->_aplDefinition;
@@ -296,6 +303,9 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
             case IAlexaResponseType::DIALOG_DELEGATE_DIRECTIVE:
                 $this->_platformResponse = $this->_prepareDialogDelegateResponse();
                 break;
+			case IAlexaResponseType::VOICE_PIN_CONFIRMATION_DIRECTIVE:
+				$this->_platformResponse = $this->_prepareVoicePinConfirmationDirectiveResponse();
+				break;
             default:
                 $this->_platformResponse = $this->_prepareSimpleResponse();
                 break;
@@ -565,6 +575,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
                     }
                 }
             } else if ($this->_mode === 'stop') {
+                $data['response']['shouldEndSession'] = true;
                 $data['response']['directives'][] = [
                     'type' => 'AudioPlayer.Stop'
                 ];
@@ -724,6 +735,37 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 
 		return $data;
 	}
+
+    private function _prepareVoicePinConfirmationDirectiveResponse() {
+        $data = array(
+            'version' => '1.0',
+            'response' => array(),
+        );
+
+        $voicePinConfirmationDirective = [
+            'type' => 'Connections.StartConnection',
+            'uri' => 'connection://AMAZON.VerifyPerson/2',
+            'input' => [
+                'requestedAuthenticationConfidenceLevel' => [
+                    'level' => 400,
+                    'customPolicy' => [
+                        'policyName' => 'VOICE_PIN'
+                    ]
+                ]
+            ]
+        ];
+
+        if (!empty($this->_voicePinConfirmationDirectiveToken)) {
+            $voicePinConfirmationDirective['token'] = $this->_voicePinConfirmationDirectiveToken;
+        }
+
+        $data['response']['directives'] = [];
+        $data['response']['directives'][] = $voicePinConfirmationDirective;
+
+        $this->_logger->info("Printing Voice PIN Confirmation Directive Response in AmazonCommandResponse [" . json_encode($data, JSON_PRETTY_PRINT) . "]" );
+
+        return $data;
+    }
 
 	private function _prepareAplRenderDocumentDirective() {
     	return [
