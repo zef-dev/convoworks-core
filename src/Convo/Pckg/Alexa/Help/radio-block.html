@@ -1,0 +1,32 @@
+<div class="media-block-help">
+    <h3>Radio Block</h3>
+
+    <p>Serves for handling radio playing requests (they are sessionless).</p>
+
+    <h4>Overview</h4>
+    <p>
+        Radio players on the smart speaker devices are working a bit differently than regular audio streaming services. Once you initiate the radio stream your service stops
+        and the radio block takes control.
+        <br>
+        While in that mode the user can take just a few different actions, by voice or by tapping on the screen.
+        However, most of the commands and actions are not supported like in the regular audio player.
+        For instance, you can't shuffle or loop the radio stream since this is a continuous stream which technically doesn't end.
+        Since this block is specific for radio streams we also don't support "next" and "previous" commands.
+        All these commands are handled automatically by the <b>Radio Block</b>.
+    </p>
+    <p>For more info on un supported command, please take alo look below:</p>
+    <ul>
+        <li>start over</li>
+        <li>repeat</li>
+        <li>next</li>
+        <li>previous</li>
+        <li>loop on</li>
+        <li>loop off</li>
+        <li>shuffle on</li>
+        <li>shuffle off</li>
+    </ul>
+
+    <p>
+        While executing the child flows (action not supported and fallback), you can say something like: E.g. "This action is not supported fot the current stream."
+    </p>
+</div>

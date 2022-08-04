@@ -5,6 +5,7 @@ namespace Convo\Core;
 use Convo\Core\Intent\EntityModel;
 use Convo\Core\Intent\IntentModel;
 use Convo\Core\Util\ArrayUtil;
+use Convo\Core\Workflow\IMediaType;
 use Zef\Zel\ArrayResolver;
 use Zef\Zel\ObjectResolver;
 use Convo\Core\Workflow\IRunnableBlock;
@@ -48,7 +49,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     private $_serviceId;
 
     private $_resolveCache	=	array();
-    
+
     /**
      * @var array
      */
@@ -259,7 +260,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 		$all = [];
         foreach ($this->getChildren() as $child) {
 			$all[] = $child;
-            
+
 			if (is_a($child, '\Convo\Core\Workflow\IWorkflowContainerComponent'))
 			{
                 /** @var \Convo\Core\Workflow\IWorkflowContainerComponent $child */
@@ -340,11 +341,23 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
             // MEDIA
             if ($request->isMediaRequest()) {
-                $this->_logger->info('Media control request.');
-                $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_MEDIA_PLAYER);
-                $block->run($request, $response);
-                $this->_logger->info('Exiting ...');
-                return;
+                $mediaTypeRequest = $request->getMediaTypeRequest();
+                switch ($mediaTypeRequest) {
+                    case IMediaType::MEDIA_TYPE_AUDIO_STREAM:
+                        $this->_logger->info('Audio player control request.');
+                        $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_MEDIA_PLAYER);
+                        $block->run($request, $response);
+                        $this->_logger->info('Exiting ...');
+                        return;
+                    case IMediaType::MEDIA_TYPE_RADIO_STREAM:
+                        $this->_logger->info('Radio control request.');
+                        $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_RADIO_STREAM);
+                        $block->run($request, $response);
+                        $this->_logger->info('Exiting ...');
+                        return;
+                    default:
+                        throw new \Exception('Unsupported media type ['.$mediaTypeRequest.']');
+                }
             }
 
             // SALES
@@ -563,7 +576,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
      * @return \Convo\Core\Workflow\IServiceContext
      */
     public function findContext( $contextId, $strClass=null) {
-        if ( isset( $this->_contexts[$contextId])) 
+        if ( isset( $this->_contexts[$contextId]))
         {
             $context    =   $this->_contexts[$contextId];
             if ( $strClass) {
@@ -592,7 +605,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
             $this->_logger->debug( 'Nothing to evaluate. Returning raw ...');
             return $string;
         }
-        
+
         // 		$this->_logger->debug( 'Evaluating ['.$string.']');
         // 		$this->_logger->debug( 'Starting context ['.print_r( $context, true).']');
 
@@ -871,10 +884,10 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $this->_children[]	=	$child;
         if ( is_a( $child, '\Convo\Core\Workflow\IServiceWorkflowComponent')) {
             /** @var \Convo\Core\Workflow\IServiceWorkflowComponent $child */
-            
+
             try {
                 $parent = $child->getParent();
-                
+
                 if ($parent !== $this) {
                     $parent->removeChild($child);
                 }
@@ -906,7 +919,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     {
 
     }
-    
+
     /**
      * @param \Convo\Core\Workflow\IConversationElement[] $elements
      * @return \Convo\Core\Workflow\IConversationElement[]
@@ -926,10 +939,10 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     // UTIL
     private function _resolveVariables($variables, $cacheKey)
     {
-        if ( !isset( $this->_resolveCache[$cacheKey])) 
+        if ( !isset( $this->_resolveCache[$cacheKey]))
         {
             $variables = $this->_evaluateVariables($variables);
-            
+
             foreach ( $variables as $key => $val)
             {
                 if (!ArrayUtil::isComplexKey($key))

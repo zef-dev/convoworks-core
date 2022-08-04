@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Convo\Core\Adapters\Alexa;
 
 use Convo\Core\Media\IAudioFile;
+use Convo\Core\Media\IRadioStream;
 use Convo\Core\Workflow\IConvoAudioResponse;
+use Convo\Core\Workflow\IConvoRadioStreamResponse;
+use Convo\Core\Workflow\IMediaType;
 
-class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse implements IConvoAudioResponse
+class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse implements IConvoAudioResponse, IConvoRadioStreamResponse
 {
     private $_mp3url;
     private $_offsetMilliseconds;
@@ -132,6 +135,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
     {
         $this->_mode = $mode;
     }
+
     public function getMode()
     {
         return $this->_mode;
@@ -538,6 +542,11 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
             'version' => '1.0',
             'response' => array(),
         );
+
+        if ($this->getText() != null) {
+            $data['response']['outputSpeech']['type'] = 'SSML';
+            $data['response']['outputSpeech']['ssml'] = $this->getTextSsml();
+        }
 
         if ($this->_mp3url !== null || $this->_mode !== null) {
             $this->_logger->debug("MP3 URL [$this->_mp3url][$this->_mode]");
@@ -991,6 +1000,12 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 
     public function playSong(IAudioFile $song, $offset = 0)
     {
+        $songDataToTokenize = [
+            'audio_url' => $song->getFileUrl(),
+            'initiated_by' => IMediaType::MEDIA_TYPE_AUDIO_STREAM,
+            'service_id' => $this->_amazonCommandRequest->getServiceId()
+        ];
+
         $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
         $this->setMetadata( [
             'artist' => $song->getArtist(),
@@ -1000,7 +1015,7 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         ]);
         $this->setOffsetMilliseconds($offset);
         $this->setUrl($song->getFileUrl());
-        $this->setCurrentSongToken(md5($song->getFileUrl()));
+        $this->setCurrentSongToken($this->_generateAudioItemToken($songDataToTokenize));
         $this->setMode("play");
 
         $this->getPlatformResponse();
@@ -1008,6 +1023,17 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
 
     public function enqueueSong(IAudioFile $playingSong, IAudioFile $enqueuingSong)
     {
+        $previousSongDataToTokenize = [
+            'audio_url' => $playingSong->getFileUrl(),
+            'initiated_by' => IMediaType::MEDIA_TYPE_AUDIO_STREAM,
+            'service_id' => $this->_amazonCommandRequest->getServiceId()
+        ];
+        $nextSongDataToTokenize = [
+            'audio_url' => $enqueuingSong->getFileUrl(),
+            'initiated_by' => IMediaType::MEDIA_TYPE_AUDIO_STREAM,
+            'service_id' => $this->_amazonCommandRequest->getServiceId()
+        ];
+
         $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
         $this->setOffsetMilliseconds(0);
         $this->setUrl($enqueuingSong->getFileUrl());
@@ -1017,8 +1043,8 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
             'art' => $enqueuingSong->getSongImageUrl(),
             'backgroundImage' => $enqueuingSong->getSongBackgroundUrl(),
         ]);
-        $this->setPreviousSongToken(md5($playingSong->getFileUrl()));
-        $this->setCurrentSongToken(md5($enqueuingSong->getFileUrl()));
+        $this->setPreviousSongToken($this->_generateAudioItemToken($previousSongDataToTokenize));
+        $this->setCurrentSongToken($this->_generateAudioItemToken($nextSongDataToTokenize));
 
         $this->setMode("enqueue");
 
@@ -1052,5 +1078,43 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
         $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
         $this->setMode("clearEnqueue");
         $this->getPlatformResponse();
+    }
+
+    public function startRadioStream(IRadioStream $radioStream)
+    {
+        $dataToTokenize = [
+            'radio_stream' => [
+                'radio_station_name' => $radioStream->getRadioStationName(),
+                'radio_station_slogan' => $radioStream->getRadioStationSlogan(),
+                'radio_station_logo_url' => $radioStream->getRadioStationLogoUrl(),
+                'stream_url' => $radioStream->getRadioStreamUrl()
+            ],
+            'initiated_by' => IMediaType::MEDIA_TYPE_RADIO_STREAM,
+            'service_id' => $this->_amazonCommandRequest->getServiceId(),
+            'timestamp' => time()
+        ];
+
+        $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
+        $this->setMetadata( [
+            'artist' => $radioStream->getRadioStationSlogan(),
+            'song' => $radioStream->getRadioStationName(),
+            'art' => $radioStream->getRadioStationLogoUrl()
+        ]);
+        $this->setOffsetMilliseconds(0);
+        $this->setUrl($radioStream->getRadioStreamUrl());
+        $this->setCurrentSongToken($this->_generateAudioItemToken($dataToTokenize));
+        $this->setMode("play");
+    }
+
+    public function stopRadioStream()
+    {
+        $this->prepareResponse(IAlexaResponseType::MEDIA_RESPONSE);
+        $this->setMode("stop");
+        $this->getPlatformResponse();
+    }
+
+    private function _generateAudioItemToken($array) {
+        $token = serialize($array);
+        return base64_encode($token);
     }
 }
