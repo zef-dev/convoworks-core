@@ -210,9 +210,11 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 		}
 
         $playerToken = $this->_data['context']['AudioPlayer']['token'] ?? '';
+        $playerActivity = $this->_data['context']['AudioPlayer']['playerActivity'] ?? '';
+        $playerActivities = ['PAUSED', 'PLAYING', 'STOPPED'];
 
 		if (!$this->_isMediaRequest && $this->_isNewSession && $this->_intentType === 'IntentRequest'
-            && in_array($this->_intentName, $this->_getAlexaAudioPlayerIntents()) && !empty($playerToken)) {
+            && in_array($this->_intentName, $this->_getAlexaAudioPlayerIntents()) && in_array($playerActivity, $playerActivities) && !empty($playerToken)) {
 		        $this->_logger->info( 'Marking request as media request for new session intent ['.$this->_intentName.']');
 		        $this->_isMediaRequest = true;
 		}
