@@ -2343,6 +2343,127 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         }
                     }
                 )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\RadioBlock',
+                'Radio Block',
+                'A special role "radio_block" block, that handles radio player requests (not in standard service session).',
+                array(
+                    'role' => array(
+                        'defaultValue' => IRunnableBlock::ROLE_RADIO_STREAM
+                    ),
+                    'block_id' => array(
+                        'editor_type' => 'block_id',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'new-block-id',
+                        'name' => 'Block ID',
+                        'description' => 'Unique string identifier',
+                        'valueType' => 'string'
+                    ),
+                    'on_action_not_supported' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Action Not Supported.',
+                        'description' => 'Elements to be read if the actions is not supported for the current radio stream.',
+                        'valueType' => 'class'
+                    ),
+                    'fallback' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Fallback',
+                        'description' => 'Elements to be read if none of the processors match',
+                        'valueType' => 'class'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'radio-block.html'
+                    ),
+                    '_interface' => '\Convo\Core\Workflow\IConversationElement',
+                    '_workflow' => 'read',
+                    '_system' => true,
+                    '_factory' => new class ($this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
+                    {
+                        private $_packageProviderFactory;
+                        public function __construct( \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory)
+                        {
+                            $this->_packageProviderFactory	=	$packageProviderFactory;
+                        }
+                        public function createComponent( $properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Elements\RadioBlock( $properties, $service, $this->_packageProviderFactory);
+                        }
+                    },
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('AUDIO_PLAYER')
+                        )
+                    )
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\StarRadioStreamPlayback',
+                'Start Radio Stream Playback',
+                'Initiates audio playback and automatically stops the current session.',
+                array(
+                    'stream_url' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Stream URL',
+                        'description' => 'Expression which evaluates to secure URL to the stream of the radio station which can be in various formats.',
+                        'valueType' => 'string'
+                    ),
+                    'radio_station_name' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Radio Station Name',
+                        'description' => 'Expression which evaluates to a name of the radio station. (optional)',
+                        'valueType' => 'string'
+                    ),
+                    'slogan' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Radio Station Slogan',
+                        'description' => 'Expression which evaluates to a slogan of the radio station. (optional)',
+                        'valueType' => 'string'
+                    ),
+                    'radio_station_logo_url' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Radio Station Logo URL',
+                        'description' => 'Expression which evaluates to a secure URL to the logo of the radio station. (optional)',
+                        'valueType' => 'string'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code"><span class="statement">START PLAYBACK</span> on <b>{{component.properties.radio_station_name}}</b>'.
+                            '</div>'
+                    ),
+                    '_interface' => '\Convo\Core\Workflow\IConversationElement',
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'start-radio-stream-playback.html'
+                    ),
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('AUDIO_PLAYER')
+                        )
+                    )
+                )
             )
         ];
     }

@@ -8,6 +8,7 @@ use Convo\Core\Adapters\Google\Common\Intent\IActionsIntent;
 use Convo\Core\Util\StrUtil;
 use Convo\Core\Workflow\IConvoAudioRequest;
 use Convo\Core\Workflow\IIntentAwareRequest;
+use Convo\Core\Workflow\IMediaType;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -87,12 +88,12 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
         $this->_intentType = $this->_data['originalDetectIntentRequest']['payload']['inputs'][0]['intent'] ?? null;
 
         $this->_logger->info( 'Got intent type ['.$this->_intentType.'] and name ['.$this->_intentName.']');
-        
+
         if ( empty( $this->_intentType) && !empty( $this->_intentName)) {
             $this->_logger->warning( 'No intent type in request but intent is resolved. Using default ['.IActionsIntent::MAIN.']');
             $this->_intentType  =   IActionsIntent::MAIN;
         }
-        
+
         if ($this->_canAccessUserStorage() && !$this->_hasUserStorage()) {
             $this->_preparedInstallationId = StrUtil::uuidV4();
             $this->_installationId = $this->_preparedInstallationId;
@@ -190,9 +191,9 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
 
 		return $values;
 	}
-	
+
 	private function _useOriginalISlotValuefExists( $name, $value) {
-	    
+
 	    if ( isset( $this->_data['queryResult']['outputContexts']) && is_array( $this->_data['queryResult']['outputContexts'])) {
 	        foreach ( $this->_data['queryResult']['outputContexts'] as $context) {
 	            if ( isset( $context['parameters'][$name.'.original']) && !empty( $context['parameters'][$name.'.original'])) {
@@ -200,7 +201,7 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
 	            }
 	        }
 	    }
-	    
+
 	    return $value;
 	}
 
@@ -240,7 +241,7 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
     }
 
     public function isSessionStart() {
-        return ($this->isLaunchRequest() || $this->_conversationType == 'NEW') && !$this->isMediaRequest();
+        return ($this->isLaunchRequest() || $this->_conversationType == 'NEW');
     }
 
     /**
@@ -364,6 +365,14 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
             $this->_isMediaRequest = true;
         }
         return $this->_isMediaRequest;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMediaTypeRequest()
+    {
+        return IMediaType::MEDIA_TYPE_AUDIO_STREAM;
     }
 
 	public function isSalesRequest() {
@@ -496,5 +505,10 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
     public function getOffset()
     {
         return 0;
+    }
+
+    public function getAudioItemToken()
+    {
+        return '';
     }
 }

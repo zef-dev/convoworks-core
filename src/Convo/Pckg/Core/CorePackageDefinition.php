@@ -2346,7 +2346,7 @@ In default phase you can inform users about problem you have interpreting comman
                     },
                     '_platform_defaults' => array(
                         'amazon' => array(
-                            'interfaces' => array('ALEXA_PRESENTATION_APL')
+                            'interfaces' => array('AUDIO_PLAYER')
                         )
                     )
                 )

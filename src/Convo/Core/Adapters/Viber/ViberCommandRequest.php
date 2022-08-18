@@ -194,6 +194,10 @@ class ViberCommandRequest implements \Convo\Core\Workflow\IConvoRequest
         return false;
     }
 
+    public function getMediaTypeRequest() {
+        return '';
+    }
+
 	public function isSalesRequest() {
 		return false;
 	}

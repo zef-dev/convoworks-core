@@ -4,6 +4,7 @@ namespace Convo\Core\Adapters\Google\Gactions;
 
 use Convo\Core\Adapters\Google\Common\Intent\IActionsIntent;
 use Convo\Core\Workflow\IConvoRequest;
+use Convo\Core\Workflow\IMediaType;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -132,7 +133,7 @@ class ActionsCommandRequest implements IConvoRequest, LoggerAwareInterface
 	}
 
     public function isSessionStart() {
-        return ($this->isLaunchRequest() || $this->_conversationType === 'NEW') && !$this->isMediaRequest();
+        return ($this->isLaunchRequest() || $this->_conversationType === 'NEW');
     }
 
 	/**
@@ -224,6 +225,10 @@ class ActionsCommandRequest implements IConvoRequest, LoggerAwareInterface
     public function isMediaRequest()
     {
         return $this->_isMediaRequest;
+    }
+
+    public function getMediaTypeRequest() {
+        return '';
     }
 
 	public function isSalesRequest() {
