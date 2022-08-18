@@ -1301,7 +1301,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code">Catch Convoworks intent '.
-                            '<a ng-if="component.properties.intent && !isSystemIntent(component.properties.intent)" class="block-id linked" ui-sref="convoworks-editor-service.intent-details({ index: getIntentIndex(component.properties.intent) })", ui-sref-opts="{ inherit: true, reload: false, notify: true, location: true }">{{ component.properties.intent}}</a>'.
+                            '<a ng-if="component.properties.intent && !isSystemIntent(component.properties.intent)" class="block-id linked" ui-sref="convoworks-editor-service.intent-details({ name: component.properties.intent })", ui-sref-opts="{ inherit: true, reload: false, notify: true, location: true }">{{ component.properties.intent}}</a>'.
                             '<b ng-if="component.properties.intent && isSystemIntent(component.properties.intent)">{{ component.properties.intent}}</b>'.
                             '<span ng-if="!component.properties[\'_use_var_values\']"><span ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span></span>'.
                             '<span ng-if="component.properties[\'_use_var_values\']"><br>Use predefined value expression <b>{{ component.properties.values }}</b></span>'.
