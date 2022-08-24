@@ -1,0 +1,18 @@
+<div>
+    <h3>Dialog Delegate Element  </h3>
+
+    <p>Delegates the slot filling conversation to Alexa Dialog.</p>
+
+    <p>Parameters:</p>
+    <ul>
+        <li><code>Action</code> - One of the following actions: "Delegate", "Delegate and Update Incoming Intent" or "Delegate and Update Another Intent".</li>
+        <li><code>Intent</code> - Is available when <var>Delegate and Update Another Intent</var> is selected in the <var>Action</var> field. You should update another intent only when the dialog state is "COMPLETED".</li>
+        <li><code>Intent Slot Values</code> - Is available when <var>Delegate and Update Incoming Intent</var> or <var>Delegate and Update Another Intent</var> is selected in the <var>Action</var> field. This field defines which slot names with what values will be filled in "COMPLETED" or "IN_PROGRESS" dialog states.</li>
+    </ul>
+
+    <p>For more details, please visit the Alexa Developer Documentation at
+        <a href="https://developer.amazon.com/en-US/docs/alexa/custom-skills/dialog-interface-reference.html#delegate" target="_blank">
+            Delegate directive
+        </a>
+    </p>
+</div>

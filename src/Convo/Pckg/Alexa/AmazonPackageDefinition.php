@@ -1817,7 +1817,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                     '_workflow' => 'read',
                     '_help' =>  array(
                         'type' => 'file',
-                        'filename' => 'get-amazon-user-element.html'
+                        'filename' => 'dialog-delegate-element.html'
                     )
                 ]
             ),
