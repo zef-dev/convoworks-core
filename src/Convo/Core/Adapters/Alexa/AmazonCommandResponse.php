@@ -751,6 +751,11 @@ class AmazonCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCo
             'response' => array(),
         );
 
+        if (!empty($this->getText())) {
+            $data['response']['outputSpeech']['type'] = 'SSML';
+            $data['response']['outputSpeech']['ssml'] = $this->getTextSsml();
+        }
+
         $voicePinConfirmationDirective = [
             'type' => 'Connections.StartConnection',
             'uri' => 'connection://AMAZON.VerifyPerson/2',
