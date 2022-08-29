@@ -181,6 +181,20 @@ class SalesBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
 		}
 	}
 
+    /**
+     * {@inheritDoc}
+     * @see \Convo\Core\Workflow\IServiceWorkflowComponent::getBlockParams()
+     */
+    public function getBlockParams( $scopeType)
+    {
+        // Is it top level block?
+        if ( $this->getParent() === $this->getService()) {
+            return $this->getService()->getComponentParams( $scopeType, $this);
+        }
+
+        return parent::getBlockParams( $scopeType);
+    }
+
 	/**
 	 * @return PreviewBlock
 	 */
