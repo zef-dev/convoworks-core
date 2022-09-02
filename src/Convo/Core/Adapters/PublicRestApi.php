@@ -4,6 +4,7 @@ namespace Convo\Core\Adapters;
 
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Container\ContainerInterface;
+use Convo\Core\Factory\IPlatformProvider;
 
 /**
  * Helper class which purpose is to group all core convo handlers into single one, ending up with just one convo route to map in your implementation
@@ -22,6 +23,12 @@ class PublicRestApi implements RequestHandlerInterface
 	 * @var ContainerInterface
 	 */
 	private $_container;
+	
+	
+	/**
+	 * @var \Convo\Core\Factory\PackageProviderFactory
+	 */
+	private $_packageProviderFactory;
 
 	public function __construct( $logger, $container)
 	{
@@ -35,6 +42,19 @@ class PublicRestApi implements RequestHandlerInterface
 
 		$this->_logger->debug( 'Got info ['.$info.']');
 
+		if ( $info->startsWith( 'service-run/external')) {
+		    if ( $route = $info->route( 'service-run/external/{platformId}')) {
+		        $platform_id  =   $route->get( 'platformId');
+		        $provider     =   $this->_packageProviderFactory->getProviderByNamespace( $platform_id);
+		        if ( $provider instanceof IPlatformProvider) {
+		            /* @var IPlatformProvider $provider */
+		            $handler      =   $provider->getPublicRestHandler();
+		            return $handler->handle( $request);
+		        }
+		        throw new \Convo\Core\Rest\NotFoundException( 'No appropriate platform provider found for ['.$platform_id.'] at ['.$info.']');
+		    }
+		}
+		
 		// AMAZON
 		if ( $info->startsWith( 'service-run/alexa-skill') || $info->startsWith( 'service-run/amazon')) {
 		    $class_name	=	'\Convo\Core\Adapters\Alexa\AlexaSkillRestHandler';
