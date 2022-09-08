@@ -2,10 +2,13 @@
 
 namespace Convo\Core\Admin;
 
+use Convo\Core\Events\ConvoServiceConversationRequestEvent;
 use Convo\Core\DataItemNotFoundException;
+use Convo\Core\Util\StrUtil;
 use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Publish\IPlatformPublisher;
 use Convo\Core\Util\ArrayUtil;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class TestServiceRestHandler implements RequestHandlerInterface
 {
@@ -40,7 +43,12 @@ class TestServiceRestHandler implements RequestHandlerInterface
 	 */
 	private $_platformRequestFactory;
 
-	public function __construct( $logger, $httpFactory, $serviceFactory, $serviceDataProvider, $serviceParamsFactory, $platformRequestFactory)
+    /*
+     * @var \Symfony\Component\EventDispatcher\EventDispatcher
+     */
+    private $_eventDispatcher;
+
+	public function __construct( $logger, $httpFactory, $serviceFactory, $serviceDataProvider, $serviceParamsFactory, $platformRequestFactory, EventDispatcher $eventDispatcher)
 	{
 		$this->_logger						= 	$logger;
 		$this->_httpFactory					= 	$httpFactory;
@@ -48,6 +56,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		$this->_convoServiceDataProvider	= 	$serviceDataProvider;
 		$this->_convoServiceParamsFactory	= 	$serviceParamsFactory;
 		$this->_platformRequestFactory	    = 	$platformRequestFactory;
+        $this->_eventDispatcher             =   $eventDispatcher;
 	}
 
 	public function handle(\Psr\Http\Message\ServerRequestInterface $request): \Psr\Http\Message\ResponseInterface
@@ -63,6 +72,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		$is_end			=	$json['end'] ?? false;
 		$device_id		=	$json['device_id'] ?? false;
 		$platform_id	=	$json['platform_id'] ?? null;
+        $request_id     =   'admin-chat-'.StrUtil::uuidV4();
 
 		if ( empty( $device_id)) {
 			throw new \Convo\Core\Rest\InvalidRequestException( 'Could not get device_id from request body');
@@ -70,7 +80,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 
 		$this->_logger->info('Performing test request ['.$text.']['.$device_id.']['.$platform_id.'] init ['.($is_init ? 'true' : 'false').'] end ['.($is_end ? 'true' : 'false').']');
 
-		$text_request   =   new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest( $service_id, $device_id, $device_id, $device_id, $text, $is_init, $is_end, $platform_id);
+		$text_request   =   new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest( $service_id, $device_id, $device_id, $request_id, $text, $is_init, $is_end, $platform_id, $json);
 		$text_response	=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse();
 		$text_response->setLogger($this->_logger);
 
@@ -87,6 +97,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		    "stack_trace" => null,
         ];
 
+        $statusCode = 'OK';
         try {
 			$this->_logger->info('Running service instance ['.$service->getId().']');
             $service->run($text_request, $text_response);
@@ -95,6 +106,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
             $stack = explode('#', $e->getTraceAsString());
             array_shift($stack);
             $exception["stack_trace"] = $stack;
+            $statusCode = $e->getCode();
             $this->_logger->error($e);
         }
 
@@ -137,6 +149,18 @@ class TestServiceRestHandler implements RequestHandlerInterface
 
 		$data = ArrayUtil::arrayFilterRecursive($data, function ($value) { return !empty($value); });
 		$data = array_merge($data, $text_response->getPlatformResponse());
+        $exceptionStackTrace = !empty($exception['stack_trace']) ? $exception['stack_trace'] : '';
+        $this->_eventDispatcher->dispatch(
+            new ConvoServiceConversationRequestEvent(
+                $text_request,
+                $text_response,
+                'develop',
+                $data['variables'],
+                $statusCode,
+                $exceptionStackTrace
+            ),
+            ConvoServiceConversationRequestEvent::NAME
+        );
 
 		return $this->_httpFactory->buildResponse($data);
 	}
@@ -183,9 +207,9 @@ class TestServiceRestHandler implements RequestHandlerInterface
 	}
 
 	/**
-	 * @param \Convo\Core\ConvoServiceInstance $service 
-	 * @param \Convo\Core\Workflow\IBasicServiceComponent $component 
-	 * @return boolean 
+	 * @param \Convo\Core\ConvoServiceInstance $service
+	 * @param \Convo\Core\Workflow\IBasicServiceComponent $component
+	 * @return boolean
 	 */
 	private function _shouldRender($service, $component)
 	{
