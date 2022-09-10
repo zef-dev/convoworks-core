@@ -127,10 +127,8 @@ class PackageProvider implements
         $prefix = $parts[0];
         $name = $parts[1];
 
-        foreach ( $this->_intentRepositories as $repo) {
-            if ($repo->accepts($prefix)) {
-                return $repo->getIntent($name);
-            }
+        if ( isset( $this->_intentRepositories[$prefix])) {
+            return $this->_intentRepositories[$prefix]->getIntent($name);
         }
         throw new \Convo\Core\ComponentNotFoundException( 'System intent ['.$name.'] not found');
     }
@@ -188,11 +186,10 @@ class PackageProvider implements
 
         $this->_logger->debug("Looking for entity [$prefix][$name]");
 
-        foreach ( $this->_entityRepositories as $repo) {
-            if ($repo->accepts($prefix)) {
-                return $repo->getEntity($name);
-            }
+        if ( isset( $this->_entityRepositories[$prefix])) {
+            return $this->_entityRepositories[$prefix]->getEntity($name);
         }
+        
         throw new \Convo\Core\ComponentNotFoundException( 'System entity ['.$name.'] not found');
     }
 
