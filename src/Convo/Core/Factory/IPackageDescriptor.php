@@ -21,4 +21,10 @@ interface IPackageDescriptor
      * @return array
      */
     public function getPackageMeta();
+
+    /**
+     * Returns package namespace
+     * @return string
+     */
+    public function getNamespace();
 }

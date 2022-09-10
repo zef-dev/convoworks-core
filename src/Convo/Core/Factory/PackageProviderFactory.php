@@ -35,9 +35,9 @@ class PackageProviderFactory
 
     public function registerPackage(IPackageDescriptor $descriptor)
     {
-        $this->_descriptors[] = $descriptor;
+        $this->_descriptors[$descriptor->getNamespace()] = $descriptor;
 
-        $this->_logger->debug('Registered package ['.$descriptor->getPackageMeta()['namespace'].']. Currently registered ['.count($this->_descriptors).'] packages.');
+        $this->_logger->debug('Registered package ['.$descriptor->getNamespace().']. Currently registered ['.count($this->_descriptors).'] packages.');
     }
 
     /**
@@ -86,7 +86,7 @@ class PackageProviderFactory
     {
         foreach ($this->_descriptors as $descriptor)
         {
-            if ($descriptor->getPackageMeta()['namespace'] === $namespace)
+            if ($descriptor->getNamespace() === $namespace)
             {
                 return $descriptor->getPackageInstance();
             }
@@ -133,7 +133,7 @@ class PackageProviderFactory
         $this->_logger->debug('Looking through ['.count($this->_descriptors).'] registered packages');
         foreach ($this->_descriptors as $descriptor)
         {
-            if ($descriptor->getPackageMeta()['namespace'] === $package) {
+            if ($descriptor->getNamespace() === $package) {
                 return $descriptor->getPackageInstance();
             }
         }
