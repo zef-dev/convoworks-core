@@ -57,7 +57,7 @@ class PackageProviderFactory
 
         foreach ($service['packages'] as $package)
         {
-             $available[] = $this->_findPackage($package);
+             $available[] = $this->getProviderByNamespace( $package);
         }
 
         return new PackageProvider($this->_logger, $available);
@@ -71,7 +71,7 @@ class PackageProviderFactory
 
         foreach ($ids as $package)
         {
-            $available[] = $this->_findPackage($package);
+            $available[] = $this->getProviderByNamespace($package);
         }
 
         return new PackageProvider($this->_logger, $available);
@@ -84,12 +84,8 @@ class PackageProviderFactory
      */
     public function getProviderByNamespace($namespace)
     {
-        foreach ($this->_descriptors as $descriptor)
-        {
-            if ($descriptor->getNamespace() === $namespace)
-            {
-                return $descriptor->getPackageInstance();
-            }
+        if ( isset( $this->_descriptors[$namespace])) {
+            return $this->_descriptors[$namespace]->getPackageInstance();
         }
 
         throw new DataItemNotFoundException('No such package with namespace ['.$namespace.']');
@@ -127,20 +123,6 @@ class PackageProviderFactory
     }
 
     // UTIL
-
-    private function _findPackage($package)
-    {
-        $this->_logger->debug('Looking through ['.count($this->_descriptors).'] registered packages');
-        foreach ($this->_descriptors as $descriptor)
-        {
-            if ($descriptor->getNamespace() === $package) {
-                return $descriptor->getPackageInstance();
-            }
-        }
-
-        throw new \Exception('Requested package ['.$package.'] has not been registered');
-    }
-
     public function __toString()
     {
         return get_class($this);
