@@ -236,33 +236,31 @@ class PackageProvider implements
 
         $this->_checkComponent( $componentData);
 
-        foreach ($this->getPackages() as $package)
-        {
-            if ($package->getNamespace() === $componentData['namespace'])
-            {
-                if (!is_a($package, '\Convo\Core\Factory\IComponentProvider')) {
-                    throw new \Exception('Package ['.$package->getNamespace().'] is not [\Convo\Core\Factory\IComponentProvider]');
-                }
-
-                /** @var \Convo\Core\Factory\IComponentProvider $package */
-                $component = $package->createPackageComponent( $service, $this, $componentData);
-                $this->_logger->debug( 'Created component ['.get_class( $component).']');
-// 				$this->_logger->debug( '-----');
-
-                if ( is_a( $component, '\Psr\Log\LoggerAwareInterface')) {
-                    /** @var \Psr\Log\LoggerAwareInterface $component */
-                    $component->setLogger( $this->_logger);
-                }
-
-                if ( is_a( $component, '\Convo\Core\Workflow\IBasicServiceComponent')) {
-                    /** @var \Convo\Core\Workflow\IBasicServiceComponent $component */
-                    $component->setService( $service);
-                }
-
-                return $component;
+        try {
+            $package    =   $this->findPackageById( $componentData['namespace']);
+            if (!is_a($package, '\Convo\Core\Factory\IComponentProvider')) {
+                throw new \Exception('Package ['.$package->getNamespace().'] is not [\Convo\Core\Factory\IComponentProvider]');
             }
+            
+            /** @var \Convo\Core\Factory\IComponentProvider $package */
+            $component = $package->createPackageComponent( $service, $this, $componentData);
+            $this->_logger->debug( 'Created component ['.get_class( $component).']');
+            // 				$this->_logger->debug( '-----');
+            
+            if ( is_a( $component, '\Psr\Log\LoggerAwareInterface')) {
+                /** @var \Psr\Log\LoggerAwareInterface $component */
+                $component->setLogger( $this->_logger);
+            }
+            
+            if ( is_a( $component, '\Convo\Core\Workflow\IBasicServiceComponent')) {
+                /** @var \Convo\Core\Workflow\IBasicServiceComponent $component */
+                $component->setService( $service);
+            }
+            
+            return $component;
+        } catch ( NotFoundException $e) {
+            throw new \Convo\Core\ComponentNotFoundException( 'Service ['.$service.'] component ['.$componentData['class'].'] not found', null, $e);
         }
-        throw new \Convo\Core\ComponentNotFoundException( 'Service ['.$service.'] component ['.$componentData['class'].'] not found');
     }
 
     /**
