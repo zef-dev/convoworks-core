@@ -47,28 +47,32 @@ class PackageProvider implements
     public function __construct(\Psr\Log\LoggerInterface $logger, $packages)
     {
         $this->_logger = $logger;
-        $this->_packages = $packages;
+//         $this->_packages = $packages;
 
-        foreach ($this->_packages as $package)
+        foreach ( $packages as $package)
         {
+            /* @var \Convo\Core\Factory\IPackageDefinition $package */
+            
+            $this->_packages[$package->getNamespace()] = $package;
+            
             if (is_a($package, '\Convo\Core\Intent\ISystemIntentRepository')) {
                 /* @var \Convo\Core\Intent\ISystemIntentRepository $package */
-                $this->_intentRepositories[] = $package;
+                $this->_intentRepositories[$package->getNamespace()] = $package;
             }
 
             if (is_a($package, '\Convo\Core\Intent\ISystemEntityRepository')) {
                 /* @var \Convo\Core\Intent\ISystemEntityRepository $package */
-                $this->_entityRepositories[] = $package;
+                $this->_entityRepositories[$package->getNamespace()] = $package;
             }
 
             if (is_a($package, '\Convo\Core\Factory\ITemplateSource')) {
                 /* @var \Convo\Core\Factory\ITemplateSource $package */
-                $this->_templateSources[] = $package;
+                $this->_templateSources[$package->getNamespace()] = $package;
             }
 
             if (is_a($package, '\Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface')) {
                 /* @var ExpressionFunctionProviderInterface */
-                $this->_functionProviders[] = $package;
+                $this->_functionProviders[$package->getNamespace()] = $package;
             }
         }
     }
@@ -88,12 +92,8 @@ class PackageProvider implements
      */
     public function findPackageById($packageId)
     {
-        foreach ($this->getPackages() as $package)
-        {
-            if ($package->getNamespace() === $packageId)
-            {
-                return $package;
-            }
+        if ( isset( $this->_packages[$packageId])) {
+            return $this->_packages[$packageId];
         }
         throw new NotFoundException('Package ['.$packageId.'] not found.');
     }
