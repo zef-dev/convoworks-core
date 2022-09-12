@@ -5,6 +5,7 @@ namespace Convo\Core\Adapters;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Container\ContainerInterface;
 use Convo\Core\Factory\IPlatformProvider;
+use Psr\Log\LoggerInterface;
 
 /**
  * Helper class which purpose is to group all core convo handlers into single one, ending up with just one convo route to map in your implementation
@@ -15,7 +16,7 @@ class PublicRestApi implements RequestHandlerInterface
 {
 
 	/**
-	 * @var \Psr\Log\LoggerInterface
+	 * @var LoggerInterface
 	 */
 	private $_logger;
 
@@ -30,10 +31,15 @@ class PublicRestApi implements RequestHandlerInterface
 	 */
 	private $_packageProviderFactory;
 
+	/**
+	 * @param LoggerInterface $logger
+	 * @param ContainerInterface $container
+	 */
 	public function __construct( $logger, $container)
 	{
 		$this->_logger						= 	$logger;
 		$this->_container					= 	$container;
+		$this->_packageProviderFactory      =	$container->get( 'packageProviderFactory');
 	}
 
 	public function handle(\Psr\Http\Message\ServerRequestInterface $request): \Psr\Http\Message\ResponseInterface
@@ -43,7 +49,7 @@ class PublicRestApi implements RequestHandlerInterface
 		$this->_logger->debug( 'Got info ['.$info.']');
 
 		if ( $info->startsWith( 'service-run/external')) {
-		    if ( $route = $info->route( 'service-run/external/{platformId}')) {
+		    if ( $route = $info->route( 'service-run/external/{platformId}/{variant}/{serviceId}')) {
 		        $platform_id  =   $route->get( 'platformId');
 		        $provider     =   $this->_packageProviderFactory->getProviderByNamespace( $platform_id);
 		        if ( $provider instanceof IPlatformProvider) {
@@ -53,6 +59,7 @@ class PublicRestApi implements RequestHandlerInterface
 		        }
 		        throw new \Convo\Core\Rest\NotFoundException( 'No appropriate platform provider found for ['.$platform_id.'] at ['.$info.']');
 		    }
+		    throw new \Convo\Core\Rest\NotFoundException( 'No platform route found for at ['.$info.']');
 		}
 		
 		// AMAZON
