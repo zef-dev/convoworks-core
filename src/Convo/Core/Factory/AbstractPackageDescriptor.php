@@ -42,6 +42,8 @@ abstract class AbstractPackageDescriptor implements IPackageDescriptor, LoggerAw
     {
         $this->_logger = $logger;
     }
+    
+    
 
     function getPackageInstance() {
         if ( !isset( $this->_package)) {
@@ -78,6 +80,10 @@ abstract class AbstractPackageDescriptor implements IPackageDescriptor, LoggerAw
         }
 
         return json_decode($meta, true);
+    }
+    
+    public function getNamespace() {
+        return $this->getPackageMeta()['namespace'];
     }
 
     // UTIL

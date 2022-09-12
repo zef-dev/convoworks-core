@@ -47,28 +47,32 @@ class PackageProvider implements
     public function __construct(\Psr\Log\LoggerInterface $logger, $packages)
     {
         $this->_logger = $logger;
-        $this->_packages = $packages;
+//         $this->_packages = $packages;
 
-        foreach ($this->_packages as $package)
+        foreach ( $packages as $package)
         {
+            /* @var \Convo\Core\Factory\IPackageDefinition $package */
+            
+            $this->_packages[$package->getNamespace()] = $package;
+            
             if (is_a($package, '\Convo\Core\Intent\ISystemIntentRepository')) {
                 /* @var \Convo\Core\Intent\ISystemIntentRepository $package */
-                $this->_intentRepositories[] = $package;
+                $this->_intentRepositories[$package->getNamespace()] = $package;
             }
 
             if (is_a($package, '\Convo\Core\Intent\ISystemEntityRepository')) {
                 /* @var \Convo\Core\Intent\ISystemEntityRepository $package */
-                $this->_entityRepositories[] = $package;
+                $this->_entityRepositories[$package->getNamespace()] = $package;
             }
 
             if (is_a($package, '\Convo\Core\Factory\ITemplateSource')) {
                 /* @var \Convo\Core\Factory\ITemplateSource $package */
-                $this->_templateSources[] = $package;
+                $this->_templateSources[$package->getNamespace()] = $package;
             }
 
             if (is_a($package, '\Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface')) {
                 /* @var ExpressionFunctionProviderInterface */
-                $this->_functionProviders[] = $package;
+                $this->_functionProviders[$package->getNamespace()] = $package;
             }
         }
     }
@@ -88,12 +92,8 @@ class PackageProvider implements
      */
     public function findPackageById($packageId)
     {
-        foreach ($this->getPackages() as $package)
-        {
-            if ($package->getNamespace() === $packageId)
-            {
-                return $package;
-            }
+        if ( isset( $this->_packages[$packageId])) {
+            return $this->_packages[$packageId];
         }
         throw new NotFoundException('Package ['.$packageId.'] not found.');
     }
@@ -127,10 +127,8 @@ class PackageProvider implements
         $prefix = $parts[0];
         $name = $parts[1];
 
-        foreach ( $this->_intentRepositories as $repo) {
-            if ($repo->accepts($prefix)) {
-                return $repo->getIntent($name);
-            }
+        if ( isset( $this->_intentRepositories[$prefix])) {
+            return $this->_intentRepositories[$prefix]->getIntent($name);
         }
         throw new \Convo\Core\ComponentNotFoundException( 'System intent ['.$name.'] not found');
     }
@@ -188,11 +186,10 @@ class PackageProvider implements
 
         $this->_logger->debug("Looking for entity [$prefix][$name]");
 
-        foreach ( $this->_entityRepositories as $repo) {
-            if ($repo->accepts($prefix)) {
-                return $repo->getEntity($name);
-            }
+        if ( isset( $this->_entityRepositories[$prefix])) {
+            return $this->_entityRepositories[$prefix]->getEntity($name);
         }
+        
         throw new \Convo\Core\ComponentNotFoundException( 'System entity ['.$name.'] not found');
     }
 
@@ -236,33 +233,31 @@ class PackageProvider implements
 
         $this->_checkComponent( $componentData);
 
-        foreach ($this->getPackages() as $package)
-        {
-            if ($package->getNamespace() === $componentData['namespace'])
-            {
-                if (!is_a($package, '\Convo\Core\Factory\IComponentProvider')) {
-                    throw new \Exception('Package ['.$package->getNamespace().'] is not [\Convo\Core\Factory\IComponentProvider]');
-                }
-
-                /** @var \Convo\Core\Factory\IComponentProvider $package */
-                $component = $package->createPackageComponent( $service, $this, $componentData);
-                $this->_logger->debug( 'Created component ['.get_class( $component).']');
-// 				$this->_logger->debug( '-----');
-
-                if ( is_a( $component, '\Psr\Log\LoggerAwareInterface')) {
-                    /** @var \Psr\Log\LoggerAwareInterface $component */
-                    $component->setLogger( $this->_logger);
-                }
-
-                if ( is_a( $component, '\Convo\Core\Workflow\IBasicServiceComponent')) {
-                    /** @var \Convo\Core\Workflow\IBasicServiceComponent $component */
-                    $component->setService( $service);
-                }
-
-                return $component;
+        try {
+            $package    =   $this->findPackageById( $componentData['namespace']);
+            if (!is_a($package, '\Convo\Core\Factory\IComponentProvider')) {
+                throw new \Exception('Package ['.$package->getNamespace().'] is not [\Convo\Core\Factory\IComponentProvider]');
             }
+            
+            /** @var \Convo\Core\Factory\IComponentProvider $package */
+            $component = $package->createPackageComponent( $service, $this, $componentData);
+            $this->_logger->debug( 'Created component ['.get_class( $component).']');
+            // 				$this->_logger->debug( '-----');
+            
+            if ( is_a( $component, '\Psr\Log\LoggerAwareInterface')) {
+                /** @var \Psr\Log\LoggerAwareInterface $component */
+                $component->setLogger( $this->_logger);
+            }
+            
+            if ( is_a( $component, '\Convo\Core\Workflow\IBasicServiceComponent')) {
+                /** @var \Convo\Core\Workflow\IBasicServiceComponent $component */
+                $component->setService( $service);
+            }
+            
+            return $component;
+        } catch ( NotFoundException $e) {
+            throw new \Convo\Core\ComponentNotFoundException( 'Service ['.$service.'] component ['.$componentData['class'].'] not found', null, $e);
         }
-        throw new \Convo\Core\ComponentNotFoundException( 'Service ['.$service.'] component ['.$componentData['class'].'] not found');
     }
 
     /**
