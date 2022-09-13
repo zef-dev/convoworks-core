@@ -20,7 +20,9 @@ class DefaultTextCommandRequest implements \Convo\Core\Workflow\IConvoRequest
 	private $_isLaunch;
 	private $_isEnd;
 
-	public function __construct( $serviceId, $installationId, $sessionId, $requestId, $text, $isLaunch=false, $isEnd=false, $platformId = 'UNKNOWN')
+    private $_platformData;
+
+	public function __construct( $serviceId, $installationId, $sessionId, $requestId, $text, $isLaunch=false, $isEnd=false, $platformId = 'UNKNOWN', $platformData)
 	{
 		$this->_serviceId		=	$serviceId;
 
@@ -34,6 +36,7 @@ class DefaultTextCommandRequest implements \Convo\Core\Workflow\IConvoRequest
 		$this->_text			=	$text;
 		$this->_isLaunch			=	$isLaunch;
 		$this->_isEnd			=	$isEnd;
+		$this->_platformData			=	$platformData;
 	}
 
 	public function getPlatformId() {
@@ -102,7 +105,7 @@ class DefaultTextCommandRequest implements \Convo\Core\Workflow\IConvoRequest
 	}
 
 	public function getPlatformData() {
-		return array();
+		return $this->_platformData;
 	}
 
     public function isMediaRequest() {

@@ -2,8 +2,10 @@
 
 namespace Convo\Core\Adapters\ConvoChat;
 
+use Convo\Core\Events\ConvoServiceConversationRequestEvent;
 use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Rest\RestSystemUser;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class ConvoChatRestHandler implements RequestHandlerInterface
 {
@@ -37,7 +39,12 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 	 */
 	private $_logger;
 
-	public function __construct( $logger, $httpFactory, $serviceFactory, $serviceDataProvider, $serviceParamsFactory, $platformRequestFactory)
+    /*
+     * @var \Symfony\Component\EventDispatcher\EventDispatcher
+     */
+    private $_eventDispatcher;
+
+	public function __construct( $logger, $httpFactory, $serviceFactory, $serviceDataProvider, $serviceParamsFactory, $platformRequestFactory, EventDispatcher $eventDispatcher)
 	{
 		$this->_logger						=	$logger;
 		$this->_httpFactory					=	$httpFactory;
@@ -45,6 +52,7 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 		$this->_convoServiceDataProvider	= 	$serviceDataProvider;
 		$this->_convoServiceParamsFactory	= 	$serviceParamsFactory;
 		$this->_platformRequestFactory  	=	$platformRequestFactory;
+        $this->_eventDispatcher             =   $eventDispatcher;
 	}
 
 	public function handle(\Psr\Http\Message\ServerRequestInterface $request): \Psr\Http\Message\ResponseInterface
@@ -139,6 +147,11 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 		);
 
 		$data		=	array_merge( $data, $text_response->getPlatformResponse());
+
+        $this->_eventDispatcher->dispatch(
+            new ConvoServiceConversationRequestEvent($text_request, $text_response), ConvoServiceConversationRequestEvent::NAME
+        );
+
 		return $this->_httpFactory->buildResponse( $data);
 	}
 

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Convo\Core\Adapters\Alexa;
 
+use Convo\Core\Events\ConvoServiceConversationRequestEvent;
 use Convo\Core\Publish\IPlatformPublisher;
 use Convo\Core\Adapters\Alexa\Validators\AlexaRequestValidator;
 use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Rest\RestSystemUser;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class AlexaSkillRestHandler implements RequestHandlerInterface
 {
@@ -41,7 +43,12 @@ class AlexaSkillRestHandler implements RequestHandlerInterface
      */
     private $_alexaRequestValidator;
 
-    public function __construct( \Psr\Log\LoggerInterface $logger, $httpFactory, $serviceFactory, $serviceDataProvider, $serviceParamsFactory, AlexaRequestValidator $alexaRequestValidator)
+    /*
+     * @var \Symfony\Component\EventDispatcher\EventDispatcher
+     */
+    private $_eventDispatcher;
+
+    public function __construct( \Psr\Log\LoggerInterface $logger, $httpFactory, $serviceFactory, $serviceDataProvider, $serviceParamsFactory, AlexaRequestValidator $alexaRequestValidator, EventDispatcher $eventDispatcher)
     {
     	$this->_logger						=	$logger;
     	$this->_httpFactory					=	$httpFactory;
@@ -49,6 +56,7 @@ class AlexaSkillRestHandler implements RequestHandlerInterface
         $this->_convoServiceDataProvider	=	$serviceDataProvider;
         $this->_convoServiceParamsFactory	=	$serviceParamsFactory;
         $this->_alexaRequestValidator       =   $alexaRequestValidator;
+        $this->_eventDispatcher             =   $eventDispatcher;
     }
 
     public function handle( \Psr\Http\Message\ServerRequestInterface $request): \Psr\Http\Message\ResponseInterface
@@ -108,7 +116,25 @@ class AlexaSkillRestHandler implements RequestHandlerInterface
         $text_response = new \Convo\Core\Adapters\Alexa\AmazonCommandResponse($text_request);
         $text_response->setLogger($this->_logger);
 
-        $service->run($text_request, $text_response);
+        $statusCode = 'OK';
+        $exceptionStackTrace = '';
+        try {
+            $this->_logger->info('Running service instance ['.$service->getId().'] in Alexa Skill REST Handler.');
+            $service->run($text_request, $text_response);
+        } catch (\Exception $e) {
+            $exceptionStackTrace = $e->getTraceAsString();
+            $statusCode = $e->getCode();
+            $this->_logger->error($e);
+        }
+
+        $request_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData();
+        $session_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getData();
+        $installation_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION)->getData();
+        $variables = [
+            'request' => $request_vars,
+            'session' => $session_vars,
+            'installation' => $installation_vars
+        ];
 
         $this->_logger->info('Got response [' . $text_response . ']');
 
@@ -121,16 +147,32 @@ class AlexaSkillRestHandler implements RequestHandlerInterface
 
         $this->_logger->info('Checking request ['.$text_request->getIntentName().']['.$text_request->getIntentType().']');
 
+        $response = $this->_httpFactory->buildResponse($data);
         if ( $text_request->getIntentType() === 'SessionEndedRequest') {
             $this->_logger->info('Building empty response for SessionEndedRequest');
-            
+
             $text_response->prepareResponse(IAlexaResponseType::EMPTY_RESPONSE);
             $emptySessionEndResponse = $text_response->getPlatformResponse();
-            
-            return $this->_httpFactory->buildResponse($emptySessionEndResponse);
+
+            $response = $this->_httpFactory->buildResponse($emptySessionEndResponse);
         }
 
-        return $this->_httpFactory->buildResponse($data);
+        $serviceMeta = $this->_convoServiceDataProvider->getServiceMeta(new RestSystemUser(), $serviceId);
+        $stage = $serviceMeta['release_mapping']['amazon'][$variant]['type'] ?? 'develop';
+
+        $this->_logger->debug('Going to dispatch event ['.ConvoServiceConversationRequestEvent::NAME.']');
+        $this->_eventDispatcher->dispatch(
+            new ConvoServiceConversationRequestEvent(
+                $text_request,
+                $text_response,
+                $stage,
+                $variables,
+                $statusCode,
+                $exceptionStackTrace
+            ), ConvoServiceConversationRequestEvent::NAME
+        );
+
+        return $response;
     }
 
     // UTIL
