@@ -2,6 +2,7 @@
 
 namespace Convo\Core\Publish;
 
+use Convo\Core\DataItemNotFoundException;
 use Convo\Core\IAdminUser;
 
 class ServiceReleaseManager
@@ -104,7 +105,13 @@ class ServiceReleaseManager
         // Get specific version flow
         $workflow = $this->_convoServiceDataProvider->getServiceData($user, $serviceId, $versionId);
         $config = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, $versionId);
-        $release_data = $this->_convoServiceDataProvider->getReleaseData($user, $serviceId, $versionId);
+
+        $release_data = [];
+        try {
+            $release_data = $this->_convoServiceDataProvider->getReleaseData($user, $serviceId, $versionId);
+        } catch (DataItemNotFoundException $e) {
+            $this->_logger->warning($e->getMessage());
+        }
 
         $meta = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId);
         $meta['default_language'] = $release_data['default_language'] ?? 'en';
