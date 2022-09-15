@@ -2292,6 +2292,14 @@ In default phase you can inform users about problem you have interpreting comman
                         'description' => 'Variable name for the media info array',
                         'valueType' => 'string'
                     ),
+                    'last_media_info_var' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'last_media_info',
+                        'name' => 'Last Media info',
+                        'description' => 'Variable name for the last successful media info array since the playback has started.',
+                        'valueType' => 'string'
+                    ),
                     'no_next' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(

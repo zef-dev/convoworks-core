@@ -49,6 +49,11 @@ class ConvoServiceConversationRequestEvent extends Event
             $platformId = $this->_convoRequest->getPlatformId();
         }
 
+        $sessionId = $this->_convoRequest->getSessionId();
+        if (strpos($sessionId, 'admin-chat') !== false) {
+            $platformId = 'Convo Admin Chat';
+        }
+
         return $platformId;
     }
 
