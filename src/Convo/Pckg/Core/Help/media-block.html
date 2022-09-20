@@ -15,4 +15,8 @@
         While executing the child flows (next not available, ...) you have access to the <b>media info</b> which you can use to enhance your responses. 
         E.g. "There are ${media_info.count} songs found and you are on the last one." 
     </p>
+    <p>
+        You also have access to the <b>last media info</b> in the entire service which you can use to enhance your resume functionalities.
+        E.g. "There are <code>${last_media_info.post_index}</code> to resume the recently played song in the <code>Start Audio Playback</code> element."
+    </p>
 </div>

@@ -70,16 +70,19 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
     
     private $_mediaInfoVar;
 
+    private $_lastMediaInfoVar;
+
     public function __construct($properties, \Convo\Core\ConvoServiceInstance $service, \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory)
     {
         parent::__construct($properties);
         $this->setService($service);
         $this->_packageProviderFactory    =   $packageProviderFactory;
 
-        $this->_blockId		    =	$properties['block_id'];
-        $this->_blockName       =   $properties['name'] ?? 'Nameless block';
-        $this->_contextId		=	$properties['context_id'];
-        $this->_mediaInfoVar	=	$properties['media_info_var'] ?? 'media_info';
+        $this->_blockId		        =	$properties['block_id'];
+        $this->_blockName           =   $properties['name'] ?? 'Nameless block';
+        $this->_contextId		    =	$properties['context_id'];
+        $this->_mediaInfoVar	    =	$properties['media_info_var'] ?? 'media_info';
+        $this->_lastMediaInfoVar	=	$properties['last_media_info_var'] ?? 'last_media_info';
 
         foreach ( $properties['no_next'] as $element) {
             $this->_noNext[]        =   $element;
@@ -518,11 +521,24 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
             // NOT HANDLED
             case self::COMMAND_PLAYBACK_STARTED:
                 $response->emptyResponse();
-                $context->setPlaying(); 
+                $context->setPlaying();
+                $last_info       =   $context->getMediaInfo();
+                $last_info_var   =   $this->evaluateString( $this->_lastMediaInfoVar);
+
+                $this->_logger->info( 'Injecting last media info ['.$last_info_var.']['.print_r( $last_info, true).']');
+
+                $user_params =   $this->getService()->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_USER);
+                $user_params->setServiceParam( $last_info_var, $last_info);
                 break;
             case self::COMMAND_PLAYBACK_FAILED:
                 $response->emptyResponse();
                 $context->setStopped();
+                $last_info_var   =   $this->evaluateString( $this->_lastMediaInfoVar);
+
+                $this->_logger->info( 'Injecting last media info ['.$last_info_var.']');
+
+                $user_params =   $this->getService()->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_USER);
+                $user_params->setServiceParam( $last_info_var, null);
                 break;
                 
             default:
