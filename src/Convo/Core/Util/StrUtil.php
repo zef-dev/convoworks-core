@@ -166,4 +166,10 @@ abstract class StrUtil
 		$last = array_pop($items);
 		return implode(', ', $items) . $lastSep . $last;
 	}
+
+    public static function getTextSimilarityPercentageBetweenTwoStrings($string1, $string2) {
+        $percentage = 0;
+        similar_text(strtolower($string1), strtolower($string2), $percentage);
+        return $percentage;
+    }
 }
