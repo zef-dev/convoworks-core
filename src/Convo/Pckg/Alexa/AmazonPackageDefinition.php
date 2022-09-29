@@ -2464,6 +2464,76 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         )
                     )
                 )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\GetGeolocationElement',
+                'Get Geolocation Element',
+                'Retrieves the Geolocation object of an Alexa Request.',
+                array(
+                    'acceptable_freshness' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '60',
+                        'name' => 'Acceptable Freshens',
+                        'description' => 'Expression which evaluates to how old the geolocation coordinates are old in seconds. (optional)',
+                        'valueType' => 'string'
+                    ),
+                    'accuracy_threshold' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '100',
+                        'name' => 'Accuracy Threshold',
+                        'description' => 'Expression which evaluates to how accurate are the coordinates in meters. (optional)',
+                        'valueType' => 'string'
+                    ),
+                    'geolocation_status_var' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => 'status',
+                        'name' => 'Return Variable Name',
+                        'description' => 'Variable name for the geolocation status.',
+                        'valueType' => 'string'
+                    ),
+                    'ok' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true
+                        ],
+                        'defaultValue' => [],
+                        'name' => 'OK',
+                        'description' => 'Executed if the geolocation object is present in the Alexa request object.',
+                        'valueType' => 'class'
+                    ],
+                    'nok' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true
+                        ],
+                        'defaultValue' => [],
+                        'name' => 'NOK',
+                        'description' => 'Executed if the geolocation object is not present in the Alexa request object.',
+                        'valueType' => 'class'
+                    ],
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="code"><span class="statement">GET GEOLOCATION</span> with <i>Acceptable Freshens</i> of <b>{{component.properties.acceptable_freshness}} seconds</b> and <i>Accuracy Threshold</i> of <b>{{component.properties.accuracy_threshold}} meters</b>'.
+                            '</div>'
+                    ),
+                    '_interface' => '\Convo\Core\Workflow\IConversationElement',
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'get-geolocation-element.html'
+                    ),
+                    '_platform_defaults' => array(
+                        'amazon' => array(
+                            'interfaces' => array('AUDIO_PLAYER')
+                        )
+                    )
+                )
             )
         ];
     }

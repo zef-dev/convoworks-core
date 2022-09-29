@@ -80,6 +80,7 @@ class ConfigurationRestHandler implements \Psr\Http\Server\RequestHandlerInterfa
 				['value' => 'alexa::profile:email:read', 'name' => 'Customer Email Address', 'checked' => false],
 				['value' => 'alexa::profile:mobile_number:read', 'name' => 'Customer Phone Number', 'checked' => false],
                 ['value' => 'alexa::alerts:reminders:skill:readwrite', 'name' => 'Reminders', 'checked' => false],
+                ['value' => 'alexa::devices:all:geolocation:read', 'name' => 'Location Services', 'checked' => false],
                 ['value' => 'alexa::person_id:read', 'name' => 'Skill Personalization', 'checked' => false],
                 ['value' => 'alexa::authenticate:2:mandatory', 'name' => 'Mandatory PIN Confirmation', 'checked' => false],
                 ['value' => 'alexa::authenticate:2:optional', 'name' => 'Optional PIN Confirmation', 'checked' => false]
