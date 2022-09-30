@@ -3,6 +3,7 @@
 namespace Convo\Pckg\Alexa;
 
 use Convo\Core\Adapters\Alexa\Api\AlexaCustomerProfileApi;
+use Convo\Core\Adapters\Alexa\Api\AlexaDeviceAddressApi;
 use Convo\Core\Adapters\Alexa\Api\AlexaPersonProfileApi;
 use Convo\Core\Adapters\Alexa\Api\AlexaRemindersApi;
 use Convo\Core\Factory\AbstractPackageDefinition;
@@ -29,6 +30,11 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 	 * @var AlexaCustomerProfileApi
 	 */
 	private $_alexaCustomerProfileApi;
+
+    /**
+     * @var AlexaDeviceAddressApi
+     */
+    private $_alexaDeviceAddressApi;
 
     /**
      * @var AlexaPersonProfileApi
@@ -58,6 +64,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 		AlexaCustomerProfileApi $alexaCustomerProfileApi,
 		AlexaPersonProfileApi $alexaPersonProfileApi,
 		AlexaRemindersApi $alexaRemindersApi,
+		AlexaDeviceAddressApi $alexaDeviceAddressApi,
         \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory
     ) {
         $this->_httpFactory = $httpFactory;
@@ -66,6 +73,7 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
 		$this->_alexaCustomerProfileApi = $alexaCustomerProfileApi;
 		$this->_alexaPersonProfileApi = $alexaPersonProfileApi;
 		$this->_alexaRemindersApi = $alexaRemindersApi;
+		$this->_alexaDeviceAddressApi = $alexaDeviceAddressApi;
 		$this->_packageProviderFactory = $packageProviderFactory;
 
 		parent::__construct( $logger, self::NAMESPACE, __DIR__);
@@ -389,6 +397,78 @@ class AmazonPackageDefinition extends AbstractPackageDefinition
                         public function createComponent($properties, $service)
                         {
                             return new \Convo\Pckg\Alexa\Elements\CreateAlexaReminderElement($properties, $this->_alexaRemindersApi, $this->_convoServiceDataProvider);
+                        }
+                    }
+                ]
+            ),
+            new ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Alexa\Elements\GetAmazonDeviceAddressElement',
+                'Get Amazon Device Address Element',
+                'Get the address of an stationary Alexa Device.',
+                [
+                    'device_address_status_var' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => 'deviceAddress',
+                        'name' => 'Return Var',
+                        'description' => 'Name under which to store the loaded address object',
+                        'valueType' => 'string'
+                    ],
+                    'ok' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true
+                        ],
+                        'defaultValue' => [],
+                        'name' => 'OK',
+                        'description' => 'Executed if the Alexa Device Address object could be fetched successfully.',
+                        'valueType' => 'class'
+                    ],
+                    'on_permission_not_granted' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => [
+                            'allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'],
+                            'multiple' => true
+                        ],
+                        'defaultValue' => [],
+                        'name' => 'On Permission Not Granted',
+                        'description' => 'Executed if one of the requested permissions are missing.',
+                        'valueType' => 'class'
+                    ],
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        'template' => '<div class="code">' .
+                            'Load Amazon Device Address and set it as <span class="statement"><b>{{ component.properties.device_address_status_var }}</b></span>' .
+                            '</div>'
+                    ],
+                    '_workflow' => 'read',
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'get-amazon-device-address-element.html'
+                    ),
+                    '_factory' => new class (
+                        $this->_alexaDeviceAddressApi,
+                        $this->_convoServiceDataProvider
+                    ) implements IComponentFactory
+                    {
+                        private $_alexaDeviceAddressApi;
+                        private $_convoServiceDataProvider;
+
+                        public function __construct($alexaDeviceAddressApi, $convoServiceDataProvider)
+                        {
+                            $this->_alexaDeviceAddressApi = $alexaDeviceAddressApi;
+                            $this->_convoServiceDataProvider = $convoServiceDataProvider;
+                        }
+
+                        public function createComponent($properties, $service)
+                        {
+                            return new \Convo\Pckg\Alexa\Elements\GetAmazonDeviceAddressElement(
+                                $properties,
+                                $this->_alexaDeviceAddressApi,
+                                $this->_convoServiceDataProvider
+                            );
                         }
                     }
                 ]
