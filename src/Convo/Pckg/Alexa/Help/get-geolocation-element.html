@@ -1,0 +1,31 @@
+<div class="for-help">
+    <h3>Get Geolocation Element</h3>
+
+    <p>Retrieves geolocation from mobile devices that run Alexa.</p>
+
+    <h4>Parameters:</h4>
+    <ul>
+        <li><code>Acceptable Freshens</code> - Acceptable difference in seconds between the timestamp when the geolocation was generated and the Alexa Request timestamp.</li>
+        <li><code>Accuracy Threshold</code> - Acceptable uncertainty in the latitude and longitude in meters provided in the <code>Geolocation.coordinate</code> filed in the Alexa Request.</li>
+        <li><code>Return Variable Name</code> - Default <code>status</code>, name of the variable that contains the geolocation data from an incoming Alexa Request</li>
+    </ul>
+
+    <h4>Properties that can be accessed in the Return Variable Name (status)</h4>
+    <ul>
+        <li>Does the device support Location Services? - <code>${status.is_geolocation_supported}</code></li>
+        <li>Has the user granted permission to the skill to use the location services? - <code>${status.is_geolocation_permission_granted}</code></li>
+        <li>Does the uncertainty in the latitude and longitude in meters exceeds the value in <var>Accuracy Threshold</var> field? - <code>${status.exceeds_accuracy_threshold}</code></li>
+        <li>Does the difference in seconds between the timestamp when the geolocation was generated and the Alexa Request timestamp exceeds the <var>Acceptable Freshens</var> value? - <code>${status.is_data_fresh_enough}</code></li>
+        <li>Is geolocation object not empty? - <code>${status.is_geolocation_available}</code></li>
+        <li>Is location sharing enabled on device? - <code>${status.is_location_sharing_enabled}</code></li>
+        <li>Access to the latitude from the geolocation object - <code>${status.geolocation.coordinate.latitudeInDegrees}</code></li>
+        <li>Access to the longitude from the geolocation object - <code>${status.geolocation.coordinate.longitudeInDegrees}</code></li>
+        <li>Access to the geolocation object - <code>${status.geolocation}</code>, for more info please visit <a target="_blank" href="https://developer.amazon.com/en-US/docs/alexa/custom-skills/location-services-for-alexa-skills.html#geolocation-interface">Geolocation interface properties</a>.</li>
+    </ul>
+
+    <h4>Flows:</h4>
+    <ul>
+        <li><code>OK</code> - executes when the geolocation object was retrieved successfully</li>
+        <li><code>NOK</code> - executes when the geolocation object is missing or the uncertainty in the latitude and longitude in meters exceeds the value in <var>Accuracy Threshold</var> field or the difference in seconds between the timestamp when the geolocation was generated and the Alexa Request timestamp exceeds the <var>Acceptable Freshens</var> value</li>
+    </ul>
+</div>
