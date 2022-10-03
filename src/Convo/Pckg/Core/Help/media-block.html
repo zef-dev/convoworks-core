@@ -1,8 +1,8 @@
 <div class="media-block-help">
     <h3>Media Block</h3>
-    
+
     <p>Serves for handling media playing requests (they are sessionless).</p>
-    
+
     <h4>Overview</h4>
     <p>
         Audio players on the smart speaker devices are working a bit differently than the regular conversation services. Once you initiate the audio stream your service stops
@@ -12,11 +12,34 @@
         All these commands are handled automatically by the <b>Media Block</b>.
     </p>
     <p>
-        While executing the child flows (next not available, ...) you have access to the <b>media info</b> which you can use to enhance your responses. 
-        E.g. "There are ${media_info.count} songs found and you are on the last one." 
+        While executing the child flows (next not available, ...) you have access to the <b>media info</b> which you can use to enhance your responses.
+        E.g. "There are ${media_info.count} songs found and you are on the last one."
     </p>
     <p>
         You also have access to the <b>last media info</b> in the entire service which you can use to enhance your resume functionalities.
-        E.g. "There are <code>${last_media_info.post_index}</code> to resume the recently played song in the <code>Start Audio Playback</code> element."
     </p>
+    <span>
+        Here are some example how to use the <b>last media info</b>:
+    </span>
+    <ul>
+        <li>Get count of found songs since the playback has started - <code>${last_media_info.count}</code></li>
+        <li>Is last song since the playback has started - <code>${last_media_info.last}</code></li>
+        <li>Is first song since the playback has started - <code>${last_media_info.first}</code></li>
+        <li>Number of song that is playing since the playback has started - <code>${last_media_info.song_no}</code></li>
+        <li>Index of song that is playing since the playback has started - <code>${last_media_info.song_no - 1}</code></li>
+        <li>Last known loop status since the playback has started - <code>${last_media_info.loop_status}</code></li>
+        <li>Last known shuffle status since the playback has started - <code>${last_media_info.shuffle_status}</code></li>
+        <li>Was playing - <code>${last_media_info.playing}</code></li>
+        <li>Current song artist since the playback has started - <code>${last_media_info.current.artist}</code></li>
+        <li>Current song title since the playback has started - <code>${last_media_info.current.songTitle}</code></li>
+        <li>Current file url since the playback has started - <code>${last_media_info.current.fileUrl}</code></li>
+        <li>Current song image url since the playback has started - <code>${last_media_info.current.songImageUrl}</code></li>
+        <li>Current song background image url since the playback has started - <code>${last_media_info.current.songBackgroundUrl}</code></li>
+        <li>Next song artist since the playback has started - <code>${last_media_info.next.artist}</code></li>
+        <li>Next song title since the playback has started - <code>${last_media_info.next.songTitle}</code></li>
+        <li>Next file url since the playback has started - <code>${last_media_info.next.fileUrl}</code></li>
+        <li>Next song image url since the playback has started - <code>${last_media_info.next.songImageUrl}</code></li>
+        <li>Next song background image url since the playback has started - <code>${last_media_info.next.songBackgroundUrl}</code></li>
+    </ul>
+
 </div>

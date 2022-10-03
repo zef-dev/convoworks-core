@@ -1,0 +1,45 @@
+<div class="for-help">
+    <h3>Get Amazon Customer Profile Element</h3>
+
+    <p>Retrieves address data from a stationary alexa device.</p>
+
+    <h3>When to use?</h3>
+
+    <p>When you want to retrieve the users Alexa Device.</p>
+
+    <h3>How to use: </h3>
+    <ol>
+        <li>
+            <span>Make sure you already have configured and propagated your service to Amazon Alexa with checked one of the permissions in <b>Amazon Alexa Skill Permissions</b> below:</span>
+            <ul>
+                <li><b>Full Address</b></li>
+                <li><b>Country/Region & Postal Code Only</b></li>
+            </ul>
+        </li>
+        <li>
+            <span>If you wish you can change the <var>Return Var</var> which represents the name under which the address data will be stored. Default is <var>deviceAddress</var></span>
+        </li>
+        <li>
+            <span>If the one of the device address permissions (Full Address or Country/Region & Postal Code Only) have been configured and granted on Account Level at the user's end, <b>OK</b> flow will be executed.</span>
+            <br>
+            <br>
+            <p>After the user has enabled the skill and granted device address related permissions, you'll be able to access the device address data like in the following examples below:</p>
+            <p>Case for <var>Full Address</var> permission configured and granted at the user's end.</p>
+            <ul>
+                <li>Access address line 1 - <code>${deviceAddress.addressLine1}</code></li>
+                <li>Access address line 2 - <code>${deviceAddress.addressLine2}</code></li>
+                <li>Access address line 3 - <code>${deviceAddress.addressLine3}</code></li>
+                <li>Access city - <code>${deviceAddress.city}</code></li>
+                <li>Access State or Region - <code>${deviceAddress.stateOrRegion}</code></li>
+                <li>Access District Or County - <code>${deviceAddress.districtOrCounty}</code></li>
+                <li>Access Country Code - <code>${deviceAddress.countryCode}</code></li>
+                <li>Access Postal Code - <code>${deviceAddress.postalCode}</code></li>
+            </ul>
+            <p>Case for <var>Country/Region & Postal Code Only</var> permission configured and granted at the user's end.</p>
+            <ul>
+                <li>Access Country Code - <code>${deviceAddress.countryCode}</code></li>
+                <li>Access Postal Code - <code>${deviceAddress.postalCode}</code></li>
+            </ul>
+        </li>
+    </ol>
+</div>

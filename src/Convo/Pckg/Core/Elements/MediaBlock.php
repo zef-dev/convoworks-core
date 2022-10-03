@@ -46,12 +46,12 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
      * @var \Convo\Core\Workflow\IConversationElement[]
      */
     private $_noNext        =   [];
-    
+
     /**
      * @var \Convo\Core\Workflow\IConversationElement[]
      */
     private $_noPrevious    =   [];
-    
+
     /**
      * @var \Convo\Core\Workflow\IConversationElement[]
      */
@@ -61,13 +61,13 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
      * @var IRequestFilter
      */
     private $_filter  =   null;
-    
+
     private $_blockId;
-    
+
     private $_contextId;
 
     private $_blockName;
-    
+
     private $_mediaInfoVar;
 
     private $_lastMediaInfoVar;
@@ -88,12 +88,12 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
             $this->_noNext[]        =   $element;
             $this->addChild( $element);
         }
-        
+
         foreach ( $properties['no_previous'] as $element) {
             $this->_noPrevious[]    =   $element;
             $this->addChild( $element);
         }
-        
+
         if ( isset( $properties['fallback'])) {
             foreach ( $properties['fallback'] as $fallback) {
                 $this->addFallback( $fallback);
@@ -311,7 +311,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
         $this->addChild( $filter);
         $this->_filter = $filter;
     }
-    
+
     /**
      * {@inheritDoc}
      * @see \Convo\Core\Workflow\IRunnableBlock::getRole()
@@ -320,7 +320,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
     {
         return IRunnableBlock::ROLE_MEDIA_PLAYER;
     }
-    
+
     /**
      * {@inheritDoc}
      * @see \Convo\Core\Workflow\IRunnableBlock::getName()
@@ -329,7 +329,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
     {
         return $this->_blockName;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -341,11 +341,11 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
     public function read( IConvoRequest $request, IConvoResponse $response)
     {
     }
-    
+
     public function getElements() {
         return [];
     }
-    
+
     public function getProcessors() {
         return [];
     }
@@ -359,12 +359,12 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
         $context    =   $this->_getMediaSourceContext();
         $info       =   $context->getMediaInfo();
         $info_var   =   $this->evaluateString( $this->_mediaInfoVar);
-        
-        $this->_logger->info( 'Injectiong media info ['.$info_var.']['.print_r( $info, true).']'); 
-        
+
+        $this->_logger->info( 'Injectiong media info ['.$info_var.']['.print_r( $info, true).']');
+
         $req_params =   $this->getService()->getComponentParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $this);
         $req_params->setServiceParam( $info_var, $info);
-        
+
         $result = new \Convo\Core\Workflow\DefaultFilterResult();
 
         if ( is_a( $request, '\Convo\Core\Workflow\IIntentAwareRequest')) {
@@ -373,25 +373,25 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
 
         $this->_logger->debug( "Filter result empty [" . $result->isEmpty()  . "] and [" . print_r( $result->getData(), true) . "]");
 
-        if ( !$result->isEmpty()) 
+        if ( !$result->isEmpty())
         {
             /** @var IConvoAudioResponse $response */
             /** @var IConvoAudioRequest $request */
             $this->_handleResult( $result, $response, $request, $context);
-        } 
-        else 
+        }
+        else
         {
             $this->_logger->info( 'Result is empty. Going to read failback.');
             $this->_readFallback( $request, $response);
         }
     }
-    
+
     private function _handleResult( IRequestFilterResult $result, IConvoAudioResponse $response, IConvoAudioRequest $request, IMediaSourceContext $context)
     {
         $command    =   $result->getSlotValue( 'command');
-        
+
         $this->_logger->info( "Handling [" . $command . "]");
-        
+
         switch ( $command) {
 
             case self::COMMAND_CANCEL:
@@ -402,7 +402,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                 $response->stopSong();
                 $context->setStopped();
                 break;
-                
+
             case self::COMMAND_CONTINUE_PLAYBACK:
             case self::COMMAND_RESUME_PLAYBACK:
                 try {
@@ -413,7 +413,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                     $this->_readFailbackOr( $request, $response);
                 }
                 break;
-                
+
             case self::COMMAND_NEXT:
                 try {
                     $context->moveNext();
@@ -424,7 +424,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                     $this->_readFailbackOr( $request, $response, $this->_noNext);
                 }
                 break;
-                
+
             case self::COMMAND_PREVIOUS:
                 try {
                     $context->movePrevious();
@@ -434,8 +434,8 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                     $this->_readFailbackOr( $request, $response, $this->_noPrevious);
                 }
                 break;
-                
-                
+
+
                 // PLAYER COMMANDS
             case self::COMMAND_REPEAT:
                 try {
@@ -455,7 +455,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                     $this->_readFailbackOr( $request, $response);
                 }
                 break;
-                
+
             case self::COMMAND_LOOP_ON:
                 if ( !$context->getLoopStatus()) {
                     $this->_logger->info( 'Enabling loop');
@@ -491,7 +491,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                 $context->setShuffleStatus( false);
                 $response->emptyResponse();
                 break;
-                
+
             // NOTIFICATIONS
             case self::COMMAND_PLAYBACK_NEARLY_FINISHED:
                 try {
@@ -501,7 +501,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                     $response->clearQueue();
                 }
                 break;
-                
+
             case self::COMMAND_PLAYBACK_FINISHED:
                 try {
                     $context->moveNext();
@@ -512,17 +512,42 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                     $response->emptyResponse();
                 }
                 break;
-                
+
             case self::COMMAND_PLAYBACK_STOPPED:
                 $context->setStopped( $request->getOffset());
                 $response->emptyResponse();
                 break;
-                
+
             // NOT HANDLED
             case self::COMMAND_PLAYBACK_STARTED:
                 $response->emptyResponse();
                 $context->setPlaying();
                 $last_info       =   $context->getMediaInfo();
+                unset($last_info['current']);
+                unset($last_info['next']);
+
+                try {
+                    $currentSong = $context->current();
+                    $last_info['current']['artist'] = $currentSong->getArtist();
+                    $last_info['current']['songTitle'] = $currentSong->getSongTitle();
+                    $last_info['current']['fileUrl'] = $currentSong->getFileUrl();
+                    $last_info['current']['songImageUrl'] = $currentSong->getSongImageUrl();
+                    $last_info['current']['songBackgroundUrl'] = $currentSong->getSongBackgroundUrl();
+                } catch (DataItemNotFoundException $e) {
+                    $this->_logger->info($e->getMessage());
+                }
+
+                try {
+                    $nextSong = $context->next();
+                    $last_info['next']['artist'] = $nextSong->getArtist();
+                    $last_info['next']['songTitle'] = $nextSong->getSongTitle();
+                    $last_info['next']['fileUrl'] = $nextSong->getFileUrl();
+                    $last_info['next']['songImageUrl'] = $nextSong->getSongImageUrl();
+                    $last_info['next']['songBackgroundUrl'] = $nextSong->getSongBackgroundUrl();
+                } catch (DataItemNotFoundException $e) {
+                    $this->_logger->info($e->getMessage());
+                }
+
                 $last_info_var   =   $this->evaluateString( $this->_lastMediaInfoVar);
 
                 $this->_logger->info( 'Injecting last media info ['.$last_info_var.']['.print_r( $last_info, true).']');
@@ -540,7 +565,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
                 $user_params =   $this->getService()->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_USER);
                 $user_params->setServiceParam( $last_info_var, null);
                 break;
-                
+
             default:
                 $this->_logger->notice( "Using default, empty response for [" . $command . "]");
                 $response->emptyResponse();
@@ -616,17 +641,17 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
         if ( empty( $request->getSessionId())) {
             $this->_logger->info( 'Sessionless request. Exiting with empty response ...');
             $response->emptyResponse();
-            return; 
+            return;
         }
-        
+
         if ( empty( $collection)) {
             $collection =   $this->_fallback;
         }
-        
+
         foreach ( $collection as $element) {
             $element->read( $request, $response);
         }
-        
+
         $response->setShouldEndSession( true);
     }
 
@@ -639,7 +664,7 @@ class MediaBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
             $this->evaluateString( $this->_contextId),
             IMediaSourceContext::class);
     }
-    
+
     // UTIL
     public function __toString() {
         return parent::__toString().'['.$this->_blockId.']['.$this->_blockName.']['.$this->_contextId.']['.$this->_mediaInfoVar.']';
