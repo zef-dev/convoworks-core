@@ -130,10 +130,12 @@ class AlexaSkillRestHandler implements RequestHandlerInterface
         $request_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData();
         $session_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getData();
         $installation_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION)->getData();
+        $user_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_USER)->getData();
         $variables = [
             'request' => $request_vars,
             'session' => $session_vars,
-            'installation' => $installation_vars
+            'installation' => $installation_vars,
+            'user' => $user_vars
         ];
 
         $this->_logger->info('Got response [' . $text_response . ']');
