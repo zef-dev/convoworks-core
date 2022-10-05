@@ -49,15 +49,16 @@ class PublicRestApi implements RequestHandlerInterface
 		$this->_logger->debug( 'Got info ['.$info.']');
 
 		if ( $info->startsWith( 'service-run/external')) {
-		    if ( $route = $info->route( 'service-run/external/{platformId}/{variant}/{serviceId}')) {
+		    if ( $route = $info->route( 'service-run/external/{packageId}/{platformId}/{variant}/{serviceId}')) {
+		        $package_id  =   $route->get( 'packageId');
 		        $platform_id  =   $route->get( 'platformId');
-		        $provider     =   $this->_packageProviderFactory->getProviderByNamespace( $platform_id);
+		        $provider     =   $this->_packageProviderFactory->getProviderByNamespace( $package_id);
 		        if ( $provider instanceof IPlatformProvider) {
 		            /* @var IPlatformProvider $provider */
-		            $handler      =   $provider->getPublicRestHandler();
+		            $handler      =   $provider->getPlatform( $platform_id)->getPublicRestHandler();
 		            return $handler->handle( $request);
 		        }
-		        throw new \Convo\Core\Rest\NotFoundException( 'No appropriate platform provider found for ['.$platform_id.'] at ['.$info.']');
+		        throw new \Convo\Core\Rest\NotFoundException( 'No appropriate platform provider found for ['.$package_id.']['.$platform_id.'] at ['.$info.']');
 		    }
 		    throw new \Convo\Core\Rest\NotFoundException( 'No platform route found for at ['.$info.']');
 		}
