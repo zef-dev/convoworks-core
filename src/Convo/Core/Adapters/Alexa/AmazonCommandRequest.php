@@ -32,6 +32,7 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	private $_data	=	array();
 
 	private $_slots;
+	private $_rawSlots;
 
 	private $_isMediaRequest = false;
 	private $_isSalesRequest = false;
@@ -246,6 +247,7 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 		if ( isset( $this->_data['request']['intent']['slots'])) {
 		    $this->_logger->debug( 'Parsing slots from ['.print_r( $this->_data['request']['intent']['slots'], true).']');
 			$this->_slots = $this->_parseSlotValues($this->_data['request']['intent']['slots']);
+			$this->_rawSlots = $this->_data['request']['intent']['slots'];
 		}
 
 		$this->_logger->debug( 'Got parsed ['.$this.']');
@@ -259,6 +261,11 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	{
 		return $this->_slots ?? [];
 	}
+
+    public function getRawSlots()
+    {
+        return $this->_rawSlots ?? [];
+    }
 
 	public function getPlatformId() {
 		return self::PLATFORM_ID;

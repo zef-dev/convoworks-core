@@ -73,10 +73,12 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
             if (isset($rename[$key])) {
                 $this->_logger->info('Renaming incoming slot ['.$key.'] to ['.$rename[$key].']');
                 $result->setSlotValue($rename[$key], $value);
+                $result->setSlotValue('_'.$rename[$key], $this->_getRawSlot($request, $key));
                 continue;
             }
 
             $result->setSlotValue( $key, $value);
+            $result->setSlotValue('_'.$key, $this->_getRawSlot($request, $key));
         }
 
         if (!is_array($this->_values) && is_string($this->_values) && StrUtil::startsWith($this->_values, '${')) {
@@ -96,6 +98,10 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
         }
 
         return $result;
+    }
+
+    private function _getRawSlot(\Convo\Core\Workflow\IIntentAwareRequest $request, $slotName) {
+        return $request->getRawSlots()[$slotName] ?? [];
     }
 
     // UTIL

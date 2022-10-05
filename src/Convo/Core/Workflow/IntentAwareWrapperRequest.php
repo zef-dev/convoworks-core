@@ -14,6 +14,11 @@ class IntentAwareWrapperRequest implements IIntentAwareRequest
 	 */
 	private $_slots    =   [];
 
+    /**
+     * @var array
+     */
+    private $_rawSlots    =   [];
+
 	/**
 	 * @var string
 	 */
@@ -24,11 +29,12 @@ class IntentAwareWrapperRequest implements IIntentAwareRequest
 	 */
 	private $_platformId;
 
-	public function __construct( $parent, $intentName, $slotsData, $platformId)
+	public function __construct( $parent, $intentName, $slotsData, $rawSlots, $platformId)
 	{
 	    $this->_parent		=	$parent;
 	    $this->_intentName	=	$intentName;
 		$this->_slots		=	$slotsData;
+		$this->_rawSlots	=	$rawSlots;
 
 		$this->_platformId	=	$platformId;
 	}
@@ -41,6 +47,15 @@ class IntentAwareWrapperRequest implements IIntentAwareRequest
 	{
 	    return $this->_slots;
 	}
+
+    /**
+     * {@inheritDoc}
+     * @see \Convo\Core\Workflow\IIntentAwareRequest::getRawSlots()
+     */
+    public function getRawSlots()
+    {
+        return $this->_rawSlots;
+    }
 
 	/**
 	 * {@inheritDoc}
