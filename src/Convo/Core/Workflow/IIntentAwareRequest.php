@@ -23,6 +23,12 @@ interface IIntentAwareRequest extends IConvoRequest
 	 */
 	public function getSlotValues();
 
+    /**
+     * Returns raw slots
+     * @return array Raw slot data as associative array
+     */
+    public function getRawSlots();
+
 	/**
 	 * Get the request's platform ID
 	 * @return string Platform ID for the request

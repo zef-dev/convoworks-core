@@ -75,7 +75,7 @@ class PlatformRequestFactory implements IPlatformRequestFactory
         $this->_logger->debug('Exec platform id ['.$platformId.']');
 
         if ($request->isEmpty()) {
-            return new IntentAwareWrapperRequest($request, '', [], $platformId);
+            return new IntentAwareWrapperRequest($request, '', [], [], $platformId);
         }
 
         $service_meta = $this->_convoServiceDataProvider->getServiceMeta(
@@ -112,8 +112,10 @@ class PlatformRequestFactory implements IPlatformRequestFactory
 
         $intent_name = $simulation_data['selectedIntent']['name'];
         $slots = [];
+        $rawSlots = [];
 
         if (isset($simulation_data['selectedIntent']['slots'])) {
+            $rawSlots = $simulation_data['selectedIntent']['slots'];
             foreach ($simulation_data['selectedIntent']['slots'] as $definition) {
                 $name = $definition['name'];
                 $value = null;
@@ -133,7 +135,7 @@ class PlatformRequestFactory implements IPlatformRequestFactory
 
         $this->_logger->info('Final matched intent data ['.$intent_name.']['.print_r($slots, true).']');
 
-        return new IntentAwareWrapperRequest($request, $intent_name, $slots, $platformId);
+        return new IntentAwareWrapperRequest($request, $intent_name, $slots, $rawSlots, $platformId);
     }
 
     private function _prepareDialogflowIntentRequest(IConvoRequest $request, \Convo\Core\IAdminUser $user, $serviceId, $platformId) {
@@ -155,7 +157,7 @@ class PlatformRequestFactory implements IPlatformRequestFactory
         $text = $request->getText();
 
         if (!$text) {
-            return new IntentAwareWrapperRequest($request, '', [], $platformId);
+            return new IntentAwareWrapperRequest($request, '', [], [], $platformId);
         }
 
         $language = DialogflowLanguageMapper::getDefaultLocale($service_meta['default_language']);
@@ -169,6 +171,6 @@ class PlatformRequestFactory implements IPlatformRequestFactory
 
         $this->_logger->info('Got intent ['.$intent_name.']['.print_r($slots, true).']');
 
-        return new IntentAwareWrapperRequest($request, $intent_name, $slots, $platformId);
+        return new IntentAwareWrapperRequest($request, $intent_name, $slots, $slots, $platformId);
     }
 }

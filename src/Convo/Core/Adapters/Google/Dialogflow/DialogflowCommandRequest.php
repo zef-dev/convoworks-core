@@ -24,6 +24,7 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
     private $_logger;
 
     private $_slots;
+    private $_rawSlots;
 
     private $_accessToken;
     private $_text;
@@ -78,6 +79,7 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
         if (isset($this->_data['queryResult']['parameters']))
         {
             $this->_slots = $this->_parseSlotValues($this->_data);
+            $this->_rawSlots = $this->_data['queryResult']['parameters'];
         }
     }
 
@@ -224,6 +226,11 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
     public function getSlotValues()
     {
         return $this->_slots ?? [];
+    }
+
+    public function getRawSlots()
+    {
+        return $this->_rawSlots ?? [];
     }
 
     private function _getProjectId() {
