@@ -113,6 +113,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
         $request_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData();
         $session_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getData();
         $installation_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION)->getData();
+        $user_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_USER)->getData();
 
 		$child_params = [];
 
@@ -131,7 +132,8 @@ class TestServiceRestHandler implements RequestHandlerInterface
                 'service' => [
 					'request' => $request_vars,
 					'session' => $session_vars,
-					'installation' => $installation_vars
+					'installation' => $installation_vars,
+                    'user' => $user_vars
 				],
                 'component' => $child_params
             ],

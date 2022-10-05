@@ -60,6 +60,12 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
     private $_intentConfirmationStatus = null;
     private $_intentSlots = null;
 
+    private $_geolocation = null;
+    private $_isGeoLocationSupported = false;
+    private $_isGeoLocationPermissionGranted = false;
+    private $_isGeoLocationAccessEnabled = false;
+    private $_areLocationServicesRunning = false;
+
 	/**
 	 * @var \Psr\Log\LoggerInterface
 	 */
@@ -113,6 +119,24 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 		$this->_offsetMilliseconds = $this->_data['request']['offsetInMilliseconds'] ?? 0;
 
         $this->_audioItemToken = $this->_data['context']['AudioPlayer']['token'] ?? null;
+
+        $this->_geolocation = $this->_data['context']['Geolocation'] ?? null;
+        $geolocationPermissionStatus = $this->_data['context']['System']['user']['permissions']['scopes']['alexa::devices:all:geolocation:read']['status'] ?? null;
+        if ($geolocationPermissionStatus === 'GRANTED') {
+            $this->_isGeoLocationPermissionGranted = true;
+        }
+
+        if (!empty($this->_geolocation)) {
+            if (isset($this->_geolocation['locationServices']['access'])) {
+                $this->_isGeoLocationAccessEnabled = $this->_geolocation['locationServices']['access'] === 'ENABLED';
+            }
+
+            if (isset($this->_geolocation['locationServices']['status'])) {
+                $this->_areLocationServicesRunning = $this->_geolocation['locationServices']['status'] === 'RUNNING';
+            }
+        }
+
+        $this->_isGeoLocationSupported = isset($this->_data['context']['System']['device']['supportedInterfaces']['Geolocation']);
 
 		if (isset($this->_data['context']['Viewport'])) {
 		    $this->_isDisplaySupported = true;
@@ -531,6 +555,30 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
     public function getAudioItemToken()
     {
         return $this->_audioItemToken;
+    }
+
+    public function getGeolocation() {
+        return $this->_geolocation;
+    }
+
+    public function isGeoLocationSupported() {
+        return $this->_isGeoLocationSupported;
+    }
+
+    public function isGeoLocationPermissionGranted() {
+        return $this->_isGeoLocationPermissionGranted;
+    }
+
+    public function isGeoLocationAccessEnabled() {
+        return $this->_isGeoLocationAccessEnabled;
+    }
+
+    public function areLocationServicesRunning() {
+        return $this->_areLocationServicesRunning;
+    }
+
+    public function isLocationSharingEnabled() {
+        return $this->isGeoLocationAccessEnabled() && $this->areLocationServicesRunning();
     }
 
     private function _getAudioItemTokenData()
