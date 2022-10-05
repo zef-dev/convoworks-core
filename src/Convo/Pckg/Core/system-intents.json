@@ -816,6 +816,13 @@
                             { "text" : "rewind"},
                             { "text" : "thirty seconds", "type" : "@convo-core.duration", "slot_value" : "Duration"}
                         ]
+                    },
+                    {
+                        "raw" : "skip back thirty seconds",
+                        "model" : [
+                            { "text" : "skip back"},
+                            { "text" : "thirty seconds", "type" : "@convo-core.duration", "slot_value" : "Duration"}
+                        ]
                     }
                 ]
             }
@@ -829,9 +836,9 @@
                 "type" : "custom",
                 "utterances" : [
                     {
-                        "raw" : "forward",
+                        "raw" : "fast forward",
                         "model" : [
-                            { "text" : "forward"}
+                            { "text" : "fast forward"}
                         ]
                     },
                     {
@@ -845,6 +852,13 @@
                         "raw" : "fast forward thirty seconds",
                         "model" : [
                             { "text" : "fast forward"},
+                            { "text" : "thirty seconds", "type" : "@convo-core.duration", "slot_value" : "Duration"}
+                        ]
+                    },
+                    {
+                        "raw" : "skip forward thirty seconds",
+                        "model" : [
+                            { "text" : "skip forward"},
                             { "text" : "thirty seconds", "type" : "@convo-core.duration", "slot_value" : "Duration"}
                         ]
                     }

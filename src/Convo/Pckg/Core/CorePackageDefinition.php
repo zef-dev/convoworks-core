@@ -130,10 +130,17 @@ class CorePackageDefinition extends AbstractPackageDefinition
             "name" => "PlaybackDirection",
             "values" => [
                 [
-                    "value" => "forward"
+                    "value" => "forward",
+                    "synonyms" => [
+                        "ahead",
+                        "onward"
+                    ]
                 ],
                 [
-                    "value" => "backward"
+                    "value" => "backward",
+                    "synonyms" => [
+                        "back"
+                    ]
                 ]
             ]
         ]);
