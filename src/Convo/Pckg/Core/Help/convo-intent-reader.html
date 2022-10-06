@@ -1,6 +1,6 @@
 <div class="intent-help">
     <h3>Convo Intent</h3>
-    
+
     <p>Matches against Convo intent definitions.</p>
 
     <h3>When to use?</h3>
@@ -20,6 +20,14 @@
             You can add <b>Predefined values</b> if you want to make them available on the <code>result</code> object.
             <ul>
                 <li><b>These are not slots!</b> They will not activate the filter if you create a predefined value with the same name as a member of the <b>Required slots</b> list.</li>
+            </ul>
+        </li>
+        <li>
+            <span>You also have access to captured slot values from an intent.</span>
+            <p>Helpful Result variables:</p>
+            <ul>
+                <li>To capture a value of a slot i.e. city, use - <code>${result.city}</code></li>
+                <li>To capture the entire structure of a platform slot i.e. city, use - <code>${result._city}</code></li>
             </ul>
         </li>
         <li>
