@@ -1,6 +1,6 @@
 <div class="platform-intent-help">
     <h3>Platform Intent</h3>
-    
+
     <p>Reads platform intents that have not been defined in the Convoworks editor. You can manually enter platform intents to be checked for in incoming requests.</p>
 
     <h3>When to use?</h3>
@@ -12,5 +12,13 @@
         <li>Write the name of the intent in the <b>Intent</b> field. This is <b>case sensitive.</b></li>
         <li>You can add <b>Predefined values</b> if you want to make them available on the <code>result</code> object.</li>
         <li>You can rename incoming slot values if you want to, by setting up <b>Rename values</b> pairs.</li>
+        <li>
+            <span>You also have access to captured slot values from an intent.</span>
+            <p>Helpful Result variables:</p>
+            <ul>
+                <li>To capture a value of a slot i.e. city, use - <code>${result.city}</code></li>
+                <li>To capture the entire structure of a platform slot i.e. city, use - <code>${result._city}</code></li>
+            </ul>
+        </li>
     </ol>
 </div>
