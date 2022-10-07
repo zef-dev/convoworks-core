@@ -45,11 +45,19 @@ class Mp3Id3File extends Mp3File
     }
     
     public function getSongTitle() {
-        return parent::getSongTitle() ? parent::getSongTitle() : $this->getMetadata()['song'];
+        $song = $this->getMetadata()['song'] ?? parent::getSongTitle();
+        if (empty($song)) {
+            $song = parent::getSongTitle();
+        }
+        return $song;
     }
     
     public function getArtist() {
-        return parent::getArtist() ? parent::getArtist() : $this->getMetadata()['artist'];
+        $artist = $this->getMetadata()['artist'] ?? parent::getArtist();
+        if (empty($artist)) {
+            $artist = parent::getArtist();
+        }
+        return $artist;
     }
 
     public function __toString()
