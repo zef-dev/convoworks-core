@@ -23,7 +23,7 @@
         "facebook/graph-sdk": "^5.7",
         "symfony/expression-language" : "^5.2",
         "symfony/event-dispatcher": "^5.4",
-        "wapmorgan/mp3info": "^0.0.5",
+        "wapmorgan/mp3info": "^0.0.8",
         "zef-dev/zef-expression-language": "^1.0.2"
 	},
 	"autoload" : {
