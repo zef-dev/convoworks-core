@@ -2,18 +2,11 @@
 
 namespace Convo\Core\Factory;
 
-use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\ComponentNotFoundException;
 
 interface IPlatformProvider
 {
 	
-	/**
-	 * @return RequestHandlerInterface
-	 * @deprecated
-	 */
-    public function getPublicRestHandler();
-
     /**
      * @return IPlatform
      * @throws ComponentNotFoundException
