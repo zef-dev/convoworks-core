@@ -102,7 +102,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
         try {
 			$this->_logger->info('Running service instance ['.$service->getId().']');
             $service->run($text_request, $text_response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $exception["message"] = $e->getMessage();
             $exceptionStackTrace = $e->getTraceAsString();
             $stack = explode('#', $e->getTraceAsString());
