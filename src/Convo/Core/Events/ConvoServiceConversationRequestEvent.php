@@ -4,7 +4,6 @@ namespace Convo\Core\Events;
 
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
-use Convo\Core\Workflow\IIntentAwareRequest;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class ConvoServiceConversationRequestEvent extends Event
