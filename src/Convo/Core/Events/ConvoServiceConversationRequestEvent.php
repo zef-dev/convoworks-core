@@ -65,7 +65,7 @@ class ConvoServiceConversationRequestEvent extends Event
             $intentName = $this->_convoRequest->getIntentName();
         }
 
-        return !empty($intentName) ? $intentName : '';
+        return $intentName;
     }
 
     public function getSlotValues() {
@@ -75,7 +75,7 @@ class ConvoServiceConversationRequestEvent extends Event
             $slotValues = $this->_convoRequest->getSlotValues();
         }
 
-        return !empty($slotValues) ? $slotValues : [];
+        return $slotValues;
     }
 
     public function getConvoServiceVariables() {
