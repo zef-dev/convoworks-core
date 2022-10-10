@@ -17,8 +17,8 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 	private $_sessionId = '';
 	private $_requestId = '';
 
-	private $_personId = null;
-    private $_personAuthenticationConfidenceLevel = null;
+	private $_personId = '';
+    private $_personAuthenticationConfidenceLevel = '';
 
 	private $_accessToken;
 	private $_aplToken;
@@ -52,16 +52,16 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 
     private $_playerRunning =   false;
 
-    private $_audioItemToken =   null;
+    private $_audioItemToken = '';
 
 	private $_isAplUserEvent = false;
 	private $_aplArguments;
 
-    private $_dialogState = null;
-    private $_intentConfirmationStatus = null;
-    private $_intentSlots = null;
+    private $_dialogState = '';
+    private $_intentConfirmationStatus = '';
+    private $_intentSlots = [];
 
-    private $_geolocation = null;
+    private $_geolocation = [];
     private $_isGeoLocationSupported = false;
     private $_isGeoLocationPermissionGranted = false;
     private $_isGeoLocationAccessEnabled = false;
@@ -102,27 +102,27 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 		$this->_requestId		=   $this->_data['request']['requestId'];
 		$this->_locale		    =   $this->_data['request']['locale'];
 
-		$this->_accessToken		=	$this->_data['context']['System']['user']['accessToken'] ?? null;
+		$this->_accessToken		=	$this->_data['context']['System']['user']['accessToken'] ?? '';
         if (isset($this->_data['context']['System']['person']['accessToken'])) {
             $this->_accessToken		=	$this->_data['context']['System']['person']['accessToken'];
         }
-		$this->_personId		=	$this->_data['context']['System']['person']['personId'] ?? null;
-		$this->_dialogState		=	$this->_data['request']['dialogState'] ?? null;
-		$this->_intentConfirmationStatus		=	$this->_data['request']['intent']['confirmationStatus'] ?? null;
-		$this->_intentSlots		=	['request']['intent']['slots'] ?? null;
-		$this->_personAuthenticationConfidenceLevel		=	$this->_data['context']['System']['person']['authenticationConfidenceLevel']['level'] ?? null;
+		$this->_personId		=	$this->_data['context']['System']['person']['personId'] ?? '';
+		$this->_dialogState		=	$this->_data['request']['dialogState'] ?? '';
+		$this->_intentConfirmationStatus		=	$this->_data['request']['intent']['confirmationStatus'] ?? '';
+		$this->_intentSlots		=	['request']['intent']['slots'] ?? [];
+		$this->_personAuthenticationConfidenceLevel		=	$this->_data['context']['System']['person']['authenticationConfidenceLevel']['level'] ?? '';
 
 		$this->_intentType		=	$this->_data['request']['type'];
-		$this->_intentName		=   isset( $this->_data['request']['intent']['name']) ? $this->_data['request']['intent']['name'] : null;
+		$this->_intentName		= $this->_data['request']['intent']['name'] ?? '';
 //		$this->_text			=   isset( $this->_data['request']['intent']['slots']['CommandSlot']['value']) ?
 //					$this->_data['request']['intent']['slots']['CommandSlot']['value'] : null;
 
 		$this->_offsetMilliseconds = $this->_data['request']['offsetInMilliseconds'] ?? 0;
 
-        $this->_audioItemToken = $this->_data['context']['AudioPlayer']['token'] ?? null;
+        $this->_audioItemToken = $this->_data['context']['AudioPlayer']['token'] ?? '';
 
-        $this->_geolocation = $this->_data['context']['Geolocation'] ?? null;
-        $geolocationPermissionStatus = $this->_data['context']['System']['user']['permissions']['scopes']['alexa::devices:all:geolocation:read']['status'] ?? null;
+        $this->_geolocation = $this->_data['context']['Geolocation'] ?? [];
+        $geolocationPermissionStatus = $this->_data['context']['System']['user']['permissions']['scopes']['alexa::devices:all:geolocation:read']['status'] ?? '';
         if ($geolocationPermissionStatus === 'GRANTED') {
             $this->_isGeoLocationPermissionGranted = true;
         }
@@ -153,7 +153,7 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
 			$this->_isAplEnabled = true;
 		}
 
-        $player =   $this->_data['context']['AudioPlayer']['playerActivity'] ?? null;
+        $player =   $this->_data['context']['AudioPlayer']['playerActivity'] ?? '';
         if ( $player && in_array( $player, ['IDLE', 'PAUSED', 'PLAYING', 'STOPPED'])) {
             $this->_logger->info( 'Seems that the player is running ['.$player.']');
             $this->_playerRunning   =   true;
@@ -402,7 +402,7 @@ class AmazonCommandRequest implements \Convo\Core\Workflow\IIntentAwareRequest, 
     }
 
     public function getIntentSlotConfirmationStatus($slotName) {
-        return $this->_intentSlots[$slotName]['confirmationStatus'] ?? null;
+        return $this->_intentSlots[$slotName]['confirmationStatus'] ?? '';
 	}
 
     public function getPersonAuthenticationConfidenceLevel() {
