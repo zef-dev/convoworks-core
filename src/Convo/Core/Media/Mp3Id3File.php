@@ -60,6 +60,14 @@ class Mp3Id3File extends Mp3File
         return $artist;
     }
 
+    public function getGenre() {
+        return $this->getMetadata()['genre'] ?? '';
+    }
+
+    public function getAlbum() {
+        return $this->getMetadata()['album'] ?? '';
+    }
+
     public function __toString()
     {
         return parent::__toString().'['.$this->_filePath.']';
