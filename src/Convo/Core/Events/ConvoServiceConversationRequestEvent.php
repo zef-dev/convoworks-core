@@ -4,7 +4,6 @@ namespace Convo\Core\Events;
 
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
-use Convo\Core\Workflow\IIntentAwareRequest;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class ConvoServiceConversationRequestEvent extends Event
@@ -65,7 +64,7 @@ class ConvoServiceConversationRequestEvent extends Event
             $intentName = $this->_convoRequest->getIntentName();
         }
 
-        return !empty($intentName) ? $intentName : '';
+        return $intentName;
     }
 
     public function getSlotValues() {
@@ -75,7 +74,7 @@ class ConvoServiceConversationRequestEvent extends Event
             $slotValues = $this->_convoRequest->getSlotValues();
         }
 
-        return !empty($slotValues) ? $slotValues : [];
+        return $slotValues;
     }
 
     public function getConvoServiceVariables() {

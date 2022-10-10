@@ -121,7 +121,7 @@ class AlexaSkillRestHandler implements RequestHandlerInterface
         try {
             $this->_logger->info('Running service instance ['.$service->getId().'] in Alexa Skill REST Handler.');
             $service->run($text_request, $text_response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $exceptionStackTrace = $e->getTraceAsString();
             $statusCode = $e->getCode();
             $this->_logger->error($e);

@@ -98,11 +98,13 @@ class TestServiceRestHandler implements RequestHandlerInterface
         ];
 
         $statusCode = 'OK';
+        $exceptionStackTrace = '';
         try {
 			$this->_logger->info('Running service instance ['.$service->getId().']');
             $service->run($text_request, $text_response);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $exception["message"] = $e->getMessage();
+            $exceptionStackTrace = $e->getTraceAsString();
             $stack = explode('#', $e->getTraceAsString());
             array_shift($stack);
             $exception["stack_trace"] = $stack;
@@ -151,7 +153,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 
 		$data = ArrayUtil::arrayFilterRecursive($data, function ($value) { return !empty($value); });
 		$data = array_merge($data, $text_response->getPlatformResponse());
-        $exceptionStackTrace = !empty($exception['stack_trace']) ? $exception['stack_trace'] : '';
+//         $exceptionStackTrace = !empty($exception['stack_trace']) ? $exception['stack_trace'] : '';
         $this->_eventDispatcher->dispatch(
             new ConvoServiceConversationRequestEvent(
                 $text_request,

@@ -2,7 +2,6 @@
 
 namespace Convo\Core\Util;
 
-use Convo\Core\Events\ConvoServiceConversationRequestEvent;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
