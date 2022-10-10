@@ -169,6 +169,9 @@ abstract class StrUtil
 
     public static function getTextSimilarityPercentageBetweenTwoStrings($string1, $string2) {
         $percentage = 0;
+        if (!is_string($string1) || !is_string($string2)) {
+            return $percentage;
+        }
         similar_text(strtolower($string1), strtolower($string2), $percentage);
         return $percentage;
     }
