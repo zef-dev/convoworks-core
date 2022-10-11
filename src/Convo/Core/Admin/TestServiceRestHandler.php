@@ -71,7 +71,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		$is_init		=	$this->_isInit($json);
 		$is_end			=	$json['end'] ?? false;
 		$device_id		=	$json['device_id'] ?? false;
-		$platform_id	=	$json['platform_id'] ?? null;
+		$platform_id	=	$json['platform_id'] ?? 'UNKNOWN';
         $request_id     =   'admin-chat-'.StrUtil::uuidV4();
 
 		if ( empty( $device_id)) {
@@ -196,7 +196,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 				try {
 					$data['children'][] = $this->_getChildData($service, $childs_child);
 				} catch (DataItemNotFoundException $e) {
-					$this->_logger->debug( $e->getMessage());
+//					$this->_logger->debug( $e->getMessage());
 				}
 			}
 		}
