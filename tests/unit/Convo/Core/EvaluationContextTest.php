@@ -169,6 +169,31 @@ class EvaluationContextTest extends TestCase
 			}
 		});
     }
+    
+    /**
+     * @dataProvider keepTypeProvider
+     * @param string $key
+     * @param mixed $context
+     */
+    public function testKeepType( $key, $context)
+    {
+        $string    = '${'.$key.'}';
+        
+        $context = new ArrayResolver( $context);
+        
+        $actual = $this->_evalContext->evalString( $string, $context->getValues());
+        
+        $this->assertSame( $context[$key], $actual);
+    }
+    
+    public function keepTypeProvider() 
+    {
+        return [
+            [ 'val', ['val' => 1]],
+            [ 'val', ['val' => '+1']]
+        ];
+    }
+    
 
     /**
      * @dataProvider stringParsingProvider
