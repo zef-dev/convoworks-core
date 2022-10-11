@@ -2,13 +2,13 @@
 
 namespace Convo\Core\Admin;
 
-use Convo\Core\Events\ConvoServiceConversationRequestEvent;
 use Convo\Core\DataItemNotFoundException;
 use Convo\Core\Util\StrUtil;
 use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Publish\IPlatformPublisher;
 use Convo\Core\Util\ArrayUtil;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Convo\Core\EventDispatcher\ServiceRunRequestEvent;
 
 class TestServiceRestHandler implements RequestHandlerInterface
 {
@@ -43,7 +43,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 	 */
 	private $_platformRequestFactory;
 
-    /*
+    /**
      * @var \Symfony\Component\EventDispatcher\EventDispatcher
      */
     private $_eventDispatcher;
@@ -97,19 +97,24 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		    "stack_trace" => null,
         ];
 
-        $statusCode = 'OK';
-        $exceptionStackTrace = '';
         try {
 			$this->_logger->info('Running service instance ['.$service->getId().']');
             $service->run($text_request, $text_response);
+            
+            $this->_eventDispatcher->dispatch(
+                new ServiceRunRequestEvent( false, $text_request, $text_response, $service, IPlatformPublisher::MAPPING_TYPE_DEVELOP),
+                ServiceRunRequestEvent::NAME);
+            
         } catch (\Throwable $e) {
             $exception["message"] = $e->getMessage();
-            $exceptionStackTrace = $e->getTraceAsString();
             $stack = explode('#', $e->getTraceAsString());
             array_shift($stack);
             $exception["stack_trace"] = $stack;
-            $statusCode = $e->getCode();
-            $this->_logger->error($e);
+            
+            $this->_eventDispatcher->dispatch(
+                new ServiceRunRequestEvent( false, $text_request, $text_response, $service, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $e),
+                ServiceRunRequestEvent::NAME);
+            $this->_logger->error( $e);
         }
 
         $request_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData();
@@ -152,19 +157,8 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		}
 
 		$data = ArrayUtil::arrayFilterRecursive($data, function ($value) { return !empty($value); });
-		$data = array_merge($data, $text_response->getPlatformResponse());
+		$data = array_merge( $data, $text_response->getPlatformResponse());
 //         $exceptionStackTrace = !empty($exception['stack_trace']) ? $exception['stack_trace'] : '';
-        $this->_eventDispatcher->dispatch(
-            new ConvoServiceConversationRequestEvent(
-                $text_request,
-                $text_response,
-                'develop',
-                $data['variables'],
-                $statusCode,
-                $exceptionStackTrace
-            ),
-            ConvoServiceConversationRequestEvent::NAME
-        );
 
 		return $this->_httpFactory->buildResponse($data);
 	}
