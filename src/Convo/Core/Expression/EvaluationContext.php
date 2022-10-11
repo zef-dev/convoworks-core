@@ -62,12 +62,28 @@ class EvaluationContext
 
 	public function evalString( $string, $context=[], $skipEmpty=false)
 	{
+	    $this->_logger->debug( 'Evaluating string ['.$string.']');
+	    
 		$expressions	=	$this->_extractExpressions( $string);
 
+		if ( count( $expressions) === 1) 
+		{
+		    $expression = $expressions[0];
+		    $expression_full = '${'.$expression.'}';
+		    if ( $expression_full === $string) 
+		    {
+		        try {
+		            $value = $this->_expLang->evaluate( $expression, $context);
+		            $this->_logger->debug( 'Got value type ['.gettype( $value).'] for a single expression string ['.$expression.']');
+		            return $value;
+		        } catch ( \Symfony\Component\ExpressionLanguage\SyntaxError $e) {
+		            throw $e;
+		        }
+		    }
+		}
+		
 		foreach ( $expressions as $expression)
 		{
-			$this->_logger->debug( 'Currently handling expression ['.$expression.']');
-
 			try {
 				$value = $this->_expLang->evaluate( $expression, $context);
 			} catch ( \Symfony\Component\ExpressionLanguage\SyntaxError $e) {
@@ -81,17 +97,17 @@ class EvaluationContext
 			    if  ( !$skipEmpty || $skipEmpty && !empty( $value)) {
 					$quot_expr = preg_quote($expression, '/');
 
-					$this->_logger->debug('preg_quoted expression ['.$quot_expr.']');
+// 					$this->_logger->debug('preg_quoted expression ['.$quot_expr.']');
 
 			        $pattern = '/\${\s*'.$quot_expr.'\s*}/';
-			        $string = $this->_castToAppropriateValueType(preg_replace($pattern, strval($value), $string));
+			        $string = preg_replace( $pattern, strval( $value), $string);
 			    }
 
-				if ( $string === '') {
-				    if ( is_null( $value) || is_int( $value) || is_float( $value)) {
-				        $string =   $value;
-				    }
-				}
+// 				if ( $string === '') {
+// 				    if ( is_null( $value) || is_int( $value) || is_float( $value)) {
+// 				        $string =   $value;
+// 				    }
+// 				}
 			} else if (is_bool( $value)) {
                 return $value;
             } else {
@@ -138,6 +154,12 @@ class EvaluationContext
 		return $expressions;
 	}
 
+	/**
+	 * @todo This is questionable method. It might be that it only requires strval().
+	 * @param string $value
+	 * @return string|number
+	 * @deprecated 
+	 */
 	private function _castToAppropriateValueType($value)
 	{
 		$this->_logger->debug('Got value to cast ['.$value.']');
