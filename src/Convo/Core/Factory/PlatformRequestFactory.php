@@ -66,7 +66,7 @@ class PlatformRequestFactory implements IPlatformRequestFactory
                 $this->_logger->info("Accessing Platform Request Factory with Dialogflow Command Request");
                 return $this->_prepareDialogflowIntentRequest($request, $user, $serviceId, $platformId);
             default:
-                return new ComponentNotFoundException('Platform ' . $platformId . ' not supported.');
+                throw new ComponentNotFoundException('Platform ' . $platformId . ' not supported.');
         }
     }
 

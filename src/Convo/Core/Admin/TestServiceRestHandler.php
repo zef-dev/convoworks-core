@@ -71,7 +71,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		$is_init		=	$this->_isInit($json);
 		$is_end			=	$json['end'] ?? false;
 		$device_id		=	$json['device_id'] ?? false;
-		$platform_id	=	$json['platform_id'] ?? 'UNKNOWN';
+		$platform_id	=	$json['platform_id'] ?? null;
         $request_id     =   'admin-chat-'.StrUtil::uuidV4();
 
 		if ( empty( $device_id)) {
@@ -89,6 +89,8 @@ class TestServiceRestHandler implements RequestHandlerInterface
 // 		    $service_meta     =   $this->_convoServiceDataProvider->getServiceMeta( $user, $service_id);
 // 		    $owner            =   $service_meta['owner'];
 		    $text_request     =   $this->_platformRequestFactory->toIntentRequest($text_request, $user, $service_id, $platform_id);
+		} else {
+		    $platform_id  =   'UNKNOWN';
 		}
 
 		$service        =   $this->_convoServiceFactory->getService( $user, $service_id, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory);
@@ -98,7 +100,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
         ];
 
         try {
-			$this->_logger->info('Running service instance ['.$service->getId().']');
+            $this->_logger->info('Running service instance ['.$service->getId().']['.$text_request.']');
             $service->run($text_request, $text_response);
             
             $this->_eventDispatcher->dispatch(
