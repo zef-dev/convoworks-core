@@ -11,6 +11,7 @@ use Zef\Zel\ObjectResolver;
 use Convo\Core\Workflow\IRunnableBlock;
 use Convo\Core\Params\NoRequestParamsException;
 use Convo\Core\Workflow\IBasicServiceComponent;
+use Convo\Core\Workflow\ISpecialRoleRequest;
 
 class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerComponent, \Convo\Core\Workflow\IIdentifiableComponent
 {
@@ -326,8 +327,35 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $this->_logger->debug( 'Running ...');
 
         try {
+            // SPECIAL ROLE CALL
+            
+            if ( $request instanceof ISpecialRoleRequest) {
+                /* @var ISpecialRoleRequest  $request */
+                if ( $request->getSpecialRole())
+                {
+                    $this->_logger->info('Handling special role call ['.$request->getSpecialRole().']');
+                    try {
+                        $block  =   $this->getBlockByRole( $request->getSpecialRole());
+
+                        try {
+                            $block->run( $request, $response);
+                        } catch ( \Convo\Core\SessionEndedException $e) {
+                            $this->_logger->info( 'Session terminate signal.');
+                        }  catch ( StateChangedException $e) {
+                            $this->_logger->info( $e->getMessage());
+                            $this->_readState( $e->getState(), $request, $response);
+                        }
+                        
+                    } catch ( ComponentNotFoundException $e) {
+                        $this->_logger->warning( 'No block with role ['.$request->getSpecialRole().'] found.');
+                    }
+                    $this->_logger->info('Exiting ...');
+                    return;
+                }
+            }
+            
             // SESSION END
-            if ($request->isSessionEndRequest()) {
+            if ( $request->isSessionEndRequest()) {
                 $this->_logger->info('Reading session end block');
                 try {
                     $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_ENDED);
