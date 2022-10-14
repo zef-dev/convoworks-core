@@ -2,7 +2,7 @@
 
 namespace Convo\Core\Adapters\ConvoChat;
 
-use Convo\Core\Events\ConvoServiceConversationRequestEvent;
+use Convo\Core\EventDispatcher\ServiceRunRequestEvent;
 use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Rest\RestSystemUser;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -129,7 +129,7 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 		$service			=	$this->_convoServiceFactory->getService($owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
 
 		$text_request		=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest(
-			$serviceId, $device_id, $device_id, $device_id, $text, $is_init, false /* <- temp */, $delegate_nlp);
+			$serviceId, $device_id, $device_id, $device_id, $text, $is_init, false /* <- temp */, $delegate_nlp, $json);
 		$text_response		=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse();
 		$text_response->setLogger($this->_logger);
 
@@ -149,8 +149,8 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 		$data		=	array_merge( $data, $text_response->getPlatformResponse());
 
         $this->_eventDispatcher->dispatch(
-            new ConvoServiceConversationRequestEvent($text_request, $text_response), ConvoServiceConversationRequestEvent::NAME
-        );
+            new ServiceRunRequestEvent( true, $text_request, $text_response, $service, $variant),
+            ServiceRunRequestEvent::NAME);
 
 		return $this->_httpFactory->buildResponse( $data);
 	}
