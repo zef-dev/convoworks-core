@@ -40,7 +40,7 @@ class ServiceRunRequestEvent extends Event
     /**
      * @var \Throwable
      */
-    private $_exceptione;
+    private $_exception;
 
     public function __construct( $testView, $convoRequest, $convoResponse, $service, $variant, $exception=null)
     {
@@ -49,7 +49,7 @@ class ServiceRunRequestEvent extends Event
         $this->_convoResponse   =   $convoResponse;
         $this->_service         =   $service;
         $this->_variant         =   $variant;
-        $this->_exceptione      =   $exception;
+        $this->_exception      =   $exception;
     }
 
     public function isTestView()
@@ -79,7 +79,7 @@ class ServiceRunRequestEvent extends Event
 
     public function getException()
     {
-        return $this->_exceptione;
+        return $this->_exception;
     }
 
     public function __toString()
