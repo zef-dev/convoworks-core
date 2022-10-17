@@ -12,6 +12,7 @@ use Convo\Core\EventDispatcher\ServiceRunRequestEvent;
 
 class TestServiceRestHandler implements RequestHandlerInterface
 {
+    const DEFAULT_PLATFORM_ID = 'convo-chat';
 
 	/**
 	 * @var \Convo\Core\Util\IHttpFactory
@@ -67,11 +68,11 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		$user			=	$info->getAuthUser();
 		$json			=	$request->getParsedBody();
 
-		$text			=	$json['text'] ?? null;
+		$text			=	$json['text'] ?? '';
 		$is_init		=	$this->_isInit($json);
 		$is_end			=	$json['end'] ?? false;
 		$device_id		=	$json['device_id'] ?? false;
-		$platform_id	=	$json['platform_id'] ?? null;
+		$platform_id	=	$json['platform_id'] ?? self::DEFAULT_PLATFORM_ID;
         $request_id     =   'admin-chat-'.StrUtil::uuidV4();
 
 		if ( empty( $device_id)) {
@@ -84,13 +85,11 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		$text_response	=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse();
 		$text_response->setLogger($this->_logger);
 
-		if ( $platform_id) {
+		if ( $platform_id !== self::DEFAULT_PLATFORM_ID) {
 // 		    TODO: load & use service owner account
 // 		    $service_meta     =   $this->_convoServiceDataProvider->getServiceMeta( $user, $service_id);
 // 		    $owner            =   $service_meta['owner'];
 		    $text_request     =   $this->_platformRequestFactory->toIntentRequest($text_request, $user, $service_id, $platform_id);
-		} else {
-		    $platform_id  =   'UNKNOWN';
 		}
 
 		$service        =   $this->_convoServiceFactory->getService( $user, $service_id, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory);
@@ -104,7 +103,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
             $service->run($text_request, $text_response);
             
             $this->_eventDispatcher->dispatch(
-                new ServiceRunRequestEvent( false, $text_request, $text_response, $service, IPlatformPublisher::MAPPING_TYPE_DEVELOP),
+                new ServiceRunRequestEvent( true, $text_request, $text_response, $service, IPlatformPublisher::MAPPING_TYPE_DEVELOP),
                 ServiceRunRequestEvent::NAME);
             
         } catch (\Throwable $e) {
@@ -114,7 +113,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
             $exception["stack_trace"] = $stack;
             
             $this->_eventDispatcher->dispatch(
-                new ServiceRunRequestEvent( false, $text_request, $text_response, $service, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $e),
+                new ServiceRunRequestEvent( true, $text_request, $text_response, $service, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $e),
                 ServiceRunRequestEvent::NAME);
             $this->_logger->error( $e);
         }
