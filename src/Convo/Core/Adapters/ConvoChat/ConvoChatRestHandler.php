@@ -149,7 +149,7 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 		$data		=	array_merge( $data, $text_response->getPlatformResponse());
 
         $this->_eventDispatcher->dispatch(
-            new ServiceRunRequestEvent( true, $text_request, $text_response, $service, $variant),
+            new ServiceRunRequestEvent( false, $text_request, $text_response, $service, $variant),
             ServiceRunRequestEvent::NAME);
 
 		return $this->_httpFactory->buildResponse( $data);
