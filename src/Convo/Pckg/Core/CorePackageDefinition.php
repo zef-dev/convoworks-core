@@ -139,7 +139,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 [
                     "value" => "backward",
                     "synonyms" => [
-                        "back"
+                        "back",
+                        "backwards"
                     ]
                 ]
             ]
