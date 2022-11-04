@@ -6,7 +6,7 @@
                 "name" : "AMAZON.RepeatIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "RepeatIntent",
                 "type" : "custom",
@@ -40,7 +40,7 @@
                 "name" : "AMAZON.CancelIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "CancelIntent",
                 "type" : "custom",
@@ -82,7 +82,7 @@
                 "name" : "AMAZON.HelpIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "HelpIntent",
                 "type" : "custom",
@@ -122,7 +122,7 @@
                 "name": "AMAZON.NextIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "NextIntent",
                 "type" : "custom",
@@ -156,7 +156,7 @@
                 "name": "AMAZON.PreviousIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "PreviousIntent",
                 "type" : "custom",
@@ -196,7 +196,7 @@
                 "name" : "AMAZON.StopIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "StopIntent",
                 "type" : "custom",
@@ -230,7 +230,7 @@
                 "name" : "AMAZON.PauseIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "PauseIntent",
                 "type" : "custom",
@@ -258,7 +258,7 @@
                 "name" : "AMAZON.ResumeIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "ResumeIntent",
                 "type" : "custom",
@@ -292,7 +292,7 @@
                 "name" : "AMAZON.StartOverIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "StartOverIntent",
                 "type" : "custom",
@@ -326,7 +326,7 @@
                 "name" : "AMAZON.LoopOnIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "LoopOnIntent",
                 "type" : "custom",
@@ -360,7 +360,7 @@
                 "name" : "AMAZON.LoopOffIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "LoopOffIntent",
                 "type" : "custom",
@@ -382,7 +382,7 @@
                 "name" : "AMAZON.ShuffleOffIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "ShuffleOffIntent",
                 "type" : "custom",
@@ -416,7 +416,7 @@
                 "name" : "AMAZON.ShuffleOnIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "ShuffleOnIntent",
                 "type" : "custom",
@@ -456,7 +456,7 @@
                 "name" : "AMAZON.NavigateHomeIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "NavigateHomeIntent",
                 "type" : "custom",
@@ -488,7 +488,7 @@
                 "name" : "AMAZON.NoIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "NoIntent",
                 "type" : "custom",
@@ -525,7 +525,7 @@
                 "name" : "AMAZON.YesIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "YesIntent",
                 "type" : "custom",
@@ -567,7 +567,7 @@
                 "name" : "AMAZON.ScrollLeftIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "ScrollLeftIntent",
                 "type" : "custom",
@@ -599,7 +599,7 @@
                 "name" : "AMAZON.ScrollRightIntent"
             }
         }, {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "ScrollRightIntent",
                 "type" : "custom",
@@ -625,7 +625,7 @@
         }
     ],
     "PlayAll": [{
-        "platforms" : ["dialogflow", "amazon"],
+        "platforms" : ["dialogflow", "dialogflow_es","amazon"],
         "definition" : {
             "name" : "PlayAll",
             "type" : "custom",
@@ -691,7 +691,7 @@
     }],
     "PlaySong": [
         {
-            "platforms" : ["dialogflow", "amazon"],
+            "platforms" : ["dialogflow", "dialogflow_es", "amazon"],
             "definition" : {
                 "name" : "PlaySong",
                 "type" : "custom",
@@ -782,7 +782,7 @@
     ],
     "ContinuePlayback": [
          {
-            "platforms" : ["dialogflow", "amazon"],
+            "platforms" : ["dialogflow", "dialogflow_es", "amazon"],
             "definition" : {
                 "name" : "ContinuePlayback",
                 "type" : "custom",
@@ -799,7 +799,7 @@
     ],
     "Rewind": [
         {
-            "platforms" : ["amazon", "dialogflow"],
+            "platforms" : ["amazon", "dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "Rewind",
                 "type" : "custom",
@@ -830,7 +830,7 @@
     ],
     "FastForward": [
         {
-            "platforms" : ["amazon", "dialogflow"],
+            "platforms" : ["amazon", "dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "FastForward",
                 "type" : "custom",
@@ -868,7 +868,7 @@
     ],
     "SeekToSong": [
         {
-            "platforms" : ["amazon", "dialogflow"],
+            "platforms" : ["amazon", "dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "SeekToSong",
                 "type" : "custom",
@@ -950,7 +950,7 @@
     ],
     "DefaultWelcomeIntent": [
         {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "DefaultWelcomeIntent",
                 "type" : "custom",
@@ -964,7 +964,7 @@
     ],
     "DefaultRepromptIntent": [
         {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "DefaultRepromptIntent",
                 "type" : "custom",
@@ -978,7 +978,7 @@
     ],
     "DefaultFallbackIntent": [
         {
-            "platforms" : ["dialogflow"],
+            "platforms" : ["dialogflow", "dialogflow_es"],
             "definition" : {
                 "name" : "DefaultFallbackIntent",
                 "type" : "custom",
