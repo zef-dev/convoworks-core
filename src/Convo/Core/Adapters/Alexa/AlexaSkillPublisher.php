@@ -1206,8 +1206,13 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $locales = $meta['supported_locales'];
         $defaultLocale = $meta['default_locale'];
-        $optInAutomaticDistribution = isset($config['availability']['automatic_distribution']) ?
-            $config['availability']['automatic_distribution'] : true;
+
+        if (isset($config['availability']['automatic_distribution']) && count($locales) <= 1) {
+            $config['availability']['automatic_distribution'] = false;
+            $this->_updateAmazonConfig($config);
+        }
+
+        $optInAutomaticDistribution = $config['availability']['automatic_distribution'] ?? false;
 
         $manifest = new AmazonSkillManifest();
         $manifest->setLogger($this->_logger);

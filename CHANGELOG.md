@@ -4,6 +4,13 @@
 
 ## [Releases]
 
+## 0.22.16.0 - 2022-11-04
+* Added support for Alexa location services
+* Several improvements in audio player
+* Speed up package access
+* Added event dispatcher and conversation request event
+* Added support for Radio station streaming
+
 ## 0.22.15.0 - 2022-07-29
 * Added new block type - Voice PIN Confirmation block
 * Added support for Alexa dialogue delegation
