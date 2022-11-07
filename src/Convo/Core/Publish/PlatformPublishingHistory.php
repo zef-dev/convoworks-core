@@ -18,6 +18,7 @@ class PlatformPublishingHistory
     // DIALOGFLOW RELATED PROPAGATION PROPERTIES TO CHECK FOR
     public const DIALOGFLOW_AGENT_DEFAULT_LANGUAGE = 'agent_default_locale';
     public const DIALOGFLOW_AGENT_INTENT_MODEL_BYTES_SIZE = 'agent_manifest_bytes_size';
+    public const DIALOGFLOW_AGENT = 'agent_manifest';
 
     // FACEBOOK MESSENGER RELATED PROPAGATION PROPERTIES TO CHECK FOR
     public const FACEBOOK_MESSENGER_WEBHOOK_EVENTS = 'webhook_events';
@@ -69,6 +70,7 @@ class PlatformPublishingHistory
             switch ($platformId) {
                 case 'amazon':
                     return $this->_compareAmazon($property, $previousPropagationData, $propagationData);
+                case 'dialogflow_es':
                 case 'dialogflow':
                     return $this->_compareDialogflow($property, $previousPropagationData, $propagationData);
                 case 'facebook_messenger':
@@ -120,6 +122,7 @@ class PlatformPublishingHistory
 
     private function _compareDialogflow($property, $previousPropagationData, $propagationData) {
         switch ($property) {
+            case self::DIALOGFLOW_AGENT:
             case self::DIALOGFLOW_AGENT_DEFAULT_LANGUAGE:
             case self::DIALOGFLOW_AGENT_INTENT_MODEL_BYTES_SIZE:
                 if ($previousPropagationData[$property] !== $propagationData) {

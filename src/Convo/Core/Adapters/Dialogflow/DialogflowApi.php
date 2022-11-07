@@ -45,6 +45,8 @@ class DialogflowApi
 
     private $_dialogflowAuthService;
 
+    private $_targetPlatformId;
+
     private const BASE_DIALOGFLOW_URL = 'https://dialogflow.googleapis.com/v2';
 
     private const DIALOGFLOW_AGENT_VALIDATION_EXCEPTION_TRIGGERS = ["ERROR", "CRITICAL", "SEVERITY_UNSPECIFIED"];
@@ -59,13 +61,14 @@ class DialogflowApi
         'sessions' => null
     ];
 
-    public function __construct($logger, $serviceDataProvider, \Convo\Core\IAdminUser $user, $serviceId, \Convo\Core\IAdminUserDataProvider $adminUserDataProvider)
+    public function __construct($logger, $serviceDataProvider, \Convo\Core\IAdminUser $user, $serviceId, \Convo\Core\IAdminUserDataProvider $adminUserDataProvider, $platformId)
     {
         $this->_logger = $logger;
         $this->_convoServiceDataProvider = $serviceDataProvider;
 
         $this->_user = $user;
         $this->_serviceId = $serviceId;
+        $this->_targetPlatformId = $platformId;
 
         $this->_projectId = $this->_getProjectId();
         $this->_adminUserDataProvider = $adminUserDataProvider;
@@ -242,11 +245,11 @@ class DialogflowApi
             IPlatformPublisher::MAPPING_TYPE_DEVELOP
         );
 
-        if (empty($config['dialogflow']['serviceAccount'])) {
+        if (empty($config[$this->_targetPlatformId]['serviceAccount'])) {
             throw new \Exception('Service account data missing. Can not use API');
         }
 
-        $auth = json_decode($config['dialogflow']['serviceAccount'], true);
+        $auth = json_decode($config[$this->_targetPlatformId]['serviceAccount'], true);
         $config = ['credentials' => $auth];
 
         return [
@@ -264,11 +267,11 @@ class DialogflowApi
 		    IPlatformPublisher::MAPPING_TYPE_DEVELOP
 		);
 
-		if (empty($config['dialogflow']['serviceAccount'])) {
+		if (empty($config[$this->_targetPlatformId]['serviceAccount'])) {
 			throw new \Exception('Service account data missing. Can not use API');
 		}
 
-		$auth = json_decode($config['dialogflow']['serviceAccount'], true);
+		$auth = json_decode($config[$this->_targetPlatformId]['serviceAccount'], true);
 		$config = ['credentials' => $auth];
 
 		return new DialogflowAuthService(new OAuth2([]), $this->_user, $config['credentials'], $this->_adminUserDataProvider);
@@ -282,11 +285,11 @@ class DialogflowApi
             IPlatformPublisher::MAPPING_TYPE_DEVELOP
         );
 
-        if (empty($config['dialogflow']['serviceAccount'])) {
+        if (empty($config[$this->_targetPlatformId]['serviceAccount'])) {
             throw new \Exception('Service account data missing. Can not get Project ID');
         }
 
-        return json_decode($config['dialogflow']['serviceAccount'], true)['project_id'];
+        return json_decode($config[$this->_targetPlatformId]['serviceAccount'], true)['project_id'];
     }
 
     public function __toString()

@@ -188,6 +188,7 @@ class ServiceImpExpRestHandler implements RequestHandlerInterface
 						}
 						break;
 					case DialogflowCommandRequest::PLATFORM_ID:
+					case 'dialogflow_es':
 						if (isset($configuration['mode']) && $configuration['mode'] === 'auto' && isset($configuration['serviceAccount']) && !empty($configuration['serviceAccount'])) {
 							$service_data['release_mappings'][$platform]['a'] = [
 								"type" => "develop",

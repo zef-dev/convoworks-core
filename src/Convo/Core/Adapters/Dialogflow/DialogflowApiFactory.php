@@ -31,14 +31,15 @@ class DialogflowApiFactory
      * @param $serviceId
      * @return \Convo\Core\Adapters\Dialogflow\DialogflowApi
      */
-    public function getApi(\Convo\Core\IAdminUser $user, $serviceId)
+    public function getApi(\Convo\Core\IAdminUser $user, $serviceId, $platformId = 'dialogflow')
     {
         return new DialogflowApi(
             $this->_logger,
             $this->_convoServiceDataProvider,
             $user,
             $serviceId,
-            $this->_adminUserDataProvider
+            $this->_adminUserDataProvider,
+            $platformId
         );
     }
 }
