@@ -63,6 +63,7 @@ class PlatformRequestFactory implements IPlatformRequestFactory
                 $this->_logger->info("Accessing Platform Request Factory with Amazon Command Request");
                 return $this->_prepareAmazonIntentRequest($request, $user, $serviceId, $platformId);
             case DialogflowCommandRequest::PLATFORM_ID;
+            case 'dialogflow_es';
                 $this->_logger->info("Accessing Platform Request Factory with Dialogflow Command Request");
                 return $this->_prepareDialogflowIntentRequest($request, $user, $serviceId, $platformId);
             default:
@@ -152,7 +153,7 @@ class PlatformRequestFactory implements IPlatformRequestFactory
 
         $owner = $this->_adminUserDataProvider->findUser($service_meta['owner']);
 
-        $api = $this->_dialogflowApiFactory->getApi($owner, $serviceId);
+        $api = $this->_dialogflowApiFactory->getApi($owner, $serviceId, $platformId);
 
         $text = $request->getText();
 

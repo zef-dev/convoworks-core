@@ -156,6 +156,21 @@ class PlatformPublisherFactory
 			);
 		}
 
+        if ($platformId === 'dialogflow_es') {
+            return new \Convo\Core\Adapters\DialogflowEs\DialogflowEsPublisher(
+                $this->_logger,
+                $owner,
+                $serviceId,
+                $this->_convoServiceFactory,
+                $this->_convoServiceDataProvider,
+                $this->_convoServiceParamsFactory,
+                $this->_packageProviderFactory,
+                $this->_dialogflowApiFactory,
+                $this->_serviceReleaseManager,
+                $this->_platformPublishingHistory
+            );
+        }
+
 		if ( $platformId === \Convo\Core\Adapters\Google\Gactions\ActionsCommandRequest::PLATFORM_ID) {
 			return new \Convo\Core\Adapters\Google\Common\GactionsPublisher(
 			    $this->_logger, $owner, $serviceId, $this->_convoServiceDataProvider, $this->_serviceReleaseManager);
