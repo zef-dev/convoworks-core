@@ -4,7 +4,6 @@
 namespace Convo\Pckg\Alexa\Elements;
 
 use Convo\Core\Adapters\Alexa\IAlexaResponseType;
-use Convo\Core\Util\ArrayUtil;
 
 class DialogDelegateElement extends \Convo\Core\Workflow\AbstractWorkflowComponent implements \Convo\Core\Workflow\IConversationElement
 {
@@ -28,7 +27,7 @@ class DialogDelegateElement extends \Convo\Core\Workflow\AbstractWorkflowCompone
         if ( is_a( $request, 'Convo\Core\Adapters\Alexa\AmazonCommandRequest')) {
             $delegationAction = $this->evaluateString($this->_delegationAction);
             $intentToUpdate = $this->evaluateString($this->_intentToUpdate);
-            $intentSlotValues = $this->_evaluateArgs($this->_slotSlotValues);
+            $intentSlotValues = $this->getService()->evaluateArgs( $this->_slotSlotValues, $this);
 
             $response->prepareResponse(IAlexaResponseType::DIALOG_DELEGATE_DIRECTIVE);
 
@@ -58,27 +57,4 @@ class DialogDelegateElement extends \Convo\Core\Workflow\AbstractWorkflowCompone
         }
 	}
 
-    private function _evaluateArgs( $args)
-    {
-        // $this->_logger->debug( 'Got raw args ['.print_r( $args, true).']');
-        $returnedArgs   =   [];
-        foreach ( $args as $key => $val)
-        {
-            $key	=	$this->evaluateString( $key);
-            $parsed =   $this->evaluateString( $val);
-
-            if ( !ArrayUtil::isComplexKey( $key))
-            {
-                $returnedArgs[$key] =   $parsed;
-            }
-            else
-            {
-                $root           =   ArrayUtil::getRootOfKey( $key);
-                $final          =   ArrayUtil::setDeepObject( $key, $parsed, $returnedArgs[$root] ?? []);
-                $returnedArgs[$root]    =   $final;
-            }
-        }
-        // $this->_logger->debug( 'Got evaluated args ['.print_r( $returnedArgs, true).']');
-        return $returnedArgs;
-    }
 }
