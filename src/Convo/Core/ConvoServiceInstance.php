@@ -12,6 +12,7 @@ use Convo\Core\Workflow\IRunnableBlock;
 use Convo\Core\Params\NoRequestParamsException;
 use Convo\Core\Workflow\IBasicServiceComponent;
 use Convo\Core\Workflow\ISpecialRoleRequest;
+use Convo\Core\Workflow\IValueEvaluator;
 
 class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerComponent, \Convo\Core\Workflow\IIdentifiableComponent
 {
@@ -690,14 +691,19 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     }
     
     
-    public function evaluateArgs( $args)
+    /**
+     * @param array $args
+     * @param IValueEvaluator $eval
+     * @return array
+     */
+    public function evaluateArgs( $args, $eval)
     {
         // $this->_logger->debug( 'Got raw args ['.print_r( $args, true).']');
         $returnedArgs   =   [];
         foreach ( $args as $key => $val)
         {
-            $key	=	$this->evaluateString( $key);
-            $parsed =   $this->evaluateString( $val);
+            $key	=	$eval->evaluateString( $key);
+            $parsed =   $eval->evaluateString( $val);
             
             if ( !ArrayUtil::isComplexKey( $key))
             {
