@@ -49,7 +49,7 @@ class PublicRestApi implements RequestHandlerInterface
 		$this->_logger->debug( 'Got info ['.$info.']');
 
 		if ( $info->startsWith( 'service-run/external')) {
-		    if ( $route = $info->route( 'service-run/external/{packageId}/{platformId}/{variant}/{serviceId}')) {
+		    if ( $route = $info->routePartial( 'service-run/external/{packageId}/{platformId}')) {
 		        $package_id  =   $route->get( 'packageId');
 		        $platform_id  =   $route->get( 'platformId');
 		        $provider     =   $this->_packageProviderFactory->getProviderByNamespace( $package_id);

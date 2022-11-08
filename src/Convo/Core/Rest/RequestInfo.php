@@ -129,6 +129,42 @@ class RequestInfo
 		return $path_info;
 	}
 
+	
+	/**
+	 * @param string $path
+	 * @param boolean $force
+	 * @return NULL|\Convo\Core\Rest\PathInfo
+	 */
+	public function routePartial( $path, $force=false)
+	{
+		$path_info	=	new PathInfo( $path);
+		
+		$parts		=	explode( '/', $path);
+		
+		for ( $i=0; $i<count( $parts); $i++) {
+			
+			if ( $parts[$i] === $this->_path[$i]) {
+				continue;
+			}	
+			
+			if ( strpos( $parts[$i], '{') === 0 && strpos( $parts[$i], '}') === strlen( $parts[$i]) - 1) {
+				$key		=	str_replace( '{', '', str_replace( '}', '', $parts[$i]));
+				$path_info->add( $key, $this->_path[$i]);
+				continue;
+			}
+			
+			if ( $parts[$i] !== $this->_path[$i]) {
+				if ( $force) {
+					throw new \Convo\Core\Rest\NotFoundException( 'Could not map path ['.$path.']');
+				} else {
+					return null;
+				}
+			}	
+		}
+		
+		return $path_info;
+	}
+
 	/**
 	 * @param int $index
 	 * @return string
