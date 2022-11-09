@@ -294,16 +294,22 @@ class DialogflowEsPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
             /** @var $intent_driven IIntentDriven */
             $intent    =   $intent_driven->getPlatformIntentModel($this->getPlatformId());
-            $intents[$intent->getName()] =   $intent;
-
-            foreach ( $intent->getEntities() as $entity_name) {
-                try {
-                    $entity        =   $service->getEntity( $entity_name);
-                } catch ( ComponentNotFoundException $e) {
-                    $sys_entity    =   $provider->getEntity( $entity_name);
-                    $entity        =   $sys_entity->getPlatformModel( $this->getPlatformId());
+            
+            try {
+            
+                foreach ( $intent->getEntities() as $entity_name) {
+                    try {
+                        $entity        =   $service->getEntity( $entity_name);
+                    } catch ( ComponentNotFoundException $e) {
+                        $sys_entity    =   $provider->getEntity( $entity_name);
+                        $entity        =   $sys_entity->getPlatformModel( $this->getPlatformId());
+                    }
+                    $entities[$entity->getName()] =   $entity;
                 }
-                $entities[$entity->getName()] =   $entity;
+                $intents[$intent->getName()] =   $intent;
+            
+            } catch ( ComponentNotFoundException $e) {
+                $this->_logger->warning( 'Skipping intent ['.$intent->getName().'] propagataion. Reason ['.$e->getMessage().']');
             }
         }
 

@@ -6,10 +6,8 @@ use Convo\Core\Intent\EntityModel;
 use Convo\Core\Intent\IntentModel;
 use Convo\Core\ComponentNotFoundException;
 use Convo\Core\Publish\PlatformPublishingHistory;
-use Convo\Core\Rest\InvalidRequestException;
 use Convo\Core\Rest\ServiceBuildingException;
 use Convo\Core\Util\StrUtil;
-use Convo\Core\Workflow\IBasicServiceComponent;
 use Convo\Core\Workflow\ICatalogSource;
 use Convo\Core\Publish\IPlatformPublisher;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -392,19 +390,22 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
 	    $provider = $this->_packageProviderFactory->getProviderFromPackageIds($service->getPackageIds());
 
-	    foreach ( $intent_drivens as $intent_driven) {
-
+	    foreach ( $intent_drivens as $intent_driven) 
+	    {
 	        $intent    =   $intent_driven->getPlatformIntentModel($this->getPlatformId());
-	        $intents[$intent->getName()] =   $intent;
-
-	        foreach ( $intent->getEntities() as $entity_name) {
-	            try {
-	                $entity        =   $service->getEntity( $entity_name);
-	            } catch ( ComponentNotFoundException $e) {
-	                $sys_entity    =   $provider->getEntity( $entity_name);
-	                $entity        =   $sys_entity->getPlatformModel( $this->getPlatformId());
+	        try {
+	            foreach ( $intent->getEntities() as $entity_name) {
+	                try {
+	                    $entity        =   $service->getEntity( $entity_name);
+	                } catch ( ComponentNotFoundException $e) {
+	                    $sys_entity    =   $provider->getEntity( $entity_name);
+	                    $entity        =   $sys_entity->getPlatformModel( $this->getPlatformId());
+	                }
+	                $entities[$entity->getName()] =   $entity;
 	            }
-	            $entities[$entity->getName()] =   $entity;
+	            $intents[$intent->getName()] =   $intent;
+	        } catch ( ComponentNotFoundException $e) {
+	            $this->_logger->warning( 'Skipping intent ['.$intent->getName().'] propagataion. Reason ['.$e->getMessage().']');
 	        }
 	    }
 
