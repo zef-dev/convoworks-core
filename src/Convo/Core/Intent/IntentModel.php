@@ -3,6 +3,8 @@ declare(strict_types = 1);
 
 namespace Convo\Core\Intent;
 
+use Convo\Core\ComponentNotFoundException;
+
 class IntentModel
 {
     /**
@@ -89,6 +91,24 @@ class IntentModel
         }
 
         return $entities;
+    }
+    
+    /**
+     * @param string $slot
+     * @throws ComponentNotFoundException
+     * @return string
+     */
+    public function getEntityTypeBySlot( $slot)
+    {
+        foreach ( $this->_utterances as $utterance) {
+            foreach ( $utterance->getParts() as $part) {
+                if ( $part['slot_value'] === $slot) {
+                    return $part['type'];
+                }
+            }
+        }
+        
+        throw new ComponentNotFoundException( 'Entity for slot ['.$slot.'] not found in intent ['.$this->getName().']');
     }
 
     /**
