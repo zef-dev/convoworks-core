@@ -12,6 +12,10 @@ use Convo\Core\Workflow\IMediaType;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Convo\Core\Factory\PackageProviderFactory;
+use Convo\Core\ConvoServiceInstance;
+use Convo\Core\ComponentNotFoundException;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 
 class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterface, IConvoAudioRequest
 {
@@ -49,14 +53,31 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
 
     private $_isRePromptRequest = false;
     private $_conversationType = '';
+    
+    
+    /**
+     * @var PackageProviderFactory
+     */
+    private $_packageProviderFactory;
 
-    public function __construct( $serviceId, $data)
+    /**
+     * @var ConvoServiceInstance
+     */
+    private $_service;
+
+    /**
+     * @param ConvoServiceInstance $service
+     * @param PackageProviderFactory $packageProviderFactory
+     * @param array $data
+     */
+    public function __construct( $service, $packageProviderFactory, $data)
     {
-        $this->_serviceId   =   $serviceId;
-        $this->_data        =   $data;
+        $this->_serviceId               =   $service->getId();
+        $this->_service                 =   $service;
+        $this->_packageProviderFactory  =   $packageProviderFactory;
+        $this->_data                    =   $data;
 
         $this->_deviceId    =   'UNKNOWN';
-
         $this->_logger		=	new NullLogger();
     }
 
@@ -166,26 +187,48 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
     private function _parseSlotValues( $data)
 	{
 		$values	=	array();
-
+		
+		$provider = $this->_packageProviderFactory->getProviderFromPackageIds( $this->_service->getPackageIds());
+		
+		$this->_logger->debug( 'Searching for intent ['.$this->_intentName.']');
+		try {
+		    $intent_model = $this->_service->getIntent( $this->_intentName);
+		} catch ( ComponentNotFoundException $e) {
+		    $sys_intent = $provider->getIntent( $this->_intentName);
+		    $intent_model = $sys_intent->getPlatformModel( 'dialogflow_es');
+		}
+		
 		if ( isset( $data['queryResult']['parameters']))
 		{
 			foreach ( $data['queryResult']['parameters'] as $key=>$slot)
 			{
-                $newKey = $this->_replaceWithUnderscoreKeyName($key);
 				if ( empty( $slot)) {
 					continue;
 				}
 
+				$newKey = $this->_replaceWithUnderscoreKeyName($key);
+				
 				if ( !$this->_isSlotValid( $newKey, $slot)) {
 					$this->_logger->debug( 'Found not valid slot ['.$newKey.']');
 					continue;
 				}
-
-				if ( is_array( $slot) && isset( $slot['name'])) {
-				    $values[$newKey]	=	$slot['name'];
-				} else {
-				    $values[$newKey]	=	$this->_useOriginalISlotValuefExists( $newKey, $slot);
+				
+				$entity_type = $intent_model->getEntityTypeBySlot( $newKey);
+			    
+				try {
+				    $entity = $this->_service->getEntity( $entity_type);
+				} catch ( CommandNotFoundException $e) {
+				    $entity = $provider->getEntity( $entity_type);
 				}
+				
+				$value              =   $this->_useOriginalISlotValuefExists( $newKey, $slot);
+				$values[$newKey]	=	$entity->parseValue( $value);
+
+// 				if ( is_array( $slot) && isset( $slot['name'])) {
+// 				    $values[$newKey]	=	$slot['name'];
+// 				} else {
+// 				    $values[$newKey]	=	$this->_useOriginalISlotValuefExists( $newKey, $slot);
+// 				}
 
 				$this->_logger->debug( 'Parsed slot value ['.$newKey.'] => ['.print_r($values[$newKey], true).']');
 			}

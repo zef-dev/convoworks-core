@@ -19,6 +19,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use \Psr\Http\Message\ResponseInterface;
 use \Psr\Http\Message\ServerRequestInterface;
 use \Psr\Log\LoggerInterface;
+use Convo\Core\Factory\PackageProviderFactory;
 
 class DialogflowAgentRestHandler implements RequestHandlerInterface
 {
@@ -37,7 +38,12 @@ class DialogflowAgentRestHandler implements RequestHandlerInterface
      * @var IServiceParamsFactory
      */
     private $_convoServiceParamsFactory;
-
+    
+    /**
+     * @var PackageProviderFactory
+     */
+    private $_packageProviderFactory;
+    
     /**
      * @var IHttpFactory
      */
@@ -48,13 +54,14 @@ class DialogflowAgentRestHandler implements RequestHandlerInterface
      */
     private $_logger;
 
-    public function __construct( LoggerInterface $logger, $httpFactory, $serviceFactory, $serviceDataProvider, $serviceParamsFactory)
+    public function __construct( LoggerInterface $logger, $httpFactory, $serviceFactory, $serviceDataProvider, $serviceParamsFactory, $packageProviderFactory)
     {
         $this->_logger						=	$logger;
         $this->_httpFactory					=	$httpFactory;
         $this->_convoServiceFactory			= 	$serviceFactory;
         $this->_convoServiceDataProvider	= 	$serviceDataProvider;
         $this->_convoServiceParamsFactory	= 	$serviceParamsFactory;
+        $this->_packageProviderFactory 	    =  	$packageProviderFactory;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -91,9 +98,12 @@ class DialogflowAgentRestHandler implements RequestHandlerInterface
             throw new InvalidRequestException( 'Service ['.$serviceId.'] not published yet');
         }
 
+        /**  @var ConvoServiceInstance $service */
+        $service = $this->_convoServiceFactory->getService( $owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
+        
         $data      	 	=   $request->getParsedBody();
 
-        $client 		=   new DialogflowCommandRequest( $serviceId, $data);
+        $client 		=   new DialogflowCommandRequest( $service, $this->_packageProviderFactory, $data);
 
         $client->init();
 
@@ -130,8 +140,6 @@ class DialogflowAgentRestHandler implements RequestHandlerInterface
         {
             $serviceParams->setServiceParam('__keepRePrompt', false);
 
-            /**  @var ConvoServiceInstance $service */
-            $service = $this->_convoServiceFactory->getService( $owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
             $service->run($client, $text_response);
 
             $json = $text_response->getPlatformResponse();
