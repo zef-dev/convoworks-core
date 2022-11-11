@@ -27,6 +27,17 @@ class EntityModel
     }
     
     /**
+     * @param mixed $raw
+     * @return string
+     */
+    public function parseValue( $raw) {
+        if ( is_array( $raw) && isset( $raw['name'])) {
+            return $raw['name'];
+        }
+        return $raw;
+    }
+    
+    /**
      * @return string
      */
     public function getName()
