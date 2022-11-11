@@ -33,6 +33,11 @@ class AplUserEventReader extends \Convo\Pckg\Core\Filters\PlatformIntentReader i
 	{
 		return $platformId === AmazonCommandRequest::PLATFORM_ID ? self::INTENT : '';
 	}
+	
+	public function getIntentName()
+	{
+	    return self::INTENT;
+	}
 
     public function accepts(IIntentAwareRequest $request)
     {

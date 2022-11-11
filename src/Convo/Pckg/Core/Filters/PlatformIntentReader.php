@@ -39,7 +39,12 @@ class PlatformIntentReader extends \Convo\Core\Workflow\AbstractWorkflowComponen
         return $this->_intent;
         // return $this->evaluateString($this->_intent); throws error on preview, cannot get component params outside of request scope
     }
-
+    
+    public function getIntentName()
+    {
+        return $this->_intent;
+    }
+    
     public function accepts(IIntentAwareRequest $request)
     {
         $disable = $this->evaluateString( $this->_disable, $request->getSlotValues());

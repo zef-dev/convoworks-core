@@ -24,5 +24,10 @@ interface IIntentAdapter extends \Convo\Core\Workflow\IServiceWorkflowComponent
      * @return string 
      */
     public function getPlatformIntentName( $platformId);
+    
+    /**
+     * @return string
+     */
+    public function getIntentName(); 
  
 }
