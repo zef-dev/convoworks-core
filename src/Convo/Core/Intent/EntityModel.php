@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Convo\Core\Intent;
 
-class EntityModel
+class EntityModel implements IEntityValueParser 
 {
     /**
      * @var string
@@ -20,17 +20,23 @@ class EntityModel
      */
     private $_values    =   [];
 
-    public function __construct( $name = null, $isSystem = false)
+    /**
+     * @var IEntityValueParser[]
+     */
+    private $_parser;
+
+    public function __construct( $name = null, $isSystem = false, $parser = null)
     {
         $this->_name        =   $name;
         $this->_isSystem    =   $isSystem;
+        $this->_parser      =   $parser;
     }
     
-    /**
-     * @param mixed $raw
-     * @return string
-     */
     public function parseValue( $raw) {
+        if ( $this->_parser) {
+            return $this->_parser->parseValue( $raw);
+        }
+        // @TODO: remove this check - it should be specific to entity and done on creation
         if ( is_array( $raw) && isset( $raw['name'])) {
             return $raw['name'];
         }
