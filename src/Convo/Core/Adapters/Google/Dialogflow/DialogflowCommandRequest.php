@@ -186,55 +186,8 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
 
     private function _parseSlotValues( $data)
 	{
-		$values	=	array();
-		
-		$provider = $this->_packageProviderFactory->getProviderFromPackageIds( $this->_service->getPackageIds());
-		
-		$this->_logger->debug( 'Searching for intent ['.$this->_intentName.']');
-		try {
-		    $intent_model = $this->_service->getIntent( $this->_intentName);
-		} catch ( ComponentNotFoundException $e) {
-		    $sys_intent = $provider->getIntent( $this->_intentName);
-		    $intent_model = $sys_intent->getPlatformModel( 'dialogflow_es');
-		}
-		
-		if ( isset( $data['queryResult']['parameters']))
-		{
-			foreach ( $data['queryResult']['parameters'] as $key=>$slot)
-			{
-				if ( empty( $slot)) {
-					continue;
-				}
-
-				$newKey = $this->_replaceWithUnderscoreKeyName($key);
-				
-				if ( !$this->_isSlotValid( $newKey, $slot)) {
-					$this->_logger->debug( 'Found not valid slot ['.$newKey.']');
-					continue;
-				}
-				
-				$entity_type = $intent_model->getEntityTypeBySlot( $newKey);
-			    
-				try {
-				    $entity = $this->_service->getEntity( $entity_type);
-				} catch ( CommandNotFoundException $e) {
-				    $entity = $provider->getEntity( $entity_type);
-				}
-				
-				$value              =   $this->_useOriginalISlotValuefExists( $newKey, $slot);
-				$values[$newKey]	=	$entity->parseValue( $value);
-
-// 				if ( is_array( $slot) && isset( $slot['name'])) {
-// 				    $values[$newKey]	=	$slot['name'];
-// 				} else {
-// 				    $values[$newKey]	=	$this->_useOriginalISlotValuefExists( $newKey, $slot);
-// 				}
-
-				$this->_logger->debug( 'Parsed slot value ['.$newKey.'] => ['.print_r($values[$newKey], true).']');
-			}
-		}
-
-		return $values;
+        $parser = new DialogflowSlotParser( $this->_logger, $this->_packageProviderFactory);
+        return $parser->parseSlotValues( $this->_service, $this->_intentName, $data);
 	}
 
 	private function _useOriginalISlotValuefExists( $name, $value) {
