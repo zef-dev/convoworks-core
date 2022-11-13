@@ -50,7 +50,7 @@ class DefaultIntentAndEntityLocator implements IIntentAndEntityLocator
         try {
             $intent_model = $this->_service->getIntent( $intentName);
         } catch ( ComponentNotFoundException $e) {
-            $sys_intent = $this->_packageProvider->getIntent( $intentName);
+            $sys_intent = $this->_packageProvider->findPlatformIntent( $intentName, $platformId);
             $intent_model = $sys_intent->getPlatformModel( $platformId);
         }
 
@@ -68,8 +68,8 @@ class DefaultIntentAndEntityLocator implements IIntentAndEntityLocator
         try {
             $entity_model = $this->_service->getEntity( $entityType);
         } catch ( ComponentNotFoundException $e) {
-            $system_entity = $this->_packageProvider->getEntity( $entityType);
-            $entity_model = $system_entity->getPlatformModel( $platformId);
+            $entity_model = $this->_packageProvider->findPlatformEntity( $entityType, $platformId);
+//             $entity_model = $system_entity->getPlatformModel( $platformId);
         }
         
         return $entity_model;
