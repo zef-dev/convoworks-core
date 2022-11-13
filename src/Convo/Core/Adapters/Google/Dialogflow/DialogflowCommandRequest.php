@@ -12,10 +12,6 @@ use Convo\Core\Workflow\IMediaType;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Convo\Core\Factory\PackageProviderFactory;
-use Convo\Core\ConvoServiceInstance;
-use Convo\Core\ComponentNotFoundException;
-use Symfony\Component\Console\Exception\CommandNotFoundException;
 
 class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterface, IConvoAudioRequest
 {
@@ -54,27 +50,20 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
     private $_isRePromptRequest = false;
     private $_conversationType = '';
     
-    
     /**
-     * @var PackageProviderFactory
+     * @var DialogflowSlotParser
      */
-    private $_packageProviderFactory;
+    private $_parser;
 
     /**
-     * @var ConvoServiceInstance
-     */
-    private $_service;
-
-    /**
-     * @param ConvoServiceInstance $service
-     * @param PackageProviderFactory $packageProviderFactory
+     * @param string $serviceId
+     * @param DialogflowSlotParser $parser
      * @param array $data
      */
-    public function __construct( $service, $packageProviderFactory, $data)
+    public function __construct( $serviceId, $parser, $data)
     {
-        $this->_serviceId               =   $service->getId();
-        $this->_service                 =   $service;
-        $this->_packageProviderFactory  =   $packageProviderFactory;
+        $this->_serviceId               =   $serviceId;
+        $this->_parser                  =   $parser;
         $this->_data                    =   $data;
 
         $this->_deviceId    =   'UNKNOWN';
@@ -96,10 +85,9 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
             $this->_initWithQueryResult();
         }
 
-
         if (isset($this->_data['queryResult']['parameters']))
         {
-            $this->_slots = $this->_parseSlotValues($this->_data);
+            $this->_slots = $this->_parser->parseSlotValues( $this->_intentName, $this->_data['queryResult']['parameters']);
             $this->_rawSlots = $this->_data['queryResult']['parameters'];
         }
     }
@@ -183,12 +171,6 @@ class DialogflowCommandRequest implements IIntentAwareRequest, LoggerAwareInterf
         $this->_accessToken = StrUtil::uuidV4();
         $this->_text = $this->_data['queryResult']['queryText'];
     }
-
-    private function _parseSlotValues( $data)
-	{
-        $parser = new DialogflowSlotParser( $this->_logger, $this->_packageProviderFactory);
-        return $parser->parseSlotValues( $this->_service, $this->_intentName, $data);
-	}
 
 	private function _useOriginalISlotValuefExists( $name, $value) {
 

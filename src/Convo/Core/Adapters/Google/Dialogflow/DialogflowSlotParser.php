@@ -1,73 +1,64 @@
 <?php declare(strict_types=1);
 
-
 namespace Convo\Core\Adapters\Google\Dialogflow;
 
-use Convo\Core\Factory\PackageProviderFactory;
-use Convo\Core\ConvoServiceInstance;
-use Convo\Core\ComponentNotFoundException;
+use Convo\Core\Intent\IIntentAndEntityLocator;
 
 class DialogflowSlotParser
 {
     
     /**
-     * @var PackageProviderFactory
+     * @var IIntentAndEntityLocator
      */
-    private $_packageProviderFactory;
+    private $_locator;
+    
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $_logger;
+    
 
-
-    public function __construct( $logger, $packageProviderFactory)
+    public function __construct( $logger, $locator)
     {
-        $this->_packageProviderFactory  =   $packageProviderFactory;
-        $this->_logger		            =	$logger;
+        $this->_logger      =   $logger;
+        $this->_locator     =   $locator;
     }
 
 
     /**
-     * @param ConvoServiceInstance $service
      * @param string $intentName
      * @param array $data
      * @return array
      */
-    public function parseSlotValues( $service, $intentName, $data)
+    public function parseSlotValues( $intentName, $data)
 	{
 		$values	=	array();
 		
-		$provider = $this->_packageProviderFactory->getProviderFromPackageIds( $service->getPackageIds());
-		
 		$this->_logger->debug( 'Searching for intent ['.$intentName.']');
-		try {
-		    $intent_model = $service->getIntent( $intentName);
-		} catch ( ComponentNotFoundException $e) {
-		    $sys_intent = $provider->getIntent( $intentName);
-		    $intent_model = $sys_intent->getPlatformModel( 'dialogflow_es');
-		}
 		
-		if ( isset( $data['queryResult']['parameters']))
+		$intent_model = $this->_locator->getIntentModel( $intentName);
+		
+	    foreach ( $data as $key=>$slot)
 		{
-			foreach ( $data['queryResult']['parameters'] as $key=>$slot)
-			{
-				if ( empty( $slot)) {
-					continue;
-				}
+			if ( empty( $slot)) {
+				continue;
+			}
 
-				$newKey = $this->_replaceWithUnderscoreKeyName($key);
-				
-				if ( !$this->_isSlotValid( $newKey, $slot)) {
-					$this->_logger->debug( 'Found not valid slot ['.$newKey.']');
-					continue;
-				}
-				
-				$entity_type = $intent_model->getEntityTypeBySlot( $newKey);
-			    
-				try {
-				    $entity = $service->getEntity( $entity_type);
-				} catch ( ComponentNotFoundException $e) {
-				    $entity = $provider->getEntity( $entity_type);
-				}
-				
-				$value              =   $this->_useOriginalISlotValuefExists( $newKey, $slot);
-				$values[$newKey]	=	$entity->parseValue( $value);
+			$newKey = $this->_replaceWithUnderscoreKeyName( $key);
+			
+			if ( !$this->_isSlotValid( $newKey, $slot)) {
+				$this->_logger->debug( 'Found not valid slot ['.$newKey.']');
+				continue;
+			}
+			
+			$entity_type = $intent_model->getEntityTypeBySlot( $newKey);
+		    
+			$this->_logger->debug( 'Searching for entity type ['.$entity_type.'] for slot ['.$newKey.']');
+			
+			$entity = $this->_locator->getEntityModel( $entity_type);
+			
+			$value              =   $this->_useOriginalISlotValuefExists( $newKey, $slot);
+			$values[$newKey]	=	$entity->parseValue( $value);
 
 // 				if ( is_array( $slot) && isset( $slot['name'])) {
 // 				    $values[$newKey]	=	$slot['name'];
@@ -75,8 +66,7 @@ class DialogflowSlotParser
 // 				    $values[$newKey]	=	$this->_useOriginalISlotValuefExists( $newKey, $slot);
 // 				}
 
-				$this->_logger->debug( 'Parsed slot value ['.$newKey.'] => ['.print_r($values[$newKey], true).']');
-			}
+			$this->_logger->debug( 'Parsed slot value ['.$newKey.'] => ['.print_r($values[$newKey], true).']');
 		}
 
 		return $values;

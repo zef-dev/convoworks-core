@@ -20,6 +20,7 @@ use \Psr\Http\Message\ResponseInterface;
 use \Psr\Http\Message\ServerRequestInterface;
 use \Psr\Log\LoggerInterface;
 use Convo\Core\Factory\PackageProviderFactory;
+use Convo\Core\Intent\DefaultIntentAndEntityLocator;
 
 class DialogflowAgentRestHandler implements RequestHandlerInterface
 {
@@ -103,7 +104,10 @@ class DialogflowAgentRestHandler implements RequestHandlerInterface
         
         $data      	 	=   $request->getParsedBody();
 
-        $client 		=   new DialogflowCommandRequest( $service, $this->_packageProviderFactory, $data);
+        $provider       =   $this->_packageProviderFactory->getProviderFromPackageIds( $service->getPackageIds());
+        $locator        =   new DefaultIntentAndEntityLocator( $this->_logger, 'dialogflow_es', $service, $provider);
+        $parser         =   new DialogflowSlotParser( $this->_logger, $locator);
+        $client 		=   new DialogflowCommandRequest( $service, $parser, $data);
 
         $client->init();
 

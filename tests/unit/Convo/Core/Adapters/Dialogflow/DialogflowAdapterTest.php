@@ -3,14 +3,42 @@
 use Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandRequest;
 use Convo\Core\Adapters\Google\Dialogflow\DialogflowCommandResponse;
 use Convo\Core\Util\Test\ConvoTestCase;
+use Convo\Core\Adapters\Google\Dialogflow\DialogflowSlotParser;
+use Convo\Core\Intent\IIntentAndEntityLocator;
+use Convo\Core\ComponentNotFoundException;
 
 class DialogflowAdapterTest extends ConvoTestCase
 {
     private const SERVICE_ID = 'my-soccer-man';
 
+    /**
+     * @var DialogflowSlotParser
+     */
+    private $_parser;
+    
     public function setUp(): void
     {
         parent::setUp();
+        
+        $locator            =   new class() implements IIntentAndEntityLocator {
+            public function getEntityModel( $entityType)
+            {
+                throw new ComponentNotFoundException( 'Entity ['.$entityType.'] not found');
+            }
+        
+            public function getIntentModel( $intentName)
+            {
+                throw new ComponentNotFoundException( 'Intent ['.$intentName.'] not found');
+            }
+        };
+        
+        $this->_parser      =   new DialogflowSlotParser( $this->_logger, $locator);
+    }
+    
+    private function _createRequest( $data) {
+        $request = new DialogflowCommandRequest(self::SERVICE_ID, $this->_parser, $data);
+        $request->init();
+        return $request;
     }
 
     /**
@@ -20,8 +48,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      */
     public function testSlotValueWithTeamName($getMatchesRequest)
     {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getMatchesRequest);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getMatchesRequest);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $slotValues = $dialogflowCommandRequest->getSlotValues();
 
@@ -38,8 +66,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testIntentName($getMatchesRequest) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getMatchesRequest);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getMatchesRequest);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $intentName = $dialogflowCommandRequest->getIntentName();
 
@@ -54,8 +82,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testLaunchRequest($getLaunchRequest) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getLaunchRequest);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getLaunchRequest);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $this->assertEquals(false, $isHealthCheck);
         $this->assertEquals(true, $dialogflowCommandRequest->isLaunchRequest(), 'This is not a launch request.');
@@ -67,8 +95,7 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testLaunchRequestWithTriggerQuery($getLaunchRequestWithTriggerQuery) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getLaunchRequestWithTriggerQuery);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getLaunchRequestWithTriggerQuery);
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $intentName = $dialogflowCommandRequest->getIntentName();
 
@@ -83,8 +110,7 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testRegularExit($getRegularExitRequest) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getRegularExitRequest);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getRegularExitRequest);
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $intentName = $dialogflowCommandRequest->getIntentName();
         $text = $dialogflowCommandRequest->getText();
@@ -101,8 +127,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testAssistantCancel($getAssistantCancelRequestProvider) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getAssistantCancelRequestProvider);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getAssistantCancelRequestProvider);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $intentName = $dialogflowCommandRequest->getIntentName();
         $text = $dialogflowCommandRequest->getText();
@@ -119,8 +145,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testSpecialExit($getSpecialExitRequest) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getSpecialExitRequest);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getSpecialExitRequest);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $intentName = $dialogflowCommandRequest->getIntentName();
         $text = $dialogflowCommandRequest->getText();
@@ -136,8 +162,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testItemSelected($getOptionSelectedRequest) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getOptionSelectedRequest);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getOptionSelectedRequest);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $intentName = $dialogflowCommandRequest->getIntentName();
         $selectedOption = $dialogflowCommandRequest->getSelectedOption();
@@ -151,8 +177,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @dataProvider getDetectIntentRequest
      */
     public function testRequestWithoutConversation($getDetectIntentRequest) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getDetectIntentRequest);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getDetectIntentRequest);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $sessionId = $dialogflowCommandRequest->getSessionId();
         $this->_logger->info('Using uuidV4 as conversationId ['. $sessionId . ']');
@@ -166,8 +192,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testRequestWithoutUserStorage($getLaunchRequestWithoutUserStorage) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getLaunchRequestWithoutUserStorage);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getLaunchRequestWithoutUserStorage);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $preparedInstallationId = $dialogflowCommandRequest->getPreparedInstallationId();
         $installationId = $dialogflowCommandRequest->getInstallationId();
@@ -184,8 +210,7 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testRequestWithUserStorage($getLaunchRequestWithUserStorage) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getLaunchRequestWithUserStorage);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getLaunchRequestWithUserStorage);
 
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $preparedInstallationId = $dialogflowCommandRequest->getPreparedInstallationId();
@@ -202,8 +227,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testResponseWhichAddsUserStorage($getLaunchRequestWithoutUserStorage) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getLaunchRequestWithoutUserStorage);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getLaunchRequestWithoutUserStorage);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
 
         $dialogflowCommandResponse = new DialogflowCommandResponse([], $dialogflowCommandRequest);
@@ -229,8 +254,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testResponseWhichOverridesExistingUserStorage($getLaunchRequestWithUserStorage) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getLaunchRequestWithUserStorage);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getLaunchRequestWithUserStorage);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $dialogflowCommandResponse = new DialogflowCommandResponse([], $dialogflowCommandRequest);
         $dialogFlowAppResponse = json_decode($dialogflowCommandResponse->getPlatformResponse(), true);
@@ -246,8 +271,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testRequestWithGuestUser($getLaunchRequestWithGuestUser) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getLaunchRequestWithGuestUser);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getLaunchRequestWithGuestUser);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $sessionId = $dialogflowCommandRequest->getSessionId();
         $installationId = $dialogflowCommandRequest->getInstallationId();
@@ -265,8 +290,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testRequestWithoutUserVerificationStatus($getLaunchRequestWithoutUserVerificationStatus) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getLaunchRequestWithoutUserVerificationStatus);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getLaunchRequestWithoutUserVerificationStatus);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
         $sessionId = $dialogflowCommandRequest->getSessionId();
         $installationId = $dialogflowCommandRequest->getInstallationId();
@@ -284,8 +309,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testItemSelectedWithHealthCheck($getOptionSelectedWithHealthCheckRequestProvider) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getOptionSelectedWithHealthCheckRequestProvider);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getOptionSelectedWithHealthCheckRequestProvider);
+        
         $isHealthCheck = $dialogflowCommandRequest->isHealthCheck();
 
         $this->assertEquals(true, $isHealthCheck, 'This should be an health check.');
@@ -297,8 +322,8 @@ class DialogflowAdapterTest extends ConvoTestCase
      * @throws Exception
      */
     public function testZeroAsText($getZeroAsTextRequestProvider) {
-        $dialogflowCommandRequest = new DialogflowCommandRequest(self::SERVICE_ID, $getZeroAsTextRequestProvider);
-        $dialogflowCommandRequest->init();
+        $dialogflowCommandRequest = $this->_createRequest( $getZeroAsTextRequestProvider);
+        
         $isRequestEmpty = $dialogflowCommandRequest->isEmpty();
         $this->_logger->info("Text to get [" . $dialogflowCommandRequest->getText() . "]");
         $this->assertEquals(false, $isRequestEmpty, 'This should be an health check.');    }
