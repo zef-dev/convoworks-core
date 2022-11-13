@@ -105,7 +105,7 @@ class DialogflowAgentRestHandler implements RequestHandlerInterface
         $data      	 	=   $request->getParsedBody();
 
         $provider       =   $this->_packageProviderFactory->getProviderFromPackageIds( $service->getPackageIds());
-        $locator        =   new DefaultIntentAndEntityLocator( $this->_logger, 'dialogflow_es', $service, $provider);
+        $locator        =   new DefaultIntentAndEntityLocator( $this->_logger, $service, $provider);
         $parser         =   new DialogflowSlotParser( $this->_logger, $locator);
         $client 		=   new DialogflowCommandRequest( $service, $parser, $data);
 

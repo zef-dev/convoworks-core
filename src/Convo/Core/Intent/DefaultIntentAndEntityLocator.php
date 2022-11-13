@@ -25,55 +25,51 @@ class DefaultIntentAndEntityLocator implements IIntentAndEntityLocator
      */
     private $_packageProvider;
 
-    /**
-     * @var string
-     */
-    private $_platformId;
     
     /**
      * @param \Psr\Log\LoggerInterface $logger
-     * @param string $platformId
      * @param ConvoServiceInstance $service
      * @param PackageProvider $pacakageProvider
      */
-    public function __construct( $logger, $platformId, $service, $pacakageProvider)
+    public function __construct( $logger, $service, $pacakageProvider)
     {
         $this->_logger = $logger;
-        $this->_platformId = $platformId;
         $this->_service = $service;
         $this->_packageProvider = $pacakageProvider;
     }
 
     /**
+     * @param string $platformId
      * @param string $intentName
      * @throws \Convo\Core\ComponentNotFoundException
      * @return \Convo\Core\Intent\IntentModel
      */
-    public function getIntentModel( $intentName) 
+    public function getIntentModel( $platformId, $intentName) 
     {
         $this->_logger->debug( 'Searching for intent ['.$intentName.']');
         try {
             $intent_model = $this->_service->getIntent( $intentName);
         } catch ( ComponentNotFoundException $e) {
             $sys_intent = $this->_packageProvider->getIntent( $intentName);
-            $intent_model = $sys_intent->getPlatformModel( $this->_platformId);
+            $intent_model = $sys_intent->getPlatformModel( $platformId);
         }
 
         return $intent_model;
     }
     
     /**
+     * @param string $platformId
      * @param string $entityType
      * @throws \Convo\Core\ComponentNotFoundException
      * @return \Convo\Core\Intent\EntityModel
      */
-    public function getEntityModel( $entityType)
+    public function getEntityModel( $platformId, $entityType)
     {
         try {
             $entity_model = $this->_service->getEntity( $entityType);
         } catch ( ComponentNotFoundException $e) {
             $system_entity = $this->_packageProvider->getEntity( $entityType);
-            $entity_model = $system_entity->getPlatformModel( $this->_platformId);
+            $entity_model = $system_entity->getPlatformModel( $platformId);
         }
         
         return $entity_model;
@@ -84,7 +80,7 @@ class DefaultIntentAndEntityLocator implements IIntentAndEntityLocator
     // UTIL
     public function __toString()
     {
-        return get_class($this) . '['.$this->_platformId.']';
+        return get_class($this) . '[]';
     }
     
 }

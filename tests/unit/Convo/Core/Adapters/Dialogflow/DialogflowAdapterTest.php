@@ -21,14 +21,14 @@ class DialogflowAdapterTest extends ConvoTestCase
         parent::setUp();
         
         $locator            =   new class() implements IIntentAndEntityLocator {
-            public function getEntityModel( $entityType)
+            public function getEntityModel( $platformId, $entityType)
             {
-                throw new ComponentNotFoundException( 'Entity ['.$entityType.'] not found');
+                throw new ComponentNotFoundException( 'Entity ['.$platformId.']['.$intentName.'] not found');
             }
         
-            public function getIntentModel( $intentName)
+            public function getIntentModel( $platformId, $intentName)
             {
-                throw new ComponentNotFoundException( 'Intent ['.$intentName.'] not found');
+                throw new ComponentNotFoundException( 'Intent ['.$platformId.']['.$intentName.'] not found');
             }
         };
         

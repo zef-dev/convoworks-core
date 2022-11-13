@@ -36,7 +36,7 @@ class DialogflowSlotParser
 		
 		$this->_logger->debug( 'Searching for intent ['.$intentName.']');
 		
-		$intent_model = $this->_locator->getIntentModel( $intentName);
+		$intent_model = $this->_locator->getIntentModel( 'dialogflow_es', $intentName);
 		
 	    foreach ( $data as $key=>$slot)
 		{
@@ -55,7 +55,7 @@ class DialogflowSlotParser
 		    
 			$this->_logger->debug( 'Searching for entity type ['.$entity_type.'] for slot ['.$newKey.']');
 			
-			$entity = $this->_locator->getEntityModel( $entity_type);
+			$entity = $this->_locator->getEntityModel( 'dialogflow_es', $entity_type);
 			
 			$value              =   $this->_useOriginalISlotValuefExists( $newKey, $slot);
 			$values[$newKey]	=	$entity->parseValue( $value);

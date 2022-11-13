@@ -7,17 +7,19 @@ interface IIntentAndEntityLocator
 {
 
     /**
+     * @param string $platformId
      * @param string $intentName
      * @throws \Convo\Core\ComponentNotFoundException
      * @return \Convo\Core\Intent\IntentModel
      */
-    public function getIntentModel( $intentName);
+    public function getIntentModel( $platformId, $intentName);
     
     /**
+     * @param string $platformId
      * @param string $entityType
      * @throws \Convo\Core\ComponentNotFoundException
      * @return \Convo\Core\Intent\EntityModel
      */
-    public function getEntityModel( $entityType);
+    public function getEntityModel( $platformId, $entityType);
     
 }
