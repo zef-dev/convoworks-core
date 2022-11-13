@@ -224,7 +224,7 @@ class FacebookMessengerRestHandler implements RequestHandlerInterface
             $delegation_nlp = $servicePlatformConfig["facebook_messenger"]["delegateNlp"] ?? null;
 
             if ($delegation_nlp) {
-                $messenger_request = $this->_platformRequestFactory->toIntentRequest($messenger_request, $owner, $serviceId, $delegation_nlp);
+                $messenger_request = $this->_platformRequestFactory->toIntentRequest($messenger_request, $owner, $service, $delegation_nlp);
                 
                 $this->_logger->info("Debug request with delegate [".print_r($messenger_request->getPlatformData(), true)."]");
             }

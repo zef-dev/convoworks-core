@@ -137,7 +137,7 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 			// 		    TODO: load & use service owner account
 			// 		    $service_meta     =   $this->_convoServiceDataProvider->getServiceMeta( $user, $service_id);
 			// 		    $owner            =   $service_meta['owner'];
-            $text_request     =   $this->_platformRequestFactory->toIntentRequest($text_request, $owner, $serviceId, $delegate_nlp);
+		    $text_request     =   $this->_platformRequestFactory->toIntentRequest($text_request, $owner, $service, $delegate_nlp);
 		}
 
 		$service->run($text_request, $text_response);

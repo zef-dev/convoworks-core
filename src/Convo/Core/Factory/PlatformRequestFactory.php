@@ -13,6 +13,9 @@ use Convo\Core\Rest\OwnerNotSpecifiedException;
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IntentAwareWrapperRequest;
 use Convo\Core\Publish\IPlatformPublisher;
+use Convo\Core\Intent\DefaultIntentAndEntityLocator;
+use Convo\Core\Adapters\Google\Dialogflow\DialogflowSlotParser;
+use Convo\Core\ConvoServiceInstance;
 
 class PlatformRequestFactory implements IPlatformRequestFactory
 {
@@ -45,27 +48,38 @@ class PlatformRequestFactory implements IPlatformRequestFactory
      * @var \Convo\Core\Util\IHttpFactory
      */
     private $_httpFactory;
+    
+    
+    /**
+     * @var PackageProviderFactory
+     */
+    private $_packageProviderFactory;
 
-    public function __construct($logger, $convoServiceDataProvider, $amazonPublishingService, $dialogflowApiFactory, $adminUserDataProvider, $httpFactory)
+    public function __construct($logger, $convoServiceDataProvider, $amazonPublishingService, $dialogflowApiFactory, $adminUserDataProvider, $packageProviderFactory, $httpFactory)
     {
         $this->_logger                      = $logger;
         $this->_convoServiceDataProvider    = $convoServiceDataProvider;
         $this->_amazonPublishingService     = $amazonPublishingService;
         $this->_dialogflowApiFactory        = $dialogflowApiFactory;
         $this->_adminUserDataProvider       = $adminUserDataProvider;
+        $this->_packageProviderFactory      = $packageProviderFactory;
         $this->_httpFactory                 = $httpFactory;
     }
 
-    public function toIntentRequest(IConvoRequest $request, \Convo\Core\IAdminUser $user, $serviceId, $platformId)
+    /**
+     * {@inheritDoc}
+     * @see \Convo\Core\Factory\IPlatformRequestFactory::toIntentRequest()
+     */
+    public function toIntentRequest(IConvoRequest $request, \Convo\Core\IAdminUser $user, ConvoServiceInstance $service, $platformId)
     {
         switch ($platformId) {
             case AmazonCommandRequest::PLATFORM_ID:
                 $this->_logger->info("Accessing Platform Request Factory with Amazon Command Request");
-                return $this->_prepareAmazonIntentRequest($request, $user, $serviceId, $platformId);
+                return $this->_prepareAmazonIntentRequest($request, $user, $service->getId(), $platformId);
             case DialogflowCommandRequest::PLATFORM_ID;
             case 'dialogflow_es';
                 $this->_logger->info("Accessing Platform Request Factory with Dialogflow Command Request");
-                return $this->_prepareDialogflowIntentRequest($request, $user, $serviceId, $platformId);
+                return $this->_prepareDialogflowIntentRequest($request, $user, $service, $platformId);
             default:
                 throw new ComponentNotFoundException('Platform ' . $platformId . ' not supported.');
         }
@@ -139,21 +153,33 @@ class PlatformRequestFactory implements IPlatformRequestFactory
         return new IntentAwareWrapperRequest($request, $intent_name, $slots, $rawSlots, $platformId);
     }
 
-    private function _prepareDialogflowIntentRequest(IConvoRequest $request, \Convo\Core\IAdminUser $user, $serviceId, $platformId) {
-
+    /**
+     * @param IConvoRequest $request
+     * @param \Convo\Core\IAdminUser $user
+     * @param ConvoServiceInstance $service
+     * @param string $platformId
+     * @throws OwnerNotSpecifiedException
+     * @return \Convo\Core\Workflow\IntentAwareWrapperRequest
+     */
+    private function _prepareDialogflowIntentRequest(IConvoRequest $request, \Convo\Core\IAdminUser $user, $service, $platformId) 
+    {
+        $provider       =   $this->_packageProviderFactory->getProviderFromPackageIds( $service->getPackageIds());
+        $locator        =   new DefaultIntentAndEntityLocator( $this->_logger, $service, $provider);
+        $parser         =   new DialogflowSlotParser( $this->_logger, $locator);
+        
         $this->_logger->debug('Exec platform id ['.$platformId.']');
 
         $service_meta = $this->_convoServiceDataProvider->getServiceMeta(
-            $user, $serviceId
+            $user, $service->getId() 
         );
 
         if (!$service_meta['owner']) {
-            throw new OwnerNotSpecifiedException('Could not determine owner for service ['.$serviceId.']');
+            throw new OwnerNotSpecifiedException('Could not determine owner for service ['.$service->getId().']');
         }
 
         $owner = $this->_adminUserDataProvider->findUser($service_meta['owner']);
 
-        $api = $this->_dialogflowApiFactory->getApi($owner, $serviceId, $platformId);
+        $api = $this->_dialogflowApiFactory->getApi($owner, $service->getId(), $platformId);
 
         $text = $request->getText();
 
@@ -169,9 +195,11 @@ class PlatformRequestFactory implements IPlatformRequestFactory
 
         $intent_name = $decodedResult['queryResult']['intent']['displayName'];
         $slots = $decodedResult['queryResult']['parameters'];
+        
+        $parsed = $parser->parseSlotValues( $intent_name, $slots);
 
         $this->_logger->info('Got intent ['.$intent_name.']['.print_r($slots, true).']');
 
-        return new IntentAwareWrapperRequest($request, $intent_name, $slots, $slots, $platformId);
+        return new IntentAwareWrapperRequest($request, $intent_name, $parsed, $slots, $platformId);
     }
 }

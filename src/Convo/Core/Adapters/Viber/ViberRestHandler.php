@@ -116,7 +116,7 @@ class ViberRestHandler implements RequestHandlerInterface
 
             $delegationNlp = $servicePlatformConfig["viber"]["delegateNlp"] ?? null;
             if ($delegationNlp) {
-                $viberCommandRequest = $this->_platformRequestFactory->toIntentRequest($viberCommandRequest, $owner, $serviceId, $delegationNlp);
+                $viberCommandRequest = $this->_platformRequestFactory->toIntentRequest($viberCommandRequest, $owner, $service, $delegationNlp);
                 $debugData = print_r($viberCommandRequest->getPlatformData(), true);
                 $this->_logger->info("Debug request with delegate [$debugData]");
             }

@@ -85,14 +85,16 @@ class TestServiceRestHandler implements RequestHandlerInterface
 		$text_response	=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse();
 		$text_response->setLogger($this->_logger);
 
+		$service        =   $this->_convoServiceFactory->getService( $user, $service_id, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory);
+		
 		if ( $platform_id !== self::DEFAULT_PLATFORM_ID) {
 // 		    TODO: load & use service owner account
 // 		    $service_meta     =   $this->_convoServiceDataProvider->getServiceMeta( $user, $service_id);
 // 		    $owner            =   $service_meta['owner'];
-		    $text_request     =   $this->_platformRequestFactory->toIntentRequest($text_request, $user, $service_id, $platform_id);
+		    $text_request     =   $this->_platformRequestFactory->toIntentRequest($text_request, $user, $service, $platform_id);
 		}
 
-		$service        =   $this->_convoServiceFactory->getService( $user, $service_id, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory);
+		
 		$exception = [
 		    "message" => null,
 		    "stack_trace" => null,
