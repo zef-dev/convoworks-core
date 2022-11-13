@@ -125,7 +125,11 @@ class PackageProvider implements
     {
         $this->_logger->debug( 'Searching for system intent ['.$name.']');
 
-        $parts = explode('.', $name);
+        $parts = explode('.', $name, 2);
+        if ( count( $parts) < 2) {
+            throw new \Exception( 'Not an system intent ['.$name.']');
+        }
+
         $prefix = $parts[0];
         $name = $parts[1];
 
