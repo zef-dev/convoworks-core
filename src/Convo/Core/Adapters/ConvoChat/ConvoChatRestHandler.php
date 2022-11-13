@@ -25,7 +25,7 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 	private $_convoServiceParamsFactory;
 
 	/**
-	 * @var \Convo\Core\Factory\PlatformRequestFactory
+	 * @var \Convo\Core\Factory\IPlatformRequestFactory
 	 */
 	private $_platformRequestFactory;
 
