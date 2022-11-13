@@ -86,7 +86,7 @@ class DialogflowSlotParser
 	}
 
     private function _isSlotValid($key, $slot) {
-        $this->_logger->debug( 'Slot data to validate: '.$key.' ['.print_r($slot, true).']');
+//         $this->_logger->debug( 'Slot data to validate: '.$key.' ['.print_r($slot, true).']');
 
 		if ( !isset($slot) && empty($slot)) {
 			$this->_logger->debug( 'Found empty slot ['.$key.']');
