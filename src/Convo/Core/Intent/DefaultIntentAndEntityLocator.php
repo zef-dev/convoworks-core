@@ -68,8 +68,9 @@ class DefaultIntentAndEntityLocator implements IIntentAndEntityLocator
         try {
             $entity_model = $this->_service->getEntity( $entityType);
         } catch ( ComponentNotFoundException $e) {
-            $entity_model = $this->_packageProvider->findPlatformEntity( $entityType, $platformId);
-//             $entity_model = $system_entity->getPlatformModel( $platformId);
+            $system_entity = $this->_packageProvider->getEntity( $entityType);
+//             $entity_model = $this->_packageProvider->findPlatformEntity( $entityType, $platformId);
+            $entity_model = $system_entity->getPlatformModel( $platformId);
         }
         
         return $entity_model;
