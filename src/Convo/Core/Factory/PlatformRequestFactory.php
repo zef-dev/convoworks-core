@@ -191,14 +191,14 @@ class PlatformRequestFactory implements IPlatformRequestFactory
         $result = $api->analyzeText($text, $language);
 
         $decodedResult = json_decode($result, true);
-        // $this->_logger->debug('Got analysis result ['.print_r($decodedResult, true).']');
+        $this->_logger->debug('Got analysis result ['.print_r($decodedResult, true).']');
 
         $intent_name = $decodedResult['queryResult']['intent']['displayName'];
         $slots = $decodedResult['queryResult']['parameters'];
         
         $parsed = $parser->parseSlotValues( $intent_name, $slots);
 
-        $this->_logger->info('Got intent ['.$intent_name.']['.print_r($slots, true).']');
+        $this->_logger->debug('Got intent ['.$intent_name.']['.print_r( $parsed, true).']');
 
         return new IntentAwareWrapperRequest($request, $intent_name, $parsed, $slots, $platformId);
     }
