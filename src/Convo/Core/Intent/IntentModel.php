@@ -102,7 +102,7 @@ class IntentModel
     {
         foreach ( $this->_utterances as $utterance) {
             foreach ( $utterance->getParts() as $part) {
-                if ( $part['slot_value'] === $slot) {
+                if ( isset($part['slot_value']) && $part['slot_value'] === $slot) {
                     return $part['type'];
                 }
             }
