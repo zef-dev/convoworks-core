@@ -75,6 +75,8 @@ class PackageProvider implements
                 $this->_functionProviders[$package->getNamespace()] = $package;
             }
         }
+        
+        $this->_logger->debug( 'Got packages provider for ['.implode( ', ', array_keys( $this->_packages)).']');
     }
 
     /**
