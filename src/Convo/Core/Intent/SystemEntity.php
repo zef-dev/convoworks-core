@@ -31,12 +31,17 @@ class SystemEntity
     }
     
     /**
-     * @param string $platformId
+     * @param string[]|string $platformIds
      * @param EntityModel $entityModel
      */
-    public function setPlatformModel( $platformId, $entityModel)
+    public function setPlatformModel( $platformIds, $entityModel)
     {
-        $this->_platformModels[$platformId] =   $entityModel;
+        if ( !is_array( $platformIds)) {
+            $platformIds = [$platformIds];
+        }
+        foreach ( $platformIds as $platform_id) {
+            $this->_platformModels[$platform_id] =   $entityModel;
+        }
     }
     
     /**
