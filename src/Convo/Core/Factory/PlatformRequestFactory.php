@@ -167,7 +167,7 @@ class PlatformRequestFactory implements IPlatformRequestFactory
         $locator        =   new DefaultIntentAndEntityLocator( $this->_logger, $service, $provider);
         $parser         =   new DialogflowSlotParser( $this->_logger, $locator);
         
-        $this->_logger->debug('Exec platform id ['.$platformId.']');
+        $this->_logger->debug('Exec platform id ['.$platformId.'] with text ['.$request->getText().']');
 
         $service_meta = $this->_convoServiceDataProvider->getServiceMeta(
             $user, $service->getId() 

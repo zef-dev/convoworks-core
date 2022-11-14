@@ -67,8 +67,6 @@ class PackageProviderFactory
     {
         $available = [];
 
-        $this->_logger->debug('Service has packages ['.print_r($ids, true).']');
-
         foreach ($ids as $package)
         {
             $available[] = $this->getProviderByNamespace($package);
