@@ -202,7 +202,9 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
 	                        'alias' => $alias
 	                    ];
 	                }
-
+	                
+	                $release['url'] = $this->_serviceReleaseManager->getAliasWebhookUrl( $user, $serviceId, $platform_id, $alias);
+	                
 	                $data[]    =   $release;
 	            }
 	        }
