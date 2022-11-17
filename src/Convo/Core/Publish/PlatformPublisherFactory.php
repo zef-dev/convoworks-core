@@ -4,6 +4,7 @@ namespace Convo\Core\Publish;
 
 use Convo\Core\IAdminUser;
 use Convo\Core\Rest\OwnerNotSpecifiedException;
+use Convo\Core\Factory\IPlatformProvider;
 
 class PlatformPublisherFactory
 {
@@ -189,6 +190,19 @@ class PlatformPublisherFactory
 		if ( $platformId === \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest::PLATFORM_ID) {
 			return new \Convo\Core\Adapters\ConvoChat\ConvoChatServicePublisher(
 			    $this->_logger, $owner, $serviceId, $this->_convoServiceDataProvider, $this->_serviceReleaseManager);
+		}
+		
+		if ( strpos( $platformId, '.') !== false) {
+		    $parts = explode( '.', $platformId, 2);
+		    $package_id = $parts[0];
+		    $platform_id = $parts[1];
+		    $provider = $this->_packageProviderFactory->getProviderByServiceId( $user, $serviceId);
+		    $package = $provider->findPackageById( $package_id);
+		    if ( $package instanceof IPlatformProvider) {
+		        /* @var IPlatformProvider $package */
+		        $platform = $package->getPlatform( $platform_id);
+		        return $platform->getPlatformPublisher( $user, $serviceId);
+		    }
 		}
 
 		throw new \Convo\Core\ComponentNotFoundException( 'Could not find publiher for platform ['.$platformId.']');
