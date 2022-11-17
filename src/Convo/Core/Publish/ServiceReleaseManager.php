@@ -255,6 +255,10 @@ class ServiceReleaseManager
 
 	public function getDevelopmentWebhookUrl( IAdminUser $user, $serviceId, $platformId) {
 	    $alias =   $this->getDevelopmentAlias( $user, $serviceId, $platformId);
+	    return $this->getAliasWebhookUrl( $user, $serviceId, $platformId, $alias);
+	}
+
+	public function getAliasWebhookUrl( IAdminUser $user, $serviceId, $platformId, $alias) {
 	    return $this->_publicRestBaseUrl."/service-run/$platformId/$alias/$serviceId";
 	}
 
