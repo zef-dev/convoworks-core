@@ -242,10 +242,20 @@ class ServiceReleaseManager
 	    return $meta;
 	}
 
+	/**
+	 * @param IAdminUser $user
+	 * @param string $serviceId
+	 * @param string $platformId
+	 * @return string
+	 * @deprecated
+	 */
 	public function getWebhookUrl( IAdminUser $user, $serviceId, $platformId) {
+	    return $this->getDevelopmentWebhookUrl($user, $serviceId, $platformId);
+	}
+
+	public function getDevelopmentWebhookUrl( IAdminUser $user, $serviceId, $platformId) {
 	    $alias =   $this->getDevelopmentAlias( $user, $serviceId, $platformId);
 	    return $this->_publicRestBaseUrl."/service-run/$platformId/$alias/$serviceId";
-
 	}
 
 	public function getDevelopmentAlias( IAdminUser $user, $serviceId, $platformId)
