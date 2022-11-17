@@ -259,8 +259,17 @@ class ServiceReleaseManager
 	}
 
 	public function getAliasWebhookUrl( IAdminUser $user, $serviceId, $platformId, $alias) {
-	    return $this->_publicRestBaseUrl."/service-run/$platformId/$alias/$serviceId";
+	    $platform_id = $this->_fixExternalPlatforms( $platformId);
+	    return $this->_publicRestBaseUrl."/service-run/$platform_id/$alias/$serviceId";
 	}
+	
+    private function _fixExternalPlatforms( $platformId) {
+        if ( strpos( $platformId, '.') === false) {
+            return $platformId;
+        }
+        
+        return 'external/'.str_replace( '.', '/', $platformId, 1);
+    }
 
 	public function getDevelopmentAlias( IAdminUser $user, $serviceId, $platformId)
 	{
