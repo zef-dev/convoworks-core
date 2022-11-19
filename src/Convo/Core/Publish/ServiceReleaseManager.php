@@ -268,7 +268,7 @@ class ServiceReleaseManager
             return $platformId;
         }
         
-        return 'external/'.str_replace( '.', '/', $platformId, 1);
+        return 'external/'.str_replace( '.', '/', $platformId);
     }
 
 	public function getDevelopmentAlias( IAdminUser $user, $serviceId, $platformId)
