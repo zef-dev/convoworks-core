@@ -717,8 +717,8 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 // 	            ]
 // 	        }
 
-	        $sentence          	=   [];
-	        $part_count			=	count($utterance->getParts());
+	        $sentence      =   [];
+	        $part_count    =	count($utterance->getParts());
 
 	        foreach ( $utterance->getParts() as $index => $part_data)
 	        {
@@ -760,8 +760,10 @@ class AlexaSkillPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 	            }
 	        }
 
-	        $intent_data['samples'][] =   implode( ' ', $sentence);
+	        $intent_data['samples'][] = implode( ' ', $sentence);
 	    }
+	    
+	    $intent_data['samples'] =   array_values( array_unique( $intent_data['samples']));
 
 	    return $intent_data;
 	}
