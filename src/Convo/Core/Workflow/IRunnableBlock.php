@@ -11,7 +11,7 @@ use Convo\Core\Preview\PreviewBlock;
  * @author Tole
  *
  */
-interface IRunnableBlock extends IConversationElement, IIdentifiableComponent
+interface IRunnableBlock extends IConversationElement, IIdentifiableComponent, IWorkflowContainerComponent
 {
 	const ROLE_CONVERSATION_BLOCK  =   'conversation_block';
 	const ROLE_MEDIA_PLAYER        =   'media_player';
