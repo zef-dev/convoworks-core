@@ -58,6 +58,10 @@ class ServiceReleaseManager
         return $meta;
     }
 
+    public function addPlatformVersionData(IAdminUser $user, $serviceId, $versionId, $platformVersionData) {
+        return $this->_convoServiceDataProvider->addPlatformVersionData($user, $serviceId, $versionId, $platformVersionData);
+    }
+
     public function promoteRelease(IAdminUser $user, $serviceId, $releaseId, $type, $stage)
     {
         $release = $this->_convoServiceDataProvider->getReleaseData($user, $serviceId, $releaseId);
@@ -127,12 +131,12 @@ class ServiceReleaseManager
         return $this->_convoServiceDataProvider->getServiceData($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
     }
 
-    public function createSimpleVersionTag(IAdminUser $user, $serviceId, $versionId, $versionTag = null)
+    public function createSimpleVersionTag(IAdminUser $user, $serviceId, $versionId, $platformId, $versionTag = null)
     {
         $workflow = $this->_convoServiceDataProvider->getServiceData($user, $serviceId, $versionId);
         $config = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, $versionId);
 
-        return $this->_convoServiceDataProvider->createServiceVersion($user, $serviceId, $workflow, $config, $versionTag);
+        return $this->_convoServiceDataProvider->createServiceVersion($user, $serviceId, $workflow, $config, $platformId, $versionTag);
     }
 
     public function getAllServiceVersionsMeta( IAdminUser $user, $serviceId)

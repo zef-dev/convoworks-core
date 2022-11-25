@@ -53,7 +53,32 @@ abstract class AbstractServicePublisher implements \Convo\Core\Publish\IPlatform
 	{
 	    $this->_checkEnabled();
 	}
-	
+
+    public function createRelease($platformId, $targetReleaseType, $targetReleaseStage, $alias, $versionId = null)
+    {
+        throw new \Convo\Core\Util\NotImplementedException('Not yet implemented for ['.$platformId.'] platform.');
+    }
+
+    public function createVersionTag($platformId, $versionTagId = null)
+    {
+        throw new \Convo\Core\Util\NotImplementedException('Not yet implemented for ['.$platformId.'] platform.');
+    }
+
+    public function importToDevelop($fromAlias, $toAlias, $versionId = null, $versionTag = null)
+    {
+        throw new \Convo\Core\Util\NotImplementedException('Not yet implemented.');
+    }
+
+    public function importToRelease($targetReleaseType, $targetReleaseStage, $alias, $versionId = null, $nextVersionId = null)
+    {
+        throw new \Convo\Core\Util\NotImplementedException('Not yet implemented.');
+    }
+
+    public function promoteToRelease($targetReleaseType, $targetReleaseStage, $alias, $versionId = null)
+    {
+        throw new \Convo\Core\Util\NotImplementedException('Not yet implemented.');
+    }
+
 	protected function _checkEnabled()
 	{
 	    $config		=	$this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);

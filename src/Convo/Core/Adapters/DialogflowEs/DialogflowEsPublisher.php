@@ -9,9 +9,6 @@ use Convo\Core\Publish\PlatformPublishingHistory;
 use Convo\Core\Util\SimpleFileResource;
 use Convo\Core\Util\StrUtil;
 use Convo\Core\Util\ZipFileResource;
-use Google\Cloud\Dialogflow\V2\Agent;
-use Google\Cloud\Dialogflow\V2\Agent\ApiVersion;
-use Google\Cloud\Dialogflow\V2\Agent\Tier;
 use Convo\Core\ComponentNotFoundException;
 use Convo\Core\Publish\IPlatformPublisher;
 
@@ -94,9 +91,9 @@ class DialogflowEsPublisher extends \Convo\Core\Publish\AbstractServicePublisher
 
         $existingAgent = $api->getAgent();
         if ($existingAgent !== null) {
-            $config[$this->getPlatformId()]['name'] = $existingAgent->getDisplayName();
-            $config[$this->getPlatformId()]['description'] = $existingAgent->getDescription();
-            $config[$this->getPlatformId()]['default_timezone'] = $existingAgent->getTimeZone();
+            $config[$this->getPlatformId()]['name'] = $existingAgent['displayName'];
+            $config[$this->getPlatformId()]['description'] = $existingAgent['description'];
+            $config[$this->getPlatformId()]['default_timezone'] = $existingAgent['timeZone'];
             $config[$this->getPlatformId()]['time_created'] = time();
             $config[$this->getPlatformId()]['time_updated'] = time();
             $this->_convoServiceDataProvider->updateServicePlatformConfig($this->_user, $this->_serviceId, $config);
@@ -110,17 +107,17 @@ class DialogflowEsPublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $defaultLocale = $meta['default_language'];
             $supportedLocales = [];
 
-            $agent = new Agent();
-            $agent
-                ->setDisplayName($name)
-                ->setDefaultLanguageCode($defaultLocale)
-                ->setSupportedLanguageCodes($supportedLocales)
-                ->setTimeZone($defaultTimezone)
-                ->setDescription($desc)
-                ->setEnableLogging(true)
-                ->setClassificationThreshold(0)
-                ->setApiVersion(ApiVersion::API_VERSION_V2)
-                ->setTier(Tier::TIER_STANDARD);
+            $agent = [
+                "displayName" => $name,
+                "defaultLanguageCode" => $defaultLocale,
+                "supportedLanguageCodes" => $supportedLocales,
+                "timeZone" => $defaultTimezone,
+                "description" => $desc,
+                'enableLogging' => true,
+                'classificationThreshold' => 0,
+                'apiVersion' => 2,
+                'tier' => 1
+            ];
 
             $api->setAgent($agent);
 
@@ -165,17 +162,17 @@ class DialogflowEsPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         $defaultLocale = $meta['default_language'];
         $supportedLocales = [];
 
-        $agent = new Agent();
-        $agent
-            ->setDisplayName($name)
-            ->setDefaultLanguageCode($defaultLocale)
-            ->setSupportedLanguageCodes($supportedLocales)
-            ->setTimeZone($defaultTimezone)
-            ->setDescription($desc)
-            ->setEnableLogging(true)
-            ->setClassificationThreshold(0)
-            ->setApiVersion(ApiVersion::API_VERSION_V2)
-            ->setTier(Tier::TIER_STANDARD);
+        $agent = [
+            "displayName" => $name,
+            "defaultLanguageCode" => $defaultLocale,
+            "supportedLanguageCodes" => $supportedLocales,
+            "timeZone" => $defaultTimezone,
+            "description" => $desc,
+            'enableLogging' => true,
+            'classificationThreshold' => 0,
+            'apiVersion' => 2,
+            'tier' => 1
+        ];
 
         $api->setAgent($agent);
 
@@ -525,7 +522,6 @@ class DialogflowEsPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                     $data['meta']   =   '@'.$sys_def->getPlatformName( $this->getPlatformId());
                     $this->_logger->info("Meta in user says [".$data['meta']."]");
                     $data['meta']   =   str_replace( '@@', '@', $data['meta']);
-                    //$data['meta']   =   $this->_toSysType($data['meta']);
                     $this->_logger->info("Meta in user says [".$data['meta']."]");
                 } catch ( \Convo\Core\ComponentNotFoundException $e) {
                     // todo quickfix
@@ -756,17 +752,124 @@ class DialogflowEsPublisher extends \Convo\Core\Publish\AbstractServicePublisher
         return $status;
     }
 
-    private function _toSysType($type) {
-        $ret = $type;
+    public function createRelease($platformId, $targetReleaseType, $targetReleaseStage, $alias, $versionId = null)
+    {
+        $api = $this->_dialogflowApiFactory->getApi(
+            $this->_user,
+            $this->_serviceId,
+            $this->getPlatformId()
+        );
 
-        if (strpos($type, '.')) {
-            $dataTypeParts = explode('.', $type);
-            if (count($dataTypeParts) > 1) {
-                $ret = "@sys.$dataTypeParts[1]";
-            }
+        $this->_logger->info('Going to create a new version for Dialogflow Agent ['.$targetReleaseType.'-'.$targetReleaseStage.']');
+        $createdDialogflowAgentVersion = $api->createVersion($versionId);
+
+        if (empty($createdDialogflowAgentVersion)) {
+            throw new \Exception("Can't create environment version at the time.");
         }
 
-        return $ret;
+        $environmentId = $alias;
+        $this->_logger->info('Going to prepare a new environment with id ['.$environmentId.'] and alias ['.$alias.']');
+
+        $environment = $api->getEnvironment($environmentId);
+        if (empty($environment)) {
+            $environment = $api->createEnvironment($environmentId, $createdDialogflowAgentVersion['versionNumber']);
+        } else {
+            $environment = $api->loadVersionIntoEnvironment($environmentId, $createdDialogflowAgentVersion['versionNumber']);
+        }
+
+        $this->_logger->info('Got new version for Dialogflow Agent ['.json_encode($createdDialogflowAgentVersion).']');
+        $this->_logger->info('Loaded new version for Dialogflow Agent ['.json_encode($environment).']');
+
+        /*$meta = $this->_convoServiceDataProvider->getServiceMeta( $this->_user, $this->_serviceId);
+        $meta['platform_version_releases']['dialogflow_es'][$alias]['dialogflow_agent_version'] = $createdDialogflowAgentVersion;
+        $meta['platform_version_releases']['dialogflow_es'][$alias]['dialogflow_agent_environment'] = $environment;
+        $this->_convoServiceDataProvider->saveServiceMeta($this->_user, $this->_serviceId, $meta);*/
+
+        $newDevelopmentAlias = $this->_serviceReleaseManager->getDevelopmentAlias($this->_user, $this->_serviceId, 'dialogflow_es');
+
+        /*if (isset($meta['platform_version_releases']['dialogflow_es'][$newDevelopmentAlias]['dialogflow_agent_version']) &&
+            isset($meta['platform_version_releases']['dialogflow_es'][$newDevelopmentAlias]['dialogflow_agent_environment'])) {
+            unset($meta['platform_version_releases']['dialogflow_es'][$newDevelopmentAlias]['dialogflow_agent_version']);
+            unset($meta['platform_version_releases']['dialogflow_es'][$newDevelopmentAlias]['dialogflow_agent_environment']);
+        }*/
+
+        return [
+            "agent_version" => $createdDialogflowAgentVersion,
+            "agent_environment" => $environment
+        ];
+    }
+
+    public function createVersionTag($platformId, $versionTagId = null)
+    {
+        $this->_logger->info('Going to create version tag on platform id ['.$platformId.'] with tag ['.$versionTagId.']');
+
+        $api = $this->_dialogflowApiFactory->getApi(
+            $this->_user,
+            $this->_serviceId,
+            $this->getPlatformId()
+        );
+
+        $createdDialogflowAgentVersion = $api->createVersion($versionTagId);
+
+        $this->_logger->debug('Got dialogflow agent info ['.json_encode($createdDialogflowAgentVersion).']');
+
+        return $createdDialogflowAgentVersion;
+    }
+
+    public function importToDevelop($fromAlias, $toAlias, $versionId = null, $versionTag = null)
+    {
+        $api = $this->_dialogflowApiFactory->getApi(
+            $this->_user,
+            $this->_serviceId,
+            $this->getPlatformId()
+        );
+
+        $existingAgent = $this->_convoServiceDataProvider->getServiceMeta($this->_user, $this->_serviceId, $versionId)['platform_version_data'];
+        $versionNumber = $existingAgent['versionNumber'];
+
+        $this->_logger->info('Existing agent ['.json_encode($existingAgent).']');
+        $this->_logger->info('Existing agent version number ['.$versionNumber.']');
+
+        if (empty($versionNumber)) {
+            throw new \Exception('Invalid Agent Version Number ['.$versionNumber.']');
+        }
+
+        $environment = $api->loadVersionIntoEnvironment('-', $versionNumber, true);
+
+        return [
+            "agent_version" => $existingAgent,
+            "agent_environment" => $environment
+        ];
+    }
+
+    public function importToRelease($targetReleaseType, $targetReleaseStage, $alias, $versionId = null, $nextVersionId = null)
+    {
+        if ($versionId === 'develop') {
+            return $this->createRelease('dialogflow_es', $targetReleaseType, $targetReleaseStage, $alias, $nextVersionId);
+        }
+
+        $api = $this->_dialogflowApiFactory->getApi(
+            $this->_user,
+            $this->_serviceId,
+            $this->getPlatformId()
+        );
+
+        $environment = $api->getEnvironment($alias);
+
+        $agentVersion = $this->_convoServiceDataProvider->getServiceMeta($this->_user, $this->_serviceId, $versionId)['platform_version_data'];
+        $versionNumber = $agentVersion['versionNumber'] ?? 0;
+
+        if (empty($versionNumber)) {
+            throw new \Exception('Invalid Agent Version Number ['.$versionNumber.']');
+        }
+
+        if (empty($environment)) {
+            $api->createEnvironment($alias, $versionNumber);
+        } else {
+            $api->loadVersionIntoEnvironment($alias, $versionNumber);
+        }
+
+        return ['agent_version' => $agentVersion];
     }
 
     private function _preparePropagateData() {
