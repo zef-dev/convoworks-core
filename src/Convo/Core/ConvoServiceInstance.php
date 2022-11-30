@@ -345,6 +345,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                         }  catch ( StateChangedException $e) {
                             $this->_logger->info( $e->getMessage());
                             $this->_readState( $e->getState(), $request, $response);
+                        }  catch ( ComponentNotFoundException $e) {
+                            throw new \Exception( 'Failed to run special role block ['.$request->getSpecialRole().']', 0, $e);
                         }
                         
                     } catch ( ComponentNotFoundException $e) {
