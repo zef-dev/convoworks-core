@@ -38,11 +38,11 @@ class IntentRequestFilter extends AbstractWorkflowContainerComponent implements 
     public function accepts( \Convo\Core\Workflow\IConvoRequest $request)
     {
         if ( !is_a( $request, '\Convo\Core\Workflow\IIntentAwareRequest')) {
-            $this->_logger->notice('Request is not IIntentAware. Exiting.');
+            $this->_logger->info('Request is not IIntentAware. Exiting.');
             return false;
         }
 
-        $this->_logger->info( 'Request is intent request ['.$request.']');
+        $this->_logger->debug( 'Request is intent request ['.$request.']');
         return true;
     }
 
