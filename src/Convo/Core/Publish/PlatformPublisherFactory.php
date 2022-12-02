@@ -217,13 +217,13 @@ class PlatformPublisherFactory
      */
 	private function _getServiceOwner($user, $serviceId) {
         $owner = null;
-        $this->_logger->debug( 'Current logged in user ['.print_r($user, true).']');
+        $this->_logger->debug( 'Current logged in user ['.$user->getUsername().']['.$user->getEmail().']');
 
         $meta = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
         if (!empty($meta["owner"])) {
             $owner = $this->_adminUserDataProvider->findUser($meta["owner"]);
             $this->_logger->debug(
-                'Going to return owner ['.print_r($owner, true).'] of the service [' . $serviceId . ']'
+                'Going to return owner ['.$owner->getUsername().']['.$owner->getEmail().'] of the service [' . $serviceId . ']'
             );
         } else {
             throw new OwnerNotSpecifiedException("Please specify an owner for the service [" . $serviceId . "]");
