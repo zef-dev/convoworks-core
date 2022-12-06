@@ -385,76 +385,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
 				return sprintf('relative_date(%1$d, %2$s)', $date, $startDayOfWeek);
 			},
 			function($args, $date, $startDayOfWeek = 'monday') {
-				$relativesArray = [
-					'relative_available' => false,
-					'yesterday' => false,
-					'today' => false,
-					'tomorrow' => false,
-					'last_week' => false,
-					'this_week' => false,
-					'next_week' => false,
-				];
-
-				$inputTime = is_int( $date) ? $date : strtotime($date);
-				$startDayOfWeek = strtolower($startDayOfWeek);
-				if (!$inputTime) {
-					return $relativesArray;
-				}
-
-				$currentTime = time();
-
-				$inputTimeFormatted = date("Y-m-d H:i:s", $inputTime);
-
-				$yesterdayFormatted = date("Y-m-d H:i:s", strtotime('yesterday', $currentTime));
-				$todayFormatted = date("Y-m-d H:i:s", strtotime('today', $currentTime));
-				$tomorrowFormatted = date("Y-m-d H:i:s", strtotime('tomorrow', $currentTime));
-
-				$dayToStartWeek = 'monday';
-				if ($startDayOfWeek === 'sunday') {
-					$dayToStartWeek = 'sunday';
-				}
-
-				$dayToEndWeek = 'sunday';
-				if ($startDayOfWeek === 'sunday') {
-					$dayToEndWeek = 'saturday';
-				}
-
-				$lastWeekStartFormatted = date("Y-m-d H:i:s", strtotime('previous week ' . $dayToStartWeek . ' midnight', $currentTime));
-				$lastWeekEndFormatted = date("Y-m-d H:i:s", strtotime('previous week ' . $dayToEndWeek . ' 23:59:59', $currentTime));
-
-				$thisWeekStartFormatted = date("Y-m-d H:i:s", strtotime('last ' . $dayToStartWeek . ' midnight', $currentTime));
-				$thisWeekEndFormatted = date("Y-m-d H:i:s", strtotime('this ' . $dayToEndWeek . ' 23:59:59', $currentTime));
-
-				$nextWeekStartFormatted = date("Y-m-d H:i:s", strtotime('last ' . $dayToStartWeek . ' midnight', $currentTime));
-				$nextWeekEndFormatted = date("Y-m-d H:i:s", strtotime('this ' . $dayToEndWeek . ' 23:59:59 + 1 week', $currentTime));
-
-				$inputTimeFormattedDateOnly = trim(explode(' ', $inputTimeFormatted)[0]);
-				$yesterdayFormattedDateOnly = trim(explode(' ', $yesterdayFormatted)[0]);
-				$todayFormattedDateOnly = trim(explode(' ', $todayFormatted)[0]);
-				$tomorrowFormattedDateOnly = trim(explode(' ', $tomorrowFormatted)[0]);
-
-				if ($inputTimeFormattedDateOnly === $yesterdayFormattedDateOnly) {
-					$relativesArray['relative_available'] = true;
-					$relativesArray['yesterday'] = true;
-				} else if ($inputTimeFormattedDateOnly === $todayFormattedDateOnly) {
-					$relativesArray['relative_available'] = true;
-					$relativesArray['today'] = true;
-					$relativesArray['this_week'] = true;
-				} else if ($inputTimeFormattedDateOnly === $tomorrowFormattedDateOnly) {
-					$relativesArray['relative_available'] = true;
-					$relativesArray['tomorrow'] = true;
-				} else if ($inputTime >= strtotime($lastWeekStartFormatted) && $inputTime <= strtotime($lastWeekEndFormatted)) {
-					$relativesArray['relative_available'] = true;
-					$relativesArray['last_week'] = true;
-				} else if ($inputTime >= strtotime($thisWeekStartFormatted) && $inputTime <= strtotime($thisWeekEndFormatted)) {
-					$relativesArray['relative_available'] = true;
-					$relativesArray['this_week'] = true;
-				} else if ($inputTime >= strtotime($nextWeekStartFormatted) && $inputTime <= strtotime($nextWeekEndFormatted)) {
-					$relativesArray['relative_available'] = true;
-					$relativesArray['next_week'] = true;
-				}
-
-				return $relativesArray;
+			    return self::relativeDate( $date, $startDayOfWeek);
 			}
 		);
 
@@ -570,6 +501,79 @@ class CorePackageDefinition extends AbstractPackageDefinition
         );
 
         return $functions;
+    }
+    
+    public static function relativeDate( $date, $startDayOfWeek = 'monday') {
+        $relativesArray = [
+            'relative_available' => false,
+            'yesterday' => false,
+            'today' => false,
+            'tomorrow' => false,
+            'last_week' => false,
+            'this_week' => false,
+            'next_week' => false,
+        ];
+        
+        $inputTime = is_int( $date) ? $date : strtotime($date);
+        $startDayOfWeek = strtolower($startDayOfWeek);
+        if (!$inputTime) {
+            return $relativesArray;
+        }
+        
+        $currentTime = time();
+        
+        $inputTimeFormatted = date("Y-m-d H:i:s", $inputTime);
+        
+        $yesterdayFormatted = date("Y-m-d H:i:s", strtotime('yesterday', $currentTime));
+        $todayFormatted = date("Y-m-d H:i:s", strtotime('today', $currentTime));
+        $tomorrowFormatted = date("Y-m-d H:i:s", strtotime('tomorrow', $currentTime));
+        
+        $dayToStartWeek = 'monday';
+        if ($startDayOfWeek === 'sunday') {
+            $dayToStartWeek = 'sunday';
+        }
+        
+        $dayToEndWeek = 'sunday';
+        if ($startDayOfWeek === 'sunday') {
+            $dayToEndWeek = 'saturday';
+        }
+        
+        $lastWeekStartFormatted = date("Y-m-d H:i:s", strtotime('previous week ' . $dayToStartWeek . ' midnight', $currentTime));
+        $lastWeekEndFormatted = date("Y-m-d H:i:s", strtotime('previous week ' . $dayToEndWeek . ' 23:59:59', $currentTime));
+        
+        $thisWeekStartFormatted = date("Y-m-d H:i:s", strtotime('last ' . $dayToStartWeek . ' midnight', $currentTime));
+        $thisWeekEndFormatted = date("Y-m-d H:i:s", strtotime('this ' . $dayToEndWeek . ' 23:59:59', $currentTime));
+        
+        $nextWeekStartFormatted = date("Y-m-d H:i:s", strtotime('last ' . $dayToStartWeek . ' midnight', $currentTime));
+        $nextWeekEndFormatted = date("Y-m-d H:i:s", strtotime('this ' . $dayToEndWeek . ' 23:59:59 + 1 week', $currentTime));
+        
+        $inputTimeFormattedDateOnly = trim(explode(' ', $inputTimeFormatted)[0]);
+        $yesterdayFormattedDateOnly = trim(explode(' ', $yesterdayFormatted)[0]);
+        $todayFormattedDateOnly = trim(explode(' ', $todayFormatted)[0]);
+        $tomorrowFormattedDateOnly = trim(explode(' ', $tomorrowFormatted)[0]);
+        
+        if ($inputTimeFormattedDateOnly === $yesterdayFormattedDateOnly) {
+            $relativesArray['relative_available'] = true;
+            $relativesArray['yesterday'] = true;
+        } else if ($inputTimeFormattedDateOnly === $todayFormattedDateOnly) {
+            $relativesArray['relative_available'] = true;
+            $relativesArray['today'] = true;
+            $relativesArray['this_week'] = true;
+        } else if ($inputTimeFormattedDateOnly === $tomorrowFormattedDateOnly) {
+            $relativesArray['relative_available'] = true;
+            $relativesArray['tomorrow'] = true;
+        } else if ($inputTime >= strtotime($lastWeekStartFormatted) && $inputTime <= strtotime($lastWeekEndFormatted)) {
+            $relativesArray['relative_available'] = true;
+            $relativesArray['last_week'] = true;
+        } else if ($inputTime >= strtotime($thisWeekStartFormatted) && $inputTime <= strtotime($thisWeekEndFormatted)) {
+            $relativesArray['relative_available'] = true;
+            $relativesArray['this_week'] = true;
+        } else if ($inputTime >= strtotime($nextWeekStartFormatted) && $inputTime <= strtotime($nextWeekEndFormatted)) {
+            $relativesArray['relative_available'] = true;
+            $relativesArray['next_week'] = true;
+        }
+        
+        return $relativesArray;
     }
 
     /**
