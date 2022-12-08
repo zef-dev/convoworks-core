@@ -466,7 +466,12 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
             }
 
             // PROCESS
-            $this->_processBlock($block, $request, $response);
+            if ( $request->isEmpty()) {
+                $this->_readBlock( $block, $request, $response);
+            } else {
+                $this->_processBlock($block, $request, $response);
+            }
+            
             $this->_checkNextState();
             $this->_logger->info('Exiting ...');
         } catch (\Throwable $e) {
@@ -499,9 +504,6 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     protected function _processBlock( IRunnableBlock $block, $request, $response)
     {
-        if ( $request->isEmpty()) {
-            throw new \Exception( 'Should not be here with empty request ['.$request.']');
-        }
         $params = $this->getServiceParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION);
         $this->setServiceState( $block->getComponentId());
 
