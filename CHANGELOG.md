@@ -2,6 +2,14 @@
 
 ## [Current development]
 
+## 0.22.17.0
+
+* Fixed type safety in evaluation context
+* Added ability to parse (modify) slot values with EntityModel
+* Do not activate filter if slot is empty - ""
+* Support for the External platforms through packages
+* Delegate session start calls to default state (first) if elements or processors are empty
+
 ## [Releases]
 
 ## 0.22.16.0 - 2022-11-04
