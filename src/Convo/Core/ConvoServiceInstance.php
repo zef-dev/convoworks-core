@@ -327,15 +327,17 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         // RUN ITSELF
         $this->_logger->debug( 'Running ...');
 
-        try {
+        try 
+        {
             // SPECIAL ROLE CALL
-            
-            if ( $request instanceof ISpecialRoleRequest) {
+            if ( $request instanceof ISpecialRoleRequest) 
+            {
                 /* @var ISpecialRoleRequest  $request */
                 if ( $request->getSpecialRole())
                 {
                     $this->_logger->info('Handling special role call ['.$request->getSpecialRole().']');
-                    try {
+                    try 
+                    {
                         $block  =   $this->getBlockByRole( $request->getSpecialRole());
 
                         try {
@@ -349,7 +351,9 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                             throw new \Exception( 'Failed to run special role block ['.$request->getSpecialRole().']', 0, $e);
                         }
                         
-                    } catch ( ComponentNotFoundException $e) {
+                    } 
+                    catch ( ComponentNotFoundException $e) 
+                    {
                         $this->_logger->warning( 'No block with role ['.$request->getSpecialRole().'] found.');
                     }
                     $this->_logger->info('Exiting ...');
@@ -426,56 +430,76 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
             }
 
             // SESSION START
-            if ($request->isSessionStart()) {
-                if ($request->isEmpty()) {
-                    try {
+            if ( $request->isSessionStart()) 
+            {
+                // EMPTY REQUEST
+                if ( $request->isEmpty()) 
+                {
+                    try 
+                    {
                         $this->_logger->info('Trying to read role [' . IRunnableBlock::ROLE_SESSION_START . '] ...');
                         $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_START);
-                    } catch (\Convo\Core\ComponentNotFoundException $e) {
-                        $this->_logger->info($e->getMessage());
+                        if ( empty( $block->getElements())) {
+                            throw new ComponentNotFoundException( 'Session start block found, but has no elements');
+                        }
+                    } 
+                    catch ( ComponentNotFoundException $e) 
+                    {
+                        $this->_logger->info( $e->getMessage());
                         $state  =   $this->_getDefaultState();
                         $this->_logger->info('Going to read an empty launch request wits state [' . $state . '] ...');
-                        $this->_readState($state, $request, $response);
+                        $this->_readState( $state, $request, $response);
                         $this->_checkNextState();
-                        $this->_logger->info('Exiting ...');
+                        $this->_logger->info( 'Read state done. Exiting ...');
                         return;
                     }
 
-                    $this->_readBlock($block, $request, $response);
+                    $this->_readBlock( $block, $request, $response);
                     $this->_checkNextState();
-                    $this->_logger->info('Exiting ...');
+                    $this->_logger->info( 'Read session start done. Exiting ...');
                     return;
                 }
 
-                try {
+                // NON EMPTY REQUEST
+                try 
+                {
                     $this->_logger->info('Trying to read role [' . IRunnableBlock::ROLE_SESSION_START . '] ...');
                     $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_START);
-                } catch (\Convo\Core\ComponentNotFoundException $e) {
-                    $this->_logger->info($e->getMessage());
+                    if ( empty( $block->getProcessors())) {
+                        throw new ComponentNotFoundException( 'Session start block found, but has no processors');
+                    }
+                } 
+                catch ( ComponentNotFoundException $e) 
+                {
+                    $this->_logger->info( $e->getMessage());
                     $state  =   $this->_getDefaultState();
                     $block  =   $this->findBlock($state);
                 }
 
                 // DIRECT INVOCATION
-                $this->_logger->info('We have direct invocation in block [' . $block->getComponentId() . '] ...');
-            } else {
+                $this->_logger->info( 'We have direct invocation in block [' . $block->getComponentId() . '] ...');
+            } 
+            else 
+            {
                 // REGULAR CALL
-                $state        =    $this->getServiceState();
-                $block      =   $this->findBlock($state);
-                $this->_logger->info('We have regular state [' . $state . '] request');
+                $state  =    $this->getServiceState();
+                $block  =   $this->findBlock($state);
+                $this->_logger->info( 'We have regular state [' . $state . '] request');
             }
 
             // PROCESS
             if ( $request->isEmpty()) {
                 $this->_readBlock( $block, $request, $response);
             } else {
-                $this->_processBlock($block, $request, $response);
+                $this->_processBlock( $block, $request, $response);
             }
             
             $this->_checkNextState();
             $this->_logger->info('Exiting ...');
-        } catch (\Throwable $e) {
-            $this->_logger->error($e);
+        } 
+        catch ( \Throwable $e) 
+        {
+            $this->_logger->error( $e);
 
             try {
                 $error_handler = $this->getBlockByRole(IRunnableBlock::ROLE_ERROR_HANDLER);
