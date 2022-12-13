@@ -91,6 +91,7 @@ class ViberRestHandler implements RequestHandlerInterface
     private function _handleRequest($request, $variant, $serviceId) {
         $response = $this->_httpFactory->buildResponse(['EVENT_RECEIVED'], 200);
         $owner		=	new RestSystemUser();
+        $serviceMeta = $this->_convoServiceDataProvider->getServiceMeta($owner, $serviceId);
 
         try {
             $version_id			=	$this->_convoServiceFactory->getVariantVersion( $owner, $serviceId, ViberCommandRequest::PLATFORM_ID, $variant);
@@ -107,16 +108,21 @@ class ViberRestHandler implements RequestHandlerInterface
         $viberCommandRequest->init();
 
         if ($viberCommandRequest->isWebhookRequest()) {
-            $servicePlatformConfig['viber']['webhook_build_status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED;
+            $servicePlatformConfig[$this->_getPlatformId()]['webhook_build_status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED;
             $this->_convoServiceDataProvider->updateServicePlatformConfig($owner, $serviceId, $servicePlatformConfig);
             $response = $this->_httpFactory->buildResponse(['EVENT_RECEIVED_AND_WEBHOOK_VERIFIED'], 200);
         } else if ($viberCommandRequest->isMessageRequest() || $viberCommandRequest->isSessionStart()) {
             $this->_viberApi = new ViberApi($this->_logger, $this->_httpFactory);
             $this->_viberApi->setupViberApi($owner, $serviceId, $servicePlatformConfig);
 
-            $delegationNlp = $servicePlatformConfig["viber"]["delegateNlp"] ?? null;
+            $delegationNlp = $servicePlatformConfig[$this->_getPlatformId()]["delegateNlp"] ?? null;
             if ($delegationNlp) {
-                $viberCommandRequest = $this->_platformRequestFactory->toIntentRequest($viberCommandRequest, $owner, $serviceId, $delegationNlp);
+                $delegationNlpVariant = $this->_determineVariantForDelegateNlp(
+                    $owner,
+                    $serviceMeta,
+                    $variant, $this->_getPlatformId(), $delegationNlp
+                );
+                $viberCommandRequest = $this->_platformRequestFactory->toIntentRequest($viberCommandRequest, $owner, $serviceId, $delegationNlp, $delegationNlpVariant);
                 $debugData = print_r($viberCommandRequest->getPlatformData(), true);
                 $this->_logger->info("Debug request with delegate [$debugData]");
             }
@@ -128,11 +134,49 @@ class ViberRestHandler implements RequestHandlerInterface
             $viberCommandResponse->setReceiver($viberCommandRequest->getSessionId());
             $this->_viberApi->callSendMessage($viberCommandResponse->getPlatformResponse());
         } else if ($viberCommandRequest->hasFailed()) {
-            $servicePlatformConfig['viber']['webhook_build_status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED;
+            $servicePlatformConfig[$this->_getPlatformId()]['webhook_build_status'] = IPlatformPublisher::SERVICE_PROPAGATION_STATUS_FINISHED;
             $this->_convoServiceDataProvider->updateServicePlatformConfig($owner, $serviceId, $servicePlatformConfig);
             $response = $this->_httpFactory->buildResponse(['AN_ERROR_OCCURRED'], 400);
         }
 
         return $response;
+    }
+
+    private function _getPlatformId() {
+        return 'viber';
+    }
+
+    private function _determineVariantForDelegateNlp($user, $serviceMeta, $targetPlatformAlias, $targetPlatformId, $delegationNlp) {
+        $variantForDelegationNlp = '';
+        $releaseMappings = $serviceMeta['release_mapping'] ?? [];
+
+        $platformReleasesOfTargetPlatformId = $releaseMappings[$targetPlatformId][$targetPlatformAlias] ?? [];
+        $releaseId = $platformReleasesOfTargetPlatformId['release_id'] ?? '';
+        if (empty($releaseId)) {
+            return $variantForDelegationNlp;
+        }
+        $targetPlatformRelease = $this->_convoServiceDataProvider->getReleaseData(
+            $user,
+            $serviceMeta['service_id'],
+            $platformReleasesOfTargetPlatformId['release_id']
+        );
+
+        $platformReleasesOfDelegateNlp = $releaseMappings[$delegationNlp] ?? [];
+        foreach ($platformReleasesOfDelegateNlp as $alias => $platformReleaseOfDelegateNlp) {
+            if (isset($platformReleaseOfDelegateNlp['release_id'])) {
+                $delegationNlpReleaseData = $this->_convoServiceDataProvider->getReleaseData(
+                    $user,
+                    $serviceMeta['service_id'],
+                    $platformReleaseOfDelegateNlp['release_id']
+                );
+                if ($targetPlatformRelease['stage'] === $delegationNlpReleaseData['stage']) {
+                    $variantForDelegationNlp = $alias;
+                }
+            }
+        }
+
+        $this->_logger->info('Got variant for Delegation NLP ['.$variantForDelegationNlp.'] of ['.$this->_getPlatformId().']['.$targetPlatformAlias.']');
+
+        return $variantForDelegationNlp;
     }
 }

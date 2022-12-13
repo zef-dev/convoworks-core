@@ -58,6 +58,10 @@ class ServiceReleaseManager
         return $meta;
     }
 
+    public function addPlatformReleaseData(IAdminUser $user, $serviceId, $releaseId, $versionId, $platformReleaseData) {
+        return $this->_convoServiceDataProvider->addPlatformReleaseData($user, $serviceId, $releaseId, $versionId, $platformReleaseData);
+    }
+
     public function addPlatformVersionData(IAdminUser $user, $serviceId, $versionId, $platformVersionData) {
         return $this->_convoServiceDataProvider->addPlatformVersionData($user, $serviceId, $versionId, $platformVersionData);
     }

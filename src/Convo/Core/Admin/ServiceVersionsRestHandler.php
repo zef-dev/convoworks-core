@@ -159,7 +159,8 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
             $publisher = $this->_platformPublisherFactory->getPublisher($user, $serviceId, $json['platform_id']);
             $platformVersionRelease = $publisher->createRelease($json['platform_id'], $json['type'], $json['stage'], $developmentAlias, $latestVersionId);
             $this->_logger->info('Got platform version release ['.json_encode($platformVersionRelease).']');
-            $this->_serviceReleaseManager->addPlatformVersionData($user, $serviceId, $latestVersionId, $platformVersionRelease['agent_version']);
+            $this->_serviceReleaseManager->addPlatformReleaseData($user, $serviceId, $createdReleaseId, $latestVersionId, $platformVersionRelease);
+            $this->_serviceReleaseManager->addPlatformVersionData($user, $serviceId, $latestVersionId, $platformVersionRelease);
         } catch (NotImplementedException $e) {
             $this->_logger->notice($e);
         }
@@ -203,13 +204,15 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
         $release = $this->_serviceReleaseManager->importWorkflowIntoRelease(
             $user, $serviceId, $releaseId, $versionId);
 
+        $platformId = $json['platform_id'];
         $this->_logger->debug('Got release info ['.json_encode($release).']');
         try {
             $publisher = $this->_platformPublisherFactory->getPublisher($user, $serviceId, $release['platform_id']);
             $nextReleaseId = $release['version_id'] ?? null;
-            $platformVersionRelease = $publisher->importToRelease($release['type'], $release['stage'], $release['alias'], $versionId, $nextReleaseId);
+            $platformVersionRelease = $publisher->importToRelease($platformId, $release['type'], $release['stage'], $release['alias'], $versionId, $nextReleaseId);
             $this->_logger->info('Platform Version Release ['.json_encode($platformVersionRelease).']');
-            $this->_serviceReleaseManager->addPlatformVersionData($user, $serviceId, $release['version_id'], $platformVersionRelease['agent_version']);
+            $this->_serviceReleaseManager->addPlatformReleaseData($user, $serviceId, $releaseId, $release['version_id'], $platformVersionRelease);
+            $this->_serviceReleaseManager->addPlatformVersionData($user, $serviceId, $release['version_id'], $platformVersionRelease);
         } catch (NotImplementedException $e) {
             $this->_logger->notice($e);
         }
@@ -238,7 +241,7 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
             $developmentAlias = $this->_serviceReleaseManager->getDevelopmentAlias($user, $serviceId, $platformId);
 
             $versionTag = $json['version_tag'] ?? null;
-            $platformVersionRelease = $publisher->importToDevelop($json['alias'], $developmentAlias, $versionId, $versionTag);
+            $platformVersionRelease = $publisher->importToDevelop($platformId, $json['alias'], $developmentAlias, $versionId, $versionTag);
 
             $this->_logger->info('Platform Version Release ['.json_encode($platformVersionRelease).']');
         } catch (NotImplementedException $e) {

@@ -69,8 +69,8 @@ interface IPlatformPublisher
 
     public function promoteToRelease( $targetReleaseType, $targetReleaseStage, $alias, $versionId = null);
 
-    public function importToRelease( $targetReleaseType, $targetReleaseStage, $alias, $versionId = null, $nextVersionId = null);
+    public function importToRelease( $platformId, $targetReleaseType, $targetReleaseStage, $alias, $versionId = null, $nextVersionId = null);
 
-    public function importToDevelop( $fromAlias, $toAlias, $versionId = null, $versionTag = null);
+    public function importToDevelop( $platformId, $fromAlias, $toAlias, $versionId = null, $versionTag = null);
 
 }

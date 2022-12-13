@@ -143,10 +143,9 @@ class DialogflowApi
      * @return false|string
      * @throws \Exception
      */
-    public function analyzeText($text, $locale) {
-        $url = self::BASE_DIALOGFLOW_URL."/projects/$this->_projectId/agent/sessions/".session_id().':detectIntent';
-
-        // TODO consider environment and version too
+    public function analyzeText($text, $locale, $variant = '-') {
+        $someSessionIdValue = '0123456789';
+        $url = self::BASE_DIALOGFLOW_URL."/projects/$this->_projectId/agent/environments/".$variant.'/users/'.$this->_user->getId().'/sessions/'.$someSessionIdValue.':detectIntent';
 
         $result = $this->_executeRequest(
             IHttpFactory::METHOD_POST,

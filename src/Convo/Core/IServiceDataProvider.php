@@ -221,6 +221,15 @@ interface IServiceDataProvider
      * @param $data
      * @return mixed
      */
+    public function addPlatformReleaseData(\Convo\Core\IAdminUser $user, $serviceId, $releaseId, $versionId, $data);
+
+    /**
+     * @param IAdminUser $user
+     * @param $serviceId
+     * @param $versionId
+     * @param $data
+     * @return mixed
+     */
     public function addPlatformVersionData(\Convo\Core\IAdminUser $user, $serviceId, $versionId, $data);
 
 	/**
@@ -231,7 +240,7 @@ interface IServiceDataProvider
 	 * @throws \Convo\Core\DataItemNotFoundException
 	 * @return array
 	 */
-	public function getReleaseData( \Convo\Core\IAdminUser $user, $serviceId, $releaseId, $versionId = null);
+	public function getReleaseData( \Convo\Core\IAdminUser $user, $serviceId, $releaseId);
 
 	/**
 	 * @param \Convo\Core\IAdminUser $user
