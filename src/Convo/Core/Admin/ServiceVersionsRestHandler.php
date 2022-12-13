@@ -2,6 +2,7 @@
 
 namespace Convo\Core\Admin;
 
+use Convo\Core\Util\NotImplementedException;
 use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Publish\IPlatformPublisher;
 
@@ -110,11 +111,24 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
     {
         $json = $request->getParsedBody();
 
+        $this->_logger->info('Creating simple version tag ['.json_encode($json).'] with version id ['.$versionId.']');
+
         $version_tag = $json['version_tag'] ?: null;
+        $platformId = $json['development_release_data']['platform_id'] ?? '';
 
         $data = $this->_serviceReleaseManager->createSimpleVersionTag(
-            $user, $serviceId, $versionId, $version_tag
+            $user, $serviceId, $versionId, $platformId, $version_tag
         );
+
+        $this->_logger->debug('Returning version tag data ['.json_encode($data).']');
+
+        try {
+            $publisher = $this->_platformPublisherFactory->getPublisher($user, $serviceId, $platformId);
+            $versionTagData = $publisher->createVersionTag($platformId, $version_tag);
+            $this->_serviceReleaseManager->addPlatformVersionData($user, $serviceId, $data, $versionTagData);
+        } catch (NotImplementedException $e) {
+            $this->_logger->notice($e);
+        }
 
 		$this->_logger->info('Getting version ['.$versionId.'] for ['.$serviceId.']');
 
@@ -130,6 +144,26 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
 
 	    $release       =   $this->_serviceReleaseManager->createServiceRelease(
 	        $user, $serviceId, $json['platform_id'], $json['type'], $json['stage']);
+        $this->_logger->debug('Got release info ['.json_encode($release).']');
+        $this->_logger->debug('Got JSON body ['.json_encode($json).']');
+        try {
+            $developmentAlias = $json['development_release_data']['alias'] ?? '';
+            $createdReleaseId = $release['release_mapping'][$json['platform_id']][$developmentAlias]['release_id'] ?? '';
+            if (empty($createdReleaseId)) {
+                throw new \Exception('Empty Release ID!');
+            }
+            $latestVersionId = $this->_convoServiceDataProvider->getReleaseData($user, $serviceId, $createdReleaseId)['version_id'] ?? '';
+            if (empty($latestVersionId)) {
+                throw new \Exception('Empty Version ID!');
+            }
+            $publisher = $this->_platformPublisherFactory->getPublisher($user, $serviceId, $json['platform_id']);
+            $platformVersionRelease = $publisher->createRelease($json['platform_id'], $json['type'], $json['stage'], $developmentAlias, $latestVersionId);
+            $this->_logger->info('Got platform version release ['.json_encode($platformVersionRelease).']');
+            $this->_serviceReleaseManager->addPlatformReleaseData($user, $serviceId, $createdReleaseId, $latestVersionId, $platformVersionRelease);
+            $this->_serviceReleaseManager->addPlatformVersionData($user, $serviceId, $latestVersionId, $platformVersionRelease);
+        } catch (NotImplementedException $e) {
+            $this->_logger->notice($e);
+        }
 	    return $this->_httpFactory->buildResponse( $release);
 	}
 
@@ -142,6 +176,21 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
 
 	    $release       =   $this->_serviceReleaseManager->promoteRelease(
 	        $user, $serviceId, $json['release_id'], $json['type'], $json['stage']);
+
+        $this->_logger->debug('Got release info ['.json_encode($release).']');
+        $this->_logger->debug('Got JSON body ['.json_encode($json).']');
+
+        $releasePlatformId = $json['current_release_data']['platform_id'] ?? '';
+        $releaseAlias = $json['current_release_data']['alias'] ?? '';
+
+        try {
+            $publisher = $this->_platformPublisherFactory->getPublisher($user, $serviceId, $releasePlatformId);
+            $platformVersionRelease = $publisher->promoteToRelease($json['type'], $json['stage'], $releaseAlias);
+            $this->_logger->info('Platform Version Release ['.json_encode($platformVersionRelease).']');
+        } catch (NotImplementedException $e) {
+            $this->_logger->notice($e);
+        }
+
 	    return $this->_httpFactory->buildResponse( $release);
 	}
 
@@ -149,10 +198,24 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
 	\Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user,
 	    $serviceId, $releaseId, $versionId)
     {
+        $json         =   $request->getParsedBody();
+        $this->_logger->info('Importing workflow ['.$serviceId.']['.$releaseId.']['.$versionId.'] with JSON body ['.json_encode($json).']');
+
         $release = $this->_serviceReleaseManager->importWorkflowIntoRelease(
             $user, $serviceId, $releaseId, $versionId);
 
-		$this->_logger->info('Importing workflow ['.$serviceId.']['.$releaseId.']['.$versionId.']');
+        $platformId = $json['platform_id'];
+        $this->_logger->debug('Got release info ['.json_encode($release).']');
+        try {
+            $publisher = $this->_platformPublisherFactory->getPublisher($user, $serviceId, $release['platform_id']);
+            $nextReleaseId = $release['version_id'] ?? null;
+            $platformVersionRelease = $publisher->importToRelease($platformId, $release['type'], $release['stage'], $release['alias'], $versionId, $nextReleaseId);
+            $this->_logger->info('Platform Version Release ['.json_encode($platformVersionRelease).']');
+            $this->_serviceReleaseManager->addPlatformReleaseData($user, $serviceId, $releaseId, $release['version_id'], $platformVersionRelease);
+            $this->_serviceReleaseManager->addPlatformVersionData($user, $serviceId, $release['version_id'], $platformVersionRelease);
+        } catch (NotImplementedException $e) {
+            $this->_logger->notice($e);
+        }
 
 	    return $this->_httpFactory->buildResponse( $release);
 	}
@@ -161,11 +224,29 @@ class ServiceVersionsRestHandler implements RequestHandlerInterface
         \Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user,
         $serviceId, $versionId)
     {
+        $json         =   $request->getParsedBody();
+
         $release = $this->_serviceReleaseManager->importWorkflowIntoDevelop(
             $user, $serviceId, $versionId
         );
 
-		$this->_logger->info('Importing workflow from version ['.$serviceId.']['.$versionId.'] into development.');
+		$this->_logger->info('Importing workflow from version ['.$serviceId.']['.$versionId.'] into development with JSON body ['.json_encode($json));
+        try {
+            $platformId = $json['platform_id'] ?? null;
+            if (empty($platformId)) {
+                $platformId = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId, $versionId)['platform_id'];
+            }
+
+            $publisher = $this->_platformPublisherFactory->getPublisher($user, $serviceId, $platformId);
+            $developmentAlias = $this->_serviceReleaseManager->getDevelopmentAlias($user, $serviceId, $platformId);
+
+            $versionTag = $json['version_tag'] ?? null;
+            $platformVersionRelease = $publisher->importToDevelop($platformId, $json['alias'], $developmentAlias, $versionId, $versionTag);
+
+            $this->_logger->info('Platform Version Release ['.json_encode($platformVersionRelease).']');
+        } catch (NotImplementedException $e) {
+            $this->_logger->notice($e);
+        }
 
         return $this->_httpFactory->buildResponse( $release);
     }

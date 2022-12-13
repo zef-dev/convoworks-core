@@ -28,14 +28,21 @@ abstract class AbstractServicePublisher implements \Convo\Core\Publish\IPlatform
 	 * @var \Convo\Core\Publish\ServiceReleaseManager
 	 */
 	protected $_serviceReleaseManager;
-	
-	public function __construct( $logger, \Convo\Core\IAdminUser $user, $serviceId, $serviceDataProvider, $serviceReleaseManager)
+
+
+    /**
+     * @var \Convo\Core\Publish\PlatformPublisherFactory
+     */
+    protected $_platformPublisherFactory;
+
+	public function __construct( $logger, \Convo\Core\IAdminUser $user, $serviceId, $serviceDataProvider, $serviceReleaseManager, $platformPublisherFactory = null)
 	{
 		$this->_logger						=	$logger;
 		$this->_user						=	$user;
 		$this->_serviceId					=	$serviceId;
 		$this->_convoServiceDataProvider	= 	$serviceDataProvider;
 		$this->_serviceReleaseManager       = 	$serviceReleaseManager;
+		$this->_platformPublisherFactory    = 	$platformPublisherFactory;
 	}
 	
 	public function getPropagateInfo() {
@@ -53,7 +60,32 @@ abstract class AbstractServicePublisher implements \Convo\Core\Publish\IPlatform
 	{
 	    $this->_checkEnabled();
 	}
-	
+
+    public function createRelease($platformId, $targetReleaseType, $targetReleaseStage, $alias, $versionId = null)
+    {
+        throw new \Convo\Core\Util\NotImplementedException('Not yet implemented for ['.$platformId.'] platform.');
+    }
+
+    public function createVersionTag($platformId, $versionTagId = null)
+    {
+        throw new \Convo\Core\Util\NotImplementedException('Not yet implemented for ['.$platformId.'] platform.');
+    }
+
+    public function importToDevelop($platformId, $fromAlias, $toAlias, $versionId = null, $versionTag = null)
+    {
+        throw new \Convo\Core\Util\NotImplementedException('Not yet implemented.');
+    }
+
+    public function importToRelease($platformId, $targetReleaseType, $targetReleaseStage, $alias, $versionId = null, $nextVersionId = null)
+    {
+        throw new \Convo\Core\Util\NotImplementedException('Not yet implemented.');
+    }
+
+    public function promoteToRelease($targetReleaseType, $targetReleaseStage, $alias, $versionId = null)
+    {
+        throw new \Convo\Core\Util\NotImplementedException('Not yet implemented.');
+    }
+
 	protected function _checkEnabled()
 	{
 	    $config		=	$this->_convoServiceDataProvider->getServicePlatformConfig( $this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);

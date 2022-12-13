@@ -2,17 +2,9 @@
 
 namespace Convo\Core\Adapters\Dialogflow;
 
-use Convo\Core\Util\SimpleFileResource;
-use Google\ApiCore\ApiException;
-use Google\Auth\OAuth2;
-use Google\Cloud\Dialogflow\V2\Agent;
-use Google\Cloud\Dialogflow\V2\AgentsClient;
-use Google\Cloud\Dialogflow\V2\ExportAgentResponse;
-use Google\Cloud\Dialogflow\V2\IntentsClient;
-use Google\Cloud\Dialogflow\V2\QueryInput;
-use Google\Cloud\Dialogflow\V2\SessionsClient;
-use Google\Cloud\Dialogflow\V2\TextInput;
+use Convo\Core\Util\IHttpFactory;
 use Convo\Core\Publish\IPlatformPublisher;
+use Psr\Http\Client\ClientExceptionInterface;
 
 class DialogflowApi
 {
@@ -47,21 +39,23 @@ class DialogflowApi
 
     private $_targetPlatformId;
 
+    /**
+     * @var \Convo\Core\Util\IHttpFactory
+     */
+    private $_httpFactory;
+
+    /**
+     * @var \Psr\Http\Client\ClientInterface
+     */
+    private $_httpClient;
+
     private const BASE_DIALOGFLOW_URL = 'https://dialogflow.googleapis.com/v2';
+
+    private const CREATE_VERSION_MAX_RETRY_COUNT = 20;
 
     private const DIALOGFLOW_AGENT_VALIDATION_EXCEPTION_TRIGGERS = ["ERROR", "CRITICAL", "SEVERITY_UNSPECIFIED"];
 
-    /**
-     * Map of clients to use
-     * @var array
-     */
-    private $_clients = [
-        'agents' => null,
-        'intents' => null,
-        'sessions' => null
-    ];
-
-    public function __construct($logger, $serviceDataProvider, \Convo\Core\IAdminUser $user, $serviceId, \Convo\Core\IAdminUserDataProvider $adminUserDataProvider, $platformId)
+    public function __construct($logger, $serviceDataProvider, \Convo\Core\IAdminUser $user, $serviceId, \Convo\Core\IAdminUserDataProvider $adminUserDataProvider, $platformId, $httpFactory)
     {
         $this->_logger = $logger;
         $this->_convoServiceDataProvider = $serviceDataProvider;
@@ -69,12 +63,13 @@ class DialogflowApi
         $this->_user = $user;
         $this->_serviceId = $serviceId;
         $this->_targetPlatformId = $platformId;
+        $this->_httpFactory = $httpFactory;
+        $this->_httpClient = $this->_httpFactory->getHttpClient();
 
         $this->_projectId = $this->_getProjectId();
         $this->_adminUserDataProvider = $adminUserDataProvider;
 
         $this->_dialogflowAuthService = $this->_setupAuthService();
-        $this->_clients = $this->_setUpClients();
     }
 
     /**
@@ -83,104 +78,63 @@ class DialogflowApi
      */
     public function getAgent()
     {
-        /** @var \Google\Cloud\Dialogflow\V2\AgentsClient $client */
-        $client = $this->_clients['agents'];
-
-        $project = $client->projectName($this->_projectId);
         $agent = null;
+        $url = self::BASE_DIALOGFLOW_URL."/projects/$this->_projectId/agent";
 
         try {
-            $agent = $client->getAgent($project);
-        } catch (ApiException $e) {
+            $response = $this->_executeRequest(
+                IHttpFactory::METHOD_GET,
+                $url
+            );
+            $agent = json_decode($response->getBody()->__toString(), true);
+        } catch (ClientExceptionInterface $e) {
             $this->_logger->notice($e->getMessage());
-        } finally {
-            $client->close();
         }
 
         return $agent;
     }
 
-    public function setAgent(Agent $agent)
+    public function setAgent($agent)
     {
-        /** @var \Google\Cloud\Dialogflow\V2\AgentsClient $client */
-        $client = $this->_clients['agents'];
+        $url = self::BASE_DIALOGFLOW_URL."/projects/$this->_projectId/agent";
 
-        $project = $client->projectName($this->_projectId);
-        $agent->setParent($project);
+        $agent['parent'] = 'projects/'.$this->_projectId;
+        $response = $this->_executeRequest(
+            IHttpFactory::METHOD_POST,
+            $url,
+            [],
+            $agent
+        );
 
-        try {
-            $client->setAgent($agent);
-        } finally {
-            $client->close();
-        }
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     public function deleteAgent()
     {
-        /** @var \Google\Cloud\Dialogflow\V2\AgentsClient $client */
-        $client = $this->_clients['agents'];
+        $url = self::BASE_DIALOGFLOW_URL."/projects/$this->_projectId/agent";
 
-        $project = $client->projectName($this->_projectId);
+        $response = $this->_executeRequest(
+            IHttpFactory::METHOD_DELETE,
+            $url
+        );
 
-        try {
-            $client->deleteAgent($project);
-        } finally {
-            $client->close();
-        }
+        return json_decode($response->getBody()->__toString(), true);
     }
-
-    public function export($serviceId)
-	{
-		/** @var \Google\Cloud\Dialogflow\V2\AgentsClient $client */
-		$client = $this->_clients['agents'];
-
-		$project = $client->projectName($this->_projectId);
-
-		try {
-			$operation_res = $client->exportAgent($project, "");
-			$operation_res->pollUntilComplete();
-
-			/** @var ExportAgentResponse $result */
-			$result = $operation_res->getResult();
-			$file = new SimpleFileResource(
-				$serviceId.'.zip', 'application/zip', $result->getAgentContent()
-			);
-			return $file;
-		} finally {
-			$client->close();
-		}
-	}
 
     public function restore($zipBytes)
     {
-        /** @var \Google\Cloud\Dialogflow\V2\AgentsClient $client */
-        $client = $this->_clients['agents'];
+        $url = self::BASE_DIALOGFLOW_URL."/projects/$this->_projectId/agent:restore";
 
-        $project = $client->projectName($this->_projectId);
+        $response = $this->_executeRequest(
+            IHttpFactory::METHOD_POST,
+            $url,
+            [],
+            [
+                "agentContent" => base64_encode($zipBytes)
+            ]
+        );
 
-        try {
-            $client->restoreAgent($project, [
-                'agentContent' => $zipBytes
-            ]);
-        } finally {
-            $client->close();
-        }
-    }
-
-    public function import($zipBytes)
-    {
-        /** @var \Google\Cloud\Dialogflow\V2\AgentsClient $client */
-        $client = $this->_clients['agents'];
-
-        $project = $client->projectName($this->_projectId);
-
-        try {
-            $client->importAgent($project, [
-                'agentContent' => $zipBytes
-            ]);
-        } finally {
-            $client->close();
-        }
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     /**
@@ -189,75 +143,130 @@ class DialogflowApi
      * @return false|string
      * @throws \Exception
      */
-    public function analyzeText($text, $locale) {
-        /** @var SessionsClient $client */
-        $client = $this->_clients['sessions'];
+    public function analyzeText($text, $locale, $variant = '-') {
+        $someSessionIdValue = '0123456789';
+        $url = self::BASE_DIALOGFLOW_URL."/projects/$this->_projectId/agent/environments/".$variant.'/users/'.$this->_user->getId().'/sessions/'.$someSessionIdValue.':detectIntent';
+
+        $result = $this->_executeRequest(
+            IHttpFactory::METHOD_POST,
+            $url,
+            [],
+            [
+                "queryInput" => [
+                    "text" => [
+                        "text" => $text,
+                        "languageCode" => $locale
+                    ]
+                ]
+            ]
+        );
+
+
         $response = [];
         $this->_logger->debug("Going to analyze text...");
-        try {
-            $sessionName = $client->sessionName($this->_projectId, uniqid());
-            $this->_logger->debug("Going to prepare TextInput...");
-            $textInput = new TextInput();
-
-            $textInput->setText($text);
-            $textInput->setLanguageCode($locale);
-
-            $this->_logger->debug("Going to prepare QueryInput...");
-            $queryInput = new QueryInput();
-            $queryInput->setText($textInput);
-            $this->_logger->debug("Going to detect intent...");
-            $queryResult = $client->detectIntent($sessionName, $queryInput)->getQueryResult();
-
-            if (!empty($queryResult)) {
-                $response['queryResult']['intent']['displayName'] = $queryResult->getIntent()->getDisplayName();
-                $response['queryResult']['parameters'] = json_decode($queryResult->getParameters()->serializeToJsonString(), true);
-            } else {
-                throw new \Exception("Couldn't prepare query result.");
-            }
-        } catch (ApiException $e) {
-            throw new \Exception($e->getMessage());
-        } finally {
-            $client->close();
+        $result = json_decode($result->getBody()->__toString(), true);
+        if (!empty($result)) {
+            $response['queryResult']['intent']['displayName'] = $result['queryResult']['intent']['displayName'] ?? '';
+            $response['queryResult']['parameters'] = $result['queryResult']['parameters'] ?? [];
         }
 
         return json_encode($response);
     }
 
     public function trainAgent() {
-        /** @var \Google\Cloud\Dialogflow\V2\AgentsClient $client */
-        $client = $this->_clients['agents'];
+        $url = self::BASE_DIALOGFLOW_URL."/projects/$this->_projectId/agent:train";
 
-        $project = $client->projectName($this->_projectId);
+        $response = $this->_executeRequest(IHttpFactory::METHOD_POST, $url);
+
+        return json_decode($response->getBody()->__toString(), true);
+    }
+
+    public function getVersion($versionId) {
+        $url = self::BASE_DIALOGFLOW_URL."/projects/$this->_projectId/agent/versions/".$versionId;
+
+        $response = $this->_executeRequest(IHttpFactory::METHOD_GET, $url);
+
+        return json_decode($response->getBody()->__toString(), true);
+    }
+    public function createVersion($versionId = '') {
+
+        $this->_logger->info('Going to create a new Dialogflow Agent Version...');
+        $url = self::BASE_DIALOGFLOW_URL."/projects/$this->_projectId/agent/versions";
+
+        if (!empty($versionId)) {
+            $response = $this->_executeRequest(
+                IHttpFactory::METHOD_POST,
+                $url,
+                [],
+                [
+                    "description" => $versionId
+                ]
+            );
+        } else {
+            $response = $this->_executeRequest(IHttpFactory::METHOD_POST, $url);
+        }
+
+        $createdDialogflowAgentVersion = json_decode($response->getBody()->__toString(), true);
+        $dialogflowAgentVersion = null;
+        $retryCount = 1;
+
+        do {
+            if (self::CREATE_VERSION_MAX_RETRY_COUNT === $retryCount) {
+                break;
+            }
+            $dialogflowAgentVersion = $this->getVersion($createdDialogflowAgentVersion['versionNumber']);
+            $retryCount++;
+        } while ($dialogflowAgentVersion['status'] === 'IN_PROGRESS');
+
+        $this->_logger->debug('Got Dialogflow Agent Version ['.json_encode($dialogflowAgentVersion).']');
+
+        return $dialogflowAgentVersion;
+    }
+
+
+    public function getEnvironment($environmentId) {
+        $environment = null;
+        $url = self::BASE_DIALOGFLOW_URL."/projects/$this->_projectId/agent/environments/$environmentId";
 
         try {
-            $client->trainAgent($project);
-        } finally {
-            $client->close();
+            $response = $this->_executeRequest(IHttpFactory::METHOD_GET, $url);
+            $environment = json_decode($response->getBody()->__toString(), true);
+        } catch (ClientExceptionInterface $e) {
+            $this->_logger->notice($e);
         }
+
+        return $environment;
+    }
+
+    public function createEnvironment($environmentId, $agentVersion) {
+        $url = self::BASE_DIALOGFLOW_URL."/projects/$this->_projectId/agent/environments?environmentId=$environmentId";
+
+        $payload["agentVersion"] = "projects/$this->_projectId/agent/versions/$agentVersion";
+
+        $response = $this->_executeRequest(IHttpFactory::METHOD_POST, $url, [], $payload);
+
+        return json_decode($response->getBody()->__toString(), true);
+    }
+
+    public function loadVersionIntoEnvironment($environmentId, $agentVersion, $allowLoadToDraftAndDiscardChanges = false) {
+
+        $this->_logger->info('Going to load version ['.$agentVersion.'] into environment with id ['.$environmentId.']');
+        $url = self::BASE_DIALOGFLOW_URL.'/projects/'.$this->_projectId.'/agent/environments/'.$environmentId.'?updateMask=agentVersion';
+
+        $payload = ['agentVersion' => 'projects/'.$this->_projectId.'/agent/versions/'.$agentVersion];
+
+        if (is_bool($allowLoadToDraftAndDiscardChanges) && $allowLoadToDraftAndDiscardChanges && $environmentId === '-') {
+            $url.= "&allowLoadToDraftAndDiscardChanges=true";
+        }
+
+        $this->_logger->info('JSON Bondy ['.json_encode($payload).']');
+
+        $response = $this->_executeRequest(IHttpFactory::METHOD_PATCH, $url, [], $payload);
+
+        return json_decode($response->getBody()->__toString(), true);
     }
 
     // UTIL
-    private function _setUpClients()
-    {
-        $config = $this->_convoServiceDataProvider->getServicePlatformConfig(
-            $this->_user,
-            $this->_serviceId,
-            IPlatformPublisher::MAPPING_TYPE_DEVELOP
-        );
-
-        if (empty($config[$this->_targetPlatformId]['serviceAccount'])) {
-            throw new \Exception('Service account data missing. Can not use API');
-        }
-
-        $auth = json_decode($config[$this->_targetPlatformId]['serviceAccount'], true);
-        $config = ['credentials' => $auth];
-
-        return [
-            'agents' => new AgentsClient($config),
-            'intents' => new IntentsClient($config),
-            'sessions' => new SessionsClient($config)
-        ];
-    }
 
     private function _setupAuthService()
 	{
@@ -274,7 +283,7 @@ class DialogflowApi
 		$auth = json_decode($config[$this->_targetPlatformId]['serviceAccount'], true);
 		$config = ['credentials' => $auth];
 
-		return new DialogflowAuthService(new OAuth2([]), $this->_user, $config['credentials'], $this->_adminUserDataProvider);
+		return new DialogflowAuthService($this->_logger, $this->_httpFactory, $this->_user, $config['credentials'], $this->_adminUserDataProvider, $this->_targetPlatformId);
 	}
 
     private function _getProjectId()
@@ -290,6 +299,31 @@ class DialogflowApi
         }
 
         return json_decode($config[$this->_targetPlatformId]['serviceAccount'], true)['project_id'];
+    }
+
+    // UTIL
+
+    /**
+     * @param $method
+     * @param $url
+     * @param $headers
+     * @param $body
+     * @return \Psr\Http\Message\ResponseInterface
+     * @throws \Psr\Http\Client\ClientExceptionInterface
+     */
+    private function _executeRequest($method, $url, $headers = [], $body = null)
+    {
+        $accessToken = $this->_dialogflowAuthService->provideDialogflowAccessToken();
+
+        $request = $this->_httpFactory->buildRequest(
+            $method,
+            $url,
+            $headers,
+            $body
+        );
+        $request  = $request->withHeader('Authorization', $accessToken);
+
+        return $this->_httpClient->sendRequest($request);
     }
 
     public function __toString()

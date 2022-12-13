@@ -184,12 +184,12 @@ class PlatformPublisherFactory
 
         if ( $platformId === \Convo\Core\Adapters\Viber\ViberCommandRequest::PLATFORM_ID) {
             return new \Convo\Core\Adapters\Viber\ViberServicePublisher(
-                $this->_logger, $owner, $serviceId, $this->_viberApi, $this->_convoServiceDataProvider, $this->_serviceReleaseManager, $this->_platformPublishingHistory);
+                $this->_logger, $owner, $serviceId, $this->_viberApi, $this->_convoServiceDataProvider, $this->_serviceReleaseManager, $this->_platformPublishingHistory, $this);
         }
 
 		if ( $platformId === \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest::PLATFORM_ID) {
 			return new \Convo\Core\Adapters\ConvoChat\ConvoChatServicePublisher(
-			    $this->_logger, $owner, $serviceId, $this->_convoServiceDataProvider, $this->_serviceReleaseManager);
+			    $this->_logger, $owner, $serviceId, $this->_convoServiceDataProvider, $this->_serviceReleaseManager, $this);
 		}
 		
 		if ( strpos( $platformId, '.') !== false) {

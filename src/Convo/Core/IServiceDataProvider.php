@@ -193,10 +193,11 @@ interface IServiceDataProvider
 	 * @param string $serviceId
 	 * @param array $workflow Complete service workflow data
 	 * @param array $config Complete service config data
+	 * @param string $platformId Platform ID
 	 * @param string $versionTag Optional custom tag name
 	 * @return string Newly created version tag
 	 */
-	public function createServiceVersion( \Convo\Core\IAdminUser $user, $serviceId, $workflow, $config, $versionTag=null);
+	public function createServiceVersion( \Convo\Core\IAdminUser $user, $serviceId, $workflow, $config, $platformId, $versionTag=null);
 
 
 	/**
@@ -213,6 +214,23 @@ interface IServiceDataProvider
 	 */
 	public function createRelease(\Convo\Core\IAdminUser $user, $serviceId, $platformId, $type, $stage, $alias, $versionId, $meta);
 
+    /**
+     * @param IAdminUser $user
+     * @param $serviceId
+     * @param $versionId
+     * @param $data
+     * @return mixed
+     */
+    public function addPlatformReleaseData(\Convo\Core\IAdminUser $user, $serviceId, $releaseId, $versionId, $data);
+
+    /**
+     * @param IAdminUser $user
+     * @param $serviceId
+     * @param $versionId
+     * @param $data
+     * @return mixed
+     */
+    public function addPlatformVersionData(\Convo\Core\IAdminUser $user, $serviceId, $versionId, $data);
 
 	/**
 	 * Returns release meta data.

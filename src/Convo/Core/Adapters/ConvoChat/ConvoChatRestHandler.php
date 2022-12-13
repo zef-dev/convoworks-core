@@ -89,6 +89,8 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 		$owner		=	new RestSystemUser();
 		$json		=	$request->getParsedBody();
 
+        $serviceMeta = $this->_convoServiceDataProvider->getServiceMeta($owner, $serviceId);
+
 		$text		=	$json['text'] ?? null;
 		$is_init	=	$this->_isInit($json);
 		$device_id	=	$json['device_id'];
@@ -137,7 +139,11 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 			// 		    TODO: load & use service owner account
 			// 		    $service_meta     =   $this->_convoServiceDataProvider->getServiceMeta( $user, $service_id);
 			// 		    $owner            =   $service_meta['owner'];
-		    $text_request     =   $this->_platformRequestFactory->toIntentRequest($text_request, $owner, $service, $delegate_nlp);
+            $delegationNlpVariant = $this->_determineVariantForDelegateNlp(
+                $serviceMeta,
+                $variant
+            );
+            $text_request     =   $this->_platformRequestFactory->toIntentRequest($text_request, $owner, $service, $delegate_nlp, $delegationNlpVariant);
 		}
 
 		$service->run($text_request, $text_response);
@@ -165,6 +171,24 @@ class ConvoChatRestHandler implements RequestHandlerInterface
         }
 
         return $isInit;
+    }
+
+    private function _determineVariantForDelegateNlp($serviceMeta, $alias) {
+        $variantForDelegationNlp = '-';
+        $releaseMappings = $serviceMeta['release_mapping'] ?? [];
+
+        $platformReleasesOfTargetPlatformId = $releaseMappings['convo_chat'][$alias] ?? [];
+        $releaseId = $platformReleasesOfTargetPlatformId['release_id'] ?? '';
+        // check if is development release
+        if (empty($releaseId)) {
+            return $variantForDelegationNlp;
+        }
+
+        $variantForDelegationNlp = 'convo_chat'.'-'.$alias;
+
+        $this->_logger->info('Got variant for Delegation NLP ['.$variantForDelegationNlp.'] of [convo_chat]');
+
+        return $variantForDelegationNlp;
     }
 
 	// UTIL
