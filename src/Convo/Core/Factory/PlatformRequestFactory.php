@@ -188,21 +188,23 @@ class PlatformRequestFactory implements IPlatformRequestFactory
         }
 
         $language = DialogflowLanguageMapper::getDefaultLocale($service_meta['default_language']);
-        $platformAndAlias = explode('-', $variant);
-        $requestPlatform = $platformAndAlias[0] ?? '';
-        $requestAlias = $platformAndAlias[1] ?? '';
-        $environmentId = $variant;
-        if (!empty($requestPlatform) && !empty($requestAlias)) {
-            $type = $service_meta['release_mapping'][$requestPlatform][$requestAlias]['type'] ?? 'develop';
-            if ($type === 'develop') {
+        $variantType = $service_meta['release_mapping'][$request->getPlatformId()][$variant]['type'] ?? '';
+
+        switch ($variantType) {
+            case 'develop':
                 $environmentId = '-';
-            }
+                break;
+            case 'release':
+                $environmentId = $request->getPlatformId().'-'.$variant;
+                break;
+            default:
+                $environmentId = '-';
         }
 
         $result = $api->analyzeText($text, $language, $environmentId);
 
         $decodedResult = json_decode($result, true);
-        $this->_logger->debug('Got analysis result ['.print_r($decodedResult, true).']');
+        $this->_logger->debug('Got analysis result ['.print_r($decodedResult, true).'] with Environment ID ['.$environmentId.']');
 
         $intent_name = $decodedResult['queryResult']['intent']['displayName'];
         $slots = $decodedResult['queryResult']['parameters'];

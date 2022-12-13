@@ -117,11 +117,7 @@ class ViberRestHandler implements RequestHandlerInterface
 
             $delegationNlp = $servicePlatformConfig[$this->_getPlatformId()]["delegateNlp"] ?? null;
             if ($delegationNlp) {
-                $delegationNlpVariant = $this->_determineVariantForDelegateNlp(
-                    $serviceMeta,
-                    $variant
-                );
-                $viberCommandRequest = $this->_platformRequestFactory->toIntentRequest($viberCommandRequest, $owner, $service, $delegationNlp, $delegationNlpVariant);
+                $viberCommandRequest = $this->_platformRequestFactory->toIntentRequest($viberCommandRequest, $owner, $service, $delegationNlp, $variant);
                 $debugData = print_r($viberCommandRequest->getPlatformData(), true);
                 $this->_logger->info("Debug request with delegate [$debugData]");
             }
@@ -143,23 +139,5 @@ class ViberRestHandler implements RequestHandlerInterface
 
     private function _getPlatformId() {
         return 'viber';
-    }
-
-    private function _determineVariantForDelegateNlp($serviceMeta, $alias) {
-        $variantForDelegationNlp = '-';
-        $releaseMappings = $serviceMeta['release_mapping'] ?? [];
-
-        $platformReleasesOfTargetPlatformId = $releaseMappings[$this->_getPlatformId()][$alias] ?? [];
-        $releaseId = $platformReleasesOfTargetPlatformId['release_id'] ?? '';
-        // check if is development release
-        if (empty($releaseId)) {
-            return $variantForDelegationNlp;
-        }
-
-        $variantForDelegationNlp = $this->_getPlatformId().'-'.$alias;
-
-        $this->_logger->info('Got variant for Delegation NLP ['.$variantForDelegationNlp.'] of ['.$this->_getPlatformId().']');
-
-        return $variantForDelegationNlp;
     }
 }
