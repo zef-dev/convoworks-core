@@ -118,9 +118,8 @@ class ViberRestHandler implements RequestHandlerInterface
             $delegationNlp = $servicePlatformConfig[$this->_getPlatformId()]["delegateNlp"] ?? null;
             if ($delegationNlp) {
                 $delegationNlpVariant = $this->_determineVariantForDelegateNlp(
-                    $owner,
                     $serviceMeta,
-                    $variant, $this->_getPlatformId(), $delegationNlp
+                    $variant
                 );
                 $viberCommandRequest = $this->_platformRequestFactory->toIntentRequest($viberCommandRequest, $owner, $serviceId, $delegationNlp, $delegationNlpVariant);
                 $debugData = print_r($viberCommandRequest->getPlatformData(), true);
@@ -146,36 +145,20 @@ class ViberRestHandler implements RequestHandlerInterface
         return 'viber';
     }
 
-    private function _determineVariantForDelegateNlp($user, $serviceMeta, $targetPlatformAlias, $targetPlatformId, $delegationNlp) {
-        $variantForDelegationNlp = '';
+    private function _determineVariantForDelegateNlp($serviceMeta, $alias) {
+        $variantForDelegationNlp = '-';
         $releaseMappings = $serviceMeta['release_mapping'] ?? [];
 
-        $platformReleasesOfTargetPlatformId = $releaseMappings[$targetPlatformId][$targetPlatformAlias] ?? [];
+        $platformReleasesOfTargetPlatformId = $releaseMappings[$this->_getPlatformId()][$alias] ?? [];
         $releaseId = $platformReleasesOfTargetPlatformId['release_id'] ?? '';
+        // check if is development release
         if (empty($releaseId)) {
             return $variantForDelegationNlp;
         }
-        $targetPlatformRelease = $this->_convoServiceDataProvider->getReleaseData(
-            $user,
-            $serviceMeta['service_id'],
-            $platformReleasesOfTargetPlatformId['release_id']
-        );
 
-        $platformReleasesOfDelegateNlp = $releaseMappings[$delegationNlp] ?? [];
-        foreach ($platformReleasesOfDelegateNlp as $alias => $platformReleaseOfDelegateNlp) {
-            if (isset($platformReleaseOfDelegateNlp['release_id'])) {
-                $delegationNlpReleaseData = $this->_convoServiceDataProvider->getReleaseData(
-                    $user,
-                    $serviceMeta['service_id'],
-                    $platformReleaseOfDelegateNlp['release_id']
-                );
-                if ($targetPlatformRelease['stage'] === $delegationNlpReleaseData['stage']) {
-                    $variantForDelegationNlp = $alias;
-                }
-            }
-        }
+        $variantForDelegationNlp = $this->_getPlatformId().'-'.$alias;
 
-        $this->_logger->info('Got variant for Delegation NLP ['.$variantForDelegationNlp.'] of ['.$this->_getPlatformId().']['.$targetPlatformAlias.']');
+        $this->_logger->info('Got variant for Delegation NLP ['.$variantForDelegationNlp.'] of ['.$this->_getPlatformId().']');
 
         return $variantForDelegationNlp;
     }
