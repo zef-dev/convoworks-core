@@ -20,11 +20,12 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
      */
     private $_platformPublishingHistory;
 
-    public function __construct($logger, \Convo\Core\IAdminUser $user, $serviceId, $viberApi, $serviceDataProvider, $serviceReleaseManager, $platformPublishingHistory)
+    public function __construct($logger, \Convo\Core\IAdminUser $user, $serviceId, $viberApi, $serviceDataProvider, $serviceReleaseManager, $platformPublishingHistory, $platformPublisherFactory)
     {
         parent::__construct($logger, $user, $serviceId, $serviceDataProvider, $serviceReleaseManager);
         $this->_viberApi                  = $viberApi;
         $this->_platformPublishingHistory = $platformPublishingHistory;
+        $this->_platformPublisherFactory  = $platformPublisherFactory;
     }
 
     /**
@@ -166,6 +167,58 @@ class ViberServicePublisher extends \Convo\Core\Publish\AbstractServicePublisher
             $status['status'] = $config[$this->getPlatformId()]['webhook_build_status'];
         }
         return $status;
+    }
+
+    public function createRelease($platformId, $targetReleaseType, $targetReleaseStage, $alias, $versionId = null)
+    {
+        $result = [];
+        $delegateNlp = $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP)[$platformId]['delegateNlp'] ?? '';
+
+        if (!empty($delegateNlp)) {
+            $publisher = $this->_platformPublisherFactory->getPublisher($this->_user, $this->_serviceId, $delegateNlp);
+            $result = $publisher->createRelease($platformId, $targetReleaseType, $targetReleaseStage, $alias, $versionId);
+        }
+
+        return $result;
+    }
+
+    public function createVersionTag($platformId, $versionTagId = null)
+    {
+        $result = [];
+        $delegateNlp = $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP)[$platformId]['delegateNlp'] ?? '';
+
+        if (!empty($delegateNlp)) {
+            $publisher = $this->_platformPublisherFactory->getPublisher($this->_user, $this->_serviceId, $delegateNlp);
+            $result = $publisher->createVersionTag($platformId, $versionTagId);
+        }
+
+        return $result;
+    }
+
+    public function importToDevelop($platformId, $fromAlias, $toAlias, $versionId = null, $versionTag = null)
+    {
+        $result = [];
+        $delegateNlp = $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP)[$platformId]['delegateNlp'] ?? '';
+
+        if (!empty($delegateNlp)) {
+            $publisher = $this->_platformPublisherFactory->getPublisher($this->_user, $this->_serviceId, $delegateNlp);
+            $result = $publisher->importToDevelop($platformId, $fromAlias, $toAlias, $versionId, $versionTag);
+        }
+
+        return $result;
+    }
+
+    public function importToRelease($platformId, $targetReleaseType, $targetReleaseStage, $alias, $versionId = null, $nextVersionId = null)
+    {
+        $result = [];
+        $delegateNlp = $this->_convoServiceDataProvider->getServicePlatformConfig($this->_user, $this->_serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP)[$platformId]['delegateNlp'] ?? '';
+
+        if (!empty($delegateNlp)) {
+            $publisher = $this->_platformPublisherFactory->getPublisher($this->_user, $this->_serviceId, $delegateNlp);
+            $result = $publisher->importToRelease($platformId, $targetReleaseType, $targetReleaseStage, $alias, $versionId, $nextVersionId);
+        }
+
+        return $result;
     }
 
     private function _preparePropagateData() {

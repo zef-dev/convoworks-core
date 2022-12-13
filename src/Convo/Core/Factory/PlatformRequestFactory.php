@@ -48,8 +48,8 @@ class PlatformRequestFactory implements IPlatformRequestFactory
      * @var \Convo\Core\Util\IHttpFactory
      */
     private $_httpFactory;
-    
-    
+
+
     /**
      * @var PackageProviderFactory
      */
@@ -70,7 +70,7 @@ class PlatformRequestFactory implements IPlatformRequestFactory
      * {@inheritDoc}
      * @see \Convo\Core\Factory\IPlatformRequestFactory::toIntentRequest()
      */
-    public function toIntentRequest(IConvoRequest $request, \Convo\Core\IAdminUser $user, ConvoServiceInstance $service, $platformId)
+    public function toIntentRequest(IConvoRequest $request, \Convo\Core\IAdminUser $user, ConvoServiceInstance $service, $platformId, $variant = '')
     {
         switch ($platformId) {
             case AmazonCommandRequest::PLATFORM_ID:
@@ -79,7 +79,7 @@ class PlatformRequestFactory implements IPlatformRequestFactory
             case DialogflowCommandRequest::PLATFORM_ID;
             case 'dialogflow_es';
                 $this->_logger->info("Accessing Platform Request Factory with Dialogflow Command Request");
-                return $this->_prepareDialogflowIntentRequest($request, $user, $service, $platformId);
+                return $this->_prepareDialogflowIntentRequest($request, $user, $service, $platformId, $variant);
             default:
                 throw new ComponentNotFoundException('Platform ' . $platformId . ' not supported.');
         }
@@ -161,16 +161,16 @@ class PlatformRequestFactory implements IPlatformRequestFactory
      * @throws OwnerNotSpecifiedException
      * @return \Convo\Core\Workflow\IntentAwareWrapperRequest
      */
-    private function _prepareDialogflowIntentRequest(IConvoRequest $request, \Convo\Core\IAdminUser $user, $service, $platformId) 
+    private function _prepareDialogflowIntentRequest(IConvoRequest $request, \Convo\Core\IAdminUser $user, $service, $platformId, $variant)
     {
         $provider       =   $this->_packageProviderFactory->getProviderFromPackageIds( $service->getPackageIds());
         $locator        =   new DefaultIntentAndEntityLocator( $this->_logger, $service, $provider);
         $parser         =   new DialogflowSlotParser( $this->_logger, $locator);
-        
+
         $this->_logger->debug('Exec platform id ['.$platformId.'] with text ['.$request->getText().']');
 
         $service_meta = $this->_convoServiceDataProvider->getServiceMeta(
-            $user, $service->getId() 
+            $user, $service->getId()
         );
 
         if (!$service_meta['owner']) {
@@ -188,14 +188,25 @@ class PlatformRequestFactory implements IPlatformRequestFactory
         }
 
         $language = DialogflowLanguageMapper::getDefaultLocale($service_meta['default_language']);
-        $result = $api->analyzeText($text, $language);
+        $platformAndAlias = explode('-', $variant);
+        $requestPlatform = $platformAndAlias[0] ?? '';
+        $requestAlias = $platformAndAlias[1] ?? '';
+        $environmentId = $variant;
+        if (!empty($requestPlatform) && !empty($requestAlias)) {
+            $type = $service_meta['release_mapping'][$requestPlatform][$requestAlias]['type'] ?? 'develop';
+            if ($type === 'develop') {
+                $environmentId = '-';
+            }
+        }
+
+        $result = $api->analyzeText($text, $language, $environmentId);
 
         $decodedResult = json_decode($result, true);
         $this->_logger->debug('Got analysis result ['.print_r($decodedResult, true).']');
 
         $intent_name = $decodedResult['queryResult']['intent']['displayName'];
         $slots = $decodedResult['queryResult']['parameters'];
-        
+
         $parsed = $parser->parseSlotValues( $intent_name, $slots);
 
         $this->_logger->debug('Got intent ['.$intent_name.']['.print_r( $parsed, true).']');

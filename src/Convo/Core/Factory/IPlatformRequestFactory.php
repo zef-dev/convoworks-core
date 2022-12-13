@@ -15,7 +15,8 @@ interface IPlatformRequestFactory
      * @param \Convo\Core\IAdminUser $user
      * @param ConvoServiceInstance $service
      * @param string $platformId
+     * @param $variant
      * @return IIntentAwareRequest
      */
-    function toIntentRequest( IConvoRequest $request, \Convo\Core\IAdminUser $user, ConvoServiceInstance $service, $platformId);
+    function toIntentRequest( IConvoRequest $request, \Convo\Core\IAdminUser $user, ConvoServiceInstance $service, $platformId, $variant = '');
 }
