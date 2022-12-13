@@ -142,6 +142,55 @@ class TextPackageDefinition extends AbstractPackageDefinition
             ),
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
+                '\Convo\Pckg\Text\Filters\Filt\ExactMatchFilter',
+                'Exact match filter',
+                'Activates if it is exact match',
+                [
+                    'search' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'multiple' => false
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Search string',
+                        'description' => 'String which is expected',
+                        'valueType' => 'string'
+                    ],
+                    'slot_name' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'multiple' => false
+                        ],
+                        'defaultValue' => '',
+                        'name' => 'Slot name',
+                        'description' => 'Name under which to store the match',
+                        'valueType' => 'string'
+                    ],
+                    'slot_value' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [
+                            'multiple' => false
+                        ],
+                        'defaultValue' => null,
+                        'name' => 'Slot value',
+                        'description' => 'Predefined value to set into the slot',
+                        'valueType' => 'string'
+                    ],
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        'template' =>
+                        '<div class="code">' .
+                            'Match <b>"{{ component.properties.search }}"</b>' .
+                            '<span ng-if="component.properties.slot_name">, save match as <b>{{ component.properties.slot_name }}</b></span>' .
+                            '<span ng-if="component.properties.slot_value">, set value to <b>{{ component.properties.slot_value }}</b></span>' .
+                            '</div>'
+                    ],
+                    '_workflow' => 'filter',
+                    '_descend' => true
+                ]
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
                 '\Convo\Pckg\Text\Filters\Filt\RegexFilter',
                 'Regex filter',
                 'Filters based on a regex',
