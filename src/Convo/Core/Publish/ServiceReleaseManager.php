@@ -40,7 +40,7 @@ class ServiceReleaseManager
         // tag version
         $data = $this->_convoServiceDataProvider->getServiceData($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
         $config = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
-        $version_id = $this->_convoServiceDataProvider->createServiceVersion($user, $serviceId, $data, $config);
+        $version_id = $this->_convoServiceDataProvider->createServiceVersion($user, $serviceId, $data, $config, $platformId);
         $new_release_id = $this->_convoServiceDataProvider->createRelease($user, $serviceId, $platformId, $type, $stage, $alias, $version_id, $meta);
 
         $this->_convoServiceDataProvider->markVersionAsRelease( $user, $serviceId, $version_id, $new_release_id);
@@ -102,7 +102,7 @@ class ServiceReleaseManager
         $release = $this->_convoServiceDataProvider->getReleaseData($user, $serviceId, $releaseId);
         $config = $this->_convoServiceDataProvider->getServicePlatformConfig($user, $serviceId, $release['version_id']);
         $meta = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId);
-        $version_id = $this->_convoServiceDataProvider->createServiceVersion($user, $serviceId, $workflow, $config);
+        $version_id = $this->_convoServiceDataProvider->createServiceVersion($user, $serviceId, $workflow, $config, '');
         $this->_convoServiceDataProvider->markVersionAsRelease( $user, $serviceId, $version_id, $releaseId);
         $this->_convoServiceDataProvider->setReleaseVersion( $user, $serviceId, $releaseId, $version_id, $meta);
         return $this->_convoServiceDataProvider->getReleaseData( $user, $serviceId, $releaseId);
