@@ -13,6 +13,7 @@ use Convo\Core\Params\NoRequestParamsException;
 use Convo\Core\Workflow\IBasicServiceComponent;
 use Convo\Core\Workflow\ISpecialRoleRequest;
 use Convo\Core\Workflow\IValueEvaluator;
+use Convo\Core\Workflow\IPredispatchableBlock;
 
 class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerComponent, \Convo\Core\Workflow\IIdentifiableComponent
 {
@@ -440,7 +441,18 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                         $this->_logger->info('Trying to read role [' . IRunnableBlock::ROLE_SESSION_START . '] ...');
                         $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_START);
                         if ( empty( $block->getElements())) {
-                            throw new ComponentNotFoundException( 'Session start block found, but has no elements');
+                            if ( $block instanceof IPredispatchableBlock) {
+                                /* @var IPredispatchableBlock $block */
+                                try {
+                                    // do predispatch anyways
+                                    $this->_logger->info('Doing pre-dispatch on no elements session start ...');
+                                    $block->preDispatch( $request, $response);
+                                    throw new ComponentNotFoundException( 'Session start block found, but has no elements');
+                                } catch ( StateChangedException $e) {
+                                    $this->_logger->info('State changed in pre-dispatch ['.$e->getState().']');
+                                    $block  =   $this->findBlock( $e->getState());
+                                }
+                            }
                         }
                     } 
                     catch ( ComponentNotFoundException $e) 
@@ -463,10 +475,21 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                 // NON EMPTY REQUEST
                 try 
                 {
-                    $this->_logger->info('Trying to read role [' . IRunnableBlock::ROLE_SESSION_START . '] ...');
+                    $this->_logger->info('Trying to process role [' . IRunnableBlock::ROLE_SESSION_START . '] ...');
                     $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_START);
                     if ( empty( $block->getProcessors())) {
-                        throw new ComponentNotFoundException( 'Session start block found, but has no processors');
+                        if ( $block instanceof IPredispatchableBlock) {
+                            /* @var IPredispatchableBlock $block */
+                            try {
+                                $this->_logger->info('Doing pre-dispatch on no processors session start ...');
+                                // do predispatch anyways
+                                $block->preDispatch( $request, $response);
+                                throw new ComponentNotFoundException( 'Session start block found, but has no processors');
+                            } catch ( StateChangedException $e) {
+                                $this->_logger->info('State changed in pre-dispatch ['.$e->getState().']');
+                                $block  =   $this->findBlock( $e->getState());
+                            }
+                        }
                     }
                 } 
                 catch ( ComponentNotFoundException $e) 

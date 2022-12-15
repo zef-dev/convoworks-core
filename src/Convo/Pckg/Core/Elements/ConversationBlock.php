@@ -11,7 +11,7 @@ use Convo\Core\StateChangedException;
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
 
-class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements \Convo\Core\Workflow\IRunnableBlock
+class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection implements \Convo\Core\Workflow\IPredispatchableBlock
 {
 
 	private $_blockId;
@@ -115,7 +115,7 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 	 */
 	public function read(IConvoRequest $request, IConvoResponse $response)
 	{
-		$this->_readPreDispatch($request, $response);
+		$this->preDispatch($request, $response);
 
 		parent::read($request, $response);
 	}
@@ -126,7 +126,7 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 	 */
 	public function run( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
-		$this->_readPreDispatch($request, $response);
+		$this->preDispatch($request, $response);
 		
 		$processors	=	$this->_collectAllAccountableProcessors();
 		if ( empty( $processors)) {
@@ -306,8 +306,8 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
         return $pblock;
     }
 
-	private function _readPreDispatch(\Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
-	{
+    public function preDispatch( IConvoRequest $request, IConvoResponse $response)
+    {
 		if (!$this->_preDispatchRun)
 		{
 			$this->_logger->info('Will check if there are any pre dispatch elements to read.');
