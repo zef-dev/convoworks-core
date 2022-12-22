@@ -696,6 +696,33 @@ class CorePackageDefinition extends AbstractPackageDefinition
             ),
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
+                '\Convo\Pckg\Core\Elements\LogElement',
+                'Editor Log',
+                'A simple element that only serves to log',
+                array(
+                    'log_message' => array(
+                        'editor_type' => 'desc',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'Your log message here',
+                        'name' => 'Log Message',
+                        'description' => 'Log of the workflow to show in the log files.',
+                        'valueType' => 'string'
+                    ),
+                    '_preview_angular' => array(
+                        'type' => 'html',
+                        'template' => '<div class="editor-comment">' .
+                            '{{ component.properties.log_message }}' .
+                            '</div>'
+                    ),
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'log-element.html'
+                    ),
+                    '_workflow' => 'read',
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\GoToElement',
                 'Go To',
                 'Stops current block execution and continues with read flow of selected block. You can call the same block, but only from process or failback flow.',
