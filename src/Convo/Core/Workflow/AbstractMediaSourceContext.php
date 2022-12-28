@@ -241,8 +241,6 @@ abstract class AbstractMediaSourceContext extends AbstractBasicComponent impleme
         
         foreach ( $this->getSongs() as $i=>$song)
         {
-            $this->_logger->debug( 'Checking song ['.$song.']['.$real_index.']');
-            
             if ( $i === $real_index) {
                 return $song;
             }
