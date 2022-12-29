@@ -4,6 +4,10 @@
 
 ## [Releases]
 
+## 0.22.17.1 - 2022-12-29
+
+* Sanitize missed index in the SeekAudioPlaybackBySearch
+
 ## 0.22.17.0 - 2022-12-27
 
 * Fixed type safety in evaluation context
