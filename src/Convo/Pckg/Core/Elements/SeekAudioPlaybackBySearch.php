@@ -66,6 +66,11 @@ class SeekAudioPlaybackBySearch extends AbstractWorkflowContainerComponent imple
         $index = $this->_getSongIndex($songs, $searchTerm);
         $this->_logger->info( 'Going to play song at index ['.$index.'] ...');
 
+        if ( $index < 0) {
+            $this->_logger->warning( 'Correcting negative -1 index to 0 ...');
+            $index = 0;
+        }
+        
         try
         {
             $context->seek($index);
