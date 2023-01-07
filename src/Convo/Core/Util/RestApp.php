@@ -30,6 +30,11 @@ class RestApp implements RequestHandlerInterface
 	 * @var MiddlewareInterface[]
 	 */
 	private $_middlewares  =   [];
+	
+	/**
+	 * @var MiddlewareInterface[]
+	 */
+	private $_originalMiddlewares  =   [];
 
 	/**
 	 * @var RequestHandlerInterface
@@ -42,6 +47,12 @@ class RestApp implements RequestHandlerInterface
         $this->_container       =   $container;
         $this->_defaultHandler  =   $defaultHandler;
         $this->_middlewares     =   $middlewares;
+        $this->_originalMiddlewares     =   $middlewares;
+	}
+	
+	public function reset()
+	{
+	    $this->_middlewares = $this->_originalMiddlewares;
 	}
 	
 	/**
