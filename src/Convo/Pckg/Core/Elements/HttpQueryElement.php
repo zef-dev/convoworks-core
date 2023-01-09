@@ -157,15 +157,17 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
 	    }
 
 	    $contentType    =   $this->evaluateString( $this->_contentType);
-	    $body		    =	json_decode( $this->_body ?: '{}', true);
+	    $body           =   $this->evaluateString( $this->_body);
+	    $this->_logger->debug('Evaluated body ['.print_r($body, true).']');
+	    $body		    =	json_decode( $body ?: '{}', true);
 
 	    $this->_logger->debug('Decoded body ['.print_r($body, true).']');
 
-	    if (!empty($body)) {
-            foreach ($body as $key => $value) {
-                $body[$key] = $this->evaluateString($value);
-            }
-        }
+// 	    if (!empty($body)) {
+//             foreach ($body as $key => $value) {
+//                 $body[$key] = $this->evaluateString($value);
+//             }
+//         }
 
 	    $parsed_headers = [];
 
