@@ -2,7 +2,9 @@
 
 namespace Convo\Pckg\Text\Filters;
 
-class PlainTextRequestFilter implements \Convo\Core\Workflow\IRequestFilter, \Psr\Log\LoggerAwareInterface
+use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
+
+class PlainTextRequestFilter extends AbstractWorkflowContainerComponent implements \Convo\Core\Workflow\IRequestFilter
 {
     /**
      * @var \Convo\Core\Workflow\IRequestFilterResult
@@ -10,29 +12,22 @@ class PlainTextRequestFilter implements \Convo\Core\Workflow\IRequestFilter, \Ps
     protected $_filterResult;
 
     /**
-     * @var \Convo\Core\ConvoServiceInstance
-     */
-    private $_service;
-
-    /**
      * @var \Convo\Pckg\Text\Filters\Filt\IPlainTextFilter[]
      */
     private $_filters;
 
-    /**
-     * Logger
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $_logger;
 
     private $_id;
 
-    public function __construct($config)
+    public function __construct( $config)
     {
-        $this->_logger = new \Psr\Log\NullLogger();
-
+        parent::__construct( $config);
+        
         $this->_filters = $config['filters'];
-
+        foreach ( $this->_filters as $filter) {
+            $this->addChild( $filter);
+        }
+        
         $this->_id = $config['_component_id'] ?? '';
         $this->_filterResult = new \Convo\Core\Workflow\DefaultFilterResult();
     }
@@ -40,11 +35,6 @@ class PlainTextRequestFilter implements \Convo\Core\Workflow\IRequestFilter, \Ps
     public function getId()
     {
         return $this->_id;
-    }
-
-    public function setLogger(\Psr\Log\LoggerInterface $logger)
-    {
-        $this->_logger = $logger;
     }
 
     public function accepts(\Convo\Core\Workflow\IConvoRequest $request)
@@ -70,19 +60,9 @@ class PlainTextRequestFilter implements \Convo\Core\Workflow\IRequestFilter, \Ps
         return $this->_filterResult;
     }
 
-    public function setService(\Convo\Core\ConvoServiceInstance $service)
-    {
-        $this->_service = $service;
-    }
-
-    public function getService()
-    {
-        return $this->_service;
-    }
-
     // UTIL
     public function __toString()
     {
-        return get_class($this)."[{$this->_id}]";
+        return parent::__toString()."[{$this->_id}]";
     }
 }

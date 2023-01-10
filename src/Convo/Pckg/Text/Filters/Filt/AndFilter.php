@@ -3,15 +3,10 @@
 namespace Convo\Pckg\Text\Filters\Filt;
 
 use Convo\Core\Workflow\DefaultFilterResult;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\NullLogger;
+use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
 
-class AndFilter implements IPlainTextFilter, LoggerAwareInterface
+class AndFilter extends AbstractWorkflowContainerComponent implements IPlainTextFilter
 {
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $_logger;
 
     /**
      * @var \Convo\Pckg\Text\Filters\Filt\IPlainTextFilter[]
@@ -27,19 +22,15 @@ class AndFilter implements IPlainTextFilter, LoggerAwareInterface
 
     public function __construct($config = [])
     {
-        $this->_logger = new NullLogger();
+        parent::__construct( $config);
 
         $this->_filterResult = new DefaultFilterResult();
 
         /** @var \Convo\Pckg\Text\Filters\Filt\IPlainTextFilter $filter */
         foreach ($config['filters'] as $filter) {
             $this->_filters[] = $filter;
+            $this->addChild( $filter);
         }
-    }
-
-    public function setLogger(\Psr\Log\LoggerInterface $logger)
-    {
-        $this->_logger = $logger;
     }
 
     public function filter(\Convo\Core\Workflow\IConvoRequest $request)
@@ -79,9 +70,4 @@ class AndFilter implements IPlainTextFilter, LoggerAwareInterface
         return $this->_filterResult;
     }
 
-    // UTIL
-    public function __toString()
-    {
-        return get_class($this)."[]";
-    }
 }
