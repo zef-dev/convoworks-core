@@ -29,9 +29,9 @@ class ExactMatchFilter extends AbstractWorkflowComponent implements IPlainTextFi
 
     public function filter( \Convo\Core\Workflow\IConvoRequest $request)
     {
-        $text = trim( $request->getText());
+        $text = trim( strval( $request->getText()));
         $text = strtolower( $text);
-        $search = strtolower( trim( $this->evaluateString( $this->_search)));
+        $search = strtolower( trim( strval( $this->evaluateString( $this->_search))));
         
         if ( $search === $text) 
         {
