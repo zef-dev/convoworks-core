@@ -39,7 +39,7 @@ class PlainTextRequestFilter extends AbstractWorkflowContainerComponent implemen
 
     public function accepts(\Convo\Core\Workflow\IConvoRequest $request)
     {
-        if (empty($request->getText())) {
+        if (trim($request->getText()) === '') {
             $this->_logger->warning('Empty text request in request filter ['.$this.']');
             return false;
         }
