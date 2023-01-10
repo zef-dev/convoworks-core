@@ -92,7 +92,9 @@ class ViberRestHandler implements RequestHandlerInterface
         $response = $this->_httpFactory->buildResponse(['EVENT_RECEIVED'], 200);
         $owner		=	new RestSystemUser();
         $serviceMeta = $this->_convoServiceDataProvider->getServiceMeta($owner, $serviceId);
-
+        
+        $this->_logger->debug( 'Got Viber request ['.print_r( $request->getParsedBody(), true).']');
+        
         try {
             $version_id			=	$this->_convoServiceFactory->getVariantVersion( $owner, $serviceId, ViberCommandRequest::PLATFORM_ID, $variant);
         } catch ( \Convo\Core\ComponentNotFoundException $e) {
