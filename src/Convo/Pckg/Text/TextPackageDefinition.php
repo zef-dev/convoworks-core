@@ -107,12 +107,22 @@ class TextPackageDefinition extends AbstractPackageDefinition
                         'description' => 'Substring to look for within user input. This will be added to the result variable, unless you also specify the predetermined slot value.',
                         'valueType' => 'string'
                     ],
+                    'starts_with' => [
+                        'editor_type' => 'boolean',
+                        'editor_properties' => [
+                            'multiple' => false
+                        ],
+                        'defaultValue' => false,
+                        'name' => 'Starts with',
+                        'description' => 'Activate only if it starts with the search phrase',
+                        'valueType' => 'boolean'
+                    ],
                     'slot_name' => [
                         'editor_type' => 'text',
                         'editor_properties' => [
                             'multiple' => false
                         ],
-                        'defaultValue' => '',
+                        'defaultValue' => 'match',
                         'name' => 'Slot name',
                         'description' => 'Name under which to store the match',
                         'valueType' => 'string'

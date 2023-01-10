@@ -13,6 +13,7 @@ class StriposFilter extends AbstractWorkflowComponent implements IPlainTextFilte
     private $_filterResult;
 
     private $_search;
+    private $_startsWith;
     private $_slotName;
     private $_slotValue;
 
@@ -23,6 +24,7 @@ class StriposFilter extends AbstractWorkflowComponent implements IPlainTextFilte
         $this->_filterResult = new DefaultFilterResult();
 
         $this->_search = $config['search'];
+        $this->_startsWith = $config['starts_with'] ?? null;
         $this->_slotName = $config['slot_name'];
         $this->_slotValue = $config['slot_value'] ?? null;
     }
@@ -31,12 +33,22 @@ class StriposFilter extends AbstractWorkflowComponent implements IPlainTextFilte
     {
         $text = $request->getText();
         $search = $this->evaluateString( $this->_search);
-        $position = stripos($text, $search);
+        $starts = $this->evaluateString( $this->_startsWith);
+        $value = $this->evaluateString( $this->_slotValue);
 
-        if ($position !== false) 
-        {
-            $value = $this->_slotValue ?? $search;
-            $this->_filterResult->setSlotValue( $this->_slotName, $value);
+        $match = false;
+        if ( $starts && stripos( $text, $search) === 0) {
+            $this->_logger->info( 'Matched starts with ['.$search.']['.$text.']');
+            $match = true;
+        } else if ( stripos( $text, $search) !== false) {
+            $this->_logger->info( 'Matched stripos with ['.$search.']['.$text.']');
+            $match = true;
+        }
+        
+        if ( $match) {
+            $value = $value ?? $search;
+            $name = $this->_slotName ?? 'match';
+            $this->_filterResult->setSlotValue( $name, $value);
         }
     }
 
@@ -48,6 +60,6 @@ class StriposFilter extends AbstractWorkflowComponent implements IPlainTextFilte
     // UTIL
     public function __toString()
     {
-        return parent::__toString()."[{$this->_search}]";
+        return parent::__toString()."[{$this->_search}][{$this->_startsWith}]";
     }
 }
