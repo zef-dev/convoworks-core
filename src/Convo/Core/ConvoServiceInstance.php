@@ -450,6 +450,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                                     throw new ComponentNotFoundException( 'Session start block found, but has no elements');
                                 } catch ( StateChangedException $e) {
                                     $this->_logger->info('State changed in pre-dispatch ['.$e->getState().']');
+                                    $this->setServiceState( $e->getState());
                                     $block  =   $this->findBlock( $e->getState());
                                 }
                             }
