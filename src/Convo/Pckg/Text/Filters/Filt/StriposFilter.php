@@ -37,9 +37,11 @@ class StriposFilter extends AbstractWorkflowComponent implements IPlainTextFilte
         $value = $this->evaluateString( $this->_slotValue);
 
         $match = false;
-        if ( $starts && stripos( $text, $search) === 0) {
-            $this->_logger->info( 'Matched starts with ['.$search.']['.$text.']');
-            $match = true;
+        if ( $starts) {
+            if ( stripos( $text, $search) === 0) {
+                $this->_logger->info( 'Matched starts with ['.$search.']['.$text.']');
+                $match = true;
+            }
         } else if ( stripos( $text, $search) !== false) {
             $this->_logger->info( 'Matched stripos with ['.$search.']['.$text.']');
             $match = true;
