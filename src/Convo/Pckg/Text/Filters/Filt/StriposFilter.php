@@ -3,16 +3,10 @@
 namespace Convo\Pckg\Text\Filters\Filt;
 
 use Convo\Core\Workflow\DefaultFilterResult;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\NullLogger;
+use Convo\Core\Workflow\AbstractWorkflowComponent;
 
-class StriposFilter implements IPlainTextFilter, LoggerAwareInterface
+class StriposFilter extends AbstractWorkflowComponent implements IPlainTextFilter
 {
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $_logger;
-
     /**
      * @var \Convo\Core\Workflow\DefaultFilterResult
      */
@@ -24,7 +18,7 @@ class StriposFilter implements IPlainTextFilter, LoggerAwareInterface
 
     public function __construct($config = [])
     {
-        $this->_logger = new NullLogger();
+        parent::__construct( $config);
 
         $this->_filterResult = new DefaultFilterResult();
 
@@ -33,21 +27,16 @@ class StriposFilter implements IPlainTextFilter, LoggerAwareInterface
         $this->_slotValue = $config['slot_value'] ?? null;
     }
 
-    public function setLogger(\Psr\Log\LoggerInterface $logger)
-    {
-        $this->_logger = $logger;
-    }
-
     public function filter(\Convo\Core\Workflow\IConvoRequest $request)
     {
         $text = $request->getText();
+        $search = $this->evaluateString( $this->_search);
+        $position = stripos($text, $search);
 
-        $position = stripos($text, $this->_search);
-
-        if ($position !== false) {
-            $value = $this->_slotValue ?? $this->_search;
-
-            $this->_filterResult->setSlotValue($this->_slotName, $value);
+        if ($position !== false) 
+        {
+            $value = $this->_slotValue ?? $search;
+            $this->_filterResult->setSlotValue( $this->_slotName, $value);
         }
     }
 
@@ -59,6 +48,6 @@ class StriposFilter implements IPlainTextFilter, LoggerAwareInterface
     // UTIL
     public function __toString()
     {
-        return get_class($this)."[{$this->_search}]";
+        return parent::__toString()."[{$this->_search}]";
     }
 }

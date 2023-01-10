@@ -3,16 +3,10 @@
 namespace Convo\Pckg\Text\Filters\Filt;
 
 use Convo\Core\Workflow\DefaultFilterResult;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\NullLogger;
+use Convo\Core\Workflow\AbstractWorkflowComponent;
 
-class ExactMatchFilter implements IPlainTextFilter, LoggerAwareInterface
+class ExactMatchFilter extends AbstractWorkflowComponent implements IPlainTextFilter
 {
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    private $_logger;
-
     /**
      * @var \Convo\Core\Workflow\DefaultFilterResult
      */
@@ -22,9 +16,9 @@ class ExactMatchFilter implements IPlainTextFilter, LoggerAwareInterface
     private $_slotName;
     private $_slotValue;
 
-    public function __construct($config = [])
+    public function __construct( $config = [])
     {
-        $this->_logger = new NullLogger();
+        parent::__construct( $config);
 
         $this->_filterResult = new DefaultFilterResult();
 
@@ -33,16 +27,11 @@ class ExactMatchFilter implements IPlainTextFilter, LoggerAwareInterface
         $this->_slotValue = $config['slot_value'] ?? null;
     }
 
-    public function setLogger(\Psr\Log\LoggerInterface $logger)
-    {
-        $this->_logger = $logger;
-    }
-
     public function filter( \Convo\Core\Workflow\IConvoRequest $request)
     {
         $text = trim( $request->getText());
         $text = strtolower( $text);
-        $search = strtolower( trim( $this->_search));
+        $search = strtolower( trim( $this->evaluateString( $this->_search)));
         
         if ( $search === $text) 
         {
@@ -59,6 +48,6 @@ class ExactMatchFilter implements IPlainTextFilter, LoggerAwareInterface
     // UTIL
     public function __toString()
     {
-        return get_class($this)."[{$this->_search}]";
+        return parent::__toString()."[{$this->_search}]";
     }
 }
