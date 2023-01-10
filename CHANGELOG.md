@@ -2,6 +2,9 @@
 
 ## [Current development]
 
+* Fix text filters to accept 0 and allow them to evaluate search string
+* Correct http query element body evaluation
+
 ## [Releases]
 
 ## 0.22.17.1 - 2022-12-29
