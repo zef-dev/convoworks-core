@@ -8,6 +8,7 @@ use Convo\Core\Intent\EntityModel;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Psr\SimpleCache\CacheInterface;
 use Convo\Core\Workflow\IRunnableBlock;
+use Convo\Core\Intent\SimpleEntityValueParser;
 
 class CorePackageDefinition extends AbstractPackageDefinition
 {
@@ -166,6 +167,12 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $entities['PlaybackDirection']->setPlatformModel('amazon', $playback_direction_model);
         $entities['PlaybackDirection']->setPlatformModel('dialogflow', $playback_direction_model);
         $entities['PlaybackDirection']->setPlatformModel('dialogflow_es', $playback_direction_model);
+        
+        $entities['postalAddress'] =   new SystemEntity( 'postalAddress');
+        $entities['postalAddress']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.PostalAddress', true));
+        $entities['postalAddress']->setPlatformModel( ['dialogflow_es', 'dialogflow'],
+            new EntityModel( '@sys.location', true, new SimpleEntityValueParser( 'street-address')));
+        
         return $entities;
     }
 

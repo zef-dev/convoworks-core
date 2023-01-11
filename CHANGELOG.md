@@ -2,6 +2,7 @@
 
 ## [Current development]
 
+* Added `postalAddress` system entity
 * Fix text filters to accept 0 and allow them to evaluate search string
 * Correct http query element body evaluation
 
