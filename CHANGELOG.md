@@ -2,11 +2,13 @@
 
 ## [Current development]
 
+## [Releases]
+
+## 0.22.18.0 - 2023-01-16
+
 * Added `postalAddress` system entity
 * Fix text filters to accept 0 and allow them to evaluate search string
 * Correct http query element body evaluation
-
-## [Releases]
 
 ## 0.22.17.1 - 2022-12-29
 
