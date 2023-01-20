@@ -531,7 +531,7 @@ class DialogflowEsPublisher extends \Convo\Core\Publish\AbstractServicePublisher
                     $this->_logger->info("Meta in user says [".$data['meta']."]");
                 } catch ( \Convo\Core\ComponentNotFoundException $e) {
                     // todo quickfix
-                    $this->_logger->warning($e);
+                    $this->_logger->notice($e->getMessage());
                     $data['meta'] = strpos( $part['type'], '@') === 0 ? $part['type'] : '@'.$part['type'];
                 }
 
