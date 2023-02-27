@@ -90,7 +90,11 @@ class ComponentDefinition
 		$row['description']				=	$this->_description;
 		$row['component_properties']	=	$this->_componentProperties;
 		
-		$row['_interfaces']             =   array_values( class_implements( $this->_type));
+		if ( class_exists( $this->_type)) {
+		    $row['_interfaces']   =   array_values( class_implements( $this->_type));
+		} else {
+		    $row['_interfaces']   =   [];
+		}
 		
 		return $row;
 	}
