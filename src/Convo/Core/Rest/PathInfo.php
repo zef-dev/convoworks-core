@@ -27,6 +27,11 @@ class PathInfo
 		return $this->_data[$key];
 	}
 	
+	public function getData()
+	{
+	    return $this->_data;
+	}
+	
 	
 	// UTIL
 	public function __toString()
