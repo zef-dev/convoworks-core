@@ -2,6 +2,8 @@
 
 namespace Convo\Core\Workflow;
 
+use Convo\Core\DataItemNotFoundException;
+
 /**
  * Basic implementation of workflow infrastructure - working with parents and evaluating strings.
  * @author Tole
@@ -21,6 +23,14 @@ abstract class AbstractWorkflowComponent extends AbstractBasicComponent implemen
 		parent::__construct( $properties);
 	}
 
+	public function isRoot()
+	{
+	    if ( !$this->_parent) {
+	        return true;
+	    }
+	    return false;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * @see \Convo\Core\Workflow\IServiceWorkflowComponent::getParent()
@@ -55,6 +65,22 @@ abstract class AbstractWorkflowComponent extends AbstractBasicComponent implemen
 	 */
 	public function getBlockParams( $scopeType) {
 		return $this->getParent()->getBlockParams( $scopeType);
+	}
+	
+	public function findAncestor( $class)
+	{
+	    $parent = $this;
+	    while ( $parent = $parent->getParent()) {
+	        if ( is_a( $parent, $class)) {
+	            return $parent;
+	        }
+	        
+	        if ( $parent === $this->getService()) {
+	            break;
+	        }
+	    }
+	    
+	    throw new DataItemNotFoundException( 'Ancestro with class ['.$class.'] not found');
 	}
 	
 }

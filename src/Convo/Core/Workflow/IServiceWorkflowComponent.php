@@ -10,7 +10,11 @@ namespace Convo\Core\Workflow;
 interface IServiceWorkflowComponent extends IBasicServiceComponent, IValueEvaluator
 {
 	
-	
+    /**
+	 * @return boolean
+     */
+    public function isRoot();
+    
 	/**
 	 * Returns parent component.
 	 * @return \Convo\Core\Workflow\IWorkflowContainerComponent
@@ -32,4 +36,9 @@ interface IServiceWorkflowComponent extends IBasicServiceComponent, IValueEvalua
 	public function getBlockParams( $scopeType);
 	
 	
+	/**
+	 * @param string $class
+	 * @return \Convo\Core\Workflow\IWorkflowContainerComponent
+	 */
+	public function findAncestor( $class);
 }

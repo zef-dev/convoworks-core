@@ -291,6 +291,15 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         }
         return $all;
     }
+    
+    public function findAncestor( $class)
+    {
+        if ( is_a( $this, $class)) {
+            return $this;
+        }
+        
+        throw new DataItemNotFoundException( 'Ancestor with class ['.$class.'] not found');
+    }
 
     // RUN
     /**
@@ -975,6 +984,10 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
     public function getParent() {
         throw new \Exception( 'Not used here');
+    }
+    
+    public function isRoot() {
+        return true;
     }
 
     public function setParent( \Convo\Core\Workflow\IWorkflowContainerComponent $parent) {
