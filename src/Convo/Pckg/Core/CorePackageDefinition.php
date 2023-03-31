@@ -215,6 +215,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('unserialize');
         $functions[] = ExpressionFunction::fromPhp('serialize');
         $functions[] = ExpressionFunction::fromPhp('trim');
+        $functions[] = ExpressionFunction::fromPhp('file_get_contents');
+        $functions[] = ExpressionFunction::fromPhp('file_put_contents');
 
         $convo_val = function ($args, $data) use (&$convo_val) {
             if (is_array($data)) {
