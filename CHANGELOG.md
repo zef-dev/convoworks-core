@@ -4,6 +4,11 @@
 
 ## [Releases]
 
+## 0.22.19.0 - 2023-04-06
+
+* Added file contents and json encoding PHP functions
+* Added findAncestor() to the service components interface
+
 ## 0.22.18.0 - 2023-01-16
 
 * Added `postalAddress` system entity
