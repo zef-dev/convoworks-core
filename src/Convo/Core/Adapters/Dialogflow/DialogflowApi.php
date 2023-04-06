@@ -74,7 +74,7 @@ class DialogflowApi
 
     /**
      * Gets existing agent for project
-     * @return Agent
+     * @return []
      */
     public function getAgent()
     {
