@@ -69,7 +69,9 @@ class PreviewSpeechPart
 
         $data['text'] = [];
         foreach ($this->_text as $text) {
-            $data['text'][] = $text;
+            if ( !empty( $text)) {
+                $data['text'][] = $text;
+            }
         }
 
         return $data;
