@@ -899,8 +899,9 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code"><span class="statement">SET</span> parameters in <span class="statement">{{ component.properties.scope_type.toUpperCase() }}</span> at <span class="statement">{{ component.properties.parameters.toUpperCase() }}</span> level' .
-                            '<br><span ng-if="!component.properties[\'_use_var_properties\']" ng-repeat="(key, val) in component.properties.properties track by key">' .
-                                ' <span class="statement">LET</span> <b>{{ key}}</b> = <b>{{ val }};</b>' .
+                            '<span ng-if="!component.properties[\'_use_var_properties\']" ng-repeat="(key, val) in component.properties.properties track by key">' .
+                                '
+<span class="statement">LET</span> <b>{{ key}}</b> = <b>{{ val }};</b>' .
                             '</span>' .
                             '<span ng-if="component.properties[\'_use_var_properties\']">{{ component.properties.properties }}</span>' .
                             '</div>'
