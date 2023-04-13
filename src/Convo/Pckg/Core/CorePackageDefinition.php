@@ -1088,7 +1088,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
 					],
                     '_preview_angular' => [
                         'type' => 'html',
-                        'template' => '<div class="code">For each item in <b>{{ component.properties.data_collection || "data collection" }}</b> as <b>{{ component.properties.item || "item" }}</b></div>'
+                        'template' => '<div class="code"><span class="statement">FOR EACH</span> <b>{{ component.properties.data_collection || "data collection" }}</b> <span class="statement">AS</span> <b>{{ component.properties.item || "item" }}</b></div>'
                     ],
                     '_help' =>  array(
                         'type' => 'file',
