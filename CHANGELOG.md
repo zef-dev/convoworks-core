@@ -4,6 +4,11 @@
 
 ## [Releases]
 
+## 0.22.19.1 - 2023-04-14
+
+* Test chat now can reset session
+* Few preview related changes
+
 ## 0.22.19.0 - 2023-04-06
 
 * Added file contents and json encoding PHP functions
