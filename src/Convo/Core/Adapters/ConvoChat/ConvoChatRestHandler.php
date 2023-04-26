@@ -6,6 +6,7 @@ use Convo\Core\EventDispatcher\ServiceRunRequestEvent;
 use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Rest\RestSystemUser;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Convo\Core\Util\StrUtil;
 
 class ConvoChatRestHandler implements RequestHandlerInterface
 {
@@ -127,11 +128,11 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 		}
 
 		$delegate_nlp		=	$platform_config['convo_chat']['delegateNlp'] ?? null;
-
+        $request_id         =   StrUtil::uuidV4();
 		$service			=	$this->_convoServiceFactory->getService($owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
 
 		$text_request		=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest(
-			$serviceId, $device_id, $device_id, $device_id, $text, $is_init, false /* <- temp */, $delegate_nlp, $json);
+		    $serviceId, $device_id, $device_id, $request_id, $text, $is_init, false, DefaultTextCommandRequest::PLATFORM_ID, $json);
 		$text_response		=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse();
 		$text_response->setLogger($this->_logger);
 
