@@ -80,12 +80,11 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 		$owner		=	new RestSystemUser();
 		$json		=	$request->getParsedBody();
 
-        $serviceMeta = $this->_convoServiceDataProvider->getServiceMeta($owner, $serviceId);
-
-		$text		=	$json['text'] ?? null;
-		$is_init	=	$this->_isInit($json);
-		$device_id	=	$json['device_id'];
-
+		$text             =	  $json['text'] ?? null;
+		$is_init          =   $this->_isInit($json);
+		$device_id        =   $json['device_id'] ?? 'UNKNOWN';
+		$session_id	      =   $json['session_id'] ?? null;
+		$installation_id  =	  $json['installation_id'] ?? 'UNKNOWN';
 
 // 		try {
 // 			$meta	=	$this->_convoServiceDataProvider->getServiceMeta( $owner, $serviceId);
@@ -122,7 +121,9 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 		$service			=	$this->_convoServiceFactory->getService($owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
 
 		$text_request		=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest(
-		    $serviceId, $device_id, $device_id, $request_id, $text, $is_init, false, DefaultTextCommandRequest::PLATFORM_ID, $json);
+		    $serviceId, $installation_id, $session_id, $request_id, $text, $is_init, false, DefaultTextCommandRequest::PLATFORM_ID, $json);
+		$text_request->setDeviceId( $device_id);
+		
 		$text_response		=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse();
 		$text_response->setLogger($this->_logger);
 

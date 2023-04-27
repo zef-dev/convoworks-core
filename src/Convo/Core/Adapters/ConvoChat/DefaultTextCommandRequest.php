@@ -87,6 +87,10 @@ class DefaultTextCommandRequest implements \Convo\Core\Workflow\IConvoRequest
 		return $this->_deviceId;
 	}
 
+	public function setDeviceId( $deviceId) {
+	    $this->_deviceId = $deviceId;
+	}
+
 	public function getApplicationId()
 	{
 		return $this->_applicationId;
