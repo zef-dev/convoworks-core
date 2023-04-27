@@ -72,16 +72,6 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 			return $this->_handleConvoChatPathServiceIdPost($request, $variant, $serviceId);
 		}
 
-		if ( $info->post() && $route = $info->route( 'service-run/convo_chat/{variant}/{serviceId}'))
-		{
-			$variant = $route->get('variant');
-			$serviceId = $route->get('serviceId');
-
-			$this->_logger->debug("Executing convo_chat [$serviceId][$variant]");
-
-			return $this->_handleConvoChatPathServiceIdPost($request, $variant, $serviceId);
-		}
-
 		throw new \Convo\Core\Rest\NotFoundException( 'Could not map ['.$info.']');
 	}
 
