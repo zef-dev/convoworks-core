@@ -2,6 +2,8 @@
 
 ## [Current development]
 
+* Fix parameters for web chat
+
 ## [Releases]
 
 ## 0.22.19.1 - 2023-04-14
