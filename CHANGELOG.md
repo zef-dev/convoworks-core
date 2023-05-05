@@ -2,6 +2,9 @@
 
 ## [Current development]
 
+* Add filter_var() PHP function
+* Add timezore aware request interface
+* Use separate convo request
 
 ## [Releases]
 
