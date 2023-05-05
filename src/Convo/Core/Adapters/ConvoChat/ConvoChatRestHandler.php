@@ -85,7 +85,15 @@ class ConvoChatRestHandler implements RequestHandlerInterface
 		$device_id        =   $json['device_id'] ?? 'UNKNOWN';
 		$session_id	      =   $json['session_id'] ?? null;
 		$installation_id  =	  $json['installation_id'] ?? 'UNKNOWN';
-
+		$timezone_str     =   $json['timezone'] ?? null;
+		
+		if ( $timezone_str) {
+		    $timezone = new \DateTimeZone( $timezone_str);
+		} else {
+		    $this->_logger->warning( 'Using default itmezone ['.date_default_timezone_get().']');
+		    $timezone = new \DateTimeZone( date_default_timezone_get());
+		}
+		
 // 		try {
 // 			$meta	=	$this->_convoServiceDataProvider->getServiceMeta( $owner, $serviceId);
 // 		} catch ( \Convo\Core\ComponentNotFoundException $e) {
@@ -120,9 +128,8 @@ class ConvoChatRestHandler implements RequestHandlerInterface
         $request_id         =   StrUtil::uuidV4();
 		$service			=	$this->_convoServiceFactory->getService($owner, $serviceId, $version_id, $this->_convoServiceParamsFactory);
 
-		$text_request		=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest(
-		    $serviceId, $installation_id, $session_id, $request_id, $text, $is_init, false, DefaultTextCommandRequest::PLATFORM_ID, $json);
-		$text_request->setDeviceId( $device_id);
+		$text_request		=	new \Convo\Core\Adapters\ConvoChat\ConvoChatCommandRequest(
+		    $serviceId, $installation_id, $device_id, $session_id, $request_id, $timezone, $text, $is_init, false, $json);
 		
 		$text_response		=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse();
 		$text_response->setLogger($this->_logger);
