@@ -2,7 +2,6 @@
 
 namespace Convo\Core\Factory;
 
-use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Publish\IPlatformPublisher;
 use Convo\Core\IAdminUser;
 
@@ -13,12 +12,6 @@ interface IPlatform
      * @return string
      */
     public function getPlatformId();
- 
-	/**
-	 * @return RequestHandlerInterface
-	 */
-    public function getPublicRestHandler();
- 
 
     /**
      * @param IAdminUser $user

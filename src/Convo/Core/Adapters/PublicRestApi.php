@@ -6,6 +6,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Container\ContainerInterface;
 use Convo\Core\Factory\IPlatformProvider;
 use Psr\Log\LoggerInterface;
+use Convo\Core\Factory\IRestPlatform;
 
 /**
  * Helper class which purpose is to group all core convo handlers into single one, ending up with just one convo route to map in your implementation
@@ -55,8 +56,12 @@ class PublicRestApi implements RequestHandlerInterface
 		        $provider     =   $this->_packageProviderFactory->getProviderByNamespace( $package_id);
 		        if ( $provider instanceof IPlatformProvider) {
 		            /* @var IPlatformProvider $provider */
-		            $handler      =   $provider->getPlatform( $platform_id)->getPublicRestHandler();
-		            return $handler->handle( $request);
+		            $platform     =   $provider->getPlatform( $platform_id);
+		            if ( $platform instanceof IRestPlatform) {
+		                /* @var IRestPlatform $platform */
+		                $handler      =   $platform->getPublicRestHandler();
+		                return $handler->handle( $request);
+		            }
 		        }
 		        throw new \Convo\Core\Rest\NotFoundException( 'No appropriate platform provider found for ['.$package_id.']['.$platform_id.'] at ['.$info.']');
 		    }
