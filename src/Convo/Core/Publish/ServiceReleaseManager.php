@@ -95,6 +95,13 @@ class ServiceReleaseManager
         $meta = $this->_convoServiceDataProvider->saveServiceMeta($user, $serviceId, $meta);
         return $meta;
     }
+    
+    public function withdrawPlatform(IAdminUser $user, $serviceId, $platformId)
+    {
+        $meta = $this->_convoServiceDataProvider->getServiceMeta($user, $serviceId);
+        unset( $meta['release_mapping'][$platformId]);
+        $meta = $this->_convoServiceDataProvider->saveServiceMeta($user, $serviceId, $meta);
+    }
 
     public function importWorkflowIntoRelease(IAdminUser $user, $serviceId, $releaseId, $versionId)
     {
