@@ -80,6 +80,12 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
 		        $request, $user, $route->get( 'serviceId'), $route->get( 'platformId'));
 		}
 
+		if ( $info->delete() && $route = $info->route( 'service-platform-config/{serviceId}/{platformId}'))
+		{
+		    return $this->_performServicePlatformPathServiceIdPathPlatformIdConfigDelete(
+		        $request, $user, $route->get( 'serviceId'), $route->get( 'platformId'));
+		}
+
 		if ( $info->post() && $route = $info->route( 'service-platform-propagate/{serviceId}/{platformId}'))
 		{
 		    return $this->_performServicePlatformPropagatePathServiceIdPathPlatformIdPost(
@@ -200,6 +206,32 @@ class ServicePlatformConfigRestHandler implements RequestHandlerInterface
 		$config = $this->_convoServiceDataProvider->getServicePlatformConfig( $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
 
         return $this->_httpFactory->buildResponse( $config[$platformId]);
+	}
+	
+	private function _performServicePlatformPathServiceIdPathPlatformIdConfigDelete(
+	    \Psr\Http\Message\ServerRequestInterface $request, \Convo\Core\IAdminUser $user, $serviceId, $platformId)
+	{
+	    $config		=	$this->_convoServiceDataProvider->getServicePlatformConfig( $user, $serviceId, IPlatformPublisher::MAPPING_TYPE_DEVELOP);
+
+		if ( !isset( $config[$platformId])) {
+		    throw new \Convo\Core\Rest\NotFoundException( 'Service ['.$serviceId.'] config ['.$platformId.'] not found');
+		}
+
+		// RELEASES ?
+		// META ?
+		
+		// PUBLISHER
+		$publisher	=	$this->_platformPublisherFactory->getPublisher( $user, $serviceId, $platformId);
+		$report     =   [];
+		$publisher->delete( $report);
+		$this->_logger->info('Platform delete report ['.print_r( $report, true).']');
+		
+		// CONFIG
+		$this->_logger->info('Deleting configuration ['.$platformId.'] for service ['.$serviceId.']');
+		unset( $config[$platformId]);
+		$this->_convoServiceDataProvider->updateServicePlatformConfig( $user, $serviceId, $config);
+
+        return $this->_httpFactory->buildResponse( []);
 	}
 
 	private function _performServicePlatformPropagatePathServiceIdPathPlatformIdPost(
