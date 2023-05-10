@@ -87,7 +87,7 @@ class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
 					$root = ArrayUtil::getRootOfKey($key);
 					$final = ArrayUtil::setDeepObject($key, $parsed, $params->getServiceParam($root) ?? []);
 					$this->_logger->info( 'Setting complex param ['.$key.']['.$root.']');
-					$this->_logger->debug( 'Setting at value ['.print_r( $final, true).']');
+// 					$this->_logger->debug( 'Setting at value ['.print_r( $final, true).']');
 					$params->setServiceParam($root, $final);
 				}
 			}
