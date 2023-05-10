@@ -782,12 +782,21 @@ class EvaluationContextTest extends TestCase
 
     public function paramParsingProvider()
     {
+        $obj = new stdClass();
+        $obj->val = 1;
         return [
             [
                 [
-                    'simple' => '1',
+                    'simple' => 1,
                 ],
-                '${simple}', '1'
+                '${simple}', 1
+            ],
+            [
+                [
+                    'obj' => new stdClass(),
+                    'obj.val' => 2
+                ],
+                '${obj.val}', 2
             ],
             [
                 [
@@ -807,7 +816,7 @@ class EvaluationContextTest extends TestCase
                 [
                     'array' => '${[1, 2, 3]}'
                 ],
-                '${array[0]}', '1'
+                '${array[0]}', 1
             ],
             [
                 [

@@ -62,6 +62,10 @@ class EvaluationContext
 
 	public function evalString( $string, $context=[], $skipEmpty=false)
 	{
+	    if ( !is_string( $string)) {
+	        $this->_logger->info( 'Returning raw value for ['.gettype( $string).']');
+	        return $string;
+	    }
 	    $this->_logger->debug( 'Evaluating string ['.$string.']');
 	    
 		$expressions	=	$this->_extractExpressions( $string);

@@ -164,8 +164,11 @@ abstract class ArrayUtil
 
         array_shift($parts);
 
-        $array = $base;
-        $current = &$array;
+        if ( is_array( $base)) {
+            $current = &$base;
+        } else {
+            $current = $base;
+        }
 
         foreach($parts as $part)
         {
@@ -175,9 +178,20 @@ abstract class ArrayUtil
                 $part = intval($part);
             }
 
-            $current = &$current[$part];
+            if ( is_array( $current) && is_array( $current[$part])) {
+                $current = &$current[$part];
+            } else if ( is_object( $current) && is_array( $current->$part)) {
+                $current = &$current->$part;
+            } else if ( is_object( $current)) {
+                $current->$part = $value;
+            } else if ( is_array( $current)) {
+                $current[$part] = $value;
+            }
         }
-        $current = $value;
-        return $array;
+        if ( $current !== $base) {
+            $current = $value;
+        }
+        
+        return $base;
     }
 }
