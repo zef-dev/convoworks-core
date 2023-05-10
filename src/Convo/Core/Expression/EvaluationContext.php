@@ -79,6 +79,9 @@ class EvaluationContext
 		        try {
 		            $value = $this->_expLang->evaluate( $expression, $context);
 		            $this->_logger->debug( 'Got value type ['.gettype( $value).'] for a single expression string ['.$expression.']');
+		            if ( is_a( $value, 'Zef\Zel\IValueAdapter')) {
+		                return $value->get();
+		            }
 		            return $value;
 		        } catch ( \Symfony\Component\ExpressionLanguage\SyntaxError $e) {
 		            throw $e;
@@ -96,7 +99,7 @@ class EvaluationContext
 
 			$this->_logger->debug( 'Got value type ['.gettype( $value).'] for expression ['.$expression.']');
 
-			if ( is_string( $value) || is_numeric( $value) || is_null( $value)) {
+			if ( is_string( $value) || is_numeric( $value) || is_null( $value) || is_bool( $value)) {
 
 			    if  ( !$skipEmpty || $skipEmpty && !empty( $value)) {
 					$quot_expr = preg_quote($expression, '/');
@@ -112,8 +115,6 @@ class EvaluationContext
 // 				        $string =   $value;
 // 				    }
 // 				}
-			} else if (is_bool( $value)) {
-                return $value;
             } else {
 				// not parsing, single value get
 				if ( is_a( $value, 'Zef\Zel\IValueAdapter')) {
