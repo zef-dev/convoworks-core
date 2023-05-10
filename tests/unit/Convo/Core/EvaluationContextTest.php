@@ -787,6 +787,12 @@ class EvaluationContextTest extends TestCase
         return [
             [
                 [
+                    'messages[0]["role"]' => 1,
+                ],
+                '${messages[0]["role"]}', 1
+            ],
+            [
+                [
                     'simple' => 1,
                 ],
                 '${simple}', 1
