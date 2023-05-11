@@ -262,7 +262,7 @@ class PackageProvider implements
             
             return $component;
         } catch ( NotFoundException $e) {
-            throw new \Convo\Core\ComponentNotFoundException( 'Service ['.$service.'] component ['.$componentData['class'].'] not found', null, $e);
+            throw new \Convo\Core\ComponentNotFoundException( 'Service ['.$service.'] component ['.$componentData['class'].'] not found', 0, $e);
         }
     }
 
