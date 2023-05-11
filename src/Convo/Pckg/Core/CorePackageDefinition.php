@@ -265,6 +265,16 @@ class CorePackageDefinition extends AbstractPackageDefinition
         );
 
         $functions[] = new ExpressionFunction(
+            'print_r',
+            function ( $val) {
+                return sprintf('print_r(%1)', $val);
+            },
+            function( $args, $val) {
+                return print_r( $val, true);
+            }
+        );
+
+        $functions[] = new ExpressionFunction(
             'array_push',
             function ($array, $item) {
                 return sprintf('is_array(%1$a) ? array_push(%1$a, %2$i) : %1$a', $array, $item);
