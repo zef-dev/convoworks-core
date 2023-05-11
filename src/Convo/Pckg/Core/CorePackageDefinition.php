@@ -2337,7 +2337,7 @@ In default phase you can inform users about problem you have interpreting comman
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\DefaultSpecialRoleBlock',
                 'Special Role Block',
-                '',
+                'This block will be activate for special role requests.',
                 array(
                     'block_id' => array(
                         'editor_type' => 'block_id',
@@ -2375,6 +2375,52 @@ In default phase you can inform users about problem you have interpreting comman
                         'description' => 'Elements to be executed in read phase',
                         'valueType' => 'class',
                         '_separate' => true
+                    ),
+                    '_workflow' => 'read',
+                    '_system' => true,
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Core\Elements\SpecialRoleProcessorBlock',
+                'Special Role Processor Block',
+                'This block will be activate for special role requests.',
+                array(
+                    'block_id' => array(
+                        'editor_type' => 'block_id',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'new-block-id',
+                        'name' => 'Block ID',
+                        'description' => 'Unique string identificator',
+                        'valueType' => 'string'
+                    ),
+                    'name' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => 'New block',
+                        'name' => 'Block name',
+                        'description' => 'A user friendly name for the block',
+                        'valueType' => 'string'
+                    ),
+                    'role' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => null,
+                        'name' => 'Role',
+                        'description' => 'A role to be activated on',
+                        'valueType' => 'string'
+                    ),
+                    'processors' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationProcessor'),
+                            'multiple' => true,
+                        ),
+                        'defaultValue' => array(),
+                        'defaultOpen' => true,
+                        'name' => 'Process phase',
+                        'description' => 'Processors to be executed in process phase',
+                        'valueType' => 'class'
                     ),
                     '_workflow' => 'read',
                     '_system' => true,
