@@ -787,6 +787,13 @@ class EvaluationContextTest extends TestCase
         return [
             [
                 [
+                    'obj' => new stdClass(),
+                    'obj.messages[0]["role"]' => 1,
+                ],
+                '${obj.messages[0]["role"]}', 1
+            ],
+            [
+                [
                     'messages[0]["role"]' => 1,
                 ],
                 '${messages[0]["role"]}', 1
