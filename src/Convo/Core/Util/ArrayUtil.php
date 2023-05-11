@@ -180,13 +180,21 @@ abstract class ArrayUtil
             $part = array_shift( $parts);
             $part = str_replace('"', '', $part);
             
+            if  ( trim( $part) === '') {
+                throw new \Exception( 'Empty part');
+            }
+            
             if ( is_array( $base->$part)) {
                 self::_setDeepFieldArray( $parts, $value, $base->$part);
                 return $base;
-            } else if ( is_object( $base->$part)) {
+            } 
+            
+            if ( is_object( $base->$part)) {
                 self::_setDeepFieldObject( $parts, $value, $base->$part);
                 return $base;
-            } else if ( !isset( $base->$part) && count( $parts)) {
+            } 
+            
+            if ( !isset( $base->$part) && count( $parts)) {
                 $base->$part = [];
                 self::_setDeepFieldArray( $parts, $value, $base->$part);
                 return $base;
@@ -198,7 +206,7 @@ abstract class ArrayUtil
         }
         while ( count( $parts) > 1);
         
-        throw new \Exception( 'Empty object base  ['.implode(', ', $parts).']['.print_r( $base).']');
+        throw new \Exception( 'Empty object base  ['.implode(', ', $parts).']['.print_r( $base, true).']');
     }
     
     private static function _setDeepFieldArray( $parts, $value, &$base) 
@@ -234,7 +242,7 @@ abstract class ArrayUtil
         }
         while ( count( $parts) > 1);
         
-        throw new \Exception( 'Empty array base  ['.implode(', ', $parts).']['.print_r( $base).']');
+        throw new \Exception( 'Empty array base  ['.implode(', ', $parts).']['.print_r( $base, true).']');
     }
     
 }
