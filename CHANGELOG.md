@@ -2,11 +2,17 @@
 
 ## [Current development]
 
-* Add filter_var() PHP function
-* Add timezore aware request interface
-* Use separate convo request
 
 ## [Releases]
+
+## 0.22.21.0 - 2023-05-03
+
+* Fix setting deep values with expression language
+* Add unregister platform endpoint
+* Add IRestPlatform
+* Add filter_var() and print_r() PHP functions
+* Add timezone aware request interface
+* Use separate convo chat request
 
 ## 0.22.20.0 - 2023-05-03
 
