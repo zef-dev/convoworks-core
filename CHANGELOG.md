@@ -5,6 +5,11 @@
 
 ## [Releases]
 
+## 0.22.22.0 - 2023-05-15
+
+* Fix missing default failback handling
+* Add $_POST, $_GET and othe server variables to the evaluation context 
+
 ## 0.22.21.0 - 2023-05-03
 
 * Fix setting deep values with expression language
