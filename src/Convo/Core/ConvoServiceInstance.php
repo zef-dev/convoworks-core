@@ -713,6 +713,25 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $variables          =   $this->_resolveVariables($this->_variables, 'variables');
         $context			=	array_merge( $variables, $context);
 
+        // POST, GET
+        $context			=	array_merge( ['_SERVER'=>$_SERVER], $context);
+        $context			=	array_merge( ['_REQUEST'=>$_REQUEST], $context);
+        $context			=	array_merge( ['_POST'=>$_POST], $context);
+        $context			=	array_merge( ['_GET'=>$_GET], $context);
+        
+        if ( isset( $_COOKIE)) {
+            $context			=	array_merge( ['_COOKIE'=>$_COOKIE], $context);
+        }
+        if ( isset( $_SESSION)) {
+            $context			=	array_merge( ['_SESSION'=>$_SESSION], $context);
+        }
+        if ( isset( $_FILES)) {
+            $context			=	array_merge( ['_FILES'=>$_FILES], $context);
+        }
+        if ( isset( $_ENV)) {
+            $context			=	array_merge( ['_ENV'=>$_ENV], $context);
+        }
+        
         // CONTEXTS
         $context_map        =   [];
         foreach ($this->_contexts as $ctx) {
