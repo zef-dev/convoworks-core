@@ -458,7 +458,7 @@ class RadioBlock extends \Convo\Core\Workflow\AbstractWorkflowContainerComponent
             try {
                 $default_fallback = $this->getService()->getBlockByRole(IRunnableBlock::ROLE_DEFAULT_FALLBACK);
                 $default_fallback->read($request, $response);
-            } catch (\Convo\Core\DataItemNotFoundException $e) {
+            } catch ( \Convo\Core\ComponentNotFoundException $e) {
             }
         }
     }

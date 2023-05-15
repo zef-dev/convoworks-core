@@ -208,7 +208,7 @@ class ConversationBlock extends \Convo\Pckg\Core\Elements\ElementCollection impl
 			try {
 				$default_fallback = $this->getService()->getBlockByRole(IRunnableBlock::ROLE_DEFAULT_FALLBACK);
 				$default_fallback->read($request, $response);
-			} catch (\Convo\Core\DataItemNotFoundException $e) {
+			} catch ( \Convo\Core\ComponentNotFoundException $e) {
 				$this->_logger->info('No valid matches found, with no block level fallback nor service level fallback');
 			}
 		}
