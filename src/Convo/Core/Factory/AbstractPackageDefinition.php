@@ -115,7 +115,9 @@ abstract class AbstractPackageDefinition
     {
         $this->_logger->debug( 'Searching for platform ['.$platformId.'] intent ['.$name.']');
 
-        foreach ( $this->_intents as $definition) {
+        $intents = $this->getIntents();
+        
+        foreach ( $intents as $definition) {
             try {
                 $intent =   $definition->getPlatformModel( $platformId);
                 if ( $intent->getName() === $name) {
@@ -140,10 +142,16 @@ abstract class AbstractPackageDefinition
      */
     public function getIntent( $name)
     {
-        if ( isset( $this->_intents[$name])) {
-            return $this->_intents[$name];
+        $intents = $this->getIntents();
+        if ( isset( $intents[$name])) {
+            return $intents[$name];
         }
         throw new \Convo\Core\ComponentNotFoundException( 'System intent ['.$name.'] not found');
+    }
+    
+    public function getIntents()
+    {
+        return $this->_intents;
     }
 
     /**
@@ -250,7 +258,7 @@ abstract class AbstractPackageDefinition
 		    $data['templates'][]	=	$template;
 		}
 
-        foreach ( $this->_intents as $intent) {
+        foreach ( $this->getIntents() as $intent) {
             $data['intents'][]	=	$this->_intentToRow( $intent);
         }
 
