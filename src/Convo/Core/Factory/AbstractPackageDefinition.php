@@ -29,7 +29,8 @@ abstract class AbstractPackageDefinition
 	 */
 	protected $_definitions	=	[];
 
-	protected $_templates	=	[];
+	private $_templates;
+	private $_templateFiles;
 
     /**
      * @var SystemEntity[]
@@ -180,11 +181,41 @@ abstract class AbstractPackageDefinition
 	{
 		return $this->_namespace;
 	}
+	
+	public function registerTemplate( $path)
+	{
+	    $this->_templateFiles[] = $path;
+	}
+	
+	public function getTemplates()
+	{
+	    if ( !isset( $this->_templates)) {
+	        $this->_templates = [];
+	        foreach ( $this->_templateFiles as $path) {
+	            $this->_addTemplate( $this->_loadFile( $path));
+	        }
+	    }
+	    
+	    return $this->_templates;
+	}
 
+	private function _addTemplate( $template)
+	{
+	    $template['template_id'] = $this->getNamespace().'.'.$template['template_id'];
+	    $this->_templates[] = $template;
+	}
+	
+	/**
+	 * @param array $template
+	 * @deprecated
+	 */
 	public function addTemplate( $template)
     {
-        $template['template_id'] = $this->getNamespace().'.'.$template['template_id'];
-	    $this->_templates[] = $template;
+        if ( !isset( $this->_templates)) {
+            $this->_templates = [];
+        }
+        
+	    $this->_addTemplate( $template);
 	}
 
 	/**
@@ -192,7 +223,7 @@ abstract class AbstractPackageDefinition
 	 * @see \Convo\Core\Factory\IPackageDefinition::getTemplate()
 	 */
 	public function getTemplate( $templateId) {
-	    foreach ( $this->_templates as $template) {
+	    foreach ( $this->getTemplates() as $template) {
 	        if ( $template['template_id'] === $templateId) {
 	            return $template;
 	        }
@@ -215,7 +246,7 @@ abstract class AbstractPackageDefinition
 			$data['components'][]	=	$definition->getRow();
 		}
 
-		foreach ( $this->_templates as $template) {
+		foreach ( $this->getTemplates() as $template) {
 		    $data['templates'][]	=	$template;
 		}
 
