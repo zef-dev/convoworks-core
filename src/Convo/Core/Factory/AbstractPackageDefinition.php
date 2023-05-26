@@ -27,7 +27,7 @@ abstract class AbstractPackageDefinition
 	/**
 	 * @var ComponentDefinition[]
 	 */
-	protected $_definitions	=	[];
+	private $_definitions	=	[];
 
 	private $_templates;
 	private $_templateFiles;
@@ -297,6 +297,11 @@ abstract class AbstractPackageDefinition
 	
 	
 	// COMPONENTS
+	public function getComponentDefinitions()
+	{
+	    return $this->_definitions;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * @see \Convo\Core\Factory\IComponentProvider::getComponentDefinition()
@@ -305,7 +310,7 @@ abstract class AbstractPackageDefinition
 	{
 	    // 		$this->_logger->debug( 'Searching for class ['.$class.'] in ['.$this.']');
 	    
-	    foreach ( $this->_definitions as $definition) {
+	    foreach ( $this->getComponentDefinitions() as $definition) {
 	        /* @var $definition ComponentDefinition */
 	        if ( $definition->getType() === $class) {
 	            // 				$this->_logger->debug( 'Found definition ['.$definition.'] in ['.$this.']');
@@ -407,7 +412,7 @@ abstract class AbstractPackageDefinition
             'entities' => [],
 		);
 
-		foreach ( $this->_definitions as $definition) {
+		foreach ( $this->getComponentDefinitions() as $definition) {
 			/* @var $definition ComponentDefinition */
 			$data['components'][]	=	$definition->getRow();
 		}
