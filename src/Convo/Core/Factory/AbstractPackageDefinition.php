@@ -77,6 +77,9 @@ abstract class AbstractPackageDefinition
 	    return $this->_namespace;
 	}
 	
+	/**
+	 * @return ComponentDefinition[]
+	 */
 	protected function _initDefintions()
 	{
 	    return [];
@@ -272,7 +275,10 @@ abstract class AbstractPackageDefinition
 	public function getComponentDefinitions()
 	{
 	    if ( !isset( $this->_definitions)) {
-	        $this->_definitions = $this->_initDefintions();
+	        $this->_definitions = [];
+	        foreach ( $this->_initDefintions() as $definition) {
+	            $this->_definitions[$definition->getType()] = $definition;
+	        }
 	    }
 	    return $this->_definitions;
 	}
@@ -284,13 +290,14 @@ abstract class AbstractPackageDefinition
 	public function getComponentDefinition( $class)
 	{
 	    // 		$this->_logger->debug( 'Searching for class ['.$class.'] in ['.$this.']');
+	    $definitions = $this->getComponentDefinitions();
 	    
-	    foreach ( $this->getComponentDefinitions() as $definition) {
+	    if ( isset( $definitions[$class])) {
+	        return $definitions[$class];
+	    }
+	    
+	    foreach ( $definitions as $definition) {
 	        /* @var $definition ComponentDefinition */
-	        if ( $definition->getType() === $class) {
-	            // 				$this->_logger->debug( 'Found definition ['.$definition.'] in ['.$this.']');
-	            return $definition;
-	        }
 	        
 	        if ( $definition->isAlias($class) ) {
 	            // $this->_logger->debug( 'Found definition ['.$definition.'] in ['.$this.'] as alias');
