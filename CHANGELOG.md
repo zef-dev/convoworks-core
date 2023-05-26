@@ -3,6 +3,7 @@
 ## [Current development]
 
 * Add parse_url() PHP function
+* Do not load definitions (templates, intents) until required
 
 ## [Releases]
 
