@@ -210,7 +210,9 @@ abstract class AbstractPackageDefinition
      */
     public function findPlatformEntity( $name, $platformId)
     {
-        foreach ( $this->_entities as $definition) {
+        $entities = $this->getEntities();
+        
+        foreach ( $entities as $definition) {
             try {
                 $entity =   $definition->getPlatformModel( $platformId);
                 if ( $entity->getName() === $name) {
@@ -229,12 +231,19 @@ abstract class AbstractPackageDefinition
      */
     public function getEntity( $name)
     {
-        if ( isset( $this->_entities[$name])) {
-            return $this->_entities[$name];
+        $entities = $this->getEntities();
+        
+        if ( isset( $entities[$name])) {
+            return $entities[$name];
         }
         throw new \Convo\Core\ComponentNotFoundException( 'System entity ['.$name.'] not found');
     }
-	
+    
+    public function getEntities()
+    {
+        return $this->_entities;
+    }
+    
 	// TEMPLATES
     public function registerTemplate( $path)
     {
