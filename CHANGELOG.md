@@ -2,6 +2,7 @@
 
 ## [Current development]
 
+* Add parse_url() PHP function
 
 ## [Releases]
 
