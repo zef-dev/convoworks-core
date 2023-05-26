@@ -43,10 +43,13 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $this->registerTemplate( __DIR__ .'/basic.template.json');
         $this->registerTemplate( __DIR__ .'/blank.template.json');
         $this->registerTemplate( __DIR__ .'/convo-daily-quotes.template.json');
-        
-        $this->_registerIntentsFile( __DIR__ .'/system-intents.json');
     }
 
+    protected function _initIntents()
+    {
+        return $this->_loadIntents( __DIR__ .'/system-intents.json');
+    }
+    
     protected function _initEntities()
     {
         $entities  =    [];
