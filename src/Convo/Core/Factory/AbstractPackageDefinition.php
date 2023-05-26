@@ -27,7 +27,7 @@ abstract class AbstractPackageDefinition
 	/**
 	 * @var ComponentDefinition[]
 	 */
-	private $_definitions	=	[];
+	private $_definitions;
 
 	private $_templates;
 	private $_templateFiles;
@@ -63,8 +63,6 @@ abstract class AbstractPackageDefinition
         if ( count( $intents)) {
             $this->_intents   =   $intents;
         }
-        
-        $this->_definitions  =   $this->_initDefintions();
 	}
 
 	// PACKAGE
@@ -299,6 +297,9 @@ abstract class AbstractPackageDefinition
 	// COMPONENTS
 	public function getComponentDefinitions()
 	{
+	    if ( !isset( $this->_definitions)) {
+	        $this->_definitions = $this->_initDefintions();
+	    }
 	    return $this->_definitions;
 	}
 	
