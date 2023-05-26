@@ -69,10 +69,23 @@ abstract class AbstractPackageDefinition
         $this->_definitions  =   $this->_initDefintions();
 	}
 
-	
+	// PACKAGE
+	/**
+	 * {@inheritDoc}
+	 * @see \Convo\Core\Intent\IPrefixed::accepts()
+	 */
 	public function accepts( $namespace)
 	{
 	    return $this->getNamespace() === $namespace;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \Convo\Core\Factory\IPackageDefinition::getNamespace()
+	 */
+	public function getNamespace()
+	{
+	    return $this->_namespace;
 	}
 	
 	protected function _initDefintions()
@@ -100,6 +113,8 @@ abstract class AbstractPackageDefinition
     }
 
     
+    
+    // INTENTS
     /**
      * {@inheritDoc}
      * @see \Convo\Core\Intent\ISystemIntentRepository::findPlatformIntent()
@@ -188,6 +203,7 @@ abstract class AbstractPackageDefinition
         return $intents;
     }
 
+    // ENTITIES
     /**
      * {@inheritDoc}
      * @see \Convo\Core\Intent\ISystemEntityRepository::findPlatformEntity()
@@ -218,17 +234,13 @@ abstract class AbstractPackageDefinition
         }
         throw new \Convo\Core\ComponentNotFoundException( 'System entity ['.$name.'] not found');
     }
-
-	public function getNamespace()
-	{
-		return $this->_namespace;
-	}
 	
-	public function registerTemplate( $path)
-	{
-	    $this->_templateFiles[] = $path;
-	}
-	
+	// TEMPLATES
+    public function registerTemplate( $path)
+    {
+        $this->_templateFiles[] = $path;
+    }
+    
 	public function getTemplates()
 	{
 	    if ( !isset( $this->_templates)) {
@@ -272,7 +284,109 @@ abstract class AbstractPackageDefinition
 	    }
 	    throw new ComponentNotFoundException( 'Service template ['.$templateId.'] not found');
 	}
+	
+	
+	// COMPONENTS
+	/**
+	 * {@inheritDoc}
+	 * @see \Convo\Core\Factory\IComponentProvider::getComponentDefinition()
+	 */
+	public function getComponentDefinition( $class)
+	{
+	    // 		$this->_logger->debug( 'Searching for class ['.$class.'] in ['.$this.']');
+	    
+	    foreach ( $this->_definitions as $definition) {
+	        /* @var $definition ComponentDefinition */
+	        if ( $definition->getType() === $class) {
+	            // 				$this->_logger->debug( 'Found definition ['.$definition.'] in ['.$this.']');
+	            return $definition;
+	        }
+	        
+	        if ( $definition->isAlias($class) ) {
+	            // $this->_logger->debug( 'Found definition ['.$definition.'] in ['.$this.'] as alias');
+	            if (!class_exists($class)) {
+	                class_alias($definition->getType(), $class);
+	            }
+	            return $definition;
+	        }
+	    }
+	    
+	    throw new ComponentNotFoundException( 'Component definition ['.$class.'] not found');
+	}
+	
+	public function getComponentHelp($component)
+	{
+	    $path = $this->_packageDir.'/Help/'.$component;
+	    
+	    if (!StrUtil::endsWith($path, '.html')) {
+	        $path .= '.html';
+	    }
+	    
+	    $path = realpath($path);
+	    
+	    if ($path === false) {
+	        throw new ComponentNotFoundException("Requested help file [$component] does not exist.");
+	    }
+	    
+	    $this->_logger->debug('Going to try opening help file ['.$path.']');
+	    
+	    if (($help = file_get_contents($path)) === false) {
+	        throw new ComponentNotFoundException('Could not find help for component ['.$component.'] in ['.$this->_packageDir.']');
+	    }
+	    
+	    return $help;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \Convo\Core\Factory\IComponentProvider::createPackageComponent()
+	 */
+	public function createPackageComponent( \Convo\Core\ConvoServiceInstance $service, PackageProvider $packageProvider, $componentData)
+	{
+	    $definition						=	$this->getComponentDefinition( $componentData['class']);
+	    $componentData['properties']	=	array_merge( $definition->getDefaultProperties(), $componentData['properties']);
+	    
+	    foreach ( $definition->getComponentProperties() as $property_name=>$property_definition) {
+	        
+	        if ( strpos( $property_name, '_') === 0) {
+	            // 				$this->_logger->debug( 'Skipping system property ['.$property_name.']');
+	            continue;
+	        }
+	        
+	        if ( !is_array( $property_definition)) {
+	            // 				$this->_logger->debug( 'Skipping simple property ['.$property_name.']');
+	            continue;
+	        }
+	        
+	        if ( isset( $property_definition['valueType']) && $property_definition['valueType'] === 'class' && !empty( $componentData['properties'][$property_name])) {
+	            $this->_logger->debug( 'Creating property ['.$property_name.']');
+	            if ( isset( $property_definition['editor_properties']['multiple']) && $property_definition['editor_properties']['multiple']) {
+	                
+	                $components	=	[];
+	                foreach ( $componentData['properties'][$property_name] as $component_data) {
+	                    $components[]	=	$packageProvider->createComponent( $service, $component_data);
+	                }
+	                
+	                $componentData['properties'][$property_name]	=	$components;
+	            } else {
+	                $componentData['properties'][$property_name]	=	$packageProvider->createComponent( $service, $componentData['properties'][$property_name]);
+	            }
+	        }
+	    }
+	    
+	    /* @var \Convo\Core\Factory\IComponentFactory $factory */
+	    
+	    try {
+	        $factory	=	$definition->getProperty( '_factory');
+	    } catch ( \Convo\Core\ComponentNotFoundException $e) {
+	        $factory	=	 new \Convo\Core\Factory\DefaultComponentFactory($componentData);
+	    }
+	    
+	    return $factory->createComponent( $componentData['properties'], $service);
+	}
+	
 
+	// DUMP DEFINITION
 	public function getRow()
 	{
 		$data	=	array(
@@ -335,6 +449,7 @@ abstract class AbstractPackageDefinition
         return $row;
     }
 
+    // UTIL
 	protected function _loadFile( $path)
 	{
 	    $this->_logger->debug( 'Loading definition file from ['.$path.']');
@@ -352,108 +467,9 @@ abstract class AbstractPackageDefinition
 	    return $data;
 	}
 
-    /**
-     * {@inheritDoc}
-     * @see \Convo\Core\Factory\IComponentProvider::getComponentDefinition()
-     */
-    public function getComponentDefinition( $class)
-    {
-// 		$this->_logger->debug( 'Searching for class ['.$class.'] in ['.$this.']');
-
-        foreach ( $this->_definitions as $definition) {
-            /* @var $definition ComponentDefinition */
-            if ( $definition->getType() === $class) {
-// 				$this->_logger->debug( 'Found definition ['.$definition.'] in ['.$this.']');
-                return $definition;
-            }
-
-            if ( $definition->isAlias($class) ) {
-                // $this->_logger->debug( 'Found definition ['.$definition.'] in ['.$this.'] as alias');
-                if (!class_exists($class)) {
-                    class_alias($definition->getType(), $class);
-                }
-                return $definition;
-            }
-        }
-
-        throw new ComponentNotFoundException( 'Component definition ['.$class.'] not found');
-    }
-
-    public function getComponentHelp($component)
-    {
-        $path = $this->_packageDir.'/Help/'.$component;
-
-        if (!StrUtil::endsWith($path, '.html')) {
-            $path .= '.html';
-        }
-
-        $path = realpath($path);
-
-        if ($path === false) {
-            throw new ComponentNotFoundException("Requested help file [$component] does not exist.");
-        }
-
-        $this->_logger->debug('Going to try opening help file ['.$path.']');
-
-        if (($help = file_get_contents($path)) === false) {
-            throw new ComponentNotFoundException('Could not find help for component ['.$component.'] in ['.$this->_packageDir.']');
-        }
-
-        return $help;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see \Convo\Core\Factory\IComponentProvider::createPackageComponent()
-     */
-    public function createPackageComponent( \Convo\Core\ConvoServiceInstance $service, PackageProvider $packageProvider, $componentData)
-    {
-        $definition						=	$this->getComponentDefinition( $componentData['class']);
-        $componentData['properties']	=	array_merge( $definition->getDefaultProperties(), $componentData['properties']);
-
-        foreach ( $definition->getComponentProperties() as $property_name=>$property_definition) {
-
-            if ( strpos( $property_name, '_') === 0) {
-// 				$this->_logger->debug( 'Skipping system property ['.$property_name.']');
-                continue;
-            }
-
-            if ( !is_array( $property_definition)) {
-// 				$this->_logger->debug( 'Skipping simple property ['.$property_name.']');
-                continue;
-            }
-
-            if ( isset( $property_definition['valueType']) && $property_definition['valueType'] === 'class' && !empty( $componentData['properties'][$property_name])) {
-                $this->_logger->debug( 'Creating property ['.$property_name.']');
-                if ( isset( $property_definition['editor_properties']['multiple']) && $property_definition['editor_properties']['multiple']) {
-
-                    $components	=	[];
-                    foreach ( $componentData['properties'][$property_name] as $component_data) {
-                        $components[]	=	$packageProvider->createComponent( $service, $component_data);
-                    }
-
-                    $componentData['properties'][$property_name]	=	$components;
-                } else {
-                    $componentData['properties'][$property_name]	=	$packageProvider->createComponent( $service, $componentData['properties'][$property_name]);
-                }
-            }
-        }
-
-        /* @var \Convo\Core\Factory\IComponentFactory $factory */
-
-
-        try {
-            $factory	=	$definition->getProperty( '_factory');
-        } catch ( \Convo\Core\ComponentNotFoundException $e) {
-            $factory	=	 new \Convo\Core\Factory\DefaultComponentFactory($componentData);
-        }
-
-        return $factory->createComponent( $componentData['properties'], $service);
-    }
-
     // UTIL
 	public function __toString()
 	{
-		return get_class( $this).'['.$this->_namespace.']';
+		return get_class( $this).'['.$this->_namespace.']['.$this->_packageDir.']';
 	}
 }
