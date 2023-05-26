@@ -40,7 +40,8 @@ abstract class AbstractPackageDefinition
     /**
      * @var SystemIntent[]
      */
-    private $_intents = [];
+    private $_intents;
+    private $_intentFiles = [];
 
 	/**
 	 * @var \Psr\Log\LoggerInterface
@@ -57,7 +58,12 @@ abstract class AbstractPackageDefinition
         $this->_namespace   =	$namespace;
         $this->_packageDir  =   $packageDir;
 
-		$this->_intents   =   $this->_initIntents();
+        // TEMP BACK COMPATIBILITY
+        $intents = $this->_initIntents();
+        if ( count( $intents)) {
+		  $this->_intents   =   $this->_initIntents();
+        }
+        
         $this->_entities  =   $this->_initEntities();
 
         $this->_definitions  =   $this->_initDefintions();
@@ -74,11 +80,15 @@ abstract class AbstractPackageDefinition
 	    return [];
 	}
 
+    /**
+     * @deprecated
+     * @return array
+     */
     protected function _initIntents()
     {
         return [];
     }
-
+    
     protected function _initEntities()
     {
         return [];
@@ -130,10 +140,31 @@ abstract class AbstractPackageDefinition
     
     public function getIntents()
     {
+        if ( !isset( $this->_intents)) {
+            $this->_intents = [];
+            foreach ( $this->_intentFiles as $path) {
+                $this->_intents = array_merge( $this->_intents, $this->_loadIntentsData( $path));
+            }
+        }
         return $this->_intents;
     }
     
+    protected function _registerIntentsFile( $path)
+    {
+        $this->_intentFiles[] = $path;
+    }
+    
+    /**
+     * @param string $path
+     * @deprecated
+     */
     protected function _loadIntents( $path)
+    {
+        $this->_registerIntentsFile( $path);
+        return $this->getIntents();
+    }
+    
+    protected function _loadIntentsData( $path)
     {
         $data  =   $this->_loadFile( $path);
         
