@@ -63,6 +63,12 @@ abstract class AbstractPackageDefinition
         $this->_definitions  =   $this->_initDefintions();
 	}
 
+	
+	public function accepts( $namespace)
+	{
+	    return $this->getNamespace() === $namespace;
+	}
+	
 	protected function _initDefintions()
 	{
 	    return [];
@@ -83,30 +89,7 @@ abstract class AbstractPackageDefinition
         return [];
     }
 
-    protected function _loadIntents( $path)
-    {
-        $data  =   $this->_loadFile( $path);
-
-        $intents   =   [];
-        foreach ( $data as $intent_name => $definitions) {
-            foreach ( $definitions as $definition) {
-                if ( !isset( $intents[$intent_name])) {
-                    $intents[$intent_name]     =   new SystemIntent( $intent_name);
-                }
-                $intent            =   new IntentModel();
-                $intent->load( $definition['definition']);
-
-                foreach ( $definition['platforms'] as $platform_id) {
-                    $intents[$intent_name]->setPlatformModel( $platform_id, $intent);
-                }
-            }
-        }
-
-        $this->_logger->debug( 'Loaded intents ['.implode( ', ', array_keys( $intents)).']');
-
-        return $intents;
-    }
-
+    
     /**
      * {@inheritDoc}
      * @see \Convo\Core\Intent\ISystemIntentRepository::findPlatformIntent()
@@ -131,10 +114,6 @@ abstract class AbstractPackageDefinition
         throw new \Convo\Core\ComponentNotFoundException( 'Platform ['.$platformId.'] intent ['.$name.'] not found');
     }
 
-    public function accepts($namespace)
-    {
-        return $this->getNamespace() === $namespace;
-    }
 
     /**
      * {@inheritDoc}
@@ -152,6 +131,30 @@ abstract class AbstractPackageDefinition
     public function getIntents()
     {
         return $this->_intents;
+    }
+    
+    protected function _loadIntents( $path)
+    {
+        $data  =   $this->_loadFile( $path);
+        
+        $intents   =   [];
+        foreach ( $data as $intent_name => $definitions) {
+            foreach ( $definitions as $definition) {
+                if ( !isset( $intents[$intent_name])) {
+                    $intents[$intent_name]     =   new SystemIntent( $intent_name);
+                }
+                $intent            =   new IntentModel();
+                $intent->load( $definition['definition']);
+                
+                foreach ( $definition['platforms'] as $platform_id) {
+                    $intents[$intent_name]->setPlatformModel( $platform_id, $intent);
+                }
+            }
+        }
+        
+        $this->_logger->debug( 'Loaded intents ['.implode( ', ', array_keys( $intents)).']');
+        
+        return $intents;
     }
 
     /**
