@@ -35,7 +35,7 @@ abstract class AbstractPackageDefinition
     /**
      * @var SystemEntity[]
      */
-    private $_entities = [];
+    private $_entities;
 
     /**
      * @var SystemIntent[]
@@ -64,8 +64,6 @@ abstract class AbstractPackageDefinition
             $this->_intents   =   $intents;
         }
         
-        $this->_entities  =   $this->_initEntities();
-
         $this->_definitions  =   $this->_initDefintions();
 	}
 
@@ -98,11 +96,6 @@ abstract class AbstractPackageDefinition
      * @return array
      */
     protected function _initIntents()
-    {
-        return [];
-    }
-    
-    protected function _initEntities()
     {
         return [];
     }
@@ -241,7 +234,15 @@ abstract class AbstractPackageDefinition
     
     public function getEntities()
     {
+        if ( !isset( $this->_entities)) {
+            $this->_entities = $this->_initEntities();
+        }
         return $this->_entities;
+    }
+    
+    protected function _initEntities()
+    {
+        return [];
     }
     
 	// TEMPLATES
@@ -419,7 +420,7 @@ abstract class AbstractPackageDefinition
             $data['intents'][]	=	$this->_intentToRow( $intent);
         }
 
-        foreach ( $this->_entities as $entity) {
+        foreach ( $this->getEntities() as $entity) {
             $data['entities'][]	=	$this->_entityToRow( $entity);
         }
 
