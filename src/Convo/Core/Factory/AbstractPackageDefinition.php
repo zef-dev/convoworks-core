@@ -61,7 +61,7 @@ abstract class AbstractPackageDefinition
         // TEMP BACK COMPATIBILITY
         $intents = $this->_initIntents();
         if ( count( $intents)) {
-		  $this->_intents   =   $this->_initIntents();
+            $this->_intents   =   $intents;
         }
         
         $this->_entities  =   $this->_initEntities();
