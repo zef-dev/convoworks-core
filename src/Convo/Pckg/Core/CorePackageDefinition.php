@@ -221,6 +221,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('json_last_error');
         $functions[] = ExpressionFunction::fromPhp('filter_var');
         $functions[] = ExpressionFunction::fromPhp('parse_url');
+        $functions[] = ExpressionFunction::fromPhp('array_slice');
+        $functions[] = ExpressionFunction::fromPhp('array_chunk');
 
         $convo_val = function ($args, $data) use (&$convo_val) {
             if (is_array($data)) {

@@ -3,6 +3,7 @@
 ## [Current development]
 
 * Add parse_url() PHP function
+* Add array_slice() and array_chunk() PHP functions
 * Do not load definitions (templates, intents) until required
 
 ## [Releases]
