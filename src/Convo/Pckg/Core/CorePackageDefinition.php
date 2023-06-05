@@ -224,6 +224,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('parse_url');
         $functions[] = ExpressionFunction::fromPhp('array_slice');
         $functions[] = ExpressionFunction::fromPhp('array_chunk');
+        $functions[] = ExpressionFunction::fromPhp('set_time_limit');
 
         $convo_val = function ($args, $data) use (&$convo_val) {
             if (is_array($data)) {
