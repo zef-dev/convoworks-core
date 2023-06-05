@@ -217,6 +217,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('trim');
         $functions[] = ExpressionFunction::fromPhp('file_get_contents');
         $functions[] = ExpressionFunction::fromPhp('file_put_contents');
+        $functions[] = ExpressionFunction::fromPhp('unlink');
         $functions[] = ExpressionFunction::fromPhp('json_last_error_msg');
         $functions[] = ExpressionFunction::fromPhp('json_last_error');
         $functions[] = ExpressionFunction::fromPhp('filter_var');
