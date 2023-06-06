@@ -2,11 +2,15 @@
 
 ## [Current development]
 
+
+## [Releases]
+
+## 0.22.23.0 - 2023-06-06
+
+* Add unlink() and set_time_limit() PHP function
 * Add parse_url() PHP function
 * Add array_slice() and array_chunk() PHP functions
 * Do not load definitions (templates, intents) until required
-
-## [Releases]
 
 ## 0.22.22.0 - 2023-05-15
 
