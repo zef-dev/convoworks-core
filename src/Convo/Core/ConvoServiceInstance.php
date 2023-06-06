@@ -315,7 +315,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         // INITIALIZE
         $this->_request					=	$request;
         $this->_response				=	$response;
-
+        $this->_stateLog = [];
+        
         // CONTEXTS
         $this->_logger->debug( 'Initialize contexts ['.count( $this->_contexts).']');
         foreach ( $this->_contexts as $eval) {
