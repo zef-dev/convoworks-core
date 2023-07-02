@@ -779,6 +779,9 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
      */
     public function evaluateArgs( $args, $eval)
     {
+        if ( is_string( $args)) {
+            return $eval->evaluateString( $args);
+        }
         // $this->_logger->debug( 'Got raw args ['.print_r( $args, true).']');
         $returnedArgs   =   [];
         foreach ( $args as $key => $val)
