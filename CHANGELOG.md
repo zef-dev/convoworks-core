@@ -5,6 +5,11 @@
 
 ## [Releases]
 
+## 0.22.23.1 - 2023-07-03
+
+* Fix args (assoc array) passed as string to be evaluated
+* Check if field exists when parsing complex keys
+
 ## 0.22.23.0 - 2023-06-06
 
 * Add unlink() and set_time_limit() PHP function
