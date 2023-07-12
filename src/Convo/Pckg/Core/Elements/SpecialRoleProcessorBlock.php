@@ -108,8 +108,6 @@ class SpecialRoleProcessorBlock extends \Convo\Pckg\Core\Elements\ElementCollect
 		}
 
 		$session_params->setServiceParam( 'failure_count', intval( $session_params->getServiceParam( 'failure_count')) + 1);
-
-		$this->_readFallback($request, $response);
 	}
 
 	protected function _processProcessor(
