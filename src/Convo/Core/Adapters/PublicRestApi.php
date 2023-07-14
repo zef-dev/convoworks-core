@@ -87,9 +87,31 @@ class PublicRestApi implements RequestHandlerInterface
 		    // FACEBOOK
 		} else if ( $info->startsWith( 'service-run/facebook_messenger')) {
 		    $class_name	= '\Convo\Core\Adapters\Fbm\FacebookMessengerRestHandler';
+		    
 		    // VIBER
 		} else if ( $info->startsWith( 'service-run/viber')) {
             $class_name	= '\Convo\Core\Adapters\Viber\ViberRestHandler';
+            
+		    // OTHER
+		} else if ( $info->startsWith( 'service-run')) {
+		    
+		    if ( $route = $info->routePartial( 'service-run/{platformId}')) {
+		        $package_id  =   $route->get( 'platformId');
+		        $platform_id  =   $route->get( 'platformId');
+		        $provider     =   $this->_packageProviderFactory->getProviderByNamespace( $package_id);
+		        if ( $provider instanceof IPlatformProvider) {
+		            /* @var IPlatformProvider $provider */
+		            $platform     =   $provider->getPlatform( $platform_id);
+		            if ( $platform instanceof IRestPlatform) {
+		                /* @var IRestPlatform $platform */
+		                $handler      =   $platform->getPublicRestHandler();
+		                return $handler->handle( $request);
+		            }
+		        }
+		        throw new \Convo\Core\Rest\NotFoundException( 'No appropriate platform provider found for ['.$package_id.']['.$platform_id.'] at ['.$info.']');
+		    }
+		    
+		    throw new \Convo\Core\Rest\NotFoundException( 'We got other [service-run] but it is not handled at ['.$info.']');
         }
 
 		// MEDIA

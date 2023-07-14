@@ -196,13 +196,17 @@ class PlatformPublisherFactory
 		    $parts = explode( '.', $platformId, 2);
 		    $package_id = $parts[0];
 		    $platform_id = $parts[1];
-		    $provider = $this->_packageProviderFactory->getProviderByServiceId( $user, $serviceId);
-		    $package = $provider->findPackageById( $package_id);
-		    if ( $package instanceof IPlatformProvider) {
-		        /* @var IPlatformProvider $package */
-		        $platform = $package->getPlatform( $platform_id);
-		        return $platform->getPlatformPublisher( $user, $serviceId);
-		    }
+		} else {
+		    $package_id = $platformId;
+		    $platform_id = $platformId;
+		}
+		
+		$provider = $this->_packageProviderFactory->getProviderByServiceId( $user, $serviceId);
+		$package = $provider->findPackageById( $package_id);
+		if ( $package instanceof IPlatformProvider) {
+		    /* @var IPlatformProvider $package */
+		    $platform = $package->getPlatform( $platform_id);
+		    return $platform->getPlatformPublisher( $user, $serviceId);
 		}
 
 		throw new \Convo\Core\ComponentNotFoundException( 'Could not find publiher for platform ['.$platformId.']');
