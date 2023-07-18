@@ -199,6 +199,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('urlencode');
         $functions[] = ExpressionFunction::fromPhp('str_replace');
         $functions[] = ExpressionFunction::fromPhp('array_splice');
+        $functions[] = ExpressionFunction::fromPhp('is_object');
         $functions[] = ExpressionFunction::fromPhp('is_array');
         $functions[] = ExpressionFunction::fromPhp('in_array');
         $functions[] = ExpressionFunction::fromPhp('array_search');
