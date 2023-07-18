@@ -5,6 +5,11 @@
 
 ## [Releases]
 
+## 0.22.24 - 2023-07-18
+
+* Add support for additional internal platforms
+* Register is_object() and array_keys() PHP functions
+
 ## 0.22.23.1 - 2023-07-03
 
 * Fix args (assoc array) passed as string to be evaluated
