@@ -19,6 +19,11 @@ class SpecialRoleProcessorBlock extends \Convo\Pckg\Core\Elements\ElementCollect
 	 * @var \Convo\Core\Workflow\IConversationProcessor[]
 	 */
 	private $_processors	=	array();
+	
+	/**
+	 * @var \Convo\Core\Workflow\IConversationElement[]
+	 */
+	private $_failback	=	array();
 
 	/**
 	 * @var string
@@ -37,6 +42,13 @@ class SpecialRoleProcessorBlock extends \Convo\Pckg\Core\Elements\ElementCollect
 		foreach ( $properties['processors'] as $processor) {
 			/* @var $processor \Convo\Core\Workflow\IConversationProcessor */
 			$this->addProcessor( $processor);
+		}
+		
+		if ( isset( $properties['failback'])) {
+		    foreach ( $properties['failback'] as $elem) {
+		        $this->_failback[] = $elem;
+		        $this->addChild( $elem);
+		    }
 		}
 
 		$this->_blockName = $properties['name'] ?? 'Nameless block';
@@ -108,6 +120,12 @@ class SpecialRoleProcessorBlock extends \Convo\Pckg\Core\Elements\ElementCollect
 		}
 
 		$session_params->setServiceParam( 'failure_count', intval( $session_params->getServiceParam( 'failure_count')) + 1);
+		
+		foreach ($this->_failback as $elem)
+		{
+		    /** @var \Convo\Core\Workflow\IConversationElement $elem */
+		    $elem->read( $request, $response);
+		}
 	}
 
 	protected function _processProcessor(

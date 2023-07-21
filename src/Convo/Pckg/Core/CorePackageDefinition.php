@@ -2418,6 +2418,17 @@ In default phase you can inform users about problem you have interpreting comman
                         'description' => 'Processors to be executed in process phase',
                         'valueType' => 'class'
                     ),
+                    'failback' => array(
+                        'editor_type' => 'service_components',
+                        'editor_properties' => array(
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'multiple' => true,
+                        ),
+                        'defaultValue' => array(),
+                        'name' => 'Failback phase',
+                        'description' => 'Elements to be executed if none of the processors was activated',
+                        'valueType' => 'class'
+                    ),
                     '_workflow' => 'read',
                     '_system' => true,
                 )
