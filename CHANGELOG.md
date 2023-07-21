@@ -5,6 +5,12 @@
 
 ## [Releases]
 
+## 0.22.25 - 2023-07-21
+
+* Add round() and number_format() functions
+* Use json encode and decode functions directly
+* Add failback flow to the special role processor
+
 ## 0.22.24 - 2023-07-18
 
 * Add support for additional internal platforms
