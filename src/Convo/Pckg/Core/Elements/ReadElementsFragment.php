@@ -23,8 +23,22 @@ class ReadElementsFragment extends \Convo\Core\Workflow\AbstractWorkflowContaine
 	
 	public function read( \Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
-		$block	=	$this->_findFragment();
-		$block->setParent( $this);
+		$block    =   $this->_findFragment();
+		$found    =   false;
+		$parent   =   $this->getParent();
+		while ( !$parent->isRoot()) {
+		    if ( $parent === $block) {
+		        $this->_logger->warning( 'Self include in ['.$this.'] while including fragment ['.$block.']');
+		        $found = true;
+		        break;
+		    }
+		    $parent =   $parent->getParent();
+		}
+		
+		if ( !$found) {
+		    $block->setParent( $this);
+		}
+		
 		$block->read( $request, $response);
 	}
 	
