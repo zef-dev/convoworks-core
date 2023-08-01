@@ -206,6 +206,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('array_column');
         $functions[] = ExpressionFunction::fromPhp('array_keys');
         $functions[] = ExpressionFunction::fromPhp('array_merge');
+        $functions[] = ExpressionFunction::fromPhp('array_diff');
         $functions[] = ExpressionFunction::fromPhp('is_numeric');
         $functions[] = ExpressionFunction::fromPhp('substr');
         $functions[] = ExpressionFunction::fromPhp('stripos');
