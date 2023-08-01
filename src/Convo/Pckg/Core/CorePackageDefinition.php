@@ -231,6 +231,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('set_time_limit');
         $functions[] = ExpressionFunction::fromPhp('number_format');
         $functions[] = ExpressionFunction::fromPhp('round');
+        $functions[] = ExpressionFunction::fromPhp('preg_replace');
 
         $convo_val = function ($args, $data) use (&$convo_val) {
             if (is_array($data)) {
