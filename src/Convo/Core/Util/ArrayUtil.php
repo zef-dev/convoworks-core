@@ -170,7 +170,7 @@ abstract class ArrayUtil
             return self::_setDeepFieldObject( $parts, $value, $base);
         }
         
-        throw new \RuntimeException( 'Failed to set ['.$key.']');
+        throw new \RuntimeException( 'Failed to set ['.$key.'] for base of type ['.gettype( $base).']');
     }
     
     private static function _setDeepFieldObject( $parts, $value, $base) 
