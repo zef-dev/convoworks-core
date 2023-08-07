@@ -93,7 +93,7 @@ class ComponentDefinition
 		if ( class_exists( $this->_type)) {
 		    $row['_interfaces']   =   array_values( class_implements( $this->_type));
 		} else {
-		    $row['_interfaces']   =   [];
+		    $row['_interfaces']   =   isset( $this->_componentProperties['_interface']) ? [ $this->_componentProperties['_interface']] : [];
 		}
 		
 		return $row;
