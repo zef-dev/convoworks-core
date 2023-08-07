@@ -9,6 +9,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Psr\SimpleCache\CacheInterface;
 use Convo\Core\Workflow\IRunnableBlock;
 use Convo\Core\Intent\SimpleEntityValueParser;
+use League\HTMLToMarkdown\HtmlConverter;
 
 class CorePackageDefinition extends AbstractPackageDefinition
 {
@@ -443,6 +444,18 @@ class CorePackageDefinition extends AbstractPackageDefinition
 				return strtotime($datetimeStr);
 			}
 		);
+		
+		$functions[] = new ExpressionFunction(
+		    'html_to_markdown',
+		    function ($html, $options=[]) {
+		        return sprintf('html_to_markdown(%s, %s)', $html, var_export( $options, true));
+		    },
+		    function ($args, $html, $options=[]) {
+		        $converter = new HtmlConverter( $options);
+		        $markdown = $converter->convert($html);
+		        return $markdown;
+		    }
+	    );
 
         $functions[] = new ExpressionFunction(
             'parse_date_time',
