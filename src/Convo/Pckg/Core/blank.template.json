@@ -1,42 +1,85 @@
 {
-    "template_id" : "blank",
-    "name" : "Blank",
-    "description" : "Empty, blank service",
-    "service" : {
-        "convo_service_version": 6,
-        "properties": [],
-        "packages": ["convo-core"],
-        "configurations": [],
+    "template_id": "blank",
+    "name": "Blank",
+    "description": "Empty, blank service",
+    "service": {
+        "convo_service_version": 40,
+        "packages": [
+            "convo-core"
+        ],
         "contexts": [],
         "variables": [],
-        "fragments": [],
+        "preview_variables": [],
         "entities": [],
         "intents": [],
-        "blocks": [ {
-            "class": "\\Convo\\Pckg\\Core\\Elements\\ConversationBlock",
-            "namespace": "convo-core",
-            "properties": {
-                "block_id": "home",
-                "role": "conversation_block",
-                "name": "Home",
-                "elements": [
-                    {
-                        "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
-                        "namespace": "convo-core",
-                        "properties": {
-                            "type": "default",
-                            "alexa_domain": "normal",
-                            "alexa_emotion": "neutral",
-                            "alexa_emotion_intensity": "medium",
-                            "text": "Hello world!",
-                            "append": false
+        "blocks": [
+            {
+                "class": "\\Convo\\Pckg\\Core\\Elements\\ConversationBlock",
+                "namespace": "convo-core",
+                "properties": {
+                    "block_id": "home",
+                    "role": "conversation_block",
+                    "name": "Home",
+                    "elements": [
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "type": "default",
+                                "alexa_domain": "normal",
+                                "alexa_emotion": "neutral",
+                                "alexa_emotion_intensity": "medium",
+                                "text": "Hello world!",
+                                "append": false,
+                                "_component_id": "f2d7402d-cb07-ac7a-7814-5ec8eea6662e"
+                            }
                         }
-                    }
-                ],
-                "processors": [],
-                "fallback": []
+                    ],
+                    "processors": [],
+                    "fallback": [],
+                    "_component_id": "eaf287c9-c1c7-79a4-42b3-6b8a8dcebe85"
+                }
+            },
+            {
+                "class": "\\Convo\\Pckg\\Core\\Elements\\ConversationBlock",
+                "namespace": "convo-core",
+                "properties": {
+                    "role": "error_handler",
+                    "block_id": "Error_handler",
+                    "name": "Error handler",
+                    "pre_dispatch": [],
+                    "elements": [
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\CommentElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "comment": "It is recommended not to display error message in production.",
+                                "context": null,
+                                "_component_id": "qmyzikrh-vtcm-f5oq-s36b-saolg581hzwl"
+                            }
+                        },
+                        {
+                            "class": "\\Convo\\Pckg\\Core\\Elements\\TextResponseElement",
+                            "namespace": "convo-core",
+                            "properties": {
+                                "type": "default",
+                                "text": "Error occurred. ${error.getMessage()}",
+                                "append": false,
+                                "alexa_domain": "normal",
+                                "alexa_emotion": "neutral",
+                                "alexa_emotion_intensity": "medium",
+                                "_component_id": "mxxoulti-f8vf-vstq-db5p-aahzr0azxnev"
+                            }
+                        }
+                    ],
+                    "processors": [],
+                    "fallback": [],
+                    "_component_id": "d7gifafb-hkkv-lnng-yorz-tlbse8h3yiep"
+                }
             }
-        }
-        ]
+        ],
+        "fragments": [],
+        "properties": [],
+        "configurations": []
     }
 }
