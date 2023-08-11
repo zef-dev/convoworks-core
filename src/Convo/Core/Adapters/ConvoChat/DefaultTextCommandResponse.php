@@ -52,7 +52,7 @@ class DefaultTextCommandResponse implements \Convo\Core\Workflow\IConvoResponse
 	    if ($append && count($this->_texts) > 0) {
             $this->_appendText($text, $this->_texts);
         } else {
-            $this->_texts[]	=	'<p>'.$this->_clearWrappers( $text).'</p>';
+            $this->_texts[]	=	$text;
         }
 	}
 
@@ -79,7 +79,7 @@ class DefaultTextCommandResponse implements \Convo\Core\Workflow\IConvoResponse
         if ($append && count($this->_reprompts) > 0) {
             $this->_appendText($text, $this->_reprompts);
         } else {
-            $this->_reprompts[]	=	'<p>'.$this->_clearWrappers( $text).'</p>';
+            $this->_reprompts[]	=	$text;
         }
 	}
 
@@ -97,8 +97,8 @@ class DefaultTextCommandResponse implements \Convo\Core\Workflow\IConvoResponse
 // 		"text_reprompt":"Please say, which game type would you like to play? Guess, or pick the number",
 // 		"should_end_session":false}
 		$response	=	[
-				'text_responses' => array_map( function ( $item) { return strip_tags( $item); }, $this->_texts),
-				'text_reprompts' => array_map( function ( $item) { return strip_tags( $item); }, $this->_reprompts),
+				'text_responses' => array_map( function ( $item) { return $item; }, $this->_texts),
+				'text_reprompts' => array_map( function ( $item) { return $item; }, $this->_reprompts),
 				'should_end_session' => $this->shouldEndSession(),
 		];
 		return $response;
@@ -116,7 +116,7 @@ class DefaultTextCommandResponse implements \Convo\Core\Workflow\IConvoResponse
 	private function _appendText($text, &$array)
     {
         $preceding = array_pop($array);
-        $preceding = "<p>".$this->_clearWrappers($preceding).' '.$this->_clearWrappers($text)."</p>";
+        $preceding = $preceding.' '.$text;
         $array[] = $preceding;
     }
 
