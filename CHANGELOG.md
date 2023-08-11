@@ -7,10 +7,10 @@
 
 ## 0.22.26 - 2023-08-11
 
-* Allow framents to include themselves
-* Register PHP functions in the core package: preg_replace(), array_diff(), htmlentities(), htmlspecialchars(), html_entity_decode(), 
-* Register custom function in the core package: html_to_markdown()
-* Allow html in the text message responses
+* Allow fragments to include themselves.
+* Register PHP functions in the core package: `preg_replace()`, `array_diff()`, `htmlentities()`, `htmlspecialchars()`, `html_entity_decode()`.
+* Register custom function in the core package: `html_to_markdown()`.
+* Allow HTML in text message responses.
 
 
 ## 0.22.25 - 2023-07-21
