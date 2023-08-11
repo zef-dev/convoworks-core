@@ -2,6 +2,6 @@
 
 namespace Convo\Core;
 
-class SessionEndedException extends \Exception
+class SessionEndedException extends RequestEndedException
 {
 }
