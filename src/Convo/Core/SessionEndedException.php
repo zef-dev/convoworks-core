@@ -2,6 +2,10 @@
 
 namespace Convo\Core;
 
-class SessionEndedException extends RequestEndedException
+/**
+ * @author Tole
+ * @deprecated
+ */
+class SessionEndedException extends EndRequestException
 {
 }

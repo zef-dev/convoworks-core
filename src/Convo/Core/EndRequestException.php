@@ -2,5 +2,5 @@
 
 namespace Convo\Core;
 
-class RequestEndedException extends \Exception
+class EndRequestException extends \Exception
 {}

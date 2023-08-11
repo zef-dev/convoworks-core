@@ -353,7 +353,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
                         try {
                             $block->run( $request, $response);
-                        } catch ( \Convo\Core\RequestEndedException $e) {
+                        } catch ( \Convo\Core\EndRequestException $e) {
                             $this->_logger->info( 'Request terminate signal.');
                         }  catch ( StateChangedException $e) {
                             $this->_logger->info( $e->getMessage());
@@ -412,7 +412,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                 $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SALES_BLOCK);
                 try {
                     $block->run($request, $response);
-                } catch (\Convo\Core\RequestEndedException $e) {
+                } catch (\Convo\Core\EndRequestException $e) {
                     $this->_logger->info('Request terminate signal.');
                 }  catch (StateChangedException $e) {
                     $this->_logger->info($e->getMessage());
@@ -429,7 +429,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                     $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_VOICE_PIN_CONFIRMATION_BLOCK);
                     try {
                         $block->run($request, $response);
-                    } catch (\Convo\Core\RequestEndedException $e) {
+                    } catch (\Convo\Core\EndRequestException $e) {
                         $this->_logger->info('Request terminate signal.');
                     }  catch (StateChangedException $e) {
                         $this->_logger->info($e->getMessage());
@@ -568,7 +568,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $this->_logger->info( 'Going to process block ['.$block->getComponentId().'] with text ['.$request->getText().']');
         try {
             $block->run( $request, $response);
-        } catch (\Convo\Core\RequestEndedException $e) {
+        } catch (\Convo\Core\EndRequestException $e) {
             $this->_logger->info('Request terminate signal.');
         } catch ( \Convo\Core\StateChangedException $e) {
             $this->_logger->info('Caught state change ['.$e->getMessage().']');
@@ -586,7 +586,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
         try {
             $block->read( $request, $response);
-        } catch (\Convo\Core\RequestEndedException $e) {
+        } catch (\Convo\Core\EndRequestException $e) {
             $this->_logger->info('Request terminate signal.');
         } catch ( \Convo\Core\StateChangedException $e) {
             $this->_logger->info('Caught state change ['.$e->getMessage().']');
@@ -605,7 +605,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
         try {
             $block->read( $request, $response);
-        } catch (\Convo\Core\RequestEndedException $e) {
+        } catch (\Convo\Core\EndRequestException $e) {
             $this->_logger->info('Request terminate signal.');
         } catch ( \Convo\Core\StateChangedException $e) {
             $this->_logger->info( $e->getMessage());
