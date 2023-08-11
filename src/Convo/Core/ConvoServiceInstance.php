@@ -353,8 +353,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
                         try {
                             $block->run( $request, $response);
-                        } catch ( \Convo\Core\SessionEndedException $e) {
-                            $this->_logger->info( 'Session terminate signal.');
+                        } catch ( \Convo\Core\RequestEndedException $e) {
+                            $this->_logger->info( 'Request terminate signal.');
                         }  catch ( StateChangedException $e) {
                             $this->_logger->info( $e->getMessage());
                             $this->_readState( $e->getState(), $request, $response);
@@ -412,8 +412,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                 $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SALES_BLOCK);
                 try {
                     $block->run($request, $response);
-                } catch (\Convo\Core\SessionEndedException $e) {
-                    $this->_logger->info('Session terminate signal.');
+                } catch (\Convo\Core\RequestEndedException $e) {
+                    $this->_logger->info('Request terminate signal.');
                 }  catch (StateChangedException $e) {
                     $this->_logger->info($e->getMessage());
                     $this->_readState($e->getState(), $request, $response);
@@ -429,8 +429,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                     $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_VOICE_PIN_CONFIRMATION_BLOCK);
                     try {
                         $block->run($request, $response);
-                    } catch (\Convo\Core\SessionEndedException $e) {
-                        $this->_logger->info('Session terminate signal.');
+                    } catch (\Convo\Core\RequestEndedException $e) {
+                        $this->_logger->info('Request terminate signal.');
                     }  catch (StateChangedException $e) {
                         $this->_logger->info($e->getMessage());
                         $this->_readState($e->getState(), $request, $response);
@@ -568,8 +568,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $this->_logger->info( 'Going to process block ['.$block->getComponentId().'] with text ['.$request->getText().']');
         try {
             $block->run( $request, $response);
-        } catch (\Convo\Core\SessionEndedException $e) {
-            $this->_logger->info('Session terminate signal.');
+        } catch (\Convo\Core\RequestEndedException $e) {
+            $this->_logger->info('Request terminate signal.');
         } catch ( \Convo\Core\StateChangedException $e) {
             $this->_logger->info('Caught state change ['.$e->getMessage().']');
             $params->setServiceParam(self::SERVICE_STATE_PREV_NAME, $block->getComponentId());
@@ -586,8 +586,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
         try {
             $block->read( $request, $response);
-        } catch (\Convo\Core\SessionEndedException $e) {
-            $this->_logger->info('Session terminate signal.');
+        } catch (\Convo\Core\RequestEndedException $e) {
+            $this->_logger->info('Request terminate signal.');
         } catch ( \Convo\Core\StateChangedException $e) {
             $this->_logger->info('Caught state change ['.$e->getMessage().']');
             if ( $e->getState() === $state) {
@@ -605,8 +605,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
         try {
             $block->read( $request, $response);
-        } catch (\Convo\Core\SessionEndedException $e) {
-            $this->_logger->info('Session terminate signal.');
+        } catch (\Convo\Core\RequestEndedException $e) {
+            $this->_logger->info('Request terminate signal.');
         } catch ( \Convo\Core\StateChangedException $e) {
             $this->_logger->info( $e->getMessage());
             if ( $e->getState() === $block->getComponentId()) {
