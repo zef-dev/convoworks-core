@@ -1192,6 +1192,19 @@ class CorePackageDefinition extends AbstractPackageDefinition
             ),
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
+                '\Convo\Pckg\Core\Elements\EndRequestElement',
+                'End Request',
+                'Stops current service execution',
+                array(
+                    '_help' =>  array(
+                        'type' => 'file',
+                        'filename' => 'end-request-element.html'
+                    ),
+                    '_workflow' => 'read',
+                )
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
                 '\Convo\Pckg\Core\Processors\SimpleProcessor',
                 'Simple Processor',
                 'Process elements if child filters are activated',
