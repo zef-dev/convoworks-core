@@ -2,10 +2,6 @@
 
 namespace Convo\Core;
 
-class SessionEndedException extends StateChangedException
+class SessionEndedException extends \Exception
 {
-    public function __construct($previous = null)
-    {
-        parent::__construct('session_ended', $previous);
-    }
 }
