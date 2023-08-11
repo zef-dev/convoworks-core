@@ -16,7 +16,7 @@ class EndSessionElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCo
 		
 		$response->setShouldEndSession(true);
 		
-		throw new \Convo\Core\SessionEndedException();
+		throw new \Convo\Core\EndRequestException();
 	}
 	
 	// UTIL
