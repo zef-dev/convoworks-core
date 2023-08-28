@@ -79,10 +79,14 @@ class LoopElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 			$limit = abs($limit);
 			$end = min(($start + $limit), $end);
 		}
+		
+		$this->_logger->debug('Offset ['.$offset.']  start & end ['.$start.', '.$end.']');
 
 		$i = 0;
 		foreach ($items as $item) {
+		    
 			if ($i < $start) {
+			    $i++;
 				continue;
 			}
 
