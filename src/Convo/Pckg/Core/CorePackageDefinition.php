@@ -237,6 +237,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('htmlentities');
         $functions[] = ExpressionFunction::fromPhp('htmlspecialchars');
         $functions[] = ExpressionFunction::fromPhp('html_entity_decode');
+        $functions[] = ExpressionFunction::fromPhp('str_getcsv');
 //         $functions[] = ExpressionFunction::fromPhp('call_user_func');
 
         $convo_val = function ($args, $data) use (&$convo_val) {
@@ -285,7 +286,24 @@ class CorePackageDefinition extends AbstractPackageDefinition
             }
         );
         
-
+        $functions[] = new ExpressionFunction(
+            'parse_cvs_file',
+            function ( $path, $separator=",") {
+                return sprintf('parse_cvs_file(%s, %s)', var_export($path, true), var_export($separator, true));
+            },
+            function ($args, $path, $separator=",") {
+                $fp = fopen( $path, 'r');
+                $array = array();
+                
+                while ( $row = fgetcsv( $fp, null, $separator)) {
+                    $array[] = $row;
+                }
+                fclose( $fp);
+                return $array;
+            }
+        );
+        
+        
         $functions[] = new ExpressionFunction(
             'array_shuffle',
             function ($array) {
