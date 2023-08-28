@@ -237,6 +237,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('htmlentities');
         $functions[] = ExpressionFunction::fromPhp('htmlspecialchars');
         $functions[] = ExpressionFunction::fromPhp('html_entity_decode');
+//         $functions[] = ExpressionFunction::fromPhp('call_user_func');
 
         $convo_val = function ($args, $data) use (&$convo_val) {
             if (is_array($data)) {
@@ -264,6 +265,26 @@ class CorePackageDefinition extends AbstractPackageDefinition
             },
             $convo_val
         );
+        
+        // https://www.php.net/manual/en/function.call-user-func.php
+        $functions[] = new ExpressionFunction(
+            'call_user_func',
+            function ($callback, $parameter = null) {
+                return sprintf('call_user_func(%s, %s)', var_export($callback, true), var_export($parameter, true));
+            },
+            function ($args, $callback, $parameter = []) {
+                $this->_logger->debug( 'Calling function ['.$callback.'] with arguments RAW ['.print_r( $parameter, true).']');
+                if ( !function_exists( $callback)) {
+                    return 'Error: function "'.$callback.'" does not exists.';
+                }
+                if ( !is_array( $parameter)) {
+                    $parameter = [$parameter];
+                }
+                $this->_logger->debug( 'Calling function ['.$callback.'] with arguments ['.print_r( $parameter, true).']');
+                return call_user_func($callback, ...$parameter);
+            }
+        );
+        
 
         $functions[] = new ExpressionFunction(
             'array_shuffle',
