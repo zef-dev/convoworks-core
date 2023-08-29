@@ -5,6 +5,12 @@
 
 ## [Releases]
 
+## 0.22.27 - 2023-08-29
+
+* Registered PHP functions in the core package: `rawurlencode()`, `base64_encode()`, `hash_hmac()`, `uniqid()`, `http_build_query()`.
+* Registered `call_user_func()` as a custom function. The difference is that arguments are passed as a single array (not spread).
+* Added `parse_csv_file()` custom function, which internally uses `fgetcsv()`.
+
 ## 0.22.26 - 2023-08-11
 
 * Allow fragments to include themselves.
