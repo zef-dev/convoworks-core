@@ -238,7 +238,11 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('htmlspecialchars');
         $functions[] = ExpressionFunction::fromPhp('html_entity_decode');
         $functions[] = ExpressionFunction::fromPhp('str_getcsv');
-//         $functions[] = ExpressionFunction::fromPhp('call_user_func');
+        $functions[] = ExpressionFunction::fromPhp('rawurlencode');
+        $functions[] = ExpressionFunction::fromPhp('base64_encode');
+        $functions[] = ExpressionFunction::fromPhp('hash_hmac');
+        $functions[] = ExpressionFunction::fromPhp('uniqid');
+        $functions[] = ExpressionFunction::fromPhp('http_build_query');
 
         $convo_val = function ($args, $data) use (&$convo_val) {
             if (is_array($data)) {
