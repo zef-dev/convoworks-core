@@ -274,7 +274,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         
         $functions[] = new ExpressionFunction(
             'call_user_func',
-            function ($callback, $parameter = null) {
+            function ($callback, $parameter = []) {
                 return sprintf('call_user_func(%s, %s)', var_export($callback, true), var_export($parameter, true));
             },
             function ($args, $callback, $parameter = []) {
