@@ -5,6 +5,10 @@
 
 ## [Releases]
 
+## 0.22.27.1 - 2023-08-29
+
+* Registered PHP `function_exists()` function.
+
 ## 0.22.27 - 2023-08-29
 
 * Registered PHP functions in the core package: `rawurlencode()`, `base64_encode()`, `hash_hmac()`, `uniqid()`, `http_build_query()`.
