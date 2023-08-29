@@ -243,6 +243,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('hash_hmac');
         $functions[] = ExpressionFunction::fromPhp('uniqid');
         $functions[] = ExpressionFunction::fromPhp('http_build_query');
+        $functions[] = ExpressionFunction::fromPhp('function_exists');
 
         $convo_val = function ($args, $data) use (&$convo_val) {
             if (is_array($data)) {
