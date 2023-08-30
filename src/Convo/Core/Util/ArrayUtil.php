@@ -220,12 +220,12 @@ abstract class ArrayUtil
                 throw new \Exception( 'Empty part');
             }
             
-            if ( isset( $base[$part]) && is_array( $base[$part])) {
+            if ( isset( $base[$part]) && is_array( $base[$part]) && count( $parts)) {
                 self::_setDeepFieldArray( $parts, $value, $base[$part]);
                 return $base;
             }
             
-            if ( isset( $base[$part]) && is_object( $base[$part])) {
+            if ( isset( $base[$part]) && is_object( $base[$part]) && count( $parts)) {
                 self::_setDeepFieldObject( $parts, $value, $base[$part]);
                 return $base;
             } 
