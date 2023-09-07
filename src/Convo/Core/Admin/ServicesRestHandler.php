@@ -8,6 +8,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Convo\Core\Publish\IPlatformPublisher;
 use Convo\Core\Util\ArrayUtil;
 use Convo\Core\Util\NotImplementedException;
+use Convo\Core\DataItemNotFoundException;
+use Convo\Core\Rest\InvalidRequestException;
 
 class ServicesRestHandler implements RequestHandlerInterface
 {
@@ -223,8 +225,14 @@ class ServicesRestHandler implements RequestHandlerInterface
 		unset($service_data['configurations']);
         unset($service_data['release_mappings']);
 
-        $this->_convoServiceFactory->fixComponentIds($service_data);
-
+        try {
+            $this->_packageProviderFactory->getProviderFromPackageIds( $service_data['packages']);
+        } catch ( DataItemNotFoundException $e) {
+            throw new InvalidRequestException( 'Failed to load packages. '.$e->getMessage(), 0, $e);
+        }
+        
+        $this->_convoServiceFactory->fixComponentIds( $service_data);
+        
 		$service_id = $this->_convoServiceDataProvider->createNewService(
 			$user,
 			$service_name,
