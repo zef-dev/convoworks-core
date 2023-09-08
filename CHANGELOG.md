@@ -5,6 +5,12 @@
 
 ## [Releases]
 
+## 0.22.27.2 - 2023-09-08
+
+* Corrected default values in function definitions.
+* Fixed complex array key settings.
+* Implemented a check for the existence of required packages during service import.
+
 ## 0.22.27.1 - 2023-08-29
 
 * Registered PHP `function_exists()` function.
