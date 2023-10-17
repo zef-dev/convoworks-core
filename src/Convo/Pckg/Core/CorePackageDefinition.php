@@ -190,6 +190,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('date');
         $functions[] = ExpressionFunction::fromPhp('is_numeric');
         $functions[] = ExpressionFunction::fromPhp('is_int');
+        $functions[] = ExpressionFunction::fromPhp('is_string');
         $functions[] = ExpressionFunction::fromPhp('intval');
         $functions[] = ExpressionFunction::fromPhp('strval');
         $functions[] = ExpressionFunction::fromPhp('ceil');
