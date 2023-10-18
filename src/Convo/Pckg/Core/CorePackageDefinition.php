@@ -282,7 +282,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 if ( !function_exists( $callback)) {
                     throw new \Exception( 'Function "'.$callback.'" does not exists.');
                 }
-                if ( !is_array( $parameter)) {
+                if ( !is_array( $parameter) || !isset( $parameter[0])) {
+                    $this->_logger->debug( 'Wrapping up param ['.gettype( $parameter).'] as array');
                     $parameter = [$parameter];
                 }
                 return call_user_func($callback, ...$parameter);
