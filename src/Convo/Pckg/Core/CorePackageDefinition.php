@@ -191,6 +191,10 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('is_numeric');
         $functions[] = ExpressionFunction::fromPhp('is_int');
         $functions[] = ExpressionFunction::fromPhp('is_string');
+        $functions[] = ExpressionFunction::fromPhp('is_float');
+        $functions[] = ExpressionFunction::fromPhp('is_long');
+        $functions[] = ExpressionFunction::fromPhp('is_countable');
+        $functions[] = ExpressionFunction::fromPhp('is_null');
         $functions[] = ExpressionFunction::fromPhp('intval');
         $functions[] = ExpressionFunction::fromPhp('strval');
         $functions[] = ExpressionFunction::fromPhp('ceil');
