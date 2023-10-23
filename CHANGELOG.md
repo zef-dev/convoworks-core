@@ -5,6 +5,12 @@
 
 ## [Releases]
 
+## 0.22.27.3 - 2023-10-23
+
+* Force no body for GET requests in the Http Query Element
+* Fix detection of indexed arrays in the `call_user_func()`
+* Registered PHP functions in the core package: `is_string()`, `is_float()`, `is_long()`, `is_countable()`, `is_null()`.
+
 ## 0.22.27.2 - 2023-09-08
 
 * Corrected default values in function definitions.
