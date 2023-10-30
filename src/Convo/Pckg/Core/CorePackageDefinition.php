@@ -299,6 +299,22 @@ class CorePackageDefinition extends AbstractPackageDefinition
         );
         
         $functions[] = new ExpressionFunction(
+            'call_user_func_array',
+            function ($callback, $parameter = []) {
+                return sprintf('call_user_func_array(%s, %s)', var_export($callback, true), var_export($parameter, true));
+            },
+            function ($args, $callback, $parameter = []) {
+                if ( !function_exists( $callback)) {
+                    throw new \Exception( 'Function "'.$callback.'" does not exists.');
+                }
+                if ( empty( $parameter)) {
+                    $parameter = [];
+                }
+                return call_user_func_array( $callback, $parameter);
+            }
+        );
+        
+        $functions[] = new ExpressionFunction(
             'parse_cvs_file',
             function ( $path, $separator=",") {
                 return sprintf('parse_cvs_file(%s, %s)', var_export($path, true), var_export($separator, true));
