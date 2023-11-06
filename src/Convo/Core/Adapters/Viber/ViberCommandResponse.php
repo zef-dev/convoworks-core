@@ -15,8 +15,7 @@ class ViberCommandResponse extends \Convo\Core\Adapters\ConvoChat\DefaultTextCom
     public function addText($text, $append = false)
     {
         parent::addText($text, $append);
-        $resultText = preg_replace('/\s\s+/', ' ', strip_tags($text));
-        $this->_texts[]	= $resultText;
+        $this->_texts[]	= $text;
     }
 
     public function setResponseType($responseType) {
