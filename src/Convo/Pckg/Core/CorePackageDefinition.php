@@ -201,6 +201,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('floor');
         $functions[] = ExpressionFunction::fromPhp('strlen');
         $functions[] = ExpressionFunction::fromPhp('array_rand');
+        $functions[] = ExpressionFunction::fromPhp('array_reverse');
         $functions[] = ExpressionFunction::fromPhp('array_values');
         $functions[] = ExpressionFunction::fromPhp('urlencode');
         $functions[] = ExpressionFunction::fromPhp('str_replace');
