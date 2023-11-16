@@ -12,7 +12,7 @@ use Convo\Core\EventDispatcher\ServiceRunRequestEvent;
 
 class TestServiceRestHandler implements RequestHandlerInterface
 {
-    const DEFAULT_PLATFORM_ID = 'convo-chat';
+    const DEFAULT_PLATFORM_ID = 'test-chat';
 
 	/**
 	 * @var \Convo\Core\Util\IHttpFactory
@@ -82,7 +82,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
 
 		$this->_logger->info('Performing test request ['.$text.']['.$device_id.']['.$platform_id.'] init ['.($is_init ? 'true' : 'false').'] end ['.($is_end ? 'true' : 'false').']');
 
-		$text_request   =   new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest( $service_id, $device_id, $session_id, $request_id, $text, $is_init, $is_end, $platform_id, $json);
+		$text_request   =   new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest( $service_id, $device_id, $session_id, $request_id, $text, $is_init, $is_end, self::DEFAULT_PLATFORM_ID, $json);
 		$text_response	=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse();
 		$text_response->setLogger($this->_logger);
 
