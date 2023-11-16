@@ -4,6 +4,7 @@ namespace Convo\Pckg\Core\Elements;
 
 use Convo\Core\Workflow\IConvoRequest;
 use Convo\Core\Workflow\IConvoResponse;
+use Convo\Core\Admin\TestServiceRestHandler;
 
 class LogElement extends \Convo\Core\Workflow\AbstractWorkflowComponent implements \Convo\Core\Workflow\IConversationElement
 {
@@ -26,5 +27,12 @@ class LogElement extends \Convo\Core\Workflow\AbstractWorkflowComponent implemen
         // Just Do the Logging
         $this->_logger->info($logMessage);
         //return;
+        
+        if ( $request->getPlatformId() === TestServiceRestHandler::DEFAULT_PLATFORM_ID) {
+            $response->addText( "```
+$logMessage
+```");
+        }
+        
     }
 }
