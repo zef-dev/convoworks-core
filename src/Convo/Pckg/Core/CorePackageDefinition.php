@@ -395,14 +395,22 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = new ExpressionFunction(
             'array_sort_by_field',
             function ($array, $field) {
-                return sprintf('is_array(%1$a) ? array_sort_by_field(%1$a, %2$a) : %1$a', $array, $field);
+                return sprintf('array_sort_by_field(%1$a, %2$a)', $array, $field);
             },
             function($args, $array, $field) {
                 if (!is_array($array)) {
+                    $this->_logger->warning( 'Not an array ['.print_r( $array, true).']');
                     return $array;
                 }
-//                 $this->_logger->debug( 'helou'.print_r( $args, true));
-                usort($array, function ($a, $b) use ($field) {return strcmp( $a[$field], $b[$field]);});
+                usort($array, function ($a, $b) use ($field) {
+                    if ( $a[$field] === $b[$field]) {
+                        return 0;
+                    }
+                    if (is_numeric( $a[$field]) && is_numeric( $b[$field])) {
+                        return floatval( $a[$field]) > floatval( $b[$field]) ? 1 : -1;
+                    }
+                    return strcmp( $a[$field], $b[$field]);
+                });
                 return $array;
             }
         );
