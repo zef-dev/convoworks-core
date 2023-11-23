@@ -2,14 +2,17 @@
 
 namespace Convo\Pckg\Core;
 
+use Psr\Log\LogLevel;
+use Psr\SimpleCache\CacheInterface;
+use League\HTMLToMarkdown\HtmlConverter;
+use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Convo\Core\Factory\AbstractPackageDefinition;
 use Convo\Core\Intent\SystemEntity;
 use Convo\Core\Intent\EntityModel;
-use Symfony\Component\ExpressionLanguage\ExpressionFunction;
-use Psr\SimpleCache\CacheInterface;
 use Convo\Core\Workflow\IRunnableBlock;
 use Convo\Core\Intent\SimpleEntityValueParser;
-use League\HTMLToMarkdown\HtmlConverter;
+
+
 
 class CorePackageDefinition extends AbstractPackageDefinition
 {
@@ -810,6 +813,33 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'name' => 'Log Message',
                         'description' => 'Log of the workflow to show in the log files.',
                         'valueType' => 'string'
+                    ),
+                    'log_level' => array(
+                        'editor_type' => 'select',
+                        'editor_properties' => [
+                            'options' => [
+                                LogLevel::DEBUG     => ucfirst(LogLevel::DEBUG),
+                                LogLevel::INFO      => ucfirst(LogLevel::INFO),
+                                LogLevel::NOTICE    => ucfirst(LogLevel::NOTICE),
+                                LogLevel::WARNING   => ucfirst(LogLevel::WARNING),
+                                LogLevel::ERROR     => ucfirst(LogLevel::ERROR),
+                                LogLevel::CRITICAL  => ucfirst(LogLevel::CRITICAL),
+                                LogLevel::ALERT     => ucfirst(LogLevel::ALERT),
+                                LogLevel::EMERGENCY => ucfirst(LogLevel::EMERGENCY)
+                            ]
+                        ],
+                        'defaultValue' => LogLevel::INFO,
+                        'name' => 'Log Level',
+                        'description' => 'PSR Log level',
+                        'valueType' => 'string'
+                    ),
+                    'disable_test_view' => array(
+                        'editor_type' => 'boolean',
+                        'editor_properties' => array(),
+                        'defaultValue' => false,
+                        'name' => 'Disable test view',
+                        'description' => 'By default, log entries will be visible in the Test view chat',
+                        'valueType' => 'boolean'
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
