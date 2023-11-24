@@ -5,6 +5,11 @@
 
 ## [Releases]
 
+## 0.22.28 - 2023-11-24
+
+* Registered PHP `array_reverse()` function.
+* Log element now accepts log level and has ability to dump response in the test view
+
 ## 0.22.27.4 - 2023-10-30
 
 * Registered `call_user_func_array()` as a custom function.
