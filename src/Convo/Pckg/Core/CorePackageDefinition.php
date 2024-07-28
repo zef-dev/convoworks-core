@@ -53,7 +53,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
     {
         return $this->_loadIntents( __DIR__ .'/system-intents.json');
     }
-    
+
     protected function _initEntities()
     {
         $entities  =    [];
@@ -171,12 +171,12 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $entities['PlaybackDirection']->setPlatformModel('amazon', $playback_direction_model);
         $entities['PlaybackDirection']->setPlatformModel('dialogflow', $playback_direction_model);
         $entities['PlaybackDirection']->setPlatformModel('dialogflow_es', $playback_direction_model);
-        
+
         $entities['postalAddress'] =   new SystemEntity( 'postalAddress');
         $entities['postalAddress']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.PostalAddress', true));
         $entities['postalAddress']->setPlatformModel( ['dialogflow_es', 'dialogflow'],
             new EntityModel( '@sys.location', true, new SimpleEntityValueParser( 'street-address')));
-        
+
         return $entities;
     }
 
@@ -280,7 +280,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             },
             $convo_val
         );
-        
+
         $functions[] = new ExpressionFunction(
             'call_user_func',
             function ($callback, $parameter = []) {
@@ -290,7 +290,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 if ( !function_exists( $callback)) {
                     throw new \Exception( 'Function "'.$callback.'" does not exists.');
                 }
-                
+
                 if ( is_null( $parameter) || ( is_array( $parameter) && empty( $parameter))) {
                     return call_user_func($callback);
                 }
@@ -301,7 +301,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 return call_user_func($callback, ...$parameter);
             }
         );
-        
+
         $functions[] = new ExpressionFunction(
             'call_user_func_array',
             function ($callback, $parameter = []) {
@@ -317,7 +317,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 return call_user_func_array( $callback, $parameter);
             }
         );
-        
+
         $functions[] = new ExpressionFunction(
             'parse_cvs_file',
             function ( $path, $separator=",") {
@@ -326,7 +326,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             function ($args, $path, $separator=",") {
                 $fp = fopen( $path, 'r');
                 $array = array();
-                
+
                 while ( $row = fgetcsv( $fp, null, $separator)) {
                     $array[] = $row;
                 }
@@ -334,8 +334,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 return $array;
             }
         );
-        
-        
+
+
         $functions[] = new ExpressionFunction(
             'array_shuffle',
             function ($array) {
@@ -526,7 +526,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
 				return strtotime($datetimeStr);
 			}
 		);
-		
+
 		$functions[] = new ExpressionFunction(
 		    'html_to_markdown',
 		    function ($html, $options=[]) {
@@ -606,9 +606,21 @@ class CorePackageDefinition extends AbstractPackageDefinition
             }
         );
 
+        $functions[] = new ExpressionFunction(
+            'constant',
+            function ($constantName) {
+                return sprintf('constant(%s)', $constantName);
+            },
+            function ($args, $constantName) {
+                if (defined($constantName)) {
+                    return constant($constantName);
+                }
+            }
+        );
+
         return $functions;
     }
-    
+
     public static function relativeDate( $date, $startDayOfWeek = 'monday') {
         $relativesArray = [
             'relative_available' => false,
@@ -619,45 +631,45 @@ class CorePackageDefinition extends AbstractPackageDefinition
             'this_week' => false,
             'next_week' => false,
         ];
-        
+
         $inputTime = is_int( $date) ? $date : strtotime($date);
         $startDayOfWeek = strtolower($startDayOfWeek);
         if (!$inputTime) {
             return $relativesArray;
         }
-        
+
         $currentTime = time();
-        
+
         $inputTimeFormatted = date("Y-m-d H:i:s", $inputTime);
-        
+
         $yesterdayFormatted = date("Y-m-d H:i:s", strtotime('yesterday', $currentTime));
         $todayFormatted = date("Y-m-d H:i:s", strtotime('today', $currentTime));
         $tomorrowFormatted = date("Y-m-d H:i:s", strtotime('tomorrow', $currentTime));
-        
+
         $dayToStartWeek = 'monday';
         if ($startDayOfWeek === 'sunday') {
             $dayToStartWeek = 'sunday';
         }
-        
+
         $dayToEndWeek = 'sunday';
         if ($startDayOfWeek === 'sunday') {
             $dayToEndWeek = 'saturday';
         }
-        
+
         $lastWeekStartFormatted = date("Y-m-d H:i:s", strtotime('previous week ' . $dayToStartWeek . ' midnight', $currentTime));
         $lastWeekEndFormatted = date("Y-m-d H:i:s", strtotime('previous week ' . $dayToEndWeek . ' 23:59:59', $currentTime));
-        
+
         $thisWeekStartFormatted = date("Y-m-d H:i:s", strtotime('last ' . $dayToStartWeek . ' midnight', $currentTime));
         $thisWeekEndFormatted = date("Y-m-d H:i:s", strtotime('this ' . $dayToEndWeek . ' 23:59:59', $currentTime));
-        
+
         $nextWeekStartFormatted = date("Y-m-d H:i:s", strtotime('last ' . $dayToStartWeek . ' midnight', $currentTime));
         $nextWeekEndFormatted = date("Y-m-d H:i:s", strtotime('this ' . $dayToEndWeek . ' 23:59:59 + 1 week', $currentTime));
-        
+
         $inputTimeFormattedDateOnly = trim(explode(' ', $inputTimeFormatted)[0]);
         $yesterdayFormattedDateOnly = trim(explode(' ', $yesterdayFormatted)[0]);
         $todayFormattedDateOnly = trim(explode(' ', $todayFormatted)[0]);
         $tomorrowFormattedDateOnly = trim(explode(' ', $tomorrowFormatted)[0]);
-        
+
         if ($inputTimeFormattedDateOnly === $yesterdayFormattedDateOnly) {
             $relativesArray['relative_available'] = true;
             $relativesArray['yesterday'] = true;
@@ -678,7 +690,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             $relativesArray['relative_available'] = true;
             $relativesArray['next_week'] = true;
         }
-        
+
         return $relativesArray;
     }
 
