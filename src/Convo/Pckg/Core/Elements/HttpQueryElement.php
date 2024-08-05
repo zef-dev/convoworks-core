@@ -114,7 +114,7 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
         try {
             $content = $this->_getContent( $method, $uri);
 
-            $this->_logger->debug('Response body ['.print_r( $content, true).']');
+        //    $this->_logger->debug('Response body ['.print_r( $content, true).']');
             $this->_logger->debug('Setting body on http ['.$name.'] namespace');
 
             $params->setServiceParam( $name, array( 'status' => 200, 'body' => $content));
@@ -162,9 +162,9 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
 	        $body           =   null;
 	    } else {
 	        $body           =   $this->evaluateString( $this->_body);
-	        $this->_logger->debug('Evaluated body ['.print_r($body, true).']');
+	   //     $this->_logger->debug('Evaluated body ['.print_r($body, true).']');
 	        $body		    =	json_decode( $body ?: '{}', true);
-	        $this->_logger->debug('Decoded body ['.print_r($body, true).']');
+	       $this->_logger->debug('Decoded body ['.print_r($body, true).']');
 	    }
 
 
@@ -229,21 +229,21 @@ class HttpQueryElement extends \Convo\Core\Workflow\AbstractWorkflowContainerCom
         if ( $contentType === 'AUTO') {
             $headerLine = explode( ';', $apiResponse->getHeaderLine('Content-Type'));
             $headerLine = array_shift( $headerLine);
-            
+
             if ( $headerLine === 'application/json') {
                 return $this->_readJson( $apiResponse);
             }
-            
+
             return $apiResponse->getBody()->__toString();
         } else if ( $contentType === 'TEXT')  {
             return $apiResponse->getBody()->__toString();
         } else if ( $contentType === 'JSON')  {
             return $this->_readJson( $apiResponse);
         }
-        
-        throw new \Exception( 'Unexpected content type parameter ['.$contentType.']'); 
+
+        throw new \Exception( 'Unexpected content type parameter ['.$contentType.']');
     }
-    
+
     private function _readJson( \Psr\Http\Message\ResponseInterface $apiResponse) {
         $content = json_decode( $apiResponse->getBody()->__toString(), true);
         if (json_last_error() !== JSON_ERROR_NONE) {
