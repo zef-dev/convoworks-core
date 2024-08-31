@@ -33,7 +33,7 @@ class LoopElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 			}
 		}
 	}
-	
+
 	public function read(\Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
 	{
         $items = $this->evaluateString($this->_dataCollection);
@@ -66,7 +66,7 @@ class LoopElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 		$offset = $this->evaluateString($this->_offset);
 		$limit = $this->evaluateString($this->_limit);
 
-		if ($offset !== null) {
+		if ($offset !== null && $offset !== '') {
 			if ($offset > $end || $offset < 0) {
 				$this->_logger->warning('Offset ['.$offset.'] falls outside the range ['.$start.', '.$end.']. Starting from 0.');
 			} else {
@@ -74,17 +74,18 @@ class LoopElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 			}
 		}
 
-		if ($limit !== null) {
+		if ($limit !== null && $limit !== '') {
 			/** @var int $limit */
+            $limit = intval( $limit);
 			$limit = abs($limit);
 			$end = min(($start + $limit), $end);
 		}
-		
+
 		$this->_logger->debug('Offset ['.$offset.']  start & end ['.$start.', '.$end.']');
 
 		$i = 0;
 		foreach ($items as $item) {
-		    
+
 			if ($i < $start) {
 			    $i++;
 				continue;
@@ -113,13 +114,13 @@ class LoopElement extends \Convo\Core\Workflow\AbstractWorkflowContainerComponen
 			$i++;
 		}
 	}
-	
+
 	public function addElement( \Convo\Core\Workflow\IConversationElement $element)
 	{
 		$this->_elements[] = $element;
 		$this->addChild($element);
 	}
-	
+
 	/**
 	 * @return \Convo\Core\Workflow\IConversationElement[]
 	 */
