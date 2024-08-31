@@ -291,13 +291,13 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         }
         return $all;
     }
-    
+
     public function findAncestor( $class)
     {
         if ( is_a( $this, $class)) {
             return $this;
         }
-        
+
         throw new DataItemNotFoundException( 'Ancestor with class ['.$class.'] not found');
     }
 
@@ -316,7 +316,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $this->_request					=	$request;
         $this->_response				=	$response;
         $this->_stateLog = [];
-        
+
         // CONTEXTS
         $this->_logger->debug( 'Initialize contexts ['.count( $this->_contexts).']');
         foreach ( $this->_contexts as $eval) {
@@ -338,16 +338,16 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         // RUN ITSELF
         $this->_logger->debug( 'Running ...');
 
-        try 
+        try
         {
             // SPECIAL ROLE CALL
-            if ( $request instanceof ISpecialRoleRequest) 
+            if ( $request instanceof ISpecialRoleRequest)
             {
                 /* @var ISpecialRoleRequest  $request */
                 if ( $request->getSpecialRole())
                 {
                     $this->_logger->info('Handling special role call ['.$request->getSpecialRole().']');
-                    try 
+                    try
                     {
                         $block  =   $this->getBlockByRole( $request->getSpecialRole());
 
@@ -361,9 +361,9 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                         }  catch ( ComponentNotFoundException $e) {
                             throw new \Exception( 'Failed to run special role block ['.$request->getSpecialRole().']', 0, $e);
                         }
-                        
-                    } 
-                    catch ( ComponentNotFoundException $e) 
+
+                    }
+                    catch ( ComponentNotFoundException $e)
                     {
                         $this->_logger->warning( 'No block with role ['.$request->getSpecialRole().'] found.');
                     }
@@ -371,7 +371,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                     return;
                 }
             }
-            
+
             // SESSION END
             if ( $request->isSessionEndRequest()) {
                 $this->_logger->info('Reading session end block');
@@ -441,12 +441,12 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
             }
 
             // SESSION START
-            if ( $request->isSessionStart()) 
+            if ( $request->isSessionStart())
             {
                 // EMPTY REQUEST
-                if ( $request->isEmpty()) 
+                if ( $request->isEmpty())
                 {
-                    try 
+                    try
                     {
                         $this->_logger->info('Trying to read role [' . IRunnableBlock::ROLE_SESSION_START . '] ...');
                         $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_START);
@@ -465,8 +465,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                                 }
                             }
                         }
-                    } 
-                    catch ( ComponentNotFoundException $e) 
+                    }
+                    catch ( ComponentNotFoundException $e)
                     {
                         $this->_logger->info( $e->getMessage());
                         $state  =   $this->_getDefaultState();
@@ -484,7 +484,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                 }
 
                 // NON EMPTY REQUEST
-                try 
+                try
                 {
                     $this->_logger->info('Trying to process role [' . IRunnableBlock::ROLE_SESSION_START . '] ...');
                     $block  =   $this->getBlockByRole(IRunnableBlock::ROLE_SESSION_START);
@@ -502,8 +502,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                             }
                         }
                     }
-                } 
-                catch ( ComponentNotFoundException $e) 
+                }
+                catch ( ComponentNotFoundException $e)
                 {
                     $this->_logger->info( $e->getMessage());
                     $state  =   $this->_getDefaultState();
@@ -512,8 +512,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
                 // DIRECT INVOCATION
                 $this->_logger->info( 'We have direct invocation in block [' . $block->getComponentId() . '] ...');
-            } 
-            else 
+            }
+            else
             {
                 // REGULAR CALL
                 $state  =    $this->getServiceState();
@@ -527,11 +527,11 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
             } else {
                 $this->_processBlock( $block, $request, $response);
             }
-            
+
             $this->_checkNextState();
             $this->_logger->info('Exiting ...');
-        } 
-        catch ( \Throwable $e) 
+        }
+        catch ( \Throwable $e)
         {
             $this->_logger->error( $e);
 
@@ -543,7 +543,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
                 $error_handler->read($request, $response);
 
-                if (strpos($request->getInstallationId(), 'admin-chat') !== false) {
+                if ($request->getInstallationId() && strpos($request->getInstallationId(), 'admin-chat') !== false) {
                     $this->_logger->info('Running in test view, throwing exception again');
                     throw $e; // test view, throw exception quickfix
                 }
@@ -719,7 +719,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         $context			=	array_merge( ['_REQUEST'=>$_REQUEST], $context);
         $context			=	array_merge( ['_POST'=>$_POST], $context);
         $context			=	array_merge( ['_GET'=>$_GET], $context);
-        
+
         if ( isset( $_COOKIE)) {
             $context			=	array_merge( ['_COOKIE'=>$_COOKIE], $context);
         }
@@ -732,7 +732,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         if ( isset( $_ENV)) {
             $context			=	array_merge( ['_ENV'=>$_ENV], $context);
         }
-        
+
         // CONTEXTS
         $context_map        =   [];
         foreach ($this->_contexts as $ctx) {
@@ -770,8 +770,8 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
 
         return $data;
     }
-    
-    
+
+
     /**
      * @param array $args
      * @param IValueEvaluator $eval
@@ -788,7 +788,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
         {
             $key	=	$eval->evaluateString( $key);
             $parsed =   $eval->evaluateString( $val);
-            
+
             if ( !ArrayUtil::isComplexKey( $key))
             {
                 $returnedArgs[$key] =   $parsed;
@@ -1008,7 +1008,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
     public function getParent() {
         throw new \Exception( 'Not used here');
     }
-    
+
     public function isRoot() {
         return true;
     }
@@ -1108,7 +1108,7 @@ class ConvoServiceInstance implements \Convo\Core\Workflow\IWorkflowContainerCom
                     $variables[$root] = $final;
                 }
             }
-            
+
             $this->_resolveCache[$cacheKey]  =   $variables;
         }
 
