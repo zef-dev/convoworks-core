@@ -1633,7 +1633,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'elements' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
-                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement'),
+                            'allow_interfaces' => array('\Convo\Core\Workflow\IConversationElement', '\Convo\Core\Workflow\IElementGenerator'),
                             'multiple' => true
                         ),
                         'defaultValue' => array(),
