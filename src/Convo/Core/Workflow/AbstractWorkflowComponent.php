@@ -11,13 +11,13 @@ use Convo\Core\DataItemNotFoundException;
  */
 abstract class AbstractWorkflowComponent extends AbstractBasicComponent implements \Convo\Core\Workflow\IServiceWorkflowComponent
 {
-	
+
 	/**
 	 * @var \Convo\Core\Workflow\IWorkflowContainerComponent
 	 */
 	private $_parent;
 
-	
+
 	public function __construct( $properties)
 	{
 		parent::__construct( $properties);
@@ -30,7 +30,7 @@ abstract class AbstractWorkflowComponent extends AbstractBasicComponent implemen
 	    }
 	    return false;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * @see \Convo\Core\Workflow\IServiceWorkflowComponent::getParent()
@@ -41,7 +41,7 @@ abstract class AbstractWorkflowComponent extends AbstractBasicComponent implemen
 		}
 		return $this->_parent;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * @see \Convo\Core\Workflow\IServiceWorkflowComponent::setParent()
@@ -49,16 +49,19 @@ abstract class AbstractWorkflowComponent extends AbstractBasicComponent implemen
 	public function setParent( \Convo\Core\Workflow\IWorkflowContainerComponent $parent) {
 		$this->_parent	=	$parent;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * @see \Convo\Core\Workflow\IServiceWorkflowComponent::evaluateString()
 	 */
 	public function evaluateString( $string, $context=[])
 	{
-		return $this->getParent()->evaluateString( $string, $context);
+		return $this->getParent()->evaluateString( $string, array_merge( [
+            '_workflowComponent' => $this
+        ],
+        $context));
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * @see \Convo\Core\Workflow\IServiceWorkflowComponent::getBlockParams()
@@ -66,7 +69,7 @@ abstract class AbstractWorkflowComponent extends AbstractBasicComponent implemen
 	public function getBlockParams( $scopeType) {
 		return $this->getParent()->getBlockParams( $scopeType);
 	}
-	
+
 	public function findAncestor( $class)
 	{
 	    $parent = $this;
@@ -74,13 +77,13 @@ abstract class AbstractWorkflowComponent extends AbstractBasicComponent implemen
 	        if ( is_a( $parent, $class)) {
 	            return $parent;
 	        }
-	        
+
 	        if ( $parent === $this->getService()) {
 	            break;
 	        }
 	    }
-	    
+
 	    throw new DataItemNotFoundException( 'Ancestro with class ['.$class.'] not found');
 	}
-	
+
 }
