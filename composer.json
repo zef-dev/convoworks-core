@@ -1,12 +1,12 @@
 {
 	"name" : "zef-dev/convoworks-core",
 	"type" : "library",
-	"description" : "PHP framework for handling conversational services like Amazon Alexa, Google Assistant, Viber, FB messenger ...",
+	"description" : "PHP framework for handling workflows and conversational services like Amazon Alexa",
 	"homepage" : "https://github.com/zef-dev/convoworks-core",
 	"keywords" : [
-		"alexa", "dialogflow", "viber", "messenger", "chatbot", "voice enabled", "voice assistant", "no code"
+		"alexa", "viber", "chatbot", "voice enabled", "voice assistant", "no-code"
 	],
-    "version": "0.22.28",
+    "version": "0.22.29",
 	"license" : "MIT",
 	"require" : {
 		"php" : "^7.2.5",

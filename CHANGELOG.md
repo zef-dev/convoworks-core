@@ -5,6 +5,11 @@
 
 ## [Releases]
 
+## 0.22.29 - 2024-10-16
+
+* Registered PHP `constant()` function.
+* Minor fixes
+
 ## 0.22.28 - 2023-11-24
 
 * Registered PHP `array_reverse()` function.
