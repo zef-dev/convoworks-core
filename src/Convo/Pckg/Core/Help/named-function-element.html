@@ -1,0 +1,65 @@
+<div class="named-function-element-help">
+    <h3>Named Function Element</h3>
+
+    <p>
+        The <b>Named Function Element</b> allows you to define a reusable workflow as a function. The function can be invoked
+        using the Expression Language, enabling dynamic and flexible usage within your application.
+    </p>
+
+    <h3>When to use?</h3>
+    <p>
+        Use this element when you need to define a block of logic that can be reused multiple times in your workflow.
+        It is particularly useful for encapsulating frequently used processes or computations.
+    </p>
+
+    <h3>How to configure:</h3>
+    <ol>
+        <li>
+            <b>Function name:</b>
+            <p>
+                Enter a valid name for the function. This name will be used to invoke the function within expressions.
+                For example, if the name is <i>myFunction</i>, you can call it like this: <i>${myFunction(arg1, arg2)}</i>.
+            </p>
+        </li>
+        <li>
+            <b>Function arguments:</b>
+            <p>
+                Specify the arguments that the function will accept. Each argument can have a name and an optional default value.
+                For example:
+            </p>
+            <ul>
+                <li><b>name:</b> The name of the argument.</li>
+                <li><b>default value:</b> The value to use if no value is provided during the function call.</li>
+            </ul>
+        </li>
+        <li>
+            <b>Result variable name:</b>
+            <p>
+                Specify a variable name where the function's result will be stored. This ensures that the component knows
+                where to retrieve the result value.
+            </p>
+        </li>
+        <li>
+            <b>OK flow:</b>
+            <p>
+                Define the steps to execute when the function is called. These steps will form the body of the function and
+                can include other conversation elements or logic. Within this flow, you must set the result variable's value
+                using the <b>Set Parameter Element</b>.
+            </p>
+        </li>
+    </ol>
+
+    <h3>How to use in expressions:</h3>
+    <p>
+        Once the function element is executed in your workflow, you can call it in subsequent workflow components using the
+        specified name in any expression. For example:
+    </p>
+    <code>
+        ${myFunction("value1", "value2")}
+    </code>
+
+    <p>
+        The arguments provided in the call will replace the placeholders defined in the <b>Function arguments</b> section.
+        The function will execute its workflow and return the result, which you can use further in your workflow.
+    </p>
+</div>

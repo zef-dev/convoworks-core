@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Convo\Pckg\Core;
 
@@ -16,7 +18,7 @@ use Convo\Core\Intent\SimpleEntityValueParser;
 
 class CorePackageDefinition extends AbstractPackageDefinition
 {
-    const NAMESPACE	=	'convo-core';
+    const NAMESPACE    =    'convo-core';
     /**
      * @var \Convo\Core\Util\IHttpFactory
      */
@@ -38,34 +40,34 @@ class CorePackageDefinition extends AbstractPackageDefinition
         \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory,
         CacheInterface $cache
     ) {
-        $this->_httpFactory				=	$httpFactory;
+        $this->_httpFactory                =    $httpFactory;
         $this->_packageProviderFactory  =   $packageProviderFactory;
         $this->_cache                   =   $cache;
 
-        parent::__construct( $logger, self::NAMESPACE, __DIR__);
+        parent::__construct($logger, self::NAMESPACE, __DIR__);
 
-        $this->registerTemplate( __DIR__ .'/basic.template.json');
-        $this->registerTemplate( __DIR__ .'/blank.template.json');
-        $this->registerTemplate( __DIR__ .'/convo-daily-quotes.template.json');
+        $this->registerTemplate(__DIR__ . '/basic.template.json');
+        $this->registerTemplate(__DIR__ . '/blank.template.json');
+        $this->registerTemplate(__DIR__ . '/convo-daily-quotes.template.json');
     }
 
     protected function _initIntents()
     {
-        return $this->_loadIntents( __DIR__ .'/system-intents.json');
+        return $this->_loadIntents(__DIR__ . '/system-intents.json');
     }
 
     protected function _initEntities()
     {
         $entities  =    [];
-        $entities['number'] =   new SystemEntity( 'number');
-        $entities['number']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.NUMBER', true));
-        $entities['number']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.number-integer', true));
-        $entities['number']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.number-integer', true));
+        $entities['number'] =   new SystemEntity('number');
+        $entities['number']->setPlatformModel('amazon', new EntityModel('AMAZON.NUMBER', true));
+        $entities['number']->setPlatformModel('dialogflow', new EntityModel('@sys.number-integer', true));
+        $entities['number']->setPlatformModel('dialogflow_es', new EntityModel('@sys.number-integer', true));
 
-        $entities['ordinal'] =   new SystemEntity( 'ordinal');
-        $entities['ordinal']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Ordinal', true));
-        $entities['ordinal']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.ordinal', true));
-        $entities['ordinal']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.ordinal', true));
+        $entities['ordinal'] =   new SystemEntity('ordinal');
+        $entities['ordinal']->setPlatformModel('amazon', new EntityModel('AMAZON.Ordinal', true));
+        $entities['ordinal']->setPlatformModel('dialogflow', new EntityModel('@sys.ordinal', true));
+        $entities['ordinal']->setPlatformModel('dialogflow_es', new EntityModel('@sys.ordinal', true));
 
         $entities['city'] = new SystemEntity('city');
         $entities['city']->setPlatformModel('amazon', new EntityModel('AMAZON.City', true));
@@ -77,75 +79,75 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $entities['country']->setPlatformModel('dialogflow', new EntityModel('@sys.geo-country', true));
         $entities['country']->setPlatformModel('dialogflow_es', new EntityModel('@sys.geo-country', true));
 
-        $entities['any'] = new SystemEntity( 'any');
-        $entities['any']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.SearchQuery', true));
-        $entities['any']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.any', true));
-        $entities['any']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.any', true));
+        $entities['any'] = new SystemEntity('any');
+        $entities['any']->setPlatformModel('amazon', new EntityModel('AMAZON.SearchQuery', true));
+        $entities['any']->setPlatformModel('dialogflow', new EntityModel('@sys.any', true));
+        $entities['any']->setPlatformModel('dialogflow_es', new EntityModel('@sys.any', true));
 
-        $entities['person'] = new SystemEntity( 'person');
-        $entities['person']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.FirstName', true));
-        $entities['person']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.person', true));
-        $entities['person']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.person', true));
+        $entities['person'] = new SystemEntity('person');
+        $entities['person']->setPlatformModel('amazon', new EntityModel('AMAZON.FirstName', true));
+        $entities['person']->setPlatformModel('dialogflow', new EntityModel('@sys.person', true));
+        $entities['person']->setPlatformModel('dialogflow_es', new EntityModel('@sys.person', true));
 
-        $entities['person_first_and_lastname'] = new SystemEntity( 'person_first_and_lastname');
-        $entities['person_first_and_lastname']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Person', true));
-        $entities['person_first_and_lastname']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.person', true));
-        $entities['person_first_and_lastname']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.person', true));
+        $entities['person_first_and_lastname'] = new SystemEntity('person_first_and_lastname');
+        $entities['person_first_and_lastname']->setPlatformModel('amazon', new EntityModel('AMAZON.Person', true));
+        $entities['person_first_and_lastname']->setPlatformModel('dialogflow', new EntityModel('@sys.person', true));
+        $entities['person_first_and_lastname']->setPlatformModel('dialogflow_es', new EntityModel('@sys.person', true));
 
-        $entities['artist'] = new SystemEntity( 'artist');
-        $entities['artist']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Artist', true));
-        $entities['artist']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.music-artist', true));
-        $entities['artist']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.music-artist', true));
+        $entities['artist'] = new SystemEntity('artist');
+        $entities['artist']->setPlatformModel('amazon', new EntityModel('AMAZON.Artist', true));
+        $entities['artist']->setPlatformModel('dialogflow', new EntityModel('@sys.music-artist', true));
+        $entities['artist']->setPlatformModel('dialogflow_es', new EntityModel('@sys.music-artist', true));
 
-        $entities['song'] = new SystemEntity( 'song');
-        $entities['song']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.MusicRecording', true));
-        $entities['song']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.any', true));
-        $entities['song']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.any', true));
+        $entities['song'] = new SystemEntity('song');
+        $entities['song']->setPlatformModel('amazon', new EntityModel('AMAZON.MusicRecording', true));
+        $entities['song']->setPlatformModel('dialogflow', new EntityModel('@sys.any', true));
+        $entities['song']->setPlatformModel('dialogflow_es', new EntityModel('@sys.any', true));
 
-        $entities['genre'] = new SystemEntity( 'genre');
-        $entities['genre']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Genre', true));
-        $entities['genre']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.music-genre', true));
-        $entities['genre']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.music-genre', true));
+        $entities['genre'] = new SystemEntity('genre');
+        $entities['genre']->setPlatformModel('amazon', new EntityModel('AMAZON.Genre', true));
+        $entities['genre']->setPlatformModel('dialogflow', new EntityModel('@sys.music-genre', true));
+        $entities['genre']->setPlatformModel('dialogflow_es', new EntityModel('@sys.music-genre', true));
 
-        $entities['music_playlist'] = new SystemEntity( 'music_playlist');
-        $entities['music_playlist']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.SearchQuery', true));
-        $entities['music_playlist']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.any', true));
-        $entities['music_playlist']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.any', true));
+        $entities['music_playlist'] = new SystemEntity('music_playlist');
+        $entities['music_playlist']->setPlatformModel('amazon', new EntityModel('AMAZON.SearchQuery', true));
+        $entities['music_playlist']->setPlatformModel('dialogflow', new EntityModel('@sys.any', true));
+        $entities['music_playlist']->setPlatformModel('dialogflow_es', new EntityModel('@sys.any', true));
 
-        $entities['date'] = new SystemEntity( 'date');
-        $entities['date']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.DATE', true));
-        $entities['date']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.date', true));
-        $entities['date']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.date', true));
+        $entities['date'] = new SystemEntity('date');
+        $entities['date']->setPlatformModel('amazon', new EntityModel('AMAZON.DATE', true));
+        $entities['date']->setPlatformModel('dialogflow', new EntityModel('@sys.date', true));
+        $entities['date']->setPlatformModel('dialogflow_es', new EntityModel('@sys.date', true));
 
-        $entities['time'] = new SystemEntity( 'time');
-        $entities['time']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.TIME', true));
-        $entities['time']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.time', true));
-        $entities['time']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.time', true));
+        $entities['time'] = new SystemEntity('time');
+        $entities['time']->setPlatformModel('amazon', new EntityModel('AMAZON.TIME', true));
+        $entities['time']->setPlatformModel('dialogflow', new EntityModel('@sys.time', true));
+        $entities['time']->setPlatformModel('dialogflow_es', new EntityModel('@sys.time', true));
 
-        $entities['color'] = new SystemEntity( 'color');
-        $entities['color']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Color', true));
-        $entities['color']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.color', true));
-        $entities['color']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.color', true));
+        $entities['color'] = new SystemEntity('color');
+        $entities['color']->setPlatformModel('amazon', new EntityModel('AMAZON.Color', true));
+        $entities['color']->setPlatformModel('dialogflow', new EntityModel('@sys.color', true));
+        $entities['color']->setPlatformModel('dialogflow_es', new EntityModel('@sys.color', true));
 
-        $entities['language'] = new SystemEntity( 'language');
-        $entities['language']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Language', true));
-        $entities['language']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.language', true));
-        $entities['language']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.language', true));
+        $entities['language'] = new SystemEntity('language');
+        $entities['language']->setPlatformModel('amazon', new EntityModel('AMAZON.Language', true));
+        $entities['language']->setPlatformModel('dialogflow', new EntityModel('@sys.language', true));
+        $entities['language']->setPlatformModel('dialogflow_es', new EntityModel('@sys.language', true));
 
-        $entities['airport'] = new SystemEntity( 'airport');
-        $entities['airport']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.Airport', true));
-        $entities['airport']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.airport', true));
-        $entities['airport']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.airport', true));
+        $entities['airport'] = new SystemEntity('airport');
+        $entities['airport']->setPlatformModel('amazon', new EntityModel('AMAZON.Airport', true));
+        $entities['airport']->setPlatformModel('dialogflow', new EntityModel('@sys.airport', true));
+        $entities['airport']->setPlatformModel('dialogflow_es', new EntityModel('@sys.airport', true));
 
-        $entities['duration'] = new SystemEntity( 'duration');
-        $entities['duration']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.DURATION', true));
-        $entities['duration']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.duration', true));
-        $entities['duration']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.duration', true));
+        $entities['duration'] = new SystemEntity('duration');
+        $entities['duration']->setPlatformModel('amazon', new EntityModel('AMAZON.DURATION', true));
+        $entities['duration']->setPlatformModel('dialogflow', new EntityModel('@sys.duration', true));
+        $entities['duration']->setPlatformModel('dialogflow_es', new EntityModel('@sys.duration', true));
 
-        $entities['phone_number'] = new SystemEntity( 'phone_number');
-        $entities['phone_number']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.PhoneNumber', true));
-        $entities['phone_number']->setPlatformModel( 'dialogflow', new EntityModel( '@sys.phone-number', true));
-        $entities['phone_number']->setPlatformModel( 'dialogflow_es', new EntityModel( '@sys.phone-number', true));
+        $entities['phone_number'] = new SystemEntity('phone_number');
+        $entities['phone_number']->setPlatformModel('amazon', new EntityModel('AMAZON.PhoneNumber', true));
+        $entities['phone_number']->setPlatformModel('dialogflow', new EntityModel('@sys.phone-number', true));
+        $entities['phone_number']->setPlatformModel('dialogflow_es', new EntityModel('@sys.phone-number', true));
 
         $entities['PlaybackDirection'] = new SystemEntity('PlaybackDirection');
         $playback_direction_model = new EntityModel('PlaybackDirection', false);
@@ -172,10 +174,12 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $entities['PlaybackDirection']->setPlatformModel('dialogflow', $playback_direction_model);
         $entities['PlaybackDirection']->setPlatformModel('dialogflow_es', $playback_direction_model);
 
-        $entities['postalAddress'] =   new SystemEntity( 'postalAddress');
-        $entities['postalAddress']->setPlatformModel( 'amazon', new EntityModel( 'AMAZON.PostalAddress', true));
-        $entities['postalAddress']->setPlatformModel( ['dialogflow_es', 'dialogflow'],
-            new EntityModel( '@sys.location', true, new SimpleEntityValueParser( 'street-address')));
+        $entities['postalAddress'] =   new SystemEntity('postalAddress');
+        $entities['postalAddress']->setPlatformModel('amazon', new EntityModel('AMAZON.PostalAddress', true));
+        $entities['postalAddress']->setPlatformModel(
+            ['dialogflow_es', 'dialogflow'],
+            new EntityModel('@sys.location', true, new SimpleEntityValueParser('street-address'))
+        );
 
         return $entities;
     }
@@ -287,15 +291,15 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 return sprintf('call_user_func(%s, %s)', var_export($callback, true), var_export($parameter, true));
             },
             function ($args, $callback, $parameter = []) {
-                if ( !function_exists( $callback)) {
-                    throw new \Exception( 'Function "'.$callback.'" does not exists.');
+                if (!function_exists($callback)) {
+                    throw new \Exception('Function "' . $callback . '" does not exists.');
                 }
 
-                if ( is_null( $parameter) || ( is_array( $parameter) && empty( $parameter))) {
+                if (is_null($parameter) || (is_array($parameter) && empty($parameter))) {
                     return call_user_func($callback);
                 }
-                if ( !is_array( $parameter) || !isset( $parameter[0])) {
-                    $this->_logger->debug( 'Wrapping up param ['.gettype( $parameter).'] as array');
+                if (!is_array($parameter) || !isset($parameter[0])) {
+                    $this->_logger->debug('Wrapping up param [' . gettype($parameter) . '] as array');
                     $parameter = [$parameter];
                 }
                 return call_user_func($callback, ...$parameter);
@@ -308,29 +312,29 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 return sprintf('call_user_func_array(%s, %s)', var_export($callback, true), var_export($parameter, true));
             },
             function ($args, $callback, $parameter = []) {
-                if ( !function_exists( $callback)) {
-                    throw new \Exception( 'Function "'.$callback.'" does not exists.');
+                if (!function_exists($callback)) {
+                    throw new \Exception('Function "' . $callback . '" does not exists.');
                 }
-                if ( empty( $parameter)) {
+                if (empty($parameter)) {
                     $parameter = [];
                 }
-                return call_user_func_array( $callback, $parameter);
+                return call_user_func_array($callback, $parameter);
             }
         );
 
         $functions[] = new ExpressionFunction(
             'parse_cvs_file',
-            function ( $path, $separator=",") {
+            function ($path, $separator = ",") {
                 return sprintf('parse_cvs_file(%s, %s)', var_export($path, true), var_export($separator, true));
             },
-            function ($args, $path, $separator=",") {
-                $fp = fopen( $path, 'r');
+            function ($args, $path, $separator = ",") {
+                $fp = fopen($path, 'r');
                 $array = array();
 
-                while ( $row = fgetcsv( $fp, null, $separator)) {
+                while ($row = fgetcsv($fp, null, $separator)) {
                     $array[] = $row;
                 }
-                fclose( $fp);
+                fclose($fp);
                 return $array;
             }
         );
@@ -341,7 +345,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             function ($array) {
                 return sprintf('is_array(%1$a) ? array_shuffle(%1$a) : %1$a', $array);
             },
-            function($args, $array) {
+            function ($args, $array) {
                 if (!is_array($array)) {
                     return $array;
                 }
@@ -354,11 +358,11 @@ class CorePackageDefinition extends AbstractPackageDefinition
 
         $functions[] = new ExpressionFunction(
             'print_r',
-            function ( $val) {
+            function ($val) {
                 return sprintf('print_r(%1)', $val);
             },
-            function( $args, $val) {
-                return print_r( $val, true);
+            function ($args, $val) {
+                return print_r($val, true);
             }
         );
 
@@ -367,7 +371,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             function ($array, $item) {
                 return sprintf('is_array(%1$a) ? array_push(%1$a, %2$i) : %1$a', $array, $item);
             },
-            function($args, $array, $item) {
+            function ($args, $array, $item) {
                 if (!is_array($array)) {
                     return $array;
                 }
@@ -383,14 +387,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
             function ($string) {
                 return sprintf('is_string(%1$a) ? decode_special_chars(%1$a) : %1$a', $string);
             },
-            function($args, $string) {
+            function ($args, $string) {
                 if (!is_string($string)) {
                     return $string;
                 }
 
-                $string = html_entity_decode( $string, ENT_QUOTES);
-                $string = htmlspecialchars_decode( $string);
-                $string = urldecode( $string);
+                $string = html_entity_decode($string, ENT_QUOTES);
+                $string = htmlspecialchars_decode($string);
+                $string = urldecode($string);
                 return $string;
             }
         );
@@ -400,19 +404,19 @@ class CorePackageDefinition extends AbstractPackageDefinition
             function ($array, $field) {
                 return sprintf('array_sort_by_field(%1$a, %2$a)', $array, $field);
             },
-            function($args, $array, $field) {
+            function ($args, $array, $field) {
                 if (!is_array($array)) {
-                    $this->_logger->warning( 'Not an array ['.print_r( $array, true).']');
+                    $this->_logger->warning('Not an array [' . print_r($array, true) . ']');
                     return $array;
                 }
                 usort($array, function ($a, $b) use ($field) {
-                    if ( $a[$field] === $b[$field]) {
+                    if ($a[$field] === $b[$field]) {
                         return 0;
                     }
-                    if (is_numeric( $a[$field]) && is_numeric( $b[$field])) {
-                        return floatval( $a[$field]) > floatval( $b[$field]) ? 1 : -1;
+                    if (is_numeric($a[$field]) && is_numeric($b[$field])) {
+                        return floatval($a[$field]) > floatval($b[$field]) ? 1 : -1;
                     }
-                    return strcmp( $a[$field], $b[$field]);
+                    return strcmp($a[$field], $b[$field]);
                 });
                 return $array;
             }
@@ -423,18 +427,18 @@ class CorePackageDefinition extends AbstractPackageDefinition
             function ($string) {
                 return sprintf('is_numeric(%1$a) ? ordinal(%1$a) : %1$a', $string);
             },
-            function($args, $string) {
+            function ($args, $string) {
                 if (!is_numeric($string)) {
                     return $string;
                 }
 
-                $integer = intval( $string);
-                $ends = array('th','st','nd','rd','th','th','th','th','th','th');
+                $integer = intval($string);
+                $ends = array('th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th');
 
-                if( (($integer % 100) >= 11) && (($integer%100) <= 13)) {
-                    return $integer. 'th';
+                if ((($integer % 100) >= 11) && (($integer % 100) <= 13)) {
+                    return $integer . 'th';
                 } else {
-                    return $integer. $ends[$integer % 10];
+                    return $integer . $ends[$integer % 10];
                 }
             }
         );
@@ -445,17 +449,17 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 return sprintf('is_array(%1$a) ? human_concat(%1$a, %2$a) : %1$a', $array, $conjunction);
             },
 
-            function($args, $array, $conjunction = null) {
+            function ($args, $array, $conjunction = null) {
                 if (!is_array($array)) {
                     return $array;
                 }
 
-                $last  = array_slice( $array, -1);
+                $last  = array_slice($array, -1);
                 $first = join(', ', array_slice($array, 0, -1));
-                $both  = array_filter( array_merge( array( $first), $last), 'strlen');
+                $both  = array_filter(array_merge(array($first), $last), 'strlen');
 
-                if( $conjunction) {
-                    return join(' '.$conjunction.' ', $both);
+                if ($conjunction) {
+                    return join(' ' . $conjunction . ' ', $both);
                 }
 
                 return join(', ', $both);
@@ -468,83 +472,83 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 return sprintf('empty(%1$v)', $var);
             },
 
-            function($args, $var) {
+            function ($args, $var) {
                 return empty($var);
             }
         );
 
-		$functions[] = new ExpressionFunction(
-			'relative_date',
-			function ($date, $startDayOfWeek = 'monday') {
-				return sprintf('relative_date(%1$d, %2$s)', $date, $startDayOfWeek);
-			},
-			function($args, $date, $startDayOfWeek = 'monday') {
-			    return self::relativeDate( $date, $startDayOfWeek);
-			}
-		);
+        $functions[] = new ExpressionFunction(
+            'relative_date',
+            function ($date, $startDayOfWeek = 'monday') {
+                return sprintf('relative_date(%1$d, %2$s)', $date, $startDayOfWeek);
+            },
+            function ($args, $date, $startDayOfWeek = 'monday') {
+                return self::relativeDate($date, $startDayOfWeek);
+            }
+        );
 
-		$functions[] = new ExpressionFunction(
-			'date_tz',
-			function ($format, $timestamp = null, $timezone = null) {
-				return sprintf('date_tz(%1$s, %2$a, %3$d)', $format, $timestamp, $timezone);
-			},
-			function($args, $format, $timestamp = null, $timezone = null ) {
-				if (!is_numeric($timestamp)) {
-					$timestamp = time();
-				}
+        $functions[] = new ExpressionFunction(
+            'date_tz',
+            function ($format, $timestamp = null, $timezone = null) {
+                return sprintf('date_tz(%1$s, %2$a, %3$d)', $format, $timestamp, $timezone);
+            },
+            function ($args, $format, $timestamp = null, $timezone = null) {
+                if (!is_numeric($timestamp)) {
+                    $timestamp = time();
+                }
 
-				$date_tz = \DateTime::createFromFormat($format, date($format, $timestamp));
+                $date_tz = \DateTime::createFromFormat($format, date($format, $timestamp));
 
-				if (!is_bool($date_tz) && !empty($timezone)) {
-					$date_tz->setTimezone(new \DateTimeZone($timezone));
-				}
+                if (!is_bool($date_tz) && !empty($timezone)) {
+                    $date_tz->setTimezone(new \DateTimeZone($timezone));
+                }
 
-				if (is_bool($date_tz)) {
-					return false;
-				}
+                if (is_bool($date_tz)) {
+                    return false;
+                }
 
-				return $date_tz->format($format);
-			}
-		);
+                return $date_tz->format($format);
+            }
+        );
 
-		$functions[] = new ExpressionFunction(
-			'strtotime_tz',
-			function ($datetime, $baseTimestamp = null, $timezone = null) {
-				return sprintf('strtotime_tz(%1$s, %2$a, %3$d)', $datetime, $baseTimestamp, $timezone);
-			},
-			function($args, $datetime, $baseTimestamp = null, $timezone = null ) {
-				$datetimeStr = $datetime;
+        $functions[] = new ExpressionFunction(
+            'strtotime_tz',
+            function ($datetime, $baseTimestamp = null, $timezone = null) {
+                return sprintf('strtotime_tz(%1$s, %2$a, %3$d)', $datetime, $baseTimestamp, $timezone);
+            },
+            function ($args, $datetime, $baseTimestamp = null, $timezone = null) {
+                $datetimeStr = $datetime;
 
-				if (!empty($timezone)) {
-					$datetimeStr .= ' ' . $timezone;
-				}
+                if (!empty($timezone)) {
+                    $datetimeStr .= ' ' . $timezone;
+                }
 
-				if (is_numeric($baseTimestamp)) {
-					return strtotime($datetimeStr, $baseTimestamp);
-				}
+                if (is_numeric($baseTimestamp)) {
+                    return strtotime($datetimeStr, $baseTimestamp);
+                }
 
-				return strtotime($datetimeStr);
-			}
-		);
+                return strtotime($datetimeStr);
+            }
+        );
 
-		$functions[] = new ExpressionFunction(
-		    'html_to_markdown',
-		    function ($html, $options=[]) {
-		        return sprintf('html_to_markdown(%s, %s)', $html, var_export( $options, true));
-		    },
-		    function ($args, $html, $options=[]) {
-		        $converter = new HtmlConverter( $options);
-		        $markdown = $converter->convert($html);
-		        return $markdown;
-		    }
-	    );
+        $functions[] = new ExpressionFunction(
+            'html_to_markdown',
+            function ($html, $options = []) {
+                return sprintf('html_to_markdown(%s, %s)', $html, var_export($options, true));
+            },
+            function ($args, $html, $options = []) {
+                $converter = new HtmlConverter($options);
+                $markdown = $converter->convert($html);
+                return $markdown;
+            }
+        );
 
         $functions[] = new ExpressionFunction(
             'parse_date_time',
             function ($date, $platform = 'amazon') {
                 return sprintf('parse_date_time(%1$d, %2$p)', $date, $platform);
             },
-            function($args, $date, $platform = 'amazon') {
+            function ($args, $date, $platform = 'amazon') {
                 if (strtotime($date)) {
                     return strval($date);
                 }
@@ -581,7 +585,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             function ($duration, $platform = 'amazon', $defaultDuration = 30) {
                 return sprintf('parse_duration(%1$d, %2$p, %3$dD)', $duration, $platform, $defaultDuration);
             },
-            function($args, $duration, $platform = 'amazon', $defaultDuration = 30) {
+            function ($args, $duration, $platform = 'amazon', $defaultDuration = 30) {
                 if (empty($duration)) {
                     return $defaultDuration;
                 }
@@ -621,7 +625,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
         return $functions;
     }
 
-    public static function relativeDate( $date, $startDayOfWeek = 'monday') {
+    public static function relativeDate($date, $startDayOfWeek = 'monday')
+    {
         $relativesArray = [
             'relative_available' => false,
             'yesterday' => false,
@@ -632,7 +637,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             'next_week' => false,
         ];
 
-        $inputTime = is_int( $date) ? $date : strtotime($date);
+        $inputTime = is_int($date) ? $date : strtotime($date);
         $startDayOfWeek = strtolower($startDayOfWeek);
         if (!$inputTime) {
             return $relativesArray;
@@ -891,9 +896,9 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code">' .
-                            "<span class=\"statement\">{{ component.properties.value == 'next' ? 'NEXT' : 'GOTO' }}</span> ".
+                            "<span class=\"statement\">{{ component.properties.value == 'next' ? 'NEXT' : 'GOTO' }}</span> " .
                             "<span ng-if=\"!isBlockLinkable( component.properties.value)\" class=\"block-id\">{{ getBlockName( component.properties.value)}}</span>" .
-                            "<a ng-if=\"isBlockLinkable( component.properties.value)\" class=\"block-id linked\" ui-sref=\"convoworks-editor-service.editor({ sb: component.properties.value, sv: 'steps' })\" ui-sref-opts=\"{inherit:true, reload:false, notify:true, location:true}\">{{ getBlockName( component.properties.value)}}</a>".
+                            "<a ng-if=\"isBlockLinkable( component.properties.value)\" class=\"block-id linked\" ui-sref=\"convoworks-editor-service.editor({ sb: component.properties.value, sv: 'steps' })\" ui-sref-opts=\"{inherit:true, reload:false, notify:true, location:true}\">{{ getBlockName( component.properties.value)}}</a>" .
                             '</div>'
                     ),
                     '_help' =>  array(
@@ -921,9 +926,9 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'type' => 'html',
                         'template' => '<div class="code">' .
                             '<span class="statement">INCLUDE</span> ' .
-                        "<span ng-if=\"!isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id\">{{ getSubroutineName( component.properties.fragment_id)}}</span>" .
-                        "<a ng-if=\"isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id linked\"".
-                        " ui-sref=\"convoworks-editor-service.editor({ sb: component.properties.fragment_id, sv: 'fragments' })\" ui-sref-opts=\"{ inherit:true, reload:false, notify:true, location:true }\">{{ getSubroutineName( component.properties.fragment_id)}}</a>" .
+                            "<span ng-if=\"!isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id\">{{ getSubroutineName( component.properties.fragment_id)}}</span>" .
+                            "<a ng-if=\"isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id linked\"" .
+                            " ui-sref=\"convoworks-editor-service.editor({ sb: component.properties.fragment_id, sv: 'fragments' })\" ui-sref-opts=\"{ inherit:true, reload:false, notify:true, location:true }\">{{ getSubroutineName( component.properties.fragment_id)}}</a>" .
                             '</div>'
                     ),
                     '_help' =>  array(
@@ -1009,16 +1014,16 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Scope under which to store parameters',
                         'valueType' => 'string'
                     ),
-					'parameters' => array(
-						'editor_type' => 'select',
-						'editor_properties' => array(
-							'options' => array('parent' => 'Parent Params', 'block' => 'Block Params', 'service' => 'Service Params'),
-						),
-						'defaultValue' => 'service',
-						'name' => 'Parameters',
-						'description' => 'Store in Block Params or in Service Params',
-						'valueType' => 'string'
-					),
+                    'parameters' => array(
+                        'editor_type' => 'select',
+                        'editor_properties' => array(
+                            'options' => array('parent' => 'Parent Params', 'block' => 'Block Params', 'service' => 'Service Params'),
+                        ),
+                        'defaultValue' => 'service',
+                        'name' => 'Parameters',
+                        'description' => 'Store in Block Params or in Service Params',
+                        'valueType' => 'string'
+                    ),
                     'properties' => array(
                         'editor_type' => 'params',
                         'editor_properties' => array(
@@ -1033,7 +1038,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'type' => 'html',
                         'template' => '<div class="code"><span class="statement">SET</span> parameters in <span class="statement">{{ component.properties.scope_type.toUpperCase() }}</span> at <span class="statement">{{ component.properties.parameters.toUpperCase() }}</span> level' .
                             '<span ng-if="!component.properties[\'_use_var_properties\']" ng-repeat="(key, val) in component.properties.properties track by key">' .
-                                '
+                            '
 <span class="statement">LET</span> <b>{{ key}}</b> = <b>{{ val }};</b>' .
                             '</span>' .
                             '<span ng-if="component.properties[\'_use_var_properties\']">{{ component.properties.properties }}</span>' .
@@ -1211,14 +1216,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Limit execution to this many elements of the collection.',
                         'valueType' => 'string'
                     ],
-					'loop_until' => [
-						'editor_type' => 'text',
-						'editor_properties' => [],
-						'defaultValue' => '',
-						'name' => 'Loop Until',
-						'description' => 'Expression to loop until.',
-						'valueType' => 'string'
-					],
+                    'loop_until' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => '',
+                        'name' => 'Loop Until',
+                        'description' => 'Expression to loop until.',
+                        'valueType' => 'string'
+                    ],
                     '_preview_angular' => [
                         'type' => 'html',
                         'template' => '<div class="code"><span class="statement">FOR EACH</span> <b>{{ component.properties.data_collection || "data collection" }}</b> <span class="statement">AS</span> <b>{{ component.properties.item || "item" }}</b></div>'
@@ -1262,14 +1267,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Variable name for accessing loop iteration information, such as the current index',
                         'valueType' => 'string'
                     ),
-					'loop_until' => [
-						'editor_type' => 'text',
-						'editor_properties' => [],
-						'defaultValue' => '',
-						'name' => 'Loop Until',
-						'description' => 'Expression to loop until.',
-						'valueType' => 'string'
-					],
+                    'loop_until' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => '',
+                        'name' => 'Loop Until',
+                        'description' => 'Expression to loop until.',
+                        'valueType' => 'string'
+                    ],
                     'elements' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
@@ -1285,7 +1290,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_preview_angular' => [
                         'type' => 'html',
                         'template' => '<div class="statement">' .
-                                'Loop <b>{{ !component.properties.count || component.properties.count === "0" ? "x" : component.properties.count }} {{ !component.properties.count || (component.properties.count * 1) > 1 ? "times" : "time" }}</b>'.
+                            'Loop <b>{{ !component.properties.count || component.properties.count === "0" ? "x" : component.properties.count }} {{ !component.properties.count || (component.properties.count * 1) > 1 ? "times" : "time" }}</b>' .
                             '</div>'
                     ],
                     '_help' =>  array(
@@ -1321,6 +1326,64 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     '_workflow' => 'read',
                 )
             ),
+            new \Convo\Core\Factory\ComponentDefinition(
+                $this->getNamespace(),
+                '\Convo\Pckg\Core\Elements\NamedFunctionElement',
+                'Function Element',
+                'Defines a workflow that can be invoked as a function in expression language',
+                [
+                    'name' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => '',
+                        'name' => 'Function name',
+                        'description' => 'Valid function name you will use to invoke it.',
+                        'valueType' => 'string'
+                    ],
+                    'function_args' => [
+                        'editor_type' => 'params',
+                        'editor_properties' => ['multiple' => true],
+                        'defaultValue' => [],
+                        'name' => 'Function arguments',
+                        'description' => 'Name and default value pairs of function arguments.',
+                        'valueType' => 'array'
+                    ],
+                    'result_data' => [
+                        'editor_type' => 'text',
+                        'editor_properties' => [],
+                        'defaultValue' => 'function_result',
+                        'name' => 'Result variable name',
+                        'description' => 'Variable storing the function result.',
+                        'valueType' => 'string'
+                    ],
+                    'ok' => [
+                        'editor_type' => 'service_components',
+                        'editor_properties' => ['allow_interfaces' => ['\Convo\Core\Workflow\IConversationElement'], 'multiple' => true],
+                        'defaultValue' => [],
+                        'defaultOpen' => false,
+                        'name' => 'OK flow',
+                        'description' => 'Executed once the operation is completed and the result variable is ready for use.',
+                        'valueType' => 'class'
+                    ],
+                    '_preview_angular' => [
+                        'type' => 'html',
+                        '<div class="code"><span class="statement">NAMED FUNCTION</span> ' .
+                            '<b>{{component.properties.function_name}}(' .
+                            '<span ng-if="!isString(component.properties.function_args)" ng-repeat="(key, val) in component.properties.function_args track by key">' .
+                            '{{$index ? ", " : ""}}{{ component.properties.request_data }}.{{ key }}</span>' .
+                            '<span ng-if="isString(component.properties.function_args)">{{ component.properties.function_args }}</span>' .
+                            ') => {{component.properties.result_data}}</b>
+                        </div>'
+                    ],
+                    '_interface' => '\Convo\Core\Workflow\IConversationElement',
+                    '_workflow' => 'read',
+                    '_help' => [
+                        'type' => 'file',
+                        'filename' => 'named-function-element.html'
+                    ],
+                ]
+            ),
+
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Processors\SimpleProcessor',
@@ -1449,12 +1512,12 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code">Catch platform intent <b>{{ component.properties.intent}}</b>'.
-                            '<span ng-if="!component.properties[\'_use_var_values\']"><span ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span></span>'.
-                            '<span ng-if="component.properties[\'_use_var_values\']">Use predefined value expression <b>{{ component.properties.values }}</b></span>'.
-                            '<span ng-if="!component.properties[\'_use_var_rename\']"><span ng-repeat="(key,val) in component.properties.rename track by key">, rename slot <b>{{ key }} => result.{{ val }}</b></span></span>'.
-                            '<span ng-if="!component.properties[\'_use_var_rename\']">Use rename expression <b>{{ component.properties.rename }}</b></span>'.
-                            '<span ng-if="component.properties[\'disable\']"><br>Disable when <b>{{ component.properties.disable }}</b></span>'.
+                        'template' => '<div class="code">Catch platform intent <b>{{ component.properties.intent}}</b>' .
+                            '<span ng-if="!component.properties[\'_use_var_values\']"><span ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span></span>' .
+                            '<span ng-if="component.properties[\'_use_var_values\']">Use predefined value expression <b>{{ component.properties.values }}</b></span>' .
+                            '<span ng-if="!component.properties[\'_use_var_rename\']"><span ng-repeat="(key,val) in component.properties.rename track by key">, rename slot <b>{{ key }} => result.{{ val }}</b></span></span>' .
+                            '<span ng-if="!component.properties[\'_use_var_rename\']">Use rename expression <b>{{ component.properties.rename }}</b></span>' .
+                            '<span ng-if="component.properties[\'disable\']"><br>Disable when <b>{{ component.properties.disable }}</b></span>' .
                             '</div>'
                     ),
                     '_help' =>  array(
@@ -1519,14 +1582,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code">Catch Convoworks intent '.
-                            '<a ng-if="component.properties.intent && !isSystemIntent(component.properties.intent)" class="block-id linked" ui-sref="convoworks-editor-service.intent-details({ name: component.properties.intent })", ui-sref-opts="{ inherit: true, reload: false, notify: true, location: true }">{{ component.properties.intent}}</a>'.
-                            '<b ng-if="component.properties.intent && isSystemIntent(component.properties.intent)">{{ component.properties.intent}}</b>'.
-                            '<span ng-if="!component.properties[\'_use_var_values\']"><span ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span></span>'.
-                            '<span ng-if="component.properties[\'_use_var_values\']"><br>Use predefined value expression <b>{{ component.properties.values }}</b></span>'.
-                            '<span ng-if="!component.properties[\'_use_var_rename\']"><span ng-repeat="(key,val) in component.properties.rename track by key">, rename slot <b>{{ key }} => result.{{ val }}</b></span></span>'.
-                            '<span ng-if="component.properties[\'_use_var_rename\']"><br>Use rename expression <b>{{ component.properties.rename }}</b></span>'.
-                            '<span ng-if="component.properties[\'disable\']"><br>Disable when <b>{{ component.properties.disable }}</b></span>'.
+                        'template' => '<div class="code">Catch Convoworks intent ' .
+                            '<a ng-if="component.properties.intent && !isSystemIntent(component.properties.intent)" class="block-id linked" ui-sref="convoworks-editor-service.intent-details({ name: component.properties.intent })", ui-sref-opts="{ inherit: true, reload: false, notify: true, location: true }">{{ component.properties.intent}}</a>' .
+                            '<b ng-if="component.properties.intent && isSystemIntent(component.properties.intent)">{{ component.properties.intent}}</b>' .
+                            '<span ng-if="!component.properties[\'_use_var_values\']"><span ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span></span>' .
+                            '<span ng-if="component.properties[\'_use_var_values\']"><br>Use predefined value expression <b>{{ component.properties.values }}</b></span>' .
+                            '<span ng-if="!component.properties[\'_use_var_rename\']"><span ng-repeat="(key,val) in component.properties.rename track by key">, rename slot <b>{{ key }} => result.{{ val }}</b></span></span>' .
+                            '<span ng-if="component.properties[\'_use_var_rename\']"><br>Use rename expression <b>{{ component.properties.rename }}</b></span>' .
+                            '<span ng-if="component.properties[\'disable\']"><br>Disable when <b>{{ component.properties.disable }}</b></span>' .
                             '</div>'
                     ),
                     '_help' =>  array(
@@ -1535,16 +1598,16 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     '_workflow' => 'filter',
                     '_descend' => true,
-                    '_factory' => new class ($this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
+                    '_factory' => new class($this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
                     {
                         private $_packageProviderFactory;
-                        public function __construct( $packageProviderFactory)
+                        public function __construct($packageProviderFactory)
                         {
-                            $this->_packageProviderFactory	= $packageProviderFactory;
+                            $this->_packageProviderFactory    = $packageProviderFactory;
                         }
-                        public function createComponent( $properties, $service)
+                        public function createComponent($properties, $service)
                         {
-                            return new \Convo\Pckg\Core\Filters\ConvoIntentReader( $properties, $this->_packageProviderFactory);
+                            return new \Convo\Pckg\Core\Filters\ConvoIntentReader($properties, $this->_packageProviderFactory);
                         }
                     }
                 )
@@ -1600,16 +1663,16 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'filename' => 'yes-no-processor.html'
                     ),
                     '_workflow' => 'process',
-                    '_factory' => new class ( $this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
+                    '_factory' => new class($this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
                     {
                         private $_packageProviderFactory;
-                        public function __construct( $packageProviderFactory)
+                        public function __construct($packageProviderFactory)
                         {
-                            $this->_packageProviderFactory	=	$packageProviderFactory;
+                            $this->_packageProviderFactory    =    $packageProviderFactory;
                         }
-                        public function createComponent( $properties, $service)
+                        public function createComponent($properties, $service)
                         {
-                            return new \Convo\Pckg\Core\Processors\YesNoProcessor( $properties, $this->_packageProviderFactory, $service);
+                            return new \Convo\Pckg\Core\Processors\YesNoProcessor($properties, $this->_packageProviderFactory, $service);
                         }
                     }
                 )
@@ -1687,26 +1750,26 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Elements to be executed at random',
                         'valueType' => 'class'
                     ),
-					'loop' => array(
-						'editor_type' => 'boolean',
-						'editor_properties' => array(
-							'dependency' => "component.properties.mode === 'smart'"
-						),
-						'defaultValue' => true,
-						'name' => 'Loop',
-						'description' => 'Should use loop?',
-						'valueType' => 'boolean'
-					),
-					'is_repeat' => array(
-						'editor_type' => 'text',
-						'editor_properties' => array(
-							'dependency' => "component.properties.mode === 'smart'"
-						),
-						'defaultValue' => '',
-						'name' => 'Is Repeat',
-						'description' => 'Expression to evaluate if you want the Element Randomizer Element to repeat the same element.',
-						'valueType' => 'string'
-					),
+                    'loop' => array(
+                        'editor_type' => 'boolean',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.mode === 'smart'"
+                        ),
+                        'defaultValue' => true,
+                        'name' => 'Loop',
+                        'description' => 'Should use loop?',
+                        'valueType' => 'boolean'
+                    ),
+                    'is_repeat' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(
+                            'dependency' => "component.properties.mode === 'smart'"
+                        ),
+                        'defaultValue' => '',
+                        'name' => 'Is Repeat',
+                        'description' => 'Expression to evaluate if you want the Element Randomizer Element to repeat the same element.',
+                        'valueType' => 'string'
+                    ),
                     'scope_type' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
@@ -1827,14 +1890,14 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'description' => 'Elements to be executed if main flow has been executed already.',
                         'valueType' => 'class'
                     ),
-					'should_reset' => array(
-						'editor_type' => 'text',
-						'editor_properties' => array(),
-						'defaultValue' => '',
-						'name' => 'Should Reset',
-						'description' => 'If this expression evaluates to true, the queue will reset and start from the beginning.',
-						'valueType' => 'string'
-					),
+                    'should_reset' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Should Reset',
+                        'description' => 'If this expression evaluates to true, the queue will reset and start from the beginning.',
+                        'valueType' => 'string'
+                    ),
                     'wraparound' => array(
                         'editor_type' => 'boolean',
                         'editor_properties' => array(),
@@ -2119,7 +2182,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'select',
                         'editor_properties' => array(
                             'multiple' => false,
-                            'options' => array( 'AUTO'=> 'Auto', 'JSON' => 'JSON', 'TEXT' => 'Plain Text')
+                            'options' => array('AUTO' => 'Auto', 'JSON' => 'JSON', 'TEXT' => 'Plain Text')
                         ),
                         'defaultValue' => 'AUTO',
                         'name' => 'Content Type',
@@ -2130,7 +2193,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'editor_type' => 'select',
                         'editor_properties' => array(
                             'multiple' => false,
-                            'options' => array( 'GET'=> 'GET', 'POST' => 'POST', 'PUT' => 'PUT')
+                            'options' => array('GET' => 'GET', 'POST' => 'POST', 'PUT' => 'PUT')
                         ),
                         'defaultValue' => 'GET',
                         'name' => 'HTTP method',
@@ -2220,22 +2283,23 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         'filename' => 'http-query-element.html'
                     ),
                     '_workflow' => 'read',
-                    '_factory' => new class ( $this->_httpFactory, $this->_cache) implements \Convo\Core\Factory\IComponentFactory
+                    '_factory' => new class($this->_httpFactory, $this->_cache) implements \Convo\Core\Factory\IComponentFactory
                     {
                         private $_httpFactory;
                         private $_cache;
-                        public function __construct( $httpFactory, $cache)
+                        public function __construct($httpFactory, $cache)
                         {
-                            $this->_httpFactory	=	$httpFactory;
-                            $this->_cache    	=	$cache;
+                            $this->_httpFactory    =    $httpFactory;
+                            $this->_cache        =    $cache;
                         }
                         public function createComponent($properties, $service)
                         {
                             return new \Convo\Pckg\Core\Elements\HttpQueryElement($properties, $this->_httpFactory, $this->_cache);
                         }
-                },
+                    },
                 )
-            ), new \Convo\Core\Factory\ComponentDefinition(
+            ),
+            new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\MysqliQueryElement',
                 'x!MySQLI query',
@@ -2663,16 +2727,16 @@ In default phase you can inform users about problem you have interpreting comman
                     '_interface' => '\Convo\Core\Workflow\IConversationElement',
                     '_workflow' => 'read',
                     '_system' => true,
-                    '_factory' => new class ($this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
+                    '_factory' => new class($this->_packageProviderFactory) implements \Convo\Core\Factory\IComponentFactory
                     {
                         private $_packageProviderFactory;
-                        public function __construct( \Convo\Core\Factory\PackageProviderFactory $packageProviderFactory)
+                        public function __construct(\Convo\Core\Factory\PackageProviderFactory $packageProviderFactory)
                         {
-                            $this->_packageProviderFactory	=	$packageProviderFactory;
+                            $this->_packageProviderFactory    =    $packageProviderFactory;
                         }
-                        public function createComponent( $properties, $service)
+                        public function createComponent($properties, $service)
                         {
-                            return new \Convo\Pckg\Core\Elements\MediaBlock( $properties, $service, $this->_packageProviderFactory);
+                            return new \Convo\Pckg\Core\Elements\MediaBlock($properties, $service, $this->_packageProviderFactory);
                         }
                     },
                     '_platform_defaults' => array(
@@ -2729,9 +2793,9 @@ In default phase you can inform users about problem you have interpreting comman
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code">' .
-                        '<span class="statement">LET</span> <b>{{ component.properties.media_info_var }}</b> = ' .
-                        'media info <span class="statement">FROM</span> <b>{{ component.properties.context_id }}</b>' .
-                        '</div>'
+                            '<span class="statement">LET</span> <b>{{ component.properties.media_info_var }}</b> = ' .
+                            'media info <span class="statement">FROM</span> <b>{{ component.properties.context_id }}</b>' .
+                            '</div>'
                     ),
                     '_interface' => '\Convo\Core\Workflow\IConversationElement',
                     '_workflow' => 'read',
@@ -2785,10 +2849,10 @@ In default phase you can inform users about problem you have interpreting comman
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code"><span class="statement">START PLAYBACK</span> on <b>{{component.properties.context_id}}</b>'.
-                        '<span class="statement">{{ component.properties.play_index ? \' FROM \' : \'\'}}</span>' .
-                        '<b> {{ component.properties.play_index ? component.properties.play_index : \'\'}}</b>' .
-                        '</div>'
+                        'template' => '<div class="code"><span class="statement">START PLAYBACK</span> on <b>{{component.properties.context_id}}</b>' .
+                            '<span class="statement">{{ component.properties.play_index ? \' FROM \' : \'\'}}</span>' .
+                            '<b> {{ component.properties.play_index ? component.properties.play_index : \'\'}}</b>' .
+                            '</div>'
                     ),
                     '_interface' => '\Convo\Core\Workflow\IConversationElement',
                     '_workflow' => 'read',
@@ -2847,7 +2911,7 @@ In default phase you can inform users about problem you have interpreting comman
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code"><span class="statement">SEEK PLAYBACK </span> on <b>{{component.properties.context_id}}</b>'.
+                        'template' => '<div class="code"><span class="statement">SEEK PLAYBACK </span> on <b>{{component.properties.context_id}}</b>' .
                             '<span class="statement">{{ component.properties.search_term ? \' SEARCH TERM \' : \'\'}}</span>' .
                             '<b> {{ component.properties.search_term ? component.properties.search_term : \'\'}}</b>' .
                             '</div>'
@@ -2899,7 +2963,7 @@ In default phase you can inform users about problem you have interpreting comman
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code"><span class="statement">{{ component.properties.mode === \'rewind\' ? \'REWIND\' :  \'FAST FORWARD\' }} </span>'.
+                        'template' => '<div class="code"><span class="statement">{{ component.properties.mode === \'rewind\' ? \'REWIND\' :  \'FAST FORWARD\' }} </span>' .
                             '<b>{{ component.properties.rewind_fast_forward_value }}</b> seconds' .
                             '</div>'
                     ),
@@ -2948,7 +3012,7 @@ In default phase you can inform users about problem you have interpreting comman
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code"><span class="statement">START VIDEO PLAYBACK</span> from <b>{{component.properties.url}}</b>'.
+                        'template' => '<div class="code"><span class="statement">START VIDEO PLAYBACK</span> from <b>{{component.properties.url}}</b>' .
                             '</div>'
                     ),
                     '_interface' => '\Convo\Core\Workflow\IConversationElement',
@@ -3029,14 +3093,14 @@ In default phase you can inform users about problem you have interpreting comman
                         'description' => 'Remember block param values when outside of trivia block. Enter a value that evaluates to true or false.',
                         'valueType' => 'string'
                     ),
-					'reset_loop' => array(
-						'editor_type' => 'text',
-						'editor_properties' => array(),
-						'defaultValue' => '',
-						'name' => 'Reset loop',
-						'description' => 'Resets the loop and starts over. Enter a value that evaluates to true or false.',
-						'valueType' => 'string'
-					),
+                    'reset_loop' => array(
+                        'editor_type' => 'text',
+                        'editor_properties' => array(),
+                        'defaultValue' => '',
+                        'name' => 'Reset loop',
+                        'description' => 'Resets the loop and starts over. Enter a value that evaluates to true or false.',
+                        'valueType' => 'string'
+                    ),
                     'elements' => array(
                         'editor_type' => 'service_components',
                         'editor_properties' => array(
@@ -3100,7 +3164,7 @@ In default phase you can inform users about problem you have interpreting comman
                     '_workflow' => 'read',
                     '_system' => true
                 )
-                ),
+            ),
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Filters\NopRequestFilter',
@@ -3129,10 +3193,10 @@ In default phase you can inform users about problem you have interpreting comman
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
-                        'template' => '<div class="code"><b>{{ component.properties.empty === \'empty\' ? \'Will not activate\' :  \'Always activated\' }}</b>'.
-                            '<span ng-if="component.properties.empty != \'empty\' && !component.properties[\'_use_var_values\']" ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span>'.
-                            '<span ng-if="component.properties.empty != \'empty\' && component.properties[\'_use_var_values\']"><br>Use predefined values expression <b>{{ component.properties.values }}</b></span>'.
-                        '</div>'
+                        'template' => '<div class="code"><b>{{ component.properties.empty === \'empty\' ? \'Will not activate\' :  \'Always activated\' }}</b>' .
+                            '<span ng-if="component.properties.empty != \'empty\' && !component.properties[\'_use_var_values\']" ng-repeat="(key,val) in component.properties.values track by key">, use predefined value <b>result.{{ key }} = \'{{ val }}\'</b></span>' .
+                            '<span ng-if="component.properties.empty != \'empty\' && component.properties[\'_use_var_values\']"><br>Use predefined values expression <b>{{ component.properties.values }}</b></span>' .
+                            '</div>'
                     ),
                     '_help' =>  array(
                         'type' => 'file',
@@ -3270,7 +3334,7 @@ In default phase you can inform users about problem you have interpreting comman
                         'template' => '<div class="code">' .
                             '<span class="statement">INCLUDE</span> ' .
                             "<span ng-if=\"!isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id\">{{ getSubroutineName( component.properties.fragment_id)}}</span>" .
-                            "<span ng-if=\"isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id linked\"".
+                            "<span ng-if=\"isSubroutineLinkable( component.properties.fragment_id)\" class=\"block-id linked\"" .
                             " ng-click=\"selectSubroutine( component.properties.fragment_id); \$event.stopPropagation()\">{{ getSubroutineName( component.properties.fragment_id)}}</span>" .
                             '</div>'
                     ),
