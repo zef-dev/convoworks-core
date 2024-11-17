@@ -243,6 +243,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('parse_url');
         $functions[] = ExpressionFunction::fromPhp('array_slice');
         $functions[] = ExpressionFunction::fromPhp('array_chunk');
+        $functions[] = ExpressionFunction::fromPhp('array_map');
         $functions[] = ExpressionFunction::fromPhp('set_time_limit');
         $functions[] = ExpressionFunction::fromPhp('number_format');
         $functions[] = ExpressionFunction::fromPhp('round');
