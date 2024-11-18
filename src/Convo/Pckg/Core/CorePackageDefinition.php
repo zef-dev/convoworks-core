@@ -1353,7 +1353,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'result_data' => [
                         'editor_type' => 'text',
                         'editor_properties' => [],
-                        'defaultValue' => 'function_result',
+                        'defaultValue' => '${function_result}',
                         'name' => 'Result variable name',
                         'description' => 'Variable storing the function result.',
                         'valueType' => 'string'
@@ -1369,13 +1369,13 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ],
                     '_preview_angular' => [
                         'type' => 'html',
-                        '<div class="code"><span class="statement">NAMED FUNCTION</span> ' .
-                            '<b>{{component.properties.function_name}}(' .
+                        'template' =>
+                        '<div class="code"><span class="statement">FUNCTION</span> ' .
+                            '<b>{{component.properties.name}}(' .
                             '<span ng-if="!isString(component.properties.function_args)" ng-repeat="(key, val) in component.properties.function_args track by key">' .
-                            '{{$index ? ", " : ""}}{{ component.properties.request_data }}.{{ key }}</span>' .
+                            '{{$index ? ", " : ""}} {{ key }}</span>' .
                             '<span ng-if="isString(component.properties.function_args)">{{ component.properties.function_args }}</span>' .
-                            ') => {{component.properties.result_data}}</b>
-                        </div>'
+                            ') => {{component.properties.result_data}}</b></div>'
                     ],
                     '_interface' => '\Convo\Core\Workflow\IConversationElement',
                     '_workflow' => 'read',
