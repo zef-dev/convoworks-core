@@ -949,7 +949,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'scope_type' => [
                         'editor_type' => 'select',
                         'editor_properties' => [
-                            'options' => ['session' => 'Session', 'installation' => 'Installation', 'user' => 'User']
+                            'options' => ['request' => 'Request', 'session' => 'Session', 'installation' => 'Installation', 'user' => 'User']
                         ],
                         'defaultValue' => 'session',
                         'name' => 'Run once per',
