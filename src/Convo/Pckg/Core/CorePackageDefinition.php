@@ -1373,7 +1373,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         '<div class="code"><span class="statement">FUNCTION</span> ' .
                             '<b>{{component.properties.name}}(' .
                             '<span ng-if="!isString(component.properties.function_args)" ng-repeat="(key, val) in component.properties.function_args track by key">' .
-                            '{{$index ? ", " : ""}} {{ key }}</span>' .
+                            '{{$index ? ", " : ""}}{{ key }}</span>' .
                             '<span ng-if="isString(component.properties.function_args)">{{ component.properties.function_args }}</span>' .
                             ') => {{component.properties.result_data}}</b></div>'
                     ],
