@@ -155,7 +155,7 @@ class EvaluationContext
                     $expression = substr_replace($expression, "", $last_char, 1);
                 }
 
-                $this->_logger->debug('Found expression [' . $match . ']');
+                // $this->_logger->debug('Found expression [' . $match . ']');
                 $expressions[] = $expression;
             }
         }
