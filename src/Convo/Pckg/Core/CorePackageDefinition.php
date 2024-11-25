@@ -1060,7 +1060,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 'Test against a condition and execute various flows depending on the result',
                 [
                     'test' => [
-                        'editor_type' => 'text',
+                        'editor_type' => 'desc',
                         'editor_properties' => [],
                         'defaultValue' => null,
                         'name' => 'Test',
@@ -1125,7 +1125,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 'Test against an expression and run children if true',
                 [
                     'test' => [
-                        'editor_type' => 'text',
+                        'editor_type' => 'desc',
                         'editor_properties' => [],
                         'defaultValue' => null,
                         'name' => 'Test',
