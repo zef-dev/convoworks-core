@@ -1291,9 +1291,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     ),
                     '_preview_angular' => [
                         'type' => 'html',
-                        'template' => '<div class="statement">' .
-                            'Loop <b>{{ !component.properties.count || component.properties.count === "0" ? "x" : component.properties.count }} {{ !component.properties.count || (component.properties.count * 1) > 1 ? "times" : "time" }}</b>' .
-                            '</div>'
+                        'template' => '<div class="code"><span class="statement">LOOP</span> <b>{{ component.properties.count || "?" }}</b> <span class="statement">TIMES AS</span> <b>{{ component.properties.item || "item" }}</b></div>'
                     ],
                     '_help' =>  array(
                         'type' => 'file',
