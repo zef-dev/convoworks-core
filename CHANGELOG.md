@@ -5,6 +5,13 @@
 
 ## [Releases]
 
+## 0.22.30 - 2024-11-26
+
+* Registered PHP `array_map()` and `str_word_count()` functions.
+* Added the Function Element, allowing you to define a function using Convoworks elements and expose it as a function in the expression language.
+* Fixed the preview for the For Loop element.
+
+
 ## 0.22.29 - 2024-10-16
 
 * Registered PHP `constant()` function.
