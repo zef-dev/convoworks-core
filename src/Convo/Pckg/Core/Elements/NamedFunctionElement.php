@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Convo\Pckg\Core\Elements;
 
+use Convo\Core\Params\IServiceParams;
+use Convo\Core\Params\SimpleParams;
+use Convo\Core\Util\StrUtil;
 use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
 use Convo\Core\Workflow\IConversationElement;
+use Convo\Core\Workflow\IFunctionScope;
 
-class NamedFunctionElement extends AbstractWorkflowContainerComponent implements IConversationElement
+class NamedFunctionElement extends AbstractWorkflowContainerComponent implements IConversationElement, IFunctionScope
 {
 
     private $_functionName;
@@ -17,6 +21,26 @@ class NamedFunctionElement extends AbstractWorkflowContainerComponent implements
      * @var IConversationElement[]
      */
     private $_ok = [];
+
+    /**
+     * @deprecated
+     */
+    private $_functionScope = [];
+
+    /**
+     * @var string
+     */
+    private $_executionId;
+
+    /**
+     * @var IServiceParams
+     */
+    private $_currentParams;
+
+    /**
+     * @var IServiceParams[]
+     */
+    private $_functionParams = [];
 
     public function __construct($properties)
     {
@@ -35,19 +59,20 @@ class NamedFunctionElement extends AbstractWorkflowContainerComponent implements
     {
         $service = $this->getService();
 
-        $elem_params = $service->getComponentParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST, $this);
+
         $arguments = $service->evaluateArgs($this->_functionArgs, $this);
 
-        $this->_logger->debug('Got parsed function arg definition [' . print_r($arguments, true) . ']');
+        $this->_logger->debug('FNC: Got parsed function arg definition [' . print_r($arguments, true) . ']');
         // Create a closure representing your function
-        $function = function (...$params) use ($arguments, $elem_params, $request, $response) {
-            $this->_logger->debug('Got function args in execution [' . json_encode($params) . ']');
+        $function = function (...$params) use ($arguments, $request, $response) {
+            $elem_params = $this->getFunctionParams();
+            $this->_logger->debug('  [' . json_encode($params) . ']');
             $i = 0;
 
             // Make function arguments visible to child components
             foreach ($arguments as $name => $default) {
                 $value = $params[$i] ?? $this->evaluateString($default);
-                $this->_logger->debug('Preparing argument  [' . $name . '][' . $value . ']');
+                $this->_logger->debug('FNC: Preparing argument  [' . $name . '][' . $value . ']');
                 $elem_params->setServiceParam($name, $value);
                 $i++;
             }
@@ -57,11 +82,11 @@ class NamedFunctionElement extends AbstractWorkflowContainerComponent implements
                 $elem->read($request, $response);
             }
             $result = $this->evaluateString($this->_resultData);
-            $this->_logger->debug('Returning function result [' . $result . ']');
+            $this->_logger->debug('FNC: Returning function result [' . $result . ']');
             return $result;
         };
 
-        $this->_logger->debug('Registering function [' . $this->_functionName . '] in global scope');
+        $this->_logger->debug('FNC: Registering function [' . $this->_functionName . '] in global scope');
 
         $expressionLanguage = $service->getExpressionLanguage();
         $expressionLanguage->addFunction(
@@ -72,8 +97,12 @@ class NamedFunctionElement extends AbstractWorkflowContainerComponent implements
                 },
                 function (...$params) use ($function) {
                     array_shift($params);
-                    $this->_logger->debug('Got function args in registration [' . json_encode($params) . ']');
-                    return call_user_func_array($function, $params);
+                    $id = $this->initParams();
+                    $this->_logger->debug('Got function args in registration [' . $id . '][' . json_encode($params) . ']');
+                    $res = call_user_func_array($function, $params);
+                    $this->restoreParams($id);
+                    $this->_logger->debug('Resttoring id [' . $id . ']');
+                    return $res;
                 }
             )
         );
@@ -83,6 +112,39 @@ class NamedFunctionElement extends AbstractWorkflowContainerComponent implements
         $service_params->setServiceParam($this->_functionName, $function);
     }
 
+    /**
+     * @return \Convo\Core\Params\IServiceParams
+     */
+    public function getFunctionParams()
+    {
+        if (!$this->_functionParams[$this->_executionId]) {
+            throw new \Exception('No params defined for [' . $this->_executionId . ']');
+        }
+
+        return $this->_functionParams[$this->_executionId];
+    }
+
+    public function initParams()
+    {
+        $this->_executionId = StrUtil::uuidV4();
+        $this->_functionParams[$this->_executionId] = new SimpleParams();
+        $this->_currentParams = $this->_functionParams[$this->_executionId];
+        return $this->_executionId;
+    }
+
+    public function restoreParams($id)
+    {
+        $this->_executionId = $id;
+        $this->_currentParams = $this->_functionParams[$this->_executionId];
+    }
+
+    public function evaluateString($string, $context = [])
+    {
+        return $this->getParent()->evaluateString($string, array_merge(
+            $context,
+            $this->_currentParams ? $this->_currentParams->getData() : []
+        ));
+    }
 
     // UTIL
     public function __toString()

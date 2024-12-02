@@ -1019,7 +1019,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
                     'parameters' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
-                            'options' => array('parent' => 'Parent Params', 'block' => 'Block Params', 'service' => 'Service Params'),
+                            'options' => array('parent' => 'Parent Params', 'block' => 'Block Params', 'service' => 'Service Params', 'function' => 'Function Params'),
                         ),
                         'defaultValue' => 'service',
                         'name' => 'Parameters',
