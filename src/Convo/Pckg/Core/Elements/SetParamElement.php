@@ -43,8 +43,8 @@ class SetParamElement extends \Convo\Core\Workflow\AbstractWorkflowComponent imp
         } else if ($parameters === 'parent') {
             $params = $service->getComponentParams($scope_type, $this->getParent());
         } else if ($parameters === 'function') {
-            $function_elem = $this->findAncestor('\Convo\Core\Workflow\IFunctionScope');
-            /** @var \Convo\Core\Workflow\IFunctionScope $function_elem */
+            $function_elem = $this->findAncestor('\Convo\Core\Workflow\IScopedFunction');
+            /** @var \Convo\Core\Workflow\IScopedFunction $function_elem */
             $params = $function_elem->getFunctionParams();
         } else {
             throw new \Exception("Unrecognized parameters type [$parameters]");

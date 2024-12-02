@@ -8,9 +8,9 @@ use Convo\Core\Params\IServiceParams;
 use Convo\Core\Params\SimpleParams;
 use Convo\Core\Util\StrUtil;
 use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
-use Convo\Core\Workflow\IFunctionScope;
+use Convo\Core\Workflow\IScopedFunction;
 
-abstract class AbstractScopedFunction extends AbstractWorkflowContainerComponent implements IFunctionScope
+abstract class AbstractScopedFunction extends AbstractWorkflowContainerComponent implements IScopedFunction
 {
 
     /**
