@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace Convo\Pckg\Core\Elements;
 
-use Convo\Core\Params\IServiceParams;
-use Convo\Core\Params\SimpleParams;
-use Convo\Core\Util\StrUtil;
-use Convo\Core\Workflow\AbstractWorkflowContainerComponent;
+use Convo\Core\Workflow\AbstractScopedFunction;
 use Convo\Core\Workflow\IConversationElement;
-use Convo\Core\Workflow\IFunctionScope;
 
-class NamedFunctionElement extends AbstractWorkflowContainerComponent implements IConversationElement, IFunctionScope
+class NamedFunctionElement extends AbstractScopedFunction implements IConversationElement
 {
 
     private $_functionName;
@@ -22,22 +18,12 @@ class NamedFunctionElement extends AbstractWorkflowContainerComponent implements
      */
     private $_ok = [];
 
-    /**
-     * @var string
-     */
-    private $_executionId = null;
-
-    /**
-     * @var IServiceParams[]
-     */
-    private $_functionParams = [];
-
     public function __construct($properties)
     {
         parent::__construct($properties);
 
-        $this->_functionName     =   $properties['name'];
-        $this->_functionArgs     =   $properties['function_args'];
+        $this->_functionName    =   $properties['name'];
+        $this->_functionArgs    =   $properties['function_args'];
         $this->_resultData      =   $properties['result_data'];
         foreach ($properties['ok'] as $element) {
             $this->_ok[] = $element;
@@ -48,7 +34,6 @@ class NamedFunctionElement extends AbstractWorkflowContainerComponent implements
     public function read(\Convo\Core\Workflow\IConvoRequest $request, \Convo\Core\Workflow\IConvoResponse $response)
     {
         $service = $this->getService();
-
 
         $arguments = $service->evaluateArgs($this->_functionArgs, $this);
 
@@ -100,39 +85,6 @@ class NamedFunctionElement extends AbstractWorkflowContainerComponent implements
         // Optionally, expose it in service_params as well
         $service_params = $service->getServiceParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST);
         $service_params->setServiceParam($this->_functionName, $function);
-    }
-
-    /**
-     * @return \Convo\Core\Params\IServiceParams
-     */
-    public function getFunctionParams()
-    {
-        if (!$this->_functionParams[$this->_executionId]) {
-            throw new \Exception('No params defined for [' . $this->_executionId . ']');
-        }
-
-        return $this->_functionParams[$this->_executionId];
-    }
-
-    public function initParams()
-    {
-        $old = $this->_executionId;
-        $this->_executionId = StrUtil::uuidV4();
-        $this->_functionParams[$this->_executionId] = new SimpleParams();
-        return $old;
-    }
-
-    public function restoreParams($id)
-    {
-        $this->_executionId = $id;
-    }
-
-    public function evaluateString($string, $context = [])
-    {
-        return parent::evaluateString($string, array_merge(
-            $context,
-            $this->_executionId ? $this->getFunctionParams()->getData() : []
-        ));
     }
 
     // UTIL
