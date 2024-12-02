@@ -23,19 +23,9 @@ class NamedFunctionElement extends AbstractWorkflowContainerComponent implements
     private $_ok = [];
 
     /**
-     * @deprecated
-     */
-    private $_functionScope = [];
-
-    /**
      * @var string
      */
-    private $_executionId;
-
-    /**
-     * @var IServiceParams
-     */
-    private $_currentParams;
+    private $_executionId = null;
 
     /**
      * @var IServiceParams[]
@@ -126,23 +116,22 @@ class NamedFunctionElement extends AbstractWorkflowContainerComponent implements
 
     public function initParams()
     {
+        $old = $this->_executionId;
         $this->_executionId = StrUtil::uuidV4();
         $this->_functionParams[$this->_executionId] = new SimpleParams();
-        $this->_currentParams = $this->_functionParams[$this->_executionId];
-        return $this->_executionId;
+        return $old;
     }
 
     public function restoreParams($id)
     {
         $this->_executionId = $id;
-        $this->_currentParams = $this->_functionParams[$this->_executionId];
     }
 
     public function evaluateString($string, $context = [])
     {
-        return $this->getParent()->evaluateString($string, array_merge(
+        return parent::evaluateString($string, array_merge(
             $context,
-            $this->_currentParams ? $this->_currentParams->getData() : []
+            $this->_executionId ? $this->getFunctionParams()->getData() : []
         ));
     }
 
