@@ -1004,26 +1004,37 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\SetParamElement',
                 'Set Parameter',
-                'Set up key-value pairs in a given scope',
+                'Define and set key-value pairs as variables with configurable visibility and persistence scopes.',
                 array(
-                    'scope_type' => array(
-                        'editor_type' => 'select',
-                        'editor_properties' => array(
-                            'options' => array('session' => 'Session', 'installation' => 'Installation', 'request' => 'Request', 'user' => 'User'),
-                        ),
-                        'defaultValue' => 'request',
-                        'name' => 'Scope type',
-                        'description' => 'Scope under which to store parameters',
-                        'valueType' => 'string'
-                    ),
                     'parameters' => array(
                         'editor_type' => 'select',
                         'editor_properties' => array(
-                            'options' => array('parent' => 'Parent Params', 'block' => 'Block Params', 'service' => 'Service Params', 'function' => 'Function Params'),
+                            'options' => array(
+                                'parent' => 'Parent Params',
+                                'block' => 'Block Params',
+                                'service' => 'Service Params',
+                                'function' => 'Function Params'
+                            ),
                         ),
                         'defaultValue' => 'service',
-                        'name' => 'Parameters',
-                        'description' => 'Store in Block Params or in Service Params',
+                        'name' => 'Visibility Scope',
+                        'description' => 'Defines where the parameters will be accessible (e.g., Service-wide, Block-specific, or Function-specific).',
+                        'valueType' => 'string'
+                    ),
+                    'scope_type' => array(
+                        'editor_type' => 'select',
+                        'editor_properties' => array(
+                            'options' => array(
+                                'session' => 'Session',
+                                'installation' => 'Installation',
+                                'request' => 'Request',
+                                'user' => 'User'
+                            ),
+                            'dependency' => 'component.properties.parameters !== "function"'
+                        ),
+                        'defaultValue' => 'request',
+                        'name' => 'Persistence Scope',
+                        'description' => 'Defines how long the parameters persist (e.g., for a single request, a session, or the installation lifecycle).',
                         'valueType' => 'string'
                     ),
                     'properties' => array(
@@ -1033,26 +1044,26 @@ class CorePackageDefinition extends AbstractPackageDefinition
                         ),
                         'defaultValue' => array(),
                         'name' => 'Properties',
-                        'description' => 'Stored parameters',
+                        'description' => 'Defines the parameters (key-value pairs) to be stored. Keys can include complex structures such as arrays or objects.',
                         'valueType' => 'array'
                     ),
                     '_preview_angular' => array(
                         'type' => 'html',
                         'template' => '<div class="code"><span class="statement">SET</span> parameters in <span class="statement">{{ component.properties.scope_type.toUpperCase() }}</span> at <span class="statement">{{ component.properties.parameters.toUpperCase() }}</span> level' .
                             '<span ng-if="!component.properties[\'_use_var_properties\']" ng-repeat="(key, val) in component.properties.properties track by key">' .
-                            '
-<span class="statement">LET</span> <b>{{ key}}</b> = <b>{{ val }};</b>' .
+                            '<br><span class="statement">LET</span> <b>{{ key}}</b> = <b>{{ val }};</b>' .
                             '</span>' .
                             '<span ng-if="component.properties[\'_use_var_properties\']">{{ component.properties.properties }}</span>' .
                             '</div>'
                     ),
-                    '_help' =>  array(
+                    '_help' => array(
                         'type' => 'file',
                         'filename' => 'set-param-element.html'
                     ),
                     '_workflow' => 'read',
                 )
             ),
+
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\IfElement',

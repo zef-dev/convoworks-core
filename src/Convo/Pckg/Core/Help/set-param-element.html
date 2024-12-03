@@ -1,36 +1,66 @@
 <div class="set-parameter-help">
-    <h3>Set parameter</h3>
+    <h3>Set Parameter</h3>
+    <p>
+        The Set Parameter element is used to define and set variables (key-value pairs) that can be reused in your workflow using the Expression Language. These variables can be scoped by visibility and persistence to suit your specific needs.
+    </p>
 
-    <p>Sets parameters.</p>
+    <h3>Key Features:</h3>
+    <ul>
+        <li><strong>Visibility Scope:</strong> Controls where the parameters are accessible:
+            <ul>
+                <li><strong>Service:</strong> Available across the entire service.</li>
+                <li><strong>Block:</strong> Limited to a specific block.</li>
+                <li><strong>Parent:</strong> Limited to the parent component.</li>
+                <li><strong>Function:</strong> Limited to a specific function. (note: works only with request scope)</li>
+            </ul>
+        </li>
+        <li><strong>Persistence Scope:</strong> Controls how long the parameters persist:
+            <ul>
+                <li><strong>Request:</strong> For the duration of a single request.</li>
+                <li><strong>Session:</strong> For the duration of the user's session.</li>
+                <li><strong>Installation:</strong> Persists across the installation's lifecycle.</li>
+                <li><strong>User:</strong> Linked to the logged-in user.</li>
+            </ul>
+        </li>
+        <li><strong>Multiple Parameters:</strong> Define multiple key-value pairs at once, including nested arrays or objects.</li>
+    </ul>
 
-    <h3>When to use?</h3>
-
-    <p>When we want to store and reuse values.</p>
-
-    <h3>How to use: </h3>
+    <h3>How to Use:</h3>
     <ol>
-        <li>Select the <b>SCOPE TYPE</b> from the drop-down</li>
-        <li>Scope type <b>installation</b> is for the duration of the whole installation and has the longest life span</li>
-        <li>Scope type <b>session</b> is for the duration of the session</li>
-        <li>Scope type <b>request</b> is for the duration of a single request</li>
-        <li>Add parameters you wish to store into the <b>PROPERTIES</b> field, like his: <i>parameterName : ${parameterValue}</i></li>
-        <li>You can access the created parameters like this: <i>${parameterName}</i></li>
+        <li>Select the <strong>Visibility Scope</strong> and <strong>Persistence Scope</strong> for the variables.</li>
+        <li>Add your parameters in the <strong>Properties</strong> field as key-value pairs, such as:
+            <ul>
+                <li><code>trimmed : ${trim(text)}</code></li>
+                <li><code>title : "My Title"</code></li>
+                <li><code>myObject : ${{"key": "value", "other": []}}</code></li>
+            </ul>
+        </li>
+        <li>Access the parameters anywhere in your workflow using their key names, e.g., <code>${trimmed}</code>.</li>
     </ol>
 
-    <h3>Example of usage for creating an array</h3>
-    <div>
-        <p>We're going to create a two dimensional array in this format:  players[index]["name"]</p>
-        <ul>
-            <li><b>SCOPE TYPE: </b>
-                <p><i>session</i></p></li>
-            <li><b>PROPERTIES: </b>
-                <p><i>players[0]["name"] : ${"John"}</i></p>
-                <p><i>players[1]["name"] : ${"Jane"}</i></p></li>
-            <li>To access an array item:
-                <p><i>${players[0]["name"]}</i> </p></li>
-            <li>Note that for cases where you don't know how many items the array is supposed to have, you can use an existing counter parameter when creating it. For example:
-                <p><b>PROPERTIES: </b></p>
-                <p><i>players[${counter}]["name"] : ${user.input}</i></p></li>
-        </ul>
-    </div>
+    <h3>Example: Creating an Array</h3>
+    <p>
+        Here's how to create a two-dimensional array, such as <code>players[index]["name"]</code>:
+    </p>
+    <ul>
+        <li><strong>Scope Type:</strong> <code>session</code></li>
+        <li><strong>Properties:</strong>
+            <ul>
+                <li><code>players[0]["name"] : ${"John"}</code></li>
+                <li><code>players[1]["name"] : ${"Jane"}</code></li>
+            </ul>
+        </li>
+        <li>Access the array items like this:
+            <ul>
+                <li><code>${players[0]["name"]}</code> → <em>John</em></li>
+                <li><code>${players[1]["name"]}</code> → <em>Jane</em></li>
+            </ul>
+        </li>
+    </ul>
+    <p>
+        For dynamic arrays where the size isn't predetermined, you can use a counter variable. For example:
+    </p>
+    <ul>
+        <li><strong>Properties:</strong> <code>players[${counter}]["name"] : ${user.input}</code></li>
+    </ul>
 </div>
