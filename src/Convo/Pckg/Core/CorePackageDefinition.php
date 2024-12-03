@@ -46,8 +46,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
 
         parent::__construct($logger, self::NAMESPACE, __DIR__);
 
-        $this->registerTemplate(__DIR__ . '/basic.template.json');
         $this->registerTemplate(__DIR__ . '/blank.template.json');
+        $this->registerTemplate(__DIR__ . '/basic.template.json');
         $this->registerTemplate(__DIR__ . '/convo-daily-quotes.template.json');
     }
 
