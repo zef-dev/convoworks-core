@@ -1,6 +1,6 @@
 {
     "template_id": "quote-of-the-day",
-    "name": "Quote of the Day",
+    "name": "Quote of the Day - Alexa",
     "description": "A template that lets users get the quote of the day in different categories",
     "service": {
         "convo_service_version": 38,

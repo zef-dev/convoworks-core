@@ -1,6 +1,6 @@
 {
 	"template_id": "basic-template",
-	"name": "Basic Template",
+	"name": "Basic Alexa Template",
 	"description": "Basic service template with minimum required intents already set (help, stop, navigate home).",
     "service": {
         "service_id": "basic-template",
