@@ -163,39 +163,6 @@ class EvaluationContext
         return $expressions;
     }
 
-    /**
-     * @todo This is questionable method. It might be that it only requires strval().
-     * @param string $value
-     * @return string|number
-     * @deprecated
-     */
-    private function _castToAppropriateValueType($value)
-    {
-        $this->_logger->debug('Got value to cast [' . $value . ']');
-
-        if (is_null($value)) {
-            $this->_logger->debug('Value [' . $value . '] is null.');
-            return '';
-        }
-
-        if (is_numeric($value)) {
-            $value += 0;
-
-            if (is_float($value)) {
-                $this->_logger->debug('Value [' . $value . '] is a float.');
-                return floatval($value);
-            }
-
-            if (is_int($value)) {
-                $this->_logger->debug('Value [' . $value . '] is an int.');
-                return intval($value);
-            }
-        }
-
-        $this->_logger->debug('Returning default string value for [' . $value . ']');
-        return strval($value);
-    }
-
     // UTIL
     public function __toString()
     {
