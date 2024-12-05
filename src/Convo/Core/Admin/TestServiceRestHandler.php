@@ -135,10 +135,7 @@ class TestServiceRestHandler implements RequestHandlerInterface
                 ServiceRunRequestEvent::NAME
             );
             if ($isStreaming) {
-                $finalData = [
-                    'service_state' => $service->getServiceState(),
-                    'variables' => $service->getServiceParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData(),
-                ];
+                $finalData = $this->_getDebugInfo($service, $text_request, $exception);
 
                 echo "data: " . json_encode(['remaining_response' => $finalData]) . "\n\n";
                 // Finish the streaming with [DONE]
@@ -160,6 +157,16 @@ class TestServiceRestHandler implements RequestHandlerInterface
             );
             $this->_logger->error($e);
         }
+
+        $data = $this->_getDebugInfo($service, $text_request, $exception);
+        $data = array_merge($data, $text_response->getPlatformResponse());
+        //         $exceptionStackTrace = !empty($exception['stack_trace']) ? $exception['stack_trace'] : '';
+
+        return $this->_httpFactory->buildResponse($data);
+    }
+
+    private function _getDebugInfo($service, $convoRequest, $exception = null)
+    {
 
         $request_vars = $service->getServiceParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData();
         $session_vars = $service->getServiceParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getData();
@@ -190,22 +197,20 @@ class TestServiceRestHandler implements RequestHandlerInterface
             'exception' => $exception
         ];
 
-        if (is_a($text_request, '\Convo\Core\Workflow\IIntentAwareRequest')) {
+        if (is_a($convoRequest, '\Convo\Core\Workflow\IIntentAwareRequest')) {
             $this->_logger->info('Going to extract intent and slot data from intent aware request');
 
             $data['intent'] = [
-                'name' => $text_request->getIntentName(),
-                'slots' => $text_request->getSlotValues()
+                'name' => $convoRequest->getIntentName(),
+                'slots' => $convoRequest->getSlotValues()
             ];
         }
 
         $data = ArrayUtil::arrayFilterRecursive($data, function ($value) {
             return !empty($value);
         });
-        $data = array_merge($data, $text_response->getPlatformResponse());
-        //         $exceptionStackTrace = !empty($exception['stack_trace']) ? $exception['stack_trace'] : '';
 
-        return $this->_httpFactory->buildResponse($data);
+        return $data;
     }
 
     private function _isInit($json)
