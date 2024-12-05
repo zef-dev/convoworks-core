@@ -156,6 +156,18 @@ class TestServiceRestHandler implements RequestHandlerInterface
                 ServiceRunRequestEvent::NAME
             );
             $this->_logger->error($e);
+
+            if ($isStreaming) {
+                $finalData = $this->_getDebugInfo($service, $text_request, $exception);
+
+                echo "data: " . json_encode(['remaining_response' => $finalData]) . "\n\n";
+                // Finish the streaming with [DONE]
+                echo "data: [DONE]\n\n";
+                ob_flush();
+                flush();
+                wp_die();
+                // return $this->_httpFactory->buildResponse(null);
+            }
         }
 
         $data = $this->_getDebugInfo($service, $text_request, $exception);
