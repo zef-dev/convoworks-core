@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Convo\Core\Admin;
 
@@ -14,160 +16,200 @@ class TestServiceRestHandler implements RequestHandlerInterface
 {
     const DEFAULT_PLATFORM_ID = 'test-chat';
 
-	/**
-	 * @var \Convo\Core\Util\IHttpFactory
-	 */
-	private $_httpFactory;
+    /**
+     * @var \Convo\Core\Util\IHttpFactory
+     */
+    private $_httpFactory;
 
-	/**
-	 * @var \Psr\Log\LoggerInterface
-	 */
-	private $_logger;
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $_logger;
 
-	/**
-	 * @var \Convo\Core\Factory\ConvoServiceFactory
-	 */
-	private $_convoServiceFactory;
+    /**
+     * @var \Convo\Core\Factory\ConvoServiceFactory
+     */
+    private $_convoServiceFactory;
 
-	/**
-	 * @var \Convo\Core\IServiceDataProvider
-	 */
-	private $_convoServiceDataProvider;
+    /**
+     * @var \Convo\Core\IServiceDataProvider
+     */
+    private $_convoServiceDataProvider;
 
-	/**
-	 * @var \Convo\Core\Params\IServiceParamsFactory
-	 */
-	private $_convoServiceParamsFactory;
+    /**
+     * @var \Convo\Core\Params\IServiceParamsFactory
+     */
+    private $_convoServiceParamsFactory;
 
-	/**
-	 * @var \Convo\Core\Factory\IPlatformRequestFactory
-	 */
-	private $_platformRequestFactory;
+    /**
+     * @var \Convo\Core\Factory\IPlatformRequestFactory
+     */
+    private $_platformRequestFactory;
 
     /**
      * @var \Symfony\Component\EventDispatcher\EventDispatcher
      */
     private $_eventDispatcher;
 
-	public function __construct( $logger, $httpFactory, $serviceFactory, $serviceDataProvider, $serviceParamsFactory, $platformRequestFactory, EventDispatcher $eventDispatcher)
-	{
-		$this->_logger						= 	$logger;
-		$this->_httpFactory					= 	$httpFactory;
-		$this->_convoServiceFactory			= 	$serviceFactory;
-		$this->_convoServiceDataProvider	= 	$serviceDataProvider;
-		$this->_convoServiceParamsFactory	= 	$serviceParamsFactory;
-		$this->_platformRequestFactory	    = 	$platformRequestFactory;
+    public function __construct($logger, $httpFactory, $serviceFactory, $serviceDataProvider, $serviceParamsFactory, $platformRequestFactory, EventDispatcher $eventDispatcher)
+    {
+        $this->_logger                        =     $logger;
+        $this->_httpFactory                    =     $httpFactory;
+        $this->_convoServiceFactory            =     $serviceFactory;
+        $this->_convoServiceDataProvider    =     $serviceDataProvider;
+        $this->_convoServiceParamsFactory    =     $serviceParamsFactory;
+        $this->_platformRequestFactory        =     $platformRequestFactory;
         $this->_eventDispatcher             =   $eventDispatcher;
-	}
+    }
 
-	public function handle(\Psr\Http\Message\ServerRequestInterface $request): \Psr\Http\Message\ResponseInterface
-	{
-		$info			=	new \Convo\Core\Rest\RequestInfo( $request);
-		$route 			= 	$info->route( 'service-test/{serviceId}', true);
-		$service_id 	= 	$route->get( 'serviceId');
-		$user			=	$info->getAuthUser();
-		$json			=	$request->getParsedBody();
+    public function handle(\Psr\Http\Message\ServerRequestInterface $request): \Psr\Http\Message\ResponseInterface
+    {
+        $info            =    new \Convo\Core\Rest\RequestInfo($request);
+        $route             =     $info->route('service-test/{serviceId}', true);
+        $service_id     =     $route->get('serviceId');
+        $user            =    $info->getAuthUser();
+        $json            =    $request->getParsedBody();
 
-		$text			=	$json['text'] ?? '';
-		$is_init		=	$this->_isInit($json);
-		$is_end			=	$json['end'] ?? false;
-		$device_id		=	$json['device_id'] ?? false;
-		$session_id		=	$json['session_id'] ?? session_id();
-		$platform_id	=	$json['platform_id'] ?? self::DEFAULT_PLATFORM_ID;
-        $request_id     =   'admin-chat-'.StrUtil::uuidV4();
-        
-		if ( empty( $device_id)) {
-			throw new \Convo\Core\Rest\InvalidRequestException( 'Could not get device_id from request body');
-		}
+        $text            =    $json['text'] ?? '';
+        $is_init        =    $this->_isInit($json);
+        $is_end            =    $json['end'] ?? false;
+        $device_id        =    $json['device_id'] ?? false;
+        $session_id        =    $json['session_id'] ?? session_id();
+        $platform_id    =    $json['platform_id'] ?? self::DEFAULT_PLATFORM_ID;
+        $request_id     =   'admin-chat-' . StrUtil::uuidV4();
 
-		$this->_logger->info('Performing test request ['.$text.']['.$device_id.']['.$platform_id.'] init ['.($is_init ? 'true' : 'false').'] end ['.($is_end ? 'true' : 'false').']');
+        if (empty($device_id)) {
+            throw new \Convo\Core\Rest\InvalidRequestException('Could not get device_id from request body');
+        }
 
-		$text_request   =   new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest( $service_id, $device_id, $session_id, $request_id, $text, $is_init, $is_end, self::DEFAULT_PLATFORM_ID, $json);
-		$text_response	=	new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse();
-		$text_response->setLogger($this->_logger);
+        $this->_logger->info('Performing test request [' . $text . '][' . $device_id . '][' . $platform_id . '] init [' . ($is_init ? 'true' : 'false') . '] end [' . ($is_end ? 'true' : 'false') . ']');
 
-		$service        =   $this->_convoServiceFactory->getService( $user, $service_id, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory);
-		
-		if ( $platform_id !== self::DEFAULT_PLATFORM_ID) {
-// 		    TODO: load & use service owner account
-// 		    $service_meta     =   $this->_convoServiceDataProvider->getServiceMeta( $user, $service_id);
-// 		    $owner            =   $service_meta['owner'];
-		    $text_request     =   $this->_platformRequestFactory->toIntentRequest($text_request, $user, $service, $platform_id);
-		}
+        $text_request   =   new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandRequest($service_id, $device_id, $session_id, $request_id, $text, $is_init, $is_end, self::DEFAULT_PLATFORM_ID, $json);
+        $text_response    =    new \Convo\Core\Adapters\ConvoChat\DefaultTextCommandResponse();
+        $text_response->setLogger($this->_logger);
 
-		
-		$exception = [
-		    "message" => null,
-		    "stack_trace" => null,
+
+        // Enable streaming if requested
+        $isStreaming = $request->getHeaderLine('X-Client-Streaming') === 'true';
+        $isStreaming = true;
+        if ($isStreaming) {
+            $this->_logger->debug('Starting streming response');
+
+            $text_response->enableStreaming();
+
+            // Set streaming-specific headers
+            header('Content-Type: text/event-stream');
+            header('Cache-Control: no-cache');
+            header('Connection: keep-alive');
+            ignore_user_abort(true);
+
+            // Clear any existing buffers
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+
+            ob_start();
+        }
+
+        $service        =   $this->_convoServiceFactory->getService($user, $service_id, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $this->_convoServiceParamsFactory);
+
+        if ($platform_id !== self::DEFAULT_PLATFORM_ID) {
+            // 		    TODO: load & use service owner account
+            // 		    $service_meta     =   $this->_convoServiceDataProvider->getServiceMeta( $user, $service_id);
+            // 		    $owner            =   $service_meta['owner'];
+            $text_request     =   $this->_platformRequestFactory->toIntentRequest($text_request, $user, $service, $platform_id);
+        }
+
+
+        $exception = [
+            "message" => null,
+            "stack_trace" => null,
         ];
 
         try {
-            $this->_logger->info('Running service instance ['.$service->getId().']['.$text_request.']');
+            $this->_logger->info('Running service instance [' . $service->getId() . '][' . $text_request . ']');
             $service->run($text_request, $text_response);
-            
+
             $this->_eventDispatcher->dispatch(
-                new ServiceRunRequestEvent( true, $text_request, $text_response, $service, IPlatformPublisher::MAPPING_TYPE_DEVELOP),
-                ServiceRunRequestEvent::NAME);
-            
+                new ServiceRunRequestEvent(true, $text_request, $text_response, $service, IPlatformPublisher::MAPPING_TYPE_DEVELOP),
+                ServiceRunRequestEvent::NAME
+            );
+            if ($isStreaming) {
+                $finalData = [
+                    'service_state' => $service->getServiceState(),
+                    'variables' => $service->getServiceParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData(),
+                ];
+
+                echo "data: " . json_encode(['remaining_response' => $finalData]) . "\n\n";
+                // Finish the streaming with [DONE]
+                echo "data: [DONE]\n\n";
+                ob_flush();
+                flush();
+                wp_die();
+                // return $this->_httpFactory->buildResponse(null);
+            }
         } catch (\Throwable $e) {
             $exception["message"] = $e->getMessage();
             $stack = explode('#', $e->getTraceAsString());
             array_shift($stack);
             $exception["stack_trace"] = $stack;
-            
+
             $this->_eventDispatcher->dispatch(
-                new ServiceRunRequestEvent( true, $text_request, $text_response, $service, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $e),
-                ServiceRunRequestEvent::NAME);
-            $this->_logger->error( $e);
+                new ServiceRunRequestEvent(true, $text_request, $text_response, $service, IPlatformPublisher::MAPPING_TYPE_DEVELOP, $e),
+                ServiceRunRequestEvent::NAME
+            );
+            $this->_logger->error($e);
         }
 
-        $request_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData();
-        $session_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getData();
-        $installation_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION)->getData();
-        $user_vars = $service->getServiceParams( \Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_USER)->getData();
+        $request_vars = $service->getServiceParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_REQUEST)->getData();
+        $session_vars = $service->getServiceParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_SESSION)->getData();
+        $installation_vars = $service->getServiceParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_INSTALLATION)->getData();
+        $user_vars = $service->getServiceParams(\Convo\Core\Params\IServiceParamsScope::SCOPE_TYPE_USER)->getData();
 
-		$child_params = [];
+        $child_params = [];
 
-		foreach ($service->getChildren() as $child)
-		{
-			try {
-				$child_params[] = $this->_getChildData($service, $child);
-			} catch (DataItemNotFoundException $e) {
-			    $this->_logger->info($e->getMessage());
-			}
-		}
+        foreach ($service->getChildren() as $child) {
+            try {
+                $child_params[] = $this->_getChildData($service, $child);
+            } catch (DataItemNotFoundException $e) {
+                $this->_logger->info($e->getMessage());
+            }
+        }
 
-		$data =	[
+        $data =    [
             'service_state' => $service->getServiceState(),
             'variables' => [
                 'service' => [
-					'request' => $request_vars,
-					'session' => $session_vars,
-					'installation' => $installation_vars,
+                    'request' => $request_vars,
+                    'session' => $session_vars,
+                    'installation' => $installation_vars,
                     'user' => $user_vars
-				],
+                ],
                 'component' => $child_params
             ],
             'exception' => $exception
-		];
+        ];
 
-		if (is_a($text_request, '\Convo\Core\Workflow\IIntentAwareRequest')) {
-			$this->_logger->info('Going to extract intent and slot data from intent aware request');
+        if (is_a($text_request, '\Convo\Core\Workflow\IIntentAwareRequest')) {
+            $this->_logger->info('Going to extract intent and slot data from intent aware request');
 
-			$data['intent'] = [
-				'name' => $text_request->getIntentName(),
-				'slots' => $text_request->getSlotValues()
-			];
-		}
+            $data['intent'] = [
+                'name' => $text_request->getIntentName(),
+                'slots' => $text_request->getSlotValues()
+            ];
+        }
 
-		$data = ArrayUtil::arrayFilterRecursive($data, function ($value) { return !empty($value); });
-		$data = array_merge( $data, $text_response->getPlatformResponse());
-//         $exceptionStackTrace = !empty($exception['stack_trace']) ? $exception['stack_trace'] : '';
+        $data = ArrayUtil::arrayFilterRecursive($data, function ($value) {
+            return !empty($value);
+        });
+        $data = array_merge($data, $text_response->getPlatformResponse());
+        //         $exceptionStackTrace = !empty($exception['stack_trace']) ? $exception['stack_trace'] : '';
 
-		return $this->_httpFactory->buildResponse($data);
-	}
+        return $this->_httpFactory->buildResponse($data);
+    }
 
-    private function _isInit($json) {
+    private function _isInit($json)
+    {
         $isInit = false;
 
         if (isset($json['lunch'])) {
@@ -179,72 +221,72 @@ class TestServiceRestHandler implements RequestHandlerInterface
         return $isInit;
     }
 
-	private function _getChildData($service, $child)
-	{
-		if (!$this->_shouldRender($service, $child)) {
-			throw new DataItemNotFoundException('Container component ['.$child->getId().'] has no params or children. Skipping.');
-		}
+    private function _getChildData($service, $child)
+    {
+        if (!$this->_shouldRender($service, $child)) {
+            throw new DataItemNotFoundException('Container component [' . $child->getId() . '] has no params or children. Skipping.');
+        }
 
-		$data = [
-			'class' => (new \ReflectionClass($child))->getShortName()
-		];
+        $data = [
+            'class' => (new \ReflectionClass($child))->getShortName()
+        ];
 
-		$params = $service->getAllComponentParams($child);
-		if (!empty($params)) {
-			$data['params'] = $params;
-		}
+        $params = $service->getAllComponentParams($child);
+        if (!empty($params)) {
+            $data['params'] = $params;
+        }
 
-		if (is_a($child, '\Convo\Core\Workflow\AbstractWorkflowContainerComponent')) {
-			/** @var \Convo\Core\Workflow\AbstractWorkflowContainerComponent $child */
-			foreach ($child->getChildren() as $childs_child) {
-				try {
-					$data['children'][] = $this->_getChildData($service, $childs_child);
-				} catch (DataItemNotFoundException $e) {
-//					$this->_logger->debug( $e->getMessage());
-				}
-			}
-		}
+        if (is_a($child, '\Convo\Core\Workflow\AbstractWorkflowContainerComponent')) {
+            /** @var \Convo\Core\Workflow\AbstractWorkflowContainerComponent $child */
+            foreach ($child->getChildren() as $childs_child) {
+                try {
+                    $data['children'][] = $this->_getChildData($service, $childs_child);
+                } catch (DataItemNotFoundException $e) {
+                    //					$this->_logger->debug( $e->getMessage());
+                }
+            }
+        }
 
-		return $data;
-	}
+        return $data;
+    }
 
-	/**
-	 * @param \Convo\Core\ConvoServiceInstance $service
-	 * @param \Convo\Core\Workflow\IBasicServiceComponent $component
-	 * @return boolean
-	 */
-	private function _shouldRender($service, $component)
-	{
-		if (!empty($service->getAllComponentParams($component))) {
-			return true;
-		}
+    /**
+     * @param \Convo\Core\ConvoServiceInstance $service
+     * @param \Convo\Core\Workflow\IBasicServiceComponent $component
+     * @return boolean
+     */
+    private function _shouldRender($service, $component)
+    {
+        if (!empty($service->getAllComponentParams($component))) {
+            return true;
+        }
 
-		if (is_a($component, '\Convo\Core\Workflow\AbstractWorkflowContainerComponent')) {
-			/** @var \Convo\Core\Workflow\AbstractWorkflowContainerComponent $component */
-			$children = $component->getChildren();
+        if (is_a($component, '\Convo\Core\Workflow\AbstractWorkflowContainerComponent')) {
+            /** @var \Convo\Core\Workflow\AbstractWorkflowContainerComponent $component */
+            $children = $component->getChildren();
 
-			if (!empty($children)) {
-				$render = false;
+            if (!empty($children)) {
+                $render = false;
 
-				foreach ($children as $child) {
-					if ($this->_shouldRender($service, $child)) {
-						$render = true;
-						// break;
-					}
-				}
+                foreach ($children as $child) {
+                    if ($this->_shouldRender($service, $child)) {
+                        $render = true;
+                        // break;
+                    }
+                }
 
-				return $render;
-			}
+                return $render;
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	// UTIL
-	public function __toString()
-	{
-		return get_class( $this).'[]';
-	}
+    // UTIL
+    public function __toString()
+    {
+        return get_class($this) . '[]';
+    }
 }
