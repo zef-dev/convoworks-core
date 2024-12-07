@@ -188,6 +188,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
     {
         $functions = [];
 
+        $functions[] = ExpressionFunction::fromPhp('sleep');
+        $functions[] = ExpressionFunction::fromPhp('usleep');
         $functions[] = ExpressionFunction::fromPhp('count');
         $functions[] = ExpressionFunction::fromPhp('rand');
         $functions[] = ExpressionFunction::fromPhp('strtolower');
