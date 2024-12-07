@@ -7,10 +7,10 @@
 
 ## 0.22.31 - 2024-12-07
 
-* Added function scope, for managing variables inside functions
-* Add response streaming to the test view rest handler
-* Registered PHP `sleep()` and `usleep()` functions.
-* Other minor enhancements
+    * Added function scope, for managing variables inside functions
+    * Add response streaming to the test view rest handler
+    * Registered PHP `sleep()` and `usleep()` functions.
+    * Other minor enhancements
 
 ## 0.22.30 - 2024-11-26
 
