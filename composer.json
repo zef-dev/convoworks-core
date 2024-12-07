@@ -6,7 +6,7 @@
 	"keywords" : [
 		"alexa", "viber", "chatbot", "voice enabled", "voice assistant", "no-code"
 	],
-    "version": "0.22.30",
+    "version": "0.22.31",
 	"license" : "MIT",
 	"require" : {
 		"php" : "^7.2.5",
