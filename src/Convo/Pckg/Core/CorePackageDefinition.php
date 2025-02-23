@@ -295,17 +295,13 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 return sprintf('call_user_func(%s, %s)', var_export($callback, true), var_export($parameter, true));
             },
             function ($args, $callback, $parameter = []) {
-                if (!function_exists($callback)) {
+                $callback = self::parseCallback($callback);
+                $parameter = self::parseCallbackParameters($parameter);
+
+                if (is_string($callback) && !function_exists($callback)) {
                     throw new \Exception('Function "' . $callback . '" does not exists.');
                 }
 
-                if (is_null($parameter) || (is_array($parameter) && empty($parameter))) {
-                    return call_user_func($callback);
-                }
-                if (!is_array($parameter) || !isset($parameter[0])) {
-                    $this->_logger->debug('Wrapping up param [' . gettype($parameter) . '] as array');
-                    $parameter = [$parameter];
-                }
                 return call_user_func($callback, ...$parameter);
             }
         );
@@ -316,12 +312,13 @@ class CorePackageDefinition extends AbstractPackageDefinition
                 return sprintf('call_user_func_array(%s, %s)', var_export($callback, true), var_export($parameter, true));
             },
             function ($args, $callback, $parameter = []) {
-                if (!function_exists($callback)) {
+                $callback = self::parseCallback($callback);
+                $parameter = self::parseCallbackParameters($parameter);
+
+                if (is_string($callback) && !function_exists($callback)) {
                     throw new \Exception('Function "' . $callback . '" does not exists.');
                 }
-                if (empty($parameter)) {
-                    $parameter = [];
-                }
+
                 return call_user_func_array($callback, $parameter);
             }
         );
@@ -701,6 +698,49 @@ class CorePackageDefinition extends AbstractPackageDefinition
         }
 
         return $relativesArray;
+    }
+
+    public static function parseCallback($callback)
+    {
+        if (is_string($callback) && strpos($callback, '::') !== false) {
+            $callback = explode('::', $callback);
+        }
+
+        if (is_array($callback)) {
+            if (count($callback) !== 2) {
+                throw new \Exception('Expected array with two items, got [' . count($callback) . ']');
+            }
+
+            if (is_object($callback[0])) {
+                $obj = $callback[0];
+                return [$obj, $callback[1]];
+            }
+
+            if (!is_string($callback[0])) {
+                throw new \Exception('Expected string or object as first item, got [' . gettype($callback[0]) . ']');
+            }
+
+            if (strpos($callback[0], '$') === 0) {
+                $obj_str = str_replace('$', '', $callback[0]);
+                $obj = $GLOBALS[$obj_str];
+                if (!isset($GLOBALS[$obj_str])) {
+                    throw new \Exception('No global variable named [' . $callback[0] . '] found');
+                }
+                return [$obj, $callback[1]];
+            }
+        }
+        return $callback;
+    }
+
+    public static function parseCallbackParameters($parameters = null)
+    {
+        if (empty($parameters)) {
+            return [];
+        }
+        if (!is_array($parameters)) {
+            return [$parameters];
+        }
+        return $parameters;
     }
 
     /**
