@@ -107,18 +107,11 @@ class EvaluationContext
 
                 if (!$skipEmpty || $skipEmpty && !empty($value)) {
                     $quot_expr = preg_quote($expression, '/');
-
-                    // 					$this->_logger->debug('preg_quoted expression ['.$quot_expr.']');
-
                     $pattern = '/\${\s*' . $quot_expr . '\s*}/';
-                    $string = preg_replace($pattern, strval($value), $string);
+                    // Convert the evaluated value to string and escape dollar signs
+                    $replacement = str_replace('$', '\\$', strval($value));
+                    $string = preg_replace($pattern, $replacement, $string);
                 }
-
-                // 				if ( $string === '') {
-                // 				    if ( is_null( $value) || is_int( $value) || is_float( $value)) {
-                // 				        $string =   $value;
-                // 				    }
-                // 				}
             } else {
                 // not parsing, single value get
                 if (is_a($value, 'Zef\Zel\IValueAdapter')) {
