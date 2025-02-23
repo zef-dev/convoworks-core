@@ -172,6 +172,21 @@ class EvaluationContextTest extends TestCase
         });
     }
 
+    public function testDollarStrings()
+    {
+        $data = [
+            'name' => 'Marko with $000 on account'
+        ];
+        $string = 'Your info is ${name}.';
+        $expected = 'Your info is Marko with $000 on account.';
+
+        $context = new ArrayResolver($data);
+
+        $actual = $this->_evalContext->evalString($string, $context->getValues());
+
+        $this->assertSame($expected, $actual);
+    }
+
     /**
      * @dataProvider keepTypeProvider
      * @param string $key
