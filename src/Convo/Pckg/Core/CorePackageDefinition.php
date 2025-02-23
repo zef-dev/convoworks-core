@@ -261,6 +261,8 @@ class CorePackageDefinition extends AbstractPackageDefinition
         $functions[] = ExpressionFunction::fromPhp('uniqid');
         $functions[] = ExpressionFunction::fromPhp('http_build_query');
         $functions[] = ExpressionFunction::fromPhp('function_exists');
+        $functions[] = ExpressionFunction::fromPhp('gettype');
+        $functions[] = ExpressionFunction::fromPhp('get_class');
 
         $convo_val = function ($args, $data) use (&$convo_val) {
             if (is_array($data)) {
