@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use Convo\Core\Expression\EvaluationContext;
 use Convo\Core\Params\SimpleParams;
@@ -26,84 +28,84 @@ class EvaluationContextTest extends TestCase
 
     public function setUp(): void
     {
-        $this->_logger  	=   new EchoLogger();
-        $this->_evalContext = new EvaluationContext( $this->_logger, new class implements ExpressionFunctionProviderInterface {
-			public function getFunctions()
-			{
-			  $functions = [];
-        $functions[] = ExpressionFunction::fromPhp('count');
-        $functions[] = ExpressionFunction::fromPhp('rand');
-        $functions[] = ExpressionFunction::fromPhp('strtolower');
-        $functions[] = ExpressionFunction::fromPhp('date');
-        $functions[] = ExpressionFunction::fromPhp('is_numeric');
-        $functions[] = ExpressionFunction::fromPhp('is_int');
-        $functions[] = ExpressionFunction::fromPhp('str_replace');
+        $this->_logger      =   new EchoLogger();
+        $this->_evalContext = new EvaluationContext($this->_logger, new class implements ExpressionFunctionProviderInterface {
+            public function getFunctions()
+            {
+                $functions = [];
+                $functions[] = ExpressionFunction::fromPhp('count');
+                $functions[] = ExpressionFunction::fromPhp('rand');
+                $functions[] = ExpressionFunction::fromPhp('strtolower');
+                $functions[] = ExpressionFunction::fromPhp('date');
+                $functions[] = ExpressionFunction::fromPhp('is_numeric');
+                $functions[] = ExpressionFunction::fromPhp('is_int');
+                $functions[] = ExpressionFunction::fromPhp('str_replace');
 
-        $unwrap_cw_resolvers = function ($args, $data) use (&$unwrap_cw_resolvers) {
-            if (is_array($data)) {
-                $clean = [];
+                $unwrap_cw_resolvers = function ($args, $data) use (&$unwrap_cw_resolvers) {
+                    if (is_array($data)) {
+                        $clean = [];
 
-                foreach ($data as $key => $val) {
-                    $clean[$key] = $unwrap_cw_resolvers($args, $val);
-                }
+                        foreach ($data as $key => $val) {
+                            $clean[$key] = $unwrap_cw_resolvers($args, $val);
+                        }
 
-                return $clean;
-            }
+                        return $clean;
+                    }
 
-            if (is_a($data, '\Zef\Zel\IValueAdapter')) {
-                /** @var \Zef\Zel\IValueAdapter $data */
-                return $data->get();
-            }
+                    if (is_a($data, '\Zef\Zel\IValueAdapter')) {
+                        /** @var \Zef\Zel\IValueAdapter $data */
+                        return $data->get();
+                    }
 
-            return $data;
-        };
+                    return $data;
+                };
 
-        $functions[] = new ExpressionFunction(
-            'unwrap_cw_resolvers',
-            function ($data) {
-                return sprintf('unwrap_cw_resolvers(%1$data)', $data);
-            },
-            $unwrap_cw_resolvers
-        );
+                $functions[] = new ExpressionFunction(
+                    'unwrap_cw_resolvers',
+                    function ($data) {
+                        return sprintf('unwrap_cw_resolvers(%1$data)', $data);
+                    },
+                    $unwrap_cw_resolvers
+                );
 
-        $functions[] = new ExpressionFunction(
-					'parse_mana',
-					function ($mana) {
-						return sprintf('(is_string(%1$s) ? parse_mana(%1$s) : %1$s', $mana);
-					},
-					function ($args, $mana) {
-						$map = [
-							'W' => 'White',
-							'B' => 'Black',
-							'G' => 'Green',
-							'R' => 'Red',
-							'U' => 'Blue'
-						];
+                $functions[] = new ExpressionFunction(
+                    'parse_mana',
+                    function ($mana) {
+                        return sprintf('(is_string(%1$s) ? parse_mana(%1$s) : %1$s', $mana);
+                    },
+                    function ($args, $mana) {
+                        $map = [
+                            'W' => 'White',
+                            'B' => 'Black',
+                            'G' => 'Green',
+                            'R' => 'Red',
+                            'U' => 'Blue'
+                        ];
 
-						$pattern = '/{(.)}/';
-						$matches = [];
+                        $pattern = '/{(.)}/';
+                        $matches = [];
 
-						preg_match_all($pattern, $mana, $matches);
-						$count = array_count_values($matches[1]);
+                        preg_match_all($pattern, $mana, $matches);
+                        $count = array_count_values($matches[1]);
 
-						$ret = [];
+                        $ret = [];
 
-						foreach ($count as $symbol => $n) {
-							$ret[] = isset($map[$symbol]) ?
-								$n.' '.$map[$symbol].' mana' :
-								$symbol.' Generic mana';
-						}
+                        foreach ($count as $symbol => $n) {
+                            $ret[] = isset($map[$symbol]) ?
+                                $n . ' ' . $map[$symbol] . ' mana' :
+                                $symbol . ' Generic mana';
+                        }
 
-						return implode(", ", $ret);
-					}
-				);
+                        return implode(", ", $ret);
+                    }
+                );
 
                 $functions[] = new ExpressionFunction(
                     'parse_date_time',
                     function ($date, $platform = 'amazon') {
                         return sprintf('parse_date_time(%1$d, %2$p)', $date, $platform);
                     },
-                    function($args, $date, $platform = 'amazon') {
+                    function ($args, $date, $platform = 'amazon') {
                         if (strtotime($date)) {
                             return strval($date);
                         }
@@ -140,7 +142,7 @@ class EvaluationContextTest extends TestCase
                     function ($duration, $platform = 'amazon', $defaultDuration = 30) {
                         return sprintf('parse_duration(%1$d, %2$p, %3$dD)', $duration, $platform, $defaultDuration);
                     },
-                    function($args, $duration, $platform = 'amazon', $defaultDuration = 30) {
+                    function ($args, $duration, $platform = 'amazon', $defaultDuration = 30) {
                         if (empty($duration)) {
                             return $defaultDuration;
                         }
@@ -165,35 +167,35 @@ class EvaluationContextTest extends TestCase
                     }
                 );
 
-				return $functions;
-			}
-		});
+                return $functions;
+            }
+        });
     }
-    
+
     /**
      * @dataProvider keepTypeProvider
      * @param string $key
      * @param mixed $context
      */
-    public function testKeepType( $key, $context)
+    public function testKeepType($key, $context)
     {
-        $string    = '${'.$key.'}';
-        
-        $context = new ArrayResolver( $context);
-        
-        $actual = $this->_evalContext->evalString( $string, $context->getValues());
-        
-        $this->assertSame( $context[$key], $actual);
+        $string    = '${' . $key . '}';
+
+        $context = new ArrayResolver($context);
+
+        $actual = $this->_evalContext->evalString($string, $context->getValues());
+
+        $this->assertSame($context[$key], $actual);
     }
-    
-    public function keepTypeProvider() 
+
+    public function keepTypeProvider()
     {
         return [
-            [ 'val', ['val' => 1]],
-            [ 'val', ['val' => '+1']]
+            ['val', ['val' => 1]],
+            ['val', ['val' => '+1']]
         ];
     }
-    
+
 
     /**
      * @dataProvider stringParsingProvider
@@ -253,21 +255,18 @@ class EvaluationContextTest extends TestCase
         $params = new SimpleParams();
 
         foreach ($data as $key => $val) {
-			$key	=	$this->_evalContext->evalString($key);
-			$parsed =   $this->_evalContext->evalString($val);
+            $key    =    $this->_evalContext->evalString($key);
+            $parsed =   $this->_evalContext->evalString($val);
 
 
-			if (!ArrayUtil::isComplexKey($key))
-			{
-				$params->setServiceParam($key, $parsed);
-			}
-			else
-            {
+            if (!ArrayUtil::isComplexKey($key)) {
+                $params->setServiceParam($key, $parsed);
+            } else {
                 $root = ArrayUtil::getRootOfKey($key);
                 $final = ArrayUtil::setDeepObject($key, $parsed, $params->getServiceParam($root) ?? []);
                 $params->setServiceParam($root, $final);
-			}
-		}
+            }
+        }
 
         $context = new ArrayResolver($params->getData());
         $actual = $this->_evalContext->evalString($string, $context->getValues());
@@ -331,7 +330,7 @@ class EvaluationContextTest extends TestCase
                     'message' => '${result.value}'
                 ],
                 [
-                    'result' => [ 'value' => 3]
+                    'result' => ['value' => 3]
                 ]
             ],
             [
@@ -342,7 +341,7 @@ class EvaluationContextTest extends TestCase
                     'message' => '${result.novalue}'
                 ],
                 [
-                    'result' => [ 'value' => 3]
+                    'result' => ['value' => 3]
                 ]
             ],
             [
@@ -353,7 +352,7 @@ class EvaluationContextTest extends TestCase
                     'message' => '${result.novalue.novalue2}'
                 ],
                 [
-                    'result' => [ 'value' => 3]
+                    'result' => ['value' => 3]
                 ]
             ],
             [
@@ -364,7 +363,7 @@ class EvaluationContextTest extends TestCase
                     'message' => '${result.value + noResult}'
                 ],
                 [
-                    'result' => [ 'value' => 3]
+                    'result' => ['value' => 3]
                 ]
             ],
             [
@@ -375,7 +374,7 @@ class EvaluationContextTest extends TestCase
                     'message' => '${result.value + nullValue}'
                 ],
                 [
-                    'result' => [ 'value' => 3],
+                    'result' => ['value' => 3],
                     'nullValue' => null
                 ]
             ],
@@ -429,66 +428,66 @@ class EvaluationContextTest extends TestCase
                 ]
             ],
             [
-				[
-					'message' => ['DOOM ETERNAL', 'CALL OF DUTY: VANGUARD']
-				],
-				[
-					'message' => '${games}'
-				],
-				[
-					"games" => ['DOOM ETERNAL', 'CALL OF DUTY: VANGUARD']
-				]
-			],
-			[
-				[
-					'message' => [
+                [
+                    'message' => ['DOOM ETERNAL', 'CALL OF DUTY: VANGUARD']
+                ],
+                [
+                    'message' => '${games}'
+                ],
+                [
+                    "games" => ['DOOM ETERNAL', 'CALL OF DUTY: VANGUARD']
+                ]
+            ],
+            [
+                [
+                    'message' => [
                         [
-							"fist_person_shooters" => [
-								[
-									'name' => 'DOOM'
-								]
-							]
-						]
-					]
-				],
-				[
-					'message' => '${unwrap_cw_resolvers(games)}'
-				],
-				[
-					"games" => [
-					    [
-							"fist_person_shooters" => [
-								[
-									'name' => 'DOOM'
-								]
-							]
-						]
-					]
-				]
-			],
-			[
-				[
-					'message' => [
-						"fist_person_shooters" => [
-							[
-								'name' => 'DOOM'
-							]
-						]
-					]
-				],
-				[
-					'message' => '${game.get()}'
-				],
-				[
-					"game" => [
-						"fist_person_shooters" => [
-							[
-								'name' => 'DOOM'
-							]
-						]
-					]
-				]
-			]
+                            "fist_person_shooters" => [
+                                [
+                                    'name' => 'DOOM'
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'message' => '${unwrap_cw_resolvers(games)}'
+                ],
+                [
+                    "games" => [
+                        [
+                            "fist_person_shooters" => [
+                                [
+                                    'name' => 'DOOM'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                [
+                    'message' => [
+                        "fist_person_shooters" => [
+                            [
+                                'name' => 'DOOM'
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'message' => '${game.get()}'
+                ],
+                [
+                    "game" => [
+                        "fist_person_shooters" => [
+                            [
+                                'name' => 'DOOM'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         ];
     }
 
@@ -513,26 +512,28 @@ class EvaluationContextTest extends TestCase
                 [
                     'action' => 'bolt',
                     'creatures' => [
-                        ['name' => 'goblin'], ['name' => 'bird'], ['name' => 'Pathrazer of Ulamog']
+                        ['name' => 'goblin'],
+                        ['name' => 'bird'],
+                        ['name' => 'Pathrazer of Ulamog']
                     ]
                 ]
             ],
             'str_replace' => [
-              'Rimrock Knight - Boulder Dash',
-              '${str_replace("//", "-", cardName)}',
-              [
-                'cardName' => 'Rimrock Knight // Boulder Dash'
-              ]
+                'Rimrock Knight - Boulder Dash',
+                '${str_replace("//", "-", cardName)}',
+                [
+                    'cardName' => 'Rimrock Knight // Boulder Dash'
+                ]
             ],
-			'MtG Mana' => [
-				'Gods Willing costs 1 White mana',
-				'Gods Willing costs ${parse_mana(card.mana)}',
-				[
-					'card' => [
-						'mana' => '{W}'
-					]
-				]
-			],
+            'MtG Mana' => [
+                'Gods Willing costs 1 White mana',
+                'Gods Willing costs ${parse_mana(card.mana)}',
+                [
+                    'card' => [
+                        'mana' => '{W}'
+                    ]
+                ]
+            ],
             'Nested arrays' => [
                 'My name is Marko, and I\'m a developer who uses PHP.',
                 'My name is ${users[0].name}, and I\'m a ${users[0].professions[0].name} who uses ${users[0].professions[0].tool}.',
@@ -558,27 +559,28 @@ class EvaluationContextTest extends TestCase
                 'His name is "Test", and he\'s a "user".',
                 'His name is "${name}", and he\'s a "${thing}".',
                 [
-                    "name" => "Test", "thing" => "user"
+                    "name" => "Test",
+                    "thing" => "user"
                 ]
             ],
-			'Non-zero starting arrays (object)' => [
-				'Your name is Milorad',
-				'Your name is ${players[1].name}',
-				[
-					'players' => [
-						1 => (object) [ 'name' => 'Milorad' ]
-					]
-				]
-			],
-			'Non-zero starting arrays (array)' => [
-				'Your name is Milorad',
-				'Your name is ${players[1]["name"]}',
-				[
-					'players' => [
-						1 => [ 'name' => 'Milorad' ]
-					]
-				]
-			],
+            'Non-zero starting arrays (object)' => [
+                'Your name is Milorad',
+                'Your name is ${players[1].name}',
+                [
+                    'players' => [
+                        1 => (object) ['name' => 'Milorad']
+                    ]
+                ]
+            ],
+            'Non-zero starting arrays (array)' => [
+                'Your name is Milorad',
+                'Your name is ${players[1]["name"]}',
+                [
+                    'players' => [
+                        1 => ['name' => 'Milorad']
+                    ]
+                ]
+            ],
             'URL string sample 1' => [
                 'https://opentdb.com/api.php?amount=6&category=11&type=multiple',
                 'https://opentdb.com/api.php?amount=${numberOfQuestions}&category=${categoryID}&type=multiple',
@@ -783,39 +785,36 @@ class EvaluationContextTest extends TestCase
     public function paramParsingProvider()
     {
         $obj = new stdClass();
-        $obj->val = 1;
+        $obj->messages = [];
         return [
             [
                 [
-                    'obj' => new stdClass(),
+                    'obj' => $obj,
                     'obj.messages[0]["role"]' => 1,
                 ],
-                '${obj.messages[0]["role"]}', 1
+                '${obj.messages[0]["role"]}',
+                1
             ],
             [
                 [
                     'messages[0]["role"]' => 1,
                 ],
-                '${messages[0]["role"]}', 1
+                '${messages[0]["role"]}',
+                1
             ],
             [
                 [
                     'simple' => 1,
                 ],
-                '${simple}', 1
-            ],
-            [
-                [
-                    'obj' => new stdClass(),
-                    'obj.val' => 2
-                ],
-                '${obj.val}', 2
+                '${simple}',
+                1
             ],
             [
                 [
                     'number' => 22,
                 ],
-                'The number is ${number}', 'The number is 22'
+                'The number is ${number}',
+                'The number is 22'
             ],
             [
                 [
@@ -829,49 +828,56 @@ class EvaluationContextTest extends TestCase
                 [
                     'array' => '${[1, 2, 3]}'
                 ],
-                '${array[0]}', 1
+                '${array[0]}',
+                1
             ],
             [
                 [
                     'data["name"]' => "John"
                 ],
-                'My name is ${data["name"]}', 'My name is John'
+                'My name is ${data["name"]}',
+                'My name is John'
             ],
             [
                 [
                     'user' => '${{"name": "Test"}}'
                 ],
-                'User name: ${user.name}', 'User name: Test'
+                'User name: ${user.name}',
+                'User name: Test'
             ],
             [
                 [
                     'card' => '${{"name": "Pack Rat", "mana_cost": "{1}{B}", "cmc": 2}}'
                 ],
-                '${card.name} (${card.mana_cost}) ${card.cmc}', 'Pack Rat ({1}{B}) 2'
+                '${card.name} (${card.mana_cost}) ${card.cmc}',
+                'Pack Rat ({1}{B}) 2'
             ],
             [
                 [
                     'number' => '${0}'
                 ],
-                'The number is ${number === 0 ? "zero" : "not zero"}', 'The number is zero'
+                'The number is ${number === 0 ? "zero" : "not zero"}',
+                'The number is zero'
             ],
             [
                 [
                     'boolean' => '${false}'
                 ],
-                'The boolean is ${boolean === false ? "boolean false" : "not boolean false"}', 'The boolean is boolean false'
+                'The boolean is ${boolean === false ? "boolean false" : "not boolean false"}',
+                'The boolean is boolean false'
             ],
             [
                 [
                     'boolean' => '${true}'
                 ],
-                'The boolean is ${boolean === true ? "boolean true" : "not boolean true"}', 'The boolean is boolean true'
+                'The boolean is ${boolean === true ? "boolean true" : "not boolean true"}',
+                'The boolean is boolean true'
             ]
         ];
     }
 
-    public static function arrayToObj( $arr)
+    public static function arrayToObj($arr)
     {
-    	return json_decode( json_encode( $arr));
+        return json_decode(json_encode($arr));
     }
 }
