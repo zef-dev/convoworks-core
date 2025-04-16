@@ -4,5 +4,5 @@
     "email": "marko@zefdev.com",
     "source_for": [],
     "description": "Package containing Amazon-specific elements, intents, or entities.",
-    "stability": "stable"
+    "stability": "experimental"
 }
