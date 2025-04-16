@@ -1668,7 +1668,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Processors\YesNoProcessor',
-                'Yes/No Processor',
+                'x!Yes/No Processor',
                 'A simple yes/no junction processor',
                 array(
                     'name' => array(
@@ -1733,7 +1733,7 @@ class CorePackageDefinition extends AbstractPackageDefinition
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\ElementCollection',
-                'Element collection',
+                'Element Collection',
                 'Collection of conversation elements. It will execute sequentially all child elements',
                 array(
                     'name' => array(
@@ -2702,7 +2702,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\MediaBlock',
-                'Media Block',
+                'Media Block - Deprecated',
                 'A special role "media_player" block, that handles audio player requests (not in standard service session).',
                 array(
                     'role' => array(
@@ -2802,7 +2802,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\MediaInfoElement',
-                'Media Info',
+                'x!Media Info',
                 'Provides info about current songs in the connected Media Context component',
                 array(
                     'context_id' => array(
@@ -2861,7 +2861,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\StartAudioPlayback',
-                'Start Audio Playback',
+                'x!Start Audio Playback',
                 'Initiates audio playback and automatically stops the current session.',
                 array(
                     'context_id' => array(
@@ -2923,7 +2923,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\SeekAudioPlaybackBySearch',
-                'Seek Audio Playback By Search',
+                'x!Seek Audio Playback By Search',
                 'Initiates audio playback by search in the current playlist and automatically stops the current session.',
                 array(
                     'context_id' => array(
@@ -2985,7 +2985,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\FastForwardRewindAudioPlayback',
-                'Fast Forward Rewind Audio Playback',
+                'x!Fast Forward Rewind Audio Playback',
                 'Fast Forwards or Rewinds the currently initiated audio playback and automatically stops the current session.',
                 array(
                     'context_id' => array(
@@ -3036,7 +3036,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\StartVideoPlayback',
-                'Start Video Playback',
+                'x!Start Video Playback',
                 'Initiates video playback and automatically stops the current session.',
                 array(
                     'url' => array(
@@ -3084,7 +3084,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\LoopBlock',
-                'Loop Block',
+                'Loop Block - Deprecated',
                 'Special conversation block type that will iterate over given array by itself.',
                 array(
                     'role' => array(
@@ -3462,7 +3462,7 @@ In default phase you can inform users about problem you have interpreting comman
             new \Convo\Core\Factory\ComponentDefinition(
                 $this->getNamespace(),
                 '\Convo\Pckg\Core\Elements\PromptAccountLinkingElement',
-                'Prompt Account Linking',
+                'x!Prompt Account Linking',
                 'Indicates to vendors that they should show an account linking card',
                 [
                     '_preview_angular' => [
