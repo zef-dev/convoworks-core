@@ -57,7 +57,7 @@ class NamedFunctionElement extends AbstractScopedFunction implements IConversati
                 $elem->read($request, $response);
             }
             $result = $this->evaluateString($this->_resultData);
-            $this->_logger->debug('FNC: Returning function result [' . $result . ']');
+            $this->_logger->debug('FNC: Returning function result [' . gettype($result) . ']');
             return $result;
         };
 
