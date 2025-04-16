@@ -5,6 +5,10 @@
 
 ## [Releases]
 
+## 0.22.33 - 2025-04-16
+
+* Remove ALexa templates
+
 ## 0.22.32 - 2025-02-23  
 
 * Reworked and unified `call_user_func()` handling to support both global functions and instance methods.  
