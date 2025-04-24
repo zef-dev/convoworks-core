@@ -51,8 +51,8 @@ abstract class AbstractScopedFunction extends AbstractWorkflowContainerComponent
     public function evaluateString($string, $context = [])
     {
         return parent::evaluateString($string, array_merge(
-            $context,
-            $this->_executionId ? $this->getFunctionParams()->getData() : []
+            $this->_executionId ? $this->getFunctionParams()->getData() : [],
+            $context
         ));
     }
 }
